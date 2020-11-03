@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="content-section mt-4">
+  <form method="POST">
+      {# This hidden_tag is a CSRF security feature. #}
+      {{ form.hidden_tag() }}
+      <fieldset class="form-group">
+        <legend class="border-bottom mb-4">Register a New User</legend>
+
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            {{ form.first_name.label(class="form-control-lable") }}
+            {{ form.first_name(class="form-control form-control-lg", placeholder="First")}}
+          </div>
+          <div class="form-group col-md-6">
+            {{ form.last_name.label(class="form-control-lable") }}
+            {{ form.last_name(class="form-control form-control-lg", placeholder="Last")}}
+          </div>
+        </div>
+
+        <div class="form-group">
+          {{ form.school.label(class="form-control-lable") }}
+          {% if form.school.errors %}
+            {{ form.school(class="form-control form-control-lg is-invalid") }}
+            <div class="invalid-feedback">
+              {% for error in form.school.errors %}
+                <span>{{ error }}</span>
+              {% endfor %}
+            </div>
+          {% else %}
+            {{ form.school(class="form-control form-control-lg")}}
+            <small id="schoolHelp" class="form-text text-muted">If new school is needed, add that first then return to this page.</small>
+          {% endif %}
+        </div>
+
+        <div class="form-group">
+          {{ form.email.label(class="form-control-lable") }}
+          {% if form.email.errors %}
+            {{ form.email(class="form-control form-control-lg is-invalid", placeholder="your@email.com") }}
+            <div class="invalid-feedback">
+              {% for error in form.email.errors %}
+                <span>{{ error }}</span>
+              {% endfor %}
+            </div>
+          {% else %}
+            {{ form.email(class="form-control form-control-lg", placeholder="user@email.com")}}
+          {% endif %}
+        </div>
+
+        <div class="form-group">
+          {{ form.password.label(class="form-control-lable") }}
+          {% if form.password.errors %}
+            {{ form.password(class="form-control form-control-lg is-invalid", placeholder="password") }}
+            <div class="invalid-feedback">
+              {% for error in form.password.errors %}
+                <span>{{ error }}</span>
+              {% endfor %}
+            </div>
+          {% else %}
+            {{ form.password(class="form-control form-control-lg", placeholder="password")}}
+          {% endif %}
+        </div>
+
+        <div class="form-group">
+          {{ form.pass_confirm.label(class="form-control-lable") }}
+          {% if form.pass_confirm.errors %}
+            {{ form.pass_confirm(class="form-control form-control-lg is-invalid", placeholder="password") }}
+            <div class="invalid-feedback">
+              {% for error in form.pass_confirm.errors %}
+                <span>{{ error }}</span>
+              {% endfor %}
+            </div>
+          {% else %}
+            {{ form.pass_confirm(class="form-control form-control-lg", placeholder="password")}}
+          {% endif %}
+        </div>
+
+        {{ form.submit(class="btn btn-primary") }}
+      </fieldset>
+  </form>
+</div>
+{% endblock %}

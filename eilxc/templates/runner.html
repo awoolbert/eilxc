@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block head %}
+<!-- <style>
+  img {
+      max-width: 50%;
+  }
+</style> -->
+{% endblock %}
+
+
+{% block content %}
+<div class="content-section py-3 px-3 mt-3 mb-3" style="border-style:solid; border-width:5px; border-color:{{runner.get_school().primary_color}};  color:{{runner.get_school().primary_color}};">
+  <div class="row">
+    <div class="col-8">
+      <legend class="h3">{{runner.display_name()}} </legend>
+      <h5>{{runner.get_school().long_name}}</h5>
+      <h5>Class of {{runner.grad_year}}</h5>
+    </div>
+    <div class="col text-right">
+      {% if runner.get_school().has_image() %}
+      <a href="{{url_for('core.school', school_id=runner.get_school().id)}}">
+        <img class="logo" data-school_id="{{ runner.get_school().id }}" src="/static/{{runner.get_school().img_filename()}}" class="img" >
+      </a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th scope="col">Date</th>
+      <th scope="col">Race</th>
+      <th scope="col" class="text-center">Place</th>
+      <th scope="col" class="text-center">Time</th>
+      <th scope="col" class="text-center">Pace</th>
+    </tr>
+  </thead>
+  <tbody id="races-list">
+
+    {% for result in runner.sorted_results() %}
+      <tr>
+        <td>{{ result.race.display_date() }}</td>
+        <td><a href="{{url_for('races.results', race_id=result.race_id)}}">{{ result.race.name }}</a></td>
+        <td class="text-center">{{ result.place }}</td>
+        <td class="text-center">{{ result.display_time() }}</td>
+        <td class="text-center">{{ result.display_pace() }}</td>
+      </tr>
+    {% endfor %}
+
+  </tbody>
+</table>
+
+{% endblock %}

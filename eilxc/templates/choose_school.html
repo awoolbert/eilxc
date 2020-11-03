@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block head %}
+  <link rel="stylesheet" href="{{ url_for('static', filename="color-picker.min.css") }}">
+  <script src="{{ url_for('static', filename="color-picker.min.js") }}"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="content-section mt-4">
+  {% for school in schools %}
+    <a href="{{ url_for('setup.add_runner', race_id=0, school_id=school.id, gender_code=school.get_team_gender())}}">
+      <div class="container float-left text-center mx-1 my-1 pt-1" data-school_id="{{school.id}}" style="background-color:{{school.primary_color}}; color:{{school.text_color}}; width:250px; height:60px; text-align:center'">{{ school.long_name }}
+      </div>
+    </a>
+  {% endfor %}
+</div>
+
+
+
+<script>
+
+</script>
+
+
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th scope="col">ID</th>
+      <th scope="col">name</th>
+      <th scope="col">description</th>
+      <th scope="col">location</th>
+      <th scope="col">distance</th>
+    </tr>
+  </thead>
+  <tbody>
+
+    {% for course in course_list %}
+      <tr>
+        <td>{{course.id}}</td>
+        <td>{{course.name}}</td>
+        <td>{{course.description}}</td>
+        <td>{{course.location.name}}</td>
+        <td>{{course.distance}}</td>
+      </tr>
+      <tr>
+        <td> </td>
+      </tr>
+    {% endfor %}
+
+  </tbody>
+</table>
+
+{% endblock %}

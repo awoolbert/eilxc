@@ -1,0 +1,209 @@
+{% extends "base.html" %}
+
+{% block head %}
+<style>
+  img {
+    max-width: 50%;
+  }
+</style>
+{% endblock %}
+
+
+{% block content %}
+<div class="content-section mb-5" id="school_info" data-school_id="{{school.id}}">
+  <div class="container mb-4 py-3 px-3 mt-3" style="border-style:solid; border-width:5px; border-color:{{school.primary_color}};  color:{{school.primary_color}};">
+    <div class="row">
+      <div class="col-8">
+        <legend class="h2">{{school.long_name}} </legend>
+        <h5>{{ school.city }}, {{ school.state_abbr }}</h5>
+        {% if school.league.id != 3 %}
+        <h6>{{school.league.long_name}} ({{school.league.short_name}})</h6>
+        {% endif %}
+      </div>
+      <div class="col text-right">
+        {% if school.has_image() %}
+        <img src="/static/{{school.img_filename()}}">
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="container mb-4" id="roster-container">
+    <h3 class="text-center mb-3">Current Roster</h3>
+    <div class="row">
+      {% for team in teams %}
+      <div class="col">
+        <table class="table table-sm table-striped mb-1">
+          <thead>
+            <tr>
+              <th scope="col">Team</th>
+              <th scope="col">Name</th>
+              <th scope="col">Class</th>
+            </tr>
+          </thead>
+          <tbody id="roster-list-{{team.gender}}">
+            {% for runner in team.alphabetized_runners() %}
+            <tr>
+              <td>{{ team.display_gender() }}</td>
+              <td><a href="{{url_for('core.runner', runner_id=runner.id)}}">{{ runner.display_name() }}</a></td>
+              <td>{{ runner.grad_year }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <small class="muted" style="margin-left:6px;">Need to <a class="edit-runner-link" href="{{url_for('setup.add_runner', race_id=0, school_id=school.id, gender_code=team.gender_code())}}">edit {{team.gender}} team roster</a>?</small>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="text-center" id="async-container">
+    {% if school.has_current_year_results() %}
+    <h3 class="text-center mb-1">Current Year Results</h3>
+    <h3 class="mt-3 mb-4 text-primary">Retrieving current season results: Page will update automatically</h3>
+    {% endif %}
+  </div>
+
+
+  <div class="container" id="races-container">
+    <h3 class="text-center mb-3">Previous Years' Results</h3>
+    <table class="table table-sm table-striped">
+      <thead>
+        <tr>
+          <th scope="col">Date</th>
+          <th scope="col">Race</th>
+          <th scope="col">Location</th>
+        </tr>
+      </thead>
+      <tbody id="races-list">
+
+        {% for race in races %}
+        <tr>
+          <td>{{ race.display_date() }}</td>
+          <td><a href="{{url_for('races.results', race_id=race.id)}}">{{ race.name }} - {{ race.display_gender() }}</a></td>
+          <td>{{ race.location.city }}, {{ race.location.state_abbr }}</td>
+        </tr>
+        {% endfor %}
+
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+
+  // get url for retrieving output from current sesaon results background task
+  var status_url = '{{ location }}';
+  get_results(status_url);
+
+  // function to repeatedly check for results from current season background
+  // task and to process results once received
+  function get_results(status_url) {
+    $.getJSON(status_url, data => {
+      if (data['state'] != 'PENDING' && data['state'] != 'PROGRESS') {
+
+        // if data has results, build table and place in DOM
+        if ('result' in data) {
+          ss = data['result']; //season summary object from server
+
+          // table shell(s) for current season results
+          shell_html = `
+          {% if school.has_current_year_results() %}
+          <div class="container mb-4" id="record-container">
+            <h3 class="text-center mb-1">Current Year Results</h3>
+            <div class="row">
+              {% for team in teams %}
+              <div class="col" id="{{team.gender}}-title">
+                {% if teams|length > 1 %}
+                <h4 class="text-center mb-1">{{ team.display_gender() }}</h4>
+                {% endif %}
+                <h6 class="text-center mb-2">
+                  (Wins: %{{team.gender}}-wins% - Losses: %{{team.gender}}-losses%)
+                </h6>
+                <table class="table table-sm table-striped">
+                  <thead>
+                    <tr>
+                      <th scope="col">Date</th>
+                      <th scope="col">Opponent</th>
+                      <th class="text-center" scope="col">Win/Loss</th>
+                      <th class="text-center" scope="col">Score</th>
+                    </tr>
+                  </thead>
+                  <tbody id="srr-list-{{team.gender}}">
+
+                  </tbody>
+                </table>
+              </div>
+              {% endfor %}
+            </div>
+            {% if school.league.id != 3 %}
+            <div class="text-left">
+            <small class="muted" style="margin-left:6px;">View <a class="league-link" href="{{url_for('core.league', league_id=school.league.id)}}">{{school.league.long_name}} ({{school.league.short_name}})</a> Standings</small>
+            </div>
+            {% endif %}
+          </div>
+          {% endif %}
+          `;
+
+          // insert 'wins' and 'losses' counts into table summaries
+          for (gender in ss) {
+            shell_html = shell_html.replace(`%${gender}-wins%`, ss[gender].wins);
+            shell_html = shell_html.replace(`%${gender}-losses%`, ss[gender].losses);
+          }
+
+          // place table shell(s) into DOM
+          $('#async-container').html(shell_html);
+
+          // create row(s) for each team's race results
+          for (gender in ss) {
+            srrList = '';
+            ss[gender].srr.forEach((rr, i) => {
+              sID = $('#school_info').data('school_id');
+              var currentURL = window.location.protocol + "//" + window.location.host + window.location.pathname;
+              var newURL = currentURL.replace(`/${sID}/school`,
+                `/${rr.race_id}/results`);
+              srrList += `
+              <tr>
+                <td>
+                  <a href="${newURL}">
+                    ${rr.race_date}
+                  </a>
+                </td>
+                <td class="school" data-opponent_id="${rr.opponent_id}" style="background-color:${rr.opponent_primary_color};  color:${rr.opponent_text_color};">${rr.opponent_short_name}</td>
+                <td class="text-center" style="color: ${rr.outcome=='Win' ? 'rgb(17, 158, 56)' : 'rgb(233, 29, 29)'};">${rr.outcome}</td>
+                <td class="text-center">${rr.own_score} - ${rr.opp_score}</td>
+              </tr>
+              `;
+            });
+            $(`#srr-list-${gender}`).html(srrList);
+          }
+
+          // route to school page if any school box is clicked
+          $('.school').click(function(e) {
+            console.log(`school = ${$(this).data('opponent_id')}`);
+            if (!$(e.target).closest('.runner-link').length) {
+              sID = $('#school_info').data('school_id');
+              oID = $(this).data('opponent_id');
+              var currentURL = window.location.protocol + "//" + window.location.host + window.location.pathname;
+              var newURL = currentURL.replace(`/${sID}/school`,
+                `/${oID}/school`);
+              window.location.href = newURL;
+            }
+          });
+
+        } else {
+          // something unexpected happened
+          console.log('something unexpected happened');
+        }
+      } else {
+        // rerun in 0.5 seconds
+        setTimeout(function() {
+          get_results(status_url);
+        }, 500);
+      }
+    });
+  };
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+
+{% block head %}
+  <link rel="stylesheet" href="{{ url_for('static', filename="color-picker.min.css") }}">
+  <script src="{{ url_for('static', filename="color-picker.min.js") }}"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="content-section mt-4">
+  <form method="post">
+
+    {# This hidden_tag is a CSRF security feature. #}
+    {{ form.hidden_tag() }}
+
+    <fieldset class="form-group">
+      <legend class="border-bottom">School</legend>
+      <div class="form-row">
+        {% if form.long_name.errors %}
+        <div class="form-group col">
+          {{ form.long_name.label(class="form-control-lable") }}
+          {{ form.long_name(class="form-control form-control-md is-invalid", id="long_name")}}
+          <div class="invalid-feedback">
+            {% for error in form.long_name.errors %}
+              <span>{{ error }}</span>
+            {% endfor %}
+          </div>
+        </div>
+        {% else %}
+        <div class="form-group col">
+          {{ form.long_name.label(class="form-control-lable") }}
+          {{ form.long_name(class="form-control form-control-md", id="long_name")}}
+        </div>
+        {% endif %}
+
+        {% if form.short_name.errors %}
+        <div class="form-group col">
+          {{ form.short_name.label(class="form-control-lable") }}
+          {{ form.short_name(class="form-control form-control-md is-invalid", id="short_name")}}
+          <div class="invalid-feedback">
+            {% for error in form.short_name.errors %}
+              <span>{{ error }}</span>
+            {% endfor %}
+          </div>
+        </div>
+        {% else %}
+        <div class="form-group col">
+          {{ form.short_name.label(class="form-control-lable") }}
+          {{ form.short_name(class="form-control form-control-md", id="short_name")}}
+        </div>
+        {% endif %}
+      </div>
+
+      <div class="form-row">
+        {% if form.city.errors %}
+        <div class="form-group col">
+          {{ form.city.label(class="form-control-lable") }}
+          {{ form.city(class="form-control form-control-md is-invalid", id="city")}}
+          <div class="invalid-feedback">
+            {% for error in form.city.errors %}
+              <span>{{ error }}</span>
+            {% endfor %}
+          </div>
+        </div>
+        {% else %}
+        <div class="form-group col">
+          {{ form.city.label(class="form-control-lable") }}
+          {{ form.city(class="form-control form-control-md", id="city")}}
+        </div>
+        {% endif %}
+
+        {% if form.state_abbr.errors %}
+        <div class="form-group col">
+          {{ form.state_abbr.label(class="form-control-lable") }}
+          {{ form.state_abbr(class="form-control form-control-md is-invalid", id="state_abbr")}}
+          <div class="invalid-feedback">
+            {% for error in form.state_abbr.errors %}
+              <span>{{ error }}</span>
+            {% endfor %}
+          </div>
+        </div>
+        {% else %}
+        <div class="form-group col">
+          {{ form.state_abbr.label(class="form-control-lable") }}
+          {{ form.state_abbr(class="form-control form-control-md", id="state_abbr")}}
+        </div>
+        {% endif %}
+      </div>
+
+
+      <div class="form-row">
+        <div hidden class="form-group col">
+          {{ form.league_id.label(class="form-control-lable") }}
+          {{ form.league_id(class="form-control form-control-md", id="league_id")}}
+        </div>
+        <div class="form-group col">
+          <label for="league-id-select">League</label>
+          <select class="form-control" id="league-id-select">
+            <option selected disabled>Select the league for this school</option>
+            {% for l in data.league_list %}
+              {% if l.id == 3 %}
+              <option data-league_id="{{l.id}}">Other</option>
+              {% else %}
+              <option data-league_id="{{l.id}}">{{l.long_name}} ({{l.short_name}})</option>
+              {% endif %}
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+      <div hidden class="form-row">
+        <div class="form-group col">
+          {{ form.primary_color.label(class="form-control-lable") }}
+          {{ form.primary_color(class="form-control form-control-md", id="primary_color", value="#000000")}}
+        </div>
+        <div class="form-group col">
+          {{ form.text_color.label(class="form-control-lable") }}
+          {{ form.text_color(class="form-control form-control-md", id="text_color", value="#ffffff")}}
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col">
+          <label for="background-cp">Choose background</label>
+          <input class="form-control" type="text" id="background-cp" value="#000000">
+          <small class="form-text text-muted">
+            Place cursor in box to open color-picker
+          </small>
+        </div>
+        <div class="form-group col">
+          <label for="text-cp">Choose text color</label>
+          <input class="form-control" type="text" id="text-cp" value="#ffffff">
+        </div>
+        <div class="form-group col">
+          <label for="sample-colors">School display</label>
+          <div class="form-control text-center" id="sample-colors" style="background-color:#000000; color:#ffffff;">Sample</div>
+        </div>
+      </div>
+    </fieldset>
+    {{ form.submit(class="btn btn-primary") }}
+
+  </form>
+</div>
+
+
+
+<script>
+
+var background_picker = new CP(document.getElementById('background-cp'));
+var text_picker = new CP(document.getElementById('text-cp'));
+var sample = document.getElementById('sample-colors');
+var primary_color = document.getElementById('primary_color');
+var text_color = document.getElementById('text_color');
+var short_name = document.getElementById('short_name');
+var league_id = document.getElementById('league_id');
+
+short_name.addEventListener('blur', () => {
+  sample.innerHTML = short_name.value;
+});
+
+$('#league-id-select').change(function () {
+    var leagueID = $('option:selected', this).attr("data-league_id");
+    console.log(leagueID);
+    league_id.value = leagueID;
+});
+
+background_picker.on('change', function(r,g,b,a) {
+  this.source.value = this.color(r,g,b,a);
+  primary_color.value = this.source.value
+  sample.style.background = this.source.value;
+});
+
+text_picker.on('change', function(r,g,b,a) {
+  this.source.value = this.color(r,g,b,a);
+  text_color.value = this.source.value
+  sample.style.color = this.source.value;
+});
+
+</script>
+
+
+{% endblock %}

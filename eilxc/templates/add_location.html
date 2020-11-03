@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block content %}
+
+<div class="content-section mt-4">
+  <form method="post">
+
+    {# This hidden_tag is a CSRF security feature. #}
+    {{ form.hidden_tag() }}
+
+    <fieldset class="form-group mb-4">
+      <legend class="border-bottom">Location</legend>
+      <div class="mt-1 mb-3" id="locationField">
+        <select class="form-control basicAutoSelect"
+                name="simple_select"
+                placeholder="Enter location to lookup address (e.g., Newton Country Day School)"
+                data-url="{{url_for('setup.autocomplete_possibilities')}}" autocomplete="off">
+        </select>
+        <!-- <input class="form-control" id="autocomplete"
+               placeholder="Enter location to lookup address (e.g., Newton Country Day School)"
+               autofocus
+               type="text"/> -->
+      </div>
+      <div class="form-row">
+        <div class="form-group col">
+          {{ form.street_number.label(class="form-control-lable") }}
+          {{ form.street_number(class="form-control form-control-md", id="street_number", disabled="true")}}
+        </div>
+        <div class="form-group col">
+          {{ form.street_name.label(class="form-control-lable") }}
+          {{ form.street_name(class="form-control form-control-md", id="route", disabled="true")}}
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col">
+          {{ form.city.label(class="form-control-lable") }}
+          {{ form.city(class="form-control form-control-md", id="locality", disabled="true")}}
+        </div>
+        <div class="form-group col">
+          {{ form.state_abbr.label(class="form-control-lable") }}
+          {{ form.state_abbr(class="form-control form-control-md", id="administrative_area_level_1", disabled="true")}}
+        </div>
+        <div class="form-group col">
+          {{ form.zip.label(class="form-control-lable") }}
+          {{ form.zip(class="form-control form-control-md", id="postal_code", disabled="true")}}
+        </div>
+      </div>
+      <div class="form-row mb-3">
+        {{ form.location_name.label(class="form-control-lable") }}
+        {{ form.location_name(class="form-control form-control-md", id="location_name", placeholder="Name of this location for future reference (e.g., Newton Country Day)")}}
+      </div>
+    </fieldset>
+
+    <fieldset class="form-group">
+      <legend class="border-bottom">Course</legend>
+      <div class="form-row mb-3">
+        {{ form.course_name.label(class="form-control-lable") }}
+        {{ form.course_name(class="form-control form-control-md", id="course_name", placeholder="Name of this course for future reference (e.g., Newton Country Day School 5K)")}}
+      </div>
+      <div class="form-row mb-3">
+        {{ form.course_description.label(class="form-control-lable") }}
+        {{ form.course_description(class="form-control form-control-md", id="course_description", placeholder="Describe this course (e.g., Standard NCDS 5K Course, Shortened Course due to construction of athletic fields in 2020, etc.)")}}
+      </div>
+      <div class="form-row mb-3">
+        {{ form.distance.label(class="form-control-lable") }}
+        {{ form.distance(class="form-control form-control-md", id="distance", placeholder="Distance in kilometers (e.g., 5.00, 4.86, etc.)")}}
+      </div>
+    </fieldset>
+
+    {{ form.submit(class="btn btn-primary") }}
+
+  </form>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/gh/xcash/bootstrap-autocomplete@v2.3.7/dist/latest/bootstrap-autocomplete.min.js"></script>
+
+<script>
+
+$('.basicAutoSelect').autoComplete();
+
+$('.basicAutoSelect').on('autocomplete.select', function (evt, item) {
+	console.log(`selected ${item.value}, ${item.text}`);
+  console.log(item)
+  // send raceState to server to update database
+  $.ajax({
+    async: true,
+    url: '/get_autofill_address',
+    type: 'POST',
+    dataType: 'json',
+    contentType: 'application/json',
+    data: JSON.stringify(item),
+    success: function(data) {
+      console.log(data);
+      for (id in data) {
+        document.getElementById(id).disabled = false;
+        document.getElementById(id).value = data[id];
+        // document.getElementById(id).disabled = true;
+      }
+    }
+  });
+});
+
+</script>
+
+{% endblock %}

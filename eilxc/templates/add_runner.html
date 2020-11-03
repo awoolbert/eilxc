@@ -1,0 +1,445 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<style media="screen">
+  .fa-arrows-alt {
+    cursor: move;
+    cursor: -webkit-grabbing;
+  }
+
+  .blue-white {
+    background-color: #007bff !important;
+    color: #ffffff;
+  }
+
+  table.table td i {
+    font-size: 20px;
+    margin-left: 4px;
+  }
+
+  table.table td a.edit-runner i {
+    margin-left: 5px;
+    color: #007bff;
+  }
+
+  table.table td a.delete-runner i {
+    color: red;
+  }
+</style>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="content-section mt-4 mb-5" id="team_info" data-race_id="{{data.race_id}}" data-school_id="{{data.school_id}}" data-gender_code="{{data.gender_code}}" data-year="{{data.year}}" data-team_id="{{data.team_id}}"
+  data-return_page="{{data.return_page}}">
+  <form class="mb-4">
+    <fieldset class="form-group">
+      <legend class="border-bottom mb-4" style="font-size:25px;" id="schoolNameLegend">{{data.school.long_name}}</legend>
+      <label for="gender-select">Add runners to which team?</label>
+      <select class="form-control" id="gender-select">
+        {% if data.gender_code == 0 %}
+        <option selected disabled>Select a team</option>
+        {% endif %}
+        {% for g in data.gender_list %}
+        <option data-gender="{{g}}">{{g}}</option>
+        {% endfor %}
+      </select>
+    </fieldset>
+  </form>
+
+  {% if data.gender_code != 0 %}
+
+  <form class="mb-4" method="post">
+
+    {# This hidden_tag is a CSRF security feature. #}
+    {{ form.hidden_tag() }}
+
+    <fieldset class="form-group">
+      <legend class="border-bottom mb-1">Add a runner</legend>
+      <div class="form-row mb-0">
+        {% if form.first_name.errors %}
+        <div class="form-group col">
+          {{ form.first_name.label(class="form-control-lable") }}
+          {{ form.first_name(class="form-control form-control-md is-invalid", id="first_name")}}
+          <div class="invalid-feedback">
+            {% for error in form.first_name.errors %}
+            <span>{{ error }}</span>
+            {% endfor %}
+          </div>
+        </div>
+        {% else %}
+        <div class="form-group col">
+          {{ form.first_name.label(class="form-control-lable") }}
+          {{ form.first_name(class="form-control form-control-md", id="first_name")}}
+        </div>
+        {% endif %}
+
+        {% if form.last_name.errors %}
+        <div class="form-group col">
+          {{ form.last_name.label(class="form-control-lable") }}
+          {{ form.last_name(class="form-control form-control-md is-invalid", id="last_name")}}
+          <div class="invalid-feedback">
+            {% for error in form.last_name.errors %}
+            <span>{{ error }}</span>
+            {% endfor %}
+          </div>
+        </div>
+        {% else %}
+        <div class="form-group col">
+          {{ form.last_name.label(class="form-control-lable") }}
+          {{ form.last_name(class="form-control form-control-md", id="last_name")}}
+        </div>
+        {% endif %}
+
+        {% if form.grad_year.errors %}
+        <div class="form-group col-2">
+          {{ form.grad_year.label(class="form-control-lable") }}
+          {{ form.grad_year(class="form-control form-control-md is-invalid", id="grad_year")}}
+          <div class="invalid-feedback">
+            {% for error in form.grad_year.errors %}
+            <span>{{ error }}</span>
+            {% endfor %}
+          </div>
+        </div>
+        {% else %}
+        <div class="form-group col-2">
+          {{ form.grad_year.label(class="form-control-lable") }}
+          {{ form.grad_year(class="form-control form-control-md", id="grad_year")}}
+        </div>
+        {% endif %}
+
+        <div class="form-group text-center col-2">
+          <p class="mb-2">Est. 5K Time</p>
+          <div class="form-group row mb-0">
+            {% if form.minutes.errors %}
+            <div class="form-group text-center col-6 mr-0 pr-1 mb-0">
+              <!-- {{ form.minutes.label(class="form-control-lable") }} -->
+              {{ form.minutes(class="form-control form-control-md is-invalid", id="minutes")}}
+              <div class="invalid-feedback">
+                {% for error in form.minutes.errors %}
+                <span>{{ error }}</span>
+                {% endfor %}
+              </div>
+            </div>
+            {% else %}
+            <div class="form-group text-center col-6 mr-0 pr-1 mb-0">
+              <!-- {{ form.minutes.label(class="form-control-lable") }} -->
+              {{ form.minutes(class="form-control form-control-md", id="minutes")}}
+              <small class="muted">Minutes</small>
+            </div>
+            {% endif %}
+
+            {% if form.seconds.errors %}
+            <div class="form-group text-center col-6 ml-0 pl-1 mb-0">
+              <!-- {{ form.seconds.label(class="form-control-lable") }} -->
+              {{ form.seconds(class="form-control form-control-md is-invalid", id="seconds")}}
+              <div class="invalid-feedback">
+                {% for error in form.seconds.errors %}
+                <span>{{ error }}</span>
+                {% endfor %}
+              </div>
+            </div>
+            {% else %}
+            <div class="form-group text-center col-6 ml-0 pl-1 mb-0">
+              <!-- {{ form.seconds.label(class="form-control-lable") }} -->
+              {{ form.seconds(class="form-control form-control-md", id="seconds")}}
+              <small class="muted">Seconds</small>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      <div class="row mb-2 justify-content-end">
+        <div class="col-3" style="width:200px;">
+          {{ form.submit(class="btn btn-block btn-primary") }}
+          <button type="button" class="btn btn-block btn-success" id="race-setup-btn">Finished Adding Runners</button>
+        </div>
+      </div>
+    </fieldset>
+  </form>
+
+
+  <div class="container mt-3">
+    <table class="table table-sm table-striped">
+      <thead>
+        <tr>
+          <th class="text-center" scope="col">No.</th>
+          <th class="text-center" scope="col">School</th>
+          <th class="pl-3" scope="col">Name</th>
+          <th class="text-center" scope="col">Class</th>
+          <th class="text-center" scope="col">5K Time</th>
+          <th class="text-center" scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody id="runners-list">
+
+        {% for runner in data.runners %}
+        <tr class="runner-row" data-runner_id="{{runner.id}}">
+          <td class="text-center">{{ loop.index }}</td>
+          <td class="text-center school" style="background-color:{{data.school.primary_color}};  color:{{data.school.text_color}};" data-school_id="{{data.school_id}}">
+            {{ data.school.short_name }}
+          </td>
+          <td class="pl-3">
+            <a href="{{url_for('core.runner', runner_id=runner.id)}}">
+              {{ runner.display_name() }}
+            </a>
+          </td>
+          <td class="text-center">{{ runner.grad_year }}</td>
+          <td class="text-center">{{ runner.display_seed_time() }}</td>
+          <td class="actions text-center">
+            {% if data.able_to_delete or runner.completed_results()|length == 0 %}
+            <a class="edit-runner" title="Edit" data-toggle="modal" data-target="#editRunnerModal" data-runner_id="{{runner.id}}" data-runner_first_name="{{runner.first_name}}" data-runner_last_name="{{runner.last_name}}"
+              data-runner_grad_year="{{runner.grad_year}}" data-runner_minutes="{{runner.minutes()}}" data-runner_seconds="{{runner.seconds()}}">
+              <i class="material-icons">&#xE254;</i>
+            </a>
+
+            <a class="delete-runner" title="Delete" data-toggle="modal" data-target="#deleteRunnerModal" data-runner_id="{{runner.id}}" data-runner_first_name="{{runner.first_name}}" data-runner_last_name="{{runner.last_name}}"
+              data-runner_grad_year="{{runner.grad_year}}" data-runner_minutes="{{runner.minutes()}}" data-runner_seconds="{{runner.seconds()}}">
+              <i class="material-icons">&#xE872;</i>
+            </a>
+            {% endif %}
+
+          </td>
+        </tr>
+        {% endfor %}
+
+      </tbody>
+    </table>
+  </div>
+
+  <div class="modal fade" id="editRunnerModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editRunnerModalTitle">Edit Runner</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form class="mb-4" method="post">
+            <fieldset class="form-group">
+              <div class="form-row mb-0">
+                <div class="form-group col">
+                  {{ form.first_name.label(class="form-control-lable") }}
+                  {{ form.first_name(class="form-control form-control-md", id="m_first_name")}}
+                </div>
+                <div class="form-group col">
+                  {{ form.last_name.label(class="form-control-lable") }}
+                  {{ form.last_name(class="form-control form-control-md", id="m_last_name")}}
+                </div>
+                <div class="form-group col-2">
+                  {{ form.grad_year.label(class="form-control-lable") }}
+                  {{ form.grad_year(class="form-control form-control-md", id="m_grad_year")}}
+                </div>
+                <div class="form-group text-center col-2">
+                  <p class="mb-2">Est. 5K Time</p>
+                  <div class="form-group row mb-0">
+                    <div class="form-group text-center col-6 mr-0 pr-1 mb-0">
+                      {{ form.minutes(class="form-control form-control-md", id="m_minutes")}}
+                      <small class="muted">Minutes</small>
+                    </div>
+                    <div class="form-group text-center col-6 ml-0 pl-1 mb-0">
+                      {{ form.seconds(class="form-control form-control-md", id="m_seconds")}}
+                      <small class="muted">Seconds</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal" id="m_close_btn">Close</button>
+          <button type="button" class="btn btn-primary" id="m_update_btn">Update Runner</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="deleteRunnerModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="deleteRunnerModalTitle">Delete Runner</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <h6 id="delete-modal-text"></h6>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal" id="m_cancel_btn">Cancel</button>
+          <button type="button" class="btn btn-primary" id="m_confirm_btn">Confirm</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  {% endif %}
+
+</div>
+
+
+
+<script>
+  var client_data = {
+    race_id: document.getElementById("team_info").dataset.race_id,
+    school_id: document.getElementById("team_info").dataset.school_id,
+    gender_code: document.getElementById("team_info").dataset.gender_code,
+    team_id: document.getElementById("team_info").dataset.team_id,
+    year: document.getElementById("team_info").dataset.year,
+  };
+
+  var runnerData = {};
+
+  var deleteSucceeded;
+
+  console.log(client_data);
+
+  // if adding runners, focus on first_name input
+  if (client_data['gender_code'] != 0) {
+    document.getElementById('first_name').focus();
+  }
+
+  // route to school page if school box on individual results table is clicked
+  $('.school').click(function(e) {
+    console.log(`school = ${$(this).data('school_id')}`);
+
+    sID = $(this).data('school_id')
+    var currentURL = window.location.protocol + "//" + window.location.host + window.location.pathname;
+    var newURL = currentURL.replace(`/${client_data.race_id}/${client_data.school_id}/${client_data.gender_code}/add_runner`,
+      `/${sID}/school`);
+    window.location.href = newURL;
+  });
+
+
+  // on clicking edit button, populate the modal with that runner's info
+  $('.edit-runner').on('click', function(e) {
+    r = e.target.closest('.edit-runner');
+    $('#m_first_name').val(r.dataset.runner_first_name);
+    $('#m_last_name').val(r.dataset.runner_last_name);
+    $('#m_grad_year').val(r.dataset.runner_grad_year);
+    $('#m_minutes').val(r.dataset.runner_minutes);
+    $('#m_seconds').val(r.dataset.runner_seconds);
+    runnerData['runner_id'] = r.dataset.runner_id;
+  });
+
+  // on clicking delete button, populate modal and ask for confirmation
+  $('.delete-runner').on('click', function(e) {
+    console.log('click on delete runner')
+    r = e.target.closest('.delete-runner');
+    runnerData['first_name'] = r.dataset.runner_first_name;
+    runnerData['last_name'] = r.dataset.runner_last_name;
+    runnerData['grad_year'] = r.dataset.runner_grad_year;
+    runnerData['runner_id'] = r.dataset.runner_id;
+    $('#delete-modal-text').text(
+      `Delete ${runnerData['first_name']} ${runnerData['last_name']}, Class of ${runnerData['grad_year']}?  Previous results will remain in the database, but the runner will be removed from the team for this race and all future races.`);
+  });
+
+  // return to race_setup page when race-setup-button is clicked
+  $("#race-setup-btn").click(function() {
+    var currentURL = window.location.protocol + "//" + window.location.host + window.location.pathname;
+    return_page = document.getElementById("team_info").dataset.return_page;
+    var newURL = currentURL.replace(`/${client_data['race_id']}/${client_data['school_id']}/${client_data['gender_code']}/add_runner`,
+      return_page);
+    console.log(currentURL);
+    console.log(newURL);
+    window.location.replace(newURL);
+  });
+
+  // upon selecting gender, remove current team and reload page with gender selected
+  $('#gender-select').change(function() {
+    // Fetch the gender and add it to the client_data object
+    var oldGenderCode = client_data['gender_code']
+    var gender = $('option:selected', this).attr("data-gender");
+    client_data['gender_code'] = gender == 'Girls' ? '1' : '2';
+
+    // Clear the team_id field from client_data since team changed
+    delete client_data.team_id;
+
+    // Send the client_data object to the database for updating
+    createTeamIfNeeded();
+
+    //request the correct url with the corresponding gender_code
+    var currentURL = window.location.protocol + "//" + window.location.host + window.location.pathname;
+    var newURL = currentURL.replace(`/${oldGenderCode}/add_runner`,
+      `/${client_data['gender_code']}/add_runner`);
+    window.location.replace(newURL);
+  });
+
+  // when update button in edit runner modal is selected, run editRunner
+  $('#m_update_btn').click(function() {
+    // Get the runner data from the DOM
+    runnerData['first_name'] = $('#m_first_name').val();
+    runnerData['last_name'] = $('#m_last_name').val();
+    runnerData['grad_year'] = $('#m_grad_year').val();
+    var minutes = parseInt($('#m_minutes').val());
+    var seconds = parseInt($('#m_seconds').val());
+    runnerData['seed_time'] = (minutes * 60 + seconds) * 1000;
+
+    // Call editDeleteRunner with edit_or_delete = 'edit'
+    runnerData['edit_or_delete'] = 'edit';
+
+    // console.log(runnerData);
+    editDeleteRunner();
+
+    // Refresh page to put update runner list with new info
+    location.reload();
+  });
+
+  // when update button in edit runner modal is selected, run editRunner
+  $('#m_confirm_btn').click(function() {
+    runnerData['edit_or_delete'] = 'delete';
+    editDeleteRunner();
+    if (deleteSucceeded) {
+      location.reload();
+    } else {
+      $('#m_cancel_btn').click();
+    };
+  });
+
+  function editDeleteRunner() {
+    $.ajax({
+      async: false,
+      url: '/edit_delete_runner',
+      type: 'POST',
+      dataType: 'json',
+      contentType: 'application/json',
+      data: JSON.stringify(runnerData),
+      success: function(data) {
+        if (data.status == 'error') {
+          console.log(data.message);
+          deleteSucceeded = false;
+        } else {
+          deleteSucceeded = true;
+          console.log('delete succeeded')
+        }
+        // want to flash a success or failure message by putting below in proper place
+        // <div class="alert alert-{{ category }} alert-dismissible">
+        //     <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        //     {{ message }}
+        // </div>
+      }
+    });
+  };
+
+  function createTeamIfNeeded() {
+    $.ajax({
+      async: false,
+      url: '/create_team_if_needed',
+      type: 'POST',
+      dataType: 'json',
+      contentType: 'application/json',
+      data: JSON.stringify(client_data)
+    });
+  };
+</script>
+
+
+{% endblock %}

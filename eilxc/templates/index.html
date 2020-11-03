@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block content %}
+<div class="container my-4 border-bottom">
+  <h1 class="text-center">New England Prep</h1>
+  <h3 class="text-center">Cross-Country Race Manager</h3>
+</div>
+
+<div class="container mb-5 text-center">
+  {% for school in schools %}
+  <a href="{{url_for('core.school', school_id=school.id)}}">
+    <img class="logo" data-school_id="{{ school.id }}" src="static/{{school.img_filename()}}" class="img">
+  </a>
+  {% endfor %}
+</div>
+
+{% endblock %}

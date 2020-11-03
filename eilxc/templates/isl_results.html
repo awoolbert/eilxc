@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th scope="col"></th>
+    </tr>
+  </thead>
+  <tbody>
+
+    {% for row in rows_list %}
+      <tr>
+        <td>{{row}}</td>
+      </tr>
+    {% endfor %}
+
+  </tbody>
+</table>
+
+{% endblock %}

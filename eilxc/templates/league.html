@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block content %}
+<div class="content-section mb-5" id="league_info" data-league_id="{{league.id}}">
+  <div class="container pt-2 pb-3 mb-5 mt-4" style="border-style: solid; border-width:5px;">
+    <h1 class="text-center">{{league.long_name}} ({{league.short_name}})</h1>
+    <div class="text-center mt-3">
+      {% for s in logo_data %}
+      <a href="{{url_for('core.school', school_id=s.school.id)}}">
+        <img class="logo" data-school_id="{{ s.school.id }}" src="/static/{{s.img_filename}}" class="img" style="width: {{img_width}};" >
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- <div class="container" id="standings-container">
+    <h3 class="text-center">{{year}} Season Standings</h3>
+    <div class="row">
+      {% for s in standings %}
+      <div class="col" id="{{s[0].team.display_gender()}}-standings">
+        <h4 class="text-center my-3">{{s[0].team.display_gender()}} Teams</h4>
+        <table class="table table-sm table-striped">
+          <thead>
+            <tr>
+              <th scope="col">School</th>
+              <th class="text-center" scope="col">Wins</th>
+              <th class="text-center" scope="col">Losses</th>
+              <th class="text-center" scope="col">Percent</th>
+            </tr>
+
+            <tbody>
+              {% for row in s %}
+              <tr class="school" data-school_id="{{row.team.school.id}}">
+                <td style="background-color:{{row.team.school.primary_color}};  color:{{row.team.school.text_color}};">{{ row.team.school.short_name}}</td>
+                <td class="text-center">{{ row.wins }}</td>
+                <td class="text-center">{{ row.losses }}</td>
+                <td class="text-center">
+                  {% if row.percent != 'N/A' %}
+                  {{ row.percent }}%
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </thead>
+        </table>
+      </div>
+      {% endfor %}
+    </div>
+  </div> -->
+
+  <div class="container" id="standings-container">
+    <h3 class="text-center">{{year}} Season Standings</h3>
+    <div class="row">
+      {% for s in standings %}
+      <div class="col" id="{{s[0].team.display_gender()}}-standings">
+        <h4 class="text-center my-3">{{s[0].team.display_gender()}} Teams</h4>
+        <table class="table table-sm table-striped">
+          <thead>
+            <tr>
+              <th rowspan="2">School</th>
+              <th class="text-center" colspan="2">Overall</th>
+              <th class="text-center" colspan="2">League</th>
+            </tr>
+            <tr>
+              <th class="text-center">Wins</th>
+              <th class="text-center">Losses</th>
+              <th class="text-center">Wins</th>
+              <th class="text-center">Losses</th>
+            </tr>
+
+            <tbody>
+              {% for row in s %}
+              <tr class="school" data-school_id="{{row.team.school.id}}">
+                <td style="background-color:{{row.team.school.primary_color}};  color:{{row.team.school.text_color}};">{{ row.team.school.short_name}}</td>
+                <td class="text-center">{{ row.wins }}</td>
+                <td class="text-center">{{ row.losses }}</td>
+                <td class="text-center">{{ row.wins }}</td>
+                <td class="text-center">{{ row.losses }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </thead>
+        </table>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+
+
+</div>
+
+<script>
+  // route to school page if school box on individual results table is clicked
+  $('.school').click(function(e) {
+    console.log(`school = ${$(this).data('school_id')}`);
+    if(!$(e.target).closest('.runner-link').length) {
+      lID = $('#league_info').data('league_id');
+      sID = $(this).data('school_id');
+      var currentURL = window.location.protocol + "//" + window.location.host + window.location.pathname;
+      var newURL = currentURL.replace(`/${lID}/league`,
+                                      `/${sID}/school`);
+      window.location.href = newURL;
+    }
+  });
+</script>
+
+{% endblock %}

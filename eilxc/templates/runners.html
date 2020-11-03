@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block content %}
+<div class="content-section py-3 text-center">
+  <h5>Full List of Runners in Database</h5>
+</div>
+
+
+<table class="table table-sm table-striped">
+  <thead>
+    <tr>
+      <th scope="col">No.</th>
+      <th scope="col">ID</th>
+      <th scope="col">School</th>
+      <th scope="col">Name</th>
+      <th scope="col">Gender</th>
+      <th scope="col">Class</th>
+      <th scope="col">Time</th>
+    </tr>
+  </thead>
+  <tbody id="runners-list">
+
+    {% for runner in runners %}
+      <tr>
+        <td>{{ loop.index }}</td>
+        <td>{{ runner.id }}</td>
+        <td class="school" data-school_id="{{runner.get_school().id}}" style="background-color:{{runner.get_school().primary_color}};  color:{{runner.get_school().text_color}};">{{ runner.school_name() }}</td>
+        <td>
+          <a href="{{ url_for('core.runner', runner_id=runner.id)}}">{{ runner.display_name() }}</a>
+        </td>
+        <td>{{ runner.gender_code() }}</td>
+        <td>{{ runner.grad_year }}</td>
+        <td>{{ runner.display_seed_time() }}</td>
+      </tr>
+    {% endfor %}
+
+  </tbody>
+</table>
+
+<script type="text/javascript">
+
+  // route to school page if school name box is clicked
+  $('.school').click(function(e) {
+    console.log(`school = ${$(this).data('school_id')}`);
+    if(!$(e.target).closest('.runner-link').length) {
+      sID = $(this).data('school_id')
+      var currentURL = window.location.protocol + "//" + window.location.host + window.location.pathname;
+      var newURL = currentURL.replace(`/runners`,
+                                      `/${sID}/school`);
+      window.location.href = newURL;
+    }
+  });
+</script>
+
+
+{% endblock %}

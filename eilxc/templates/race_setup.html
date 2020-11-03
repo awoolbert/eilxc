@@ -1,0 +1,311 @@
+{% extends "base.html" %}
+
+{% block head %}
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link href="{{ url_for('static', filename='bootstrap-datepicker.min.css') }}" rel='stylesheet' type='text/css'>
+<script src="{{ url_for('static', filename='bootstrap-datepicker.min.js') }}"></script>
+
+{% endblock %}
+
+
+{% block content %}
+
+
+<div class="content-section mt-4" id="race_info" data-race_id="{{data.race_id}}" data-host_school_id="{{data.host_school_id}}" data-location_id="{{data.location_id}}" data-course_id="{{data.course_id}}" data-group_id="{{data.group_id}}" data-date="{{data.date}}">
+  <form class="mb-4">
+    <div class="form-group">
+        <label for="datepicker">Race Date</label>
+        <input id="datepicker" type="text" class="form-control" value="{{data.date}}">
+    </div>
+  </form>
+
+  <form class="mb-4">
+    <div class="form-group">
+      <label for="host-school-select">Host School</label>
+      <select class="form-control" id="host-school-select">
+        {% if not data.host_school_id %}
+        <option selected disabled>Select a school</option>
+        {% endif %}
+        {% for s in data.host_school_list %}
+        <option data-host_school_id="{{s.id}}">{{s.long_name}}</option>
+        {% endfor %}
+        <option data-host_school_id="add">Add a school not in list</option>
+      </select>
+    </div>
+  </form>
+
+  {% if data.host_school_id %}
+  <form class="mb-4">
+    <div class="form-group">
+      <label for="location-select">Location</label>
+      <select class="form-control" id="location-select">
+        {% if not data.location_id %}
+        <option selected disabled>Select a location</option>
+        {% endif %}
+        {% for l in data.location_list %}
+        <option data-location_id="{{l.id}}">{{l.name}}</option>
+        {% endfor %}
+        <option data-location_id="add">Add a location not in list</option>
+      </select>
+    </div>
+  </form>
+  {% endif %}
+
+  {% if data.location_id %}
+  <form class="mb-4">
+    <div class="form-group">
+      <label for="course-select">Course</label>
+      <select class="form-control" id="course-select">
+        {% if not data.course_id %}
+        <option selected disabled>Select a course</option>
+        {% endif %}
+        {% for c in data.course_list %}
+        <option data-course_id="{{c.id}}">{{c.name}}</option>
+        {% endfor %}
+        <option data-course_id="add">Add a course not in list</option>
+      </select>
+      <small id="passwordHelpBlock" class="form-text text-muted">
+        Note: This is the specific course used at this location.  If the course has meaningfully changed from prior races or prior years (e.g., construction caused a reroute), create a new course to keep times comparable (e.g., "2020 Temporary Course Given Construction")
+      </small>
+    </div>
+  </form>
+  {% endif %}
+
+  {% if data.course_id %}
+  <div class="row">
+    <div class="col">
+      <label for="possible-school-select">Select participating schools and add with buttons below
+        <a href="" data-toggle="tooltip" data-placement="top" title="Select ALL schools participating in ANY of the races">
+          <i class="material-icons">info</i>
+        </a>
+      </label>
+    </div>
+    <div class="col">
+      <label for="selected-school-select" style="padding-top:6px;">Participating Schools</label>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <form>
+        <div class="form-group">
+          <select multiple size="{{data.select_box_length_schools}}" class="form-control" id="possible-school-select">
+            {% for s in data.non_participating_schools %}
+            <option value="{{s.id}}">{{s.long_name}}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </form>
+    </div>
+
+    <div class="col">
+      <form>
+        <div class="form-group">
+          <select multiple size="{{data.select_box_length_schools}}" class="form-control" id="selected-school-select">
+            {% for s in data.schools %}
+            <option value="{{s.id}}">{{s.long_name}}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <small class="text-muted ml-2">
+        School not in list?
+        <a href="/{{ data.race_id }}/add_school">Add School</a>
+      </small>
+    </div>
+    <div class="col">
+      <div class="form-group">
+        <button type="button" class="btn btn-outline-primary" id="left"> < </button>
+        <button type="button" class="btn btn-outline-primary" id="right"> > </button>
+        <button type="button" class="btn btn-outline-primary" id="leftall"> << </button>
+        <button type="button" class="btn btn-outline-primary" id="rightall"> >> </button>
+      </div>
+    </div>
+  </div>
+
+
+
+  {% endif %}
+
+</div>
+
+
+
+<script>
+
+  // Information about this race that will be passed to the server when
+  // updating the database based on user actions on this page
+  race = {
+    race_id: document.getElementById("race_info").dataset.race_id,
+    host_school_id: document.getElementById("race_info").dataset.host_school_id,
+    location_id: document.getElementById("race_info").dataset.location_id,
+    course_id: document.getElementById("race_info").dataset.course_id,
+    group_id: document.getElementById("race_info").dataset.group_id,
+    date: document.getElementById("race_info").dataset.date,
+  };
+  console.log(race);
+
+  // When host school is selected, get the value, update the database and reload
+  $('#host-school-select').change(function () {
+      var hostSchoolID = $('option:selected', this).attr("data-host_school_id");
+      // If add is selected, then redirect to add_school route
+      if (hostSchoolID == 'add') {
+        window.location.href = "add_school";
+      } else {
+        race.host_school_id = hostSchoolID;
+        if (race.location_id) delete race.location_id;
+        if (race.course_id) delete race.course_id;
+        sendRaceData();
+        location.reload();
+      }
+  });
+
+  // When location selected, get value, update database and reload
+  $('#location-select').change(function () {
+      var locationID = $('option:selected', this).attr("data-location_id");
+      // If add is selected, the redirect to add_location route
+      if (locationID == 'add') {
+        window.location.href = "add_location";
+      } else {
+        race.location_id = locationID;
+        if (race.course_id) delete race.course_id;
+        sendRaceData();
+        location.reload();
+      }
+  });
+
+  // When course selected, get value, update database and reload
+  $('#course-select').change(function () {
+      var courseID = $('option:selected', this).attr("data-course_id");
+      if (courseID == 'add') {
+        window.location.href = "add_course";
+      } else {
+        race.course_id = courseID;
+        sendRaceData();
+        location.reload();
+      }
+  });
+
+  // on clicking edit button, populate the modal with that runner's info
+
+
+  // Enable tooltip
+  $(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip();
+  });
+
+  // Add event listeners to the participating schools buttons.  Each time a
+  // button is pressed, move the items in the DOM, grab the participating
+  // schools and update the database accordingly.  Display the next page
+  // button if a school is added to the list and it is not yet displayed
+  $(function () {
+
+    function moveItems(origin, dest) {
+      $(origin).find(':selected').appendTo(dest);
+    }
+
+    function moveAllItems(origin, dest) {
+        $(origin).children().appendTo(dest);
+    }
+
+    $('#left').click(function () {
+        moveItems('#selected-school-select', '#possible-school-select');
+        grabParticipatingSchools();
+        sendRaceData();
+    });
+
+    $('#right').on('click', function () {
+        moveItems('#possible-school-select', '#selected-school-select');
+        grabParticipatingSchools();
+        sendRaceData();
+        addNextPageButton();
+    });
+
+    $('#leftall').on('click', function () {
+        moveAllItems('#selected-school-select', '#possible-school-select');
+        grabParticipatingSchools();
+        sendRaceData();
+    });
+
+    $('#rightall').on('click', function () {
+        moveAllItems('#possible-school-select', '#selected-school-select');
+        grabParticipatingSchools();
+        sendRaceData();
+        addNextPageButton();
+    });
+  });
+
+  // Function to get the list of participating schools from the DOM
+  const grabParticipatingSchools = () => {
+    var pSchools = document.getElementById("selected-school-select");
+    var tempSchools = [];
+    if (pSchools) {
+      for(var i = 0; i < pSchools.options.length; i++) {
+        tempSchools.push(pSchools.options[i].value);
+      }
+    }
+    race.schools = tempSchools;
+    if (pSchools) {
+      if (pSchools.options.length > 1) {
+        addNextPageButton();
+      }
+    }
+  };
+
+  // Function to add the next page button when appropriate
+  function addNextPageButton () {
+    html = `<div class="container mt-3 mb-5" id="next-page-btn">
+      <button class="btn btn-primary btn-block" onclick="nextPage();">
+        Contintue
+      </button>
+    </div>`
+    if (!document.getElementById("next-page-btn")) {
+      el = document.getElementById("race_info");
+      el.insertAdjacentHTML('beforeend', html);
+    }
+  };
+
+  function nextPage () {
+    race.status = 'setup';
+    sendRaceData();
+    window.location.href = "race_detail";
+  };
+
+  // AJAX call to update the database on the server with the current state of
+  // the race
+  function sendRaceData() {
+    $.ajax({
+      async: false,
+      url: '/update_race_data',
+      type: 'POST',
+      dataType: 'json',
+      contentType: 'application/json',
+      data: JSON.stringify(race)
+    });
+  }
+
+  // Initialize the datepicker
+  $('#datepicker').datepicker({autoclose: true,
+                               todayHighlight: true});
+  $('#datepicker').on('changeDate', function() {
+      $('#datepicker').val(
+          $('#datepicker').datepicker('getFormattedDate')
+      );
+      race.date = $('#datepicker').val();
+      if (race.host_school_id) {
+        sendRaceData();
+      }
+  });
+
+  // Calling this on load so that race object populates with participating
+  // schools if they are present
+  grabParticipatingSchools();
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,385 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+{% endblock %}
+
+
+{% block content %}
+
+<div class="content-section mt-4" id="race_info" data-race_id="{{data.race_id}}" data-group_id="{{data.group_id}}" data-race_number="{{data.race_number}}" data-races_count="{{data.races_count}}" data-gender="{{data.race.gender}}"
+  data-name="{{data.race.name}}" data-prev_race_id="{{data.prev_race_id}}" data-next_race_id="{{data.next_race_id}}">
+  {% if not data.group_id %}
+  <form class="mb-4">
+    <div class="form-group">
+      <label class="h6" for="races_count-select">How many separate races will be run?</label>
+      <select class="form-control" id="races_count-select">
+        <option selected disabled>Select number of races</option>
+        {% for n in range(8) %}
+        <option data-races_count="{{n+1}}">{{n+1}}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </form>
+
+  {% else %}
+  <legend class="h3 border-bottom mb-4">Setting up Race {{data.race_number}} of {{data.races_count}}</legend>
+  <form class="mb-4">
+    <div class="form-group">
+      <label class="h5" for="gender-select">Is this race for girls, boys or both?</label>
+      <select class="form-control" id="gender-select">
+        {% if not data.race.gender %}
+        <option selected disabled>Select gender</option>
+        {% endif %}
+        {% for g in data.gender_list %}
+        <option data-gender="{{g.lower()}}">{{g}}</option>
+        {% endfor %}
+      </select>
+      <small class="muted" style="padding-left:4px;">NOTE: Choose "Combined" if boys and girls are running at the same time. Girls and boys will still be scored separately.</small>
+    </div>
+  </form>
+  {% endif %}
+
+  {% if data.race.gender %}
+  <form class="mb-5">
+    <h5>Select participating teams:</h5>
+    <div class="container mt-2">
+      {% for t in data.potential_teams %}
+      <div class="form-group row my-1">
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" {% if t in data.selected_teams %} checked {% endif %} data-team_id="{{t.id}}" data-school="{{t.school.short_name}}" id="{{t.id}}">
+          <label class="form-check-label" for="{{t.id}}">
+            {{t.school.long_name}} - {{t.gender[0]|upper}}{{t.gender[1:]}}
+          </label>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </form>
+
+  {% for t in data.race.teams %}
+  <div class="team-container" data-team_id="{{t.id}}" data-team_gender="{{t.gender}}" data-school_id="{{t.school.id}}">
+    <div class="row" style="margin-left:0px; margin-bottom:0px; padding-bottom:3px;">
+      <h5 class="mb-0">
+        {{t.school.long_name}} - {{t.gender[0]|upper}}{{t.gender[1:]}}
+        <a href="" data-toggle="tooltip" data-placement="top" title="Click on runner(s) and move with buttons below">
+          <i class="material-icons">info</i>
+        </a>
+      </h5>
+    </div>
+    <div class="row mt-0">
+      <div class="col">
+        <label for="non-participating-runners-select">Runners NOT Participating</label>
+      </div>
+      <div class="col">
+        <label for="participating-runners-select">Participating Runners
+          <small class="muted" style="margin-left:6px;">(Need to <a class="edit-runner-link" href="#">edit team roster</a>?)</small>
+        </label>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <form>
+          <div class="form-group">
+            <select multiple size="15" class="form-control" id="{{t.id}}_non-participating-runners-select">
+              {% for r in data.non_particpants %}
+              {% if r in t.runners %}
+              <option value="{{r.id}}">{{r.first_name}} {{r.last_name}}</option>
+              {% endif %}
+              {% endfor %}
+            </select>
+          </div>
+        </form>
+      </div>
+
+      <div class="col">
+        <form>
+          <div class="form-group">
+            <select multiple size="15" class="form-control participating-runners-select-box" id="{{t.id}}_participating-runners-select">
+              {% for r in data.participants %}
+              {% if r in t.runners %}
+              <option value="{{r.id}}">{{r.first_name}} {{r.last_name}}</option>
+              {% endif %}
+              {% endfor %}
+            </select>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="row mb-4">
+      <div class="col text-center">
+        <div class="form-group">
+          <button type="button" class="btn btn-outline-primary left" id="left">
+            <
+          </button>
+          <button type="button" class="btn btn-outline-primary right" id="right">
+             >
+          </button>
+          <button type="button" class="btn btn-outline-primary leftall" id="leftall">
+            <<
+          </button>
+          <button type="button" class="btn btn-outline-primary rightall" id="rightall">
+             >>
+          </button>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="form-group mb-5">
+    <label class="h5" for="race-name-input">Name this race</label>
+    <input class="form-control" id="race-name-input" value="">
+  </div>
+
+  <div class="container mb-3" id="btns-ctr">
+    <div class="row" id="btns-row">
+      <div class="col-6" id="left-btn">
+        <button type="button" class="btn btn-primary text-left" onclick="previousPage();" id="race-setup-btn">
+          << Previous Page
+        </button>
+      </div>
+      <div class="col-6 text-right" id="right-btn">
+        <button type="button" class="btn btn-primary" id="race-setup-btn" onclick="finishRaceSetup();">
+          Next Page >>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  {% endif %}
+
+
+
+</div>
+
+
+
+<script>
+  // Information about this race that will be passed to the server when
+  // updating the database based on user actions on this page
+  race = {
+    race_id: document.getElementById("race_info").dataset.race_id,
+    group_id: document.getElementById("race_info").dataset.group_id,
+    race_number: document.getElementById("race_info").dataset.race_number,
+    races_count: document.getElementById("race_info").dataset.races_count,
+    prev_race_id: document.getElementById("race_info").dataset.prev_race_id,
+    next_race_id: document.getElementById("race_info").dataset.next_race_id,
+    gender: document.getElementById("race_info").dataset.gender,
+    name: document.getElementById("race_info").dataset.name,
+  };
+
+  // When races_count is selected, get the value, update the database and reload
+  $('#races_count-select').change(function() {
+    var racesCount = $('option:selected', this).attr("data-races_count");
+    race.races_count = racesCount;
+    duplicateRace();
+    location.reload();
+  });
+
+  // When gender is selected, get the value, update the database and reload
+  $('#gender-select').change(function() {
+    var gender = $('option:selected', this).attr("data-gender");
+    gender = gender == 'combined' ? 'combo' : gender;
+    race.gender = gender;
+
+    // Since gender is changed, clear the existing selected_teams
+    race.selected_teams = [];
+
+    sendRaceDetail();
+    location.reload();
+  });
+
+  // When a team's checkbox is changed, make adjustments to lists, update the
+  // database accordingly then reload the page
+  $('.form-check-input').change(function() {
+    team_id = $(this).attr("data-team_id");
+    grabSelectedTeams();
+    sendRaceDetail();
+    location.reload();
+  });
+
+  // Functions to control the buttons which move runners from participating
+  // to non-participating
+  $(function() {
+
+    function moveItems(origin, dest) {
+      $(origin).find(':selected').appendTo(dest);
+    }
+
+    function moveAllItems(origin, dest) {
+      $(origin).children().appendTo(dest);
+    }
+
+    $('.left').click(function() {
+      tID = ($(this).closest('.team-container').attr('data-team_id'));
+      origin = `#${tID}_participating-runners-select`;
+      dest = `#${tID}_non-participating-runners-select`;
+      moveItems(origin, dest);
+      updateParticipantsList();
+      sendParticipants();
+    });
+
+    $('.right').on('click', function() {
+      tID = ($(this).closest('.team-container').attr('data-team_id'));
+      dest = `#${tID}_participating-runners-select`;
+      origin = `#${tID}_non-participating-runners-select`;
+      moveItems(origin, dest);
+      updateParticipantsList();
+      sendParticipants();
+    });
+
+    $('.leftall').on('click', function() {
+      tID = ($(this).closest('.team-container').attr('data-team_id'));
+      origin = `#${tID}_participating-runners-select`;
+      dest = `#${tID}_non-participating-runners-select`;
+      moveAllItems(origin, dest);
+      updateParticipantsList();
+      sendParticipants();
+    });
+
+    $('.rightall').on('click', function() {
+      tID = ($(this).closest('.team-container').attr('data-team_id'));
+      dest = `#${tID}_participating-runners-select`;
+      origin = `#${tID}_non-participating-runners-select`;
+      moveAllItems(origin, dest);
+      updateParticipantsList();
+      sendParticipants();
+    });
+  });
+
+  // If "edit team roster" link is selected, send to add_runner
+  $('.edit-runner-link').click(function() {
+    schoolID = ($(this).closest('.team-container').attr('data-school_id'));
+    teamGender = ($(this).closest('.team-container').attr('data-team_gender'));
+    genderID = teamGender == 'girls' ? 1 : 2;
+    window.location.href = `/${race.race_id}/${schoolID}/${genderID}/add_runner`
+  });
+
+  // Enable tooltips
+  $(document).ready(function() {
+    $('[data-toggle="tooltip"]').tooltip();
+  });
+
+  // Function to loop through all of the select boxes to determine the
+  // participating runners and store them in the race object
+  const updateParticipantsList = () => {
+    var participantsList = [];
+    boxes = document.querySelectorAll('.participating-runners-select-box');
+    boxes.forEach((box) => {
+      for (var i = 0; i < box.options.length; i++) {
+        participantsList.push(box.options[i].value);
+      }
+    });
+    race.participants = participantsList;
+  };
+
+  // Function to grab the team_id of all selected teams from the DOM and
+  // store them in the race object
+  const grabSelectedTeams = () => {
+    race.selected_teams = [];
+    $('.form-check-input').each(function() {
+      if ($(this).prop('checked')) {
+        race.selected_teams.push($(this).attr("data-team_id"));
+      }
+    });
+  };
+
+  const updateRaceName = () => {
+
+    if (race.name == "None") {
+      var valueText = "";
+      $('.form-check-input').each(function(index) {
+        if ($(this).prop('checked')) {
+          valueText += $(this).attr("data-school") + ' vs ';
+        }
+      });
+      valueText = valueText.substring(0, valueText.length - 3);
+      // gender = race.gender.toUpperCase();
+      // valueText += gender;
+      console.log(valueText);
+      $('#race-name-input').val(valueText);
+    } else {
+      $('#race-name-input').val(race.name);
+    }
+  };
+
+  const previousPage = () => {
+    if (race.race_number == 1) {
+      window.location.href = "race_setup";
+    } else {
+      // route to prev_race_id/race_detail
+      var currentURL = window.location.protocol + "//" + window.location.host + window.location.pathname;
+      var newURL = currentURL.replace(`/${race.race_id}/`,
+        `/${race.prev_race_id}/`);
+      window.location.replace(newURL);
+    }
+  };
+
+  const finishRaceSetup = () => {
+    // Add name to the race object and update the database
+    race.name = $('#race-name-input').val();
+    race.status = 'bib';
+    sendRaceDetail();
+
+    // Determine if this is the last race in the group
+    if (race.race_number == race.races_count) {
+      window.location.href = "bibs";
+      // window.location.href = "assign_bibs"
+    } else {
+      // route to next_race_id/race_detail
+      var currentURL = window.location.protocol + "//" + window.location.host + window.location.pathname;
+      var newURL = currentURL.replace(`/${race.race_id}/`,
+        `/${race.next_race_id}/`);
+      window.location.replace(newURL);
+    }
+  };
+
+  // AJAX call to update the database with the current participants
+  function sendParticipants() {
+    $.ajax({
+      async: false,
+      url: '/update_race_participants',
+      type: 'POST',
+      dataType: 'json',
+      contentType: 'application/json',
+      data: JSON.stringify(race)
+    });
+    console.log(`Number of Participants: ${race.participants.length}`);
+  }
+
+  // AJAX call to update the database with the current state of the race
+  function sendRaceDetail() {
+    $.ajax({
+      async: false,
+      url: '/update_race_detail',
+      type: 'POST',
+      dataType: 'json',
+      contentType: 'application/json',
+      data: JSON.stringify(race)
+    });
+  }
+
+  // AJAX call to update the database to set group_id and
+  // create additional races if needed
+  function duplicateRace() {
+    $.ajax({
+      async: false,
+      url: '/duplicate_race',
+      type: 'POST',
+      dataType: 'json',
+      contentType: 'application/json',
+      data: JSON.stringify(race)
+    });
+  }
+
+  // Steps to be run upon load
+  grabSelectedTeams();
+  updateParticipantsList();
+  updateRaceName();
+  console.log('race:', race);
+  console.log(`Number of Participants: ${race.participants.length}`);
+</script>
+
+{% endblock %}
