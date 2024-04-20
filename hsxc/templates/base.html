@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/static/css/fontawesome.css">
+  <link rel="stylesheet" href="/static/css/base.css">
+  <script src="/static/js/jquery.min.js"></script>
+  <script src="/static/js/popper.min.js"></script>
+  <script src="/static/js/bootstrap.min.js"></script>
+
+  {% block head %}
+  {% endblock %}
+  
+  <meta charset="utf-8">
+  <title>NE Prep XC</title>
+</head>
+
+<body>
+  <header class="site-header">
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+      <div class="container">
+
+        <!-- app name with link to core.index -->
+        <a class="navbar-brand" href="{{ url_for('core.index') }}">
+          NE Prep XC
+        </a>
+
+        <button 
+          class="navbar-toggler" 
+          type="button" 
+          data-toggle="collapse" 
+          data-target="#navbarToggle" 
+          aria-controls="navbarToggle" 
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarToggle">
+          <div class="navbar-nav mr-auto">
+
+            <!-- don't display any options if not yet authenticated -->
+            {% if current_user.is_authenticated %}
+
+              <!-- special link if a race is fully setup and ready to start -->
+              {% if current_user.races_ready_to_start() %}
+              <a 
+                class="nav-item nav-link" 
+                href="{{ url_for('users.home') }}" 
+                style="background-color: #ffffff; 
+                      border-radius: 10px; 
+                      color: #007bff; 
+                      font-weight: bold;"
+              >
+                START RACE
+              </a>
+              {% endif %}
+
+              <!-- special link to races in some other stage of setup process -->
+              {% if current_user.races_in_setup() %}
+              <a class="nav-item nav-link" href="{{ url_for('users.home') }}">
+                Continue Race Setup</a>
+              {% endif %}
+
+              <!-- direct link to creating new race -->
+              <a 
+                class="nav-item nav-link" 
+                href="{{ url_for('race_setup.create_race') }}"
+              >
+                Create Race
+              </a>
+              
+              <!-- direct link to school page -->
+              <a 
+                class="nav-item nav-link" 
+                {% if current_user.schools_coached|length == 1 %}
+                href="{{ url_for('core.school', school_id=current_user.schools_coached[0].id) }}"
+                {% else %}
+                href="{{ url_for('core.index') }}"
+                {% endif %}
+              >
+                School
+              </a>
+
+              <!-- direct link to league page -->
+              <a 
+                class="nav-item nav-link" 
+                {% if current_user.schools_coached|length == 1 %}
+                href="{{ url_for('core.league', school_id=current_user.schools_coached[0].league.id) }}"
+                {% else %}
+                href="{{ url_for('core.index') }}"
+                {% endif %}
+              >
+                League
+              </a>
+ 
+              <!-- direct link to race results -->
+              <a 
+                class="nav-item nav-link" 
+                href="{{ url_for('races.all_races') }}"
+              >
+                Races
+              </a>
+
+              <!-- direct link to leaderboards page -->
+              <a 
+                class="nav-item nav-link" 
+                href="{{ url_for('core.leaderboards') }}"
+              >
+                Leaderboards
+              </a>
+
+              <!-- direct link to courses page -->
+              <a 
+                class="nav-item nav-link" 
+                href="{{ url_for('core.courses') }}"
+              >
+                Courses
+              </a>
+
+              <a 
+                class="nav-item nav-link" 
+                href="{{url_for('races.hypothetical_race')}}"
+              >
+                Simulator
+              </a>
+
+
+              <!-- database options via dropdown -->
+              {% if current_user.is_administrator() %}
+              <div class="nav-item dropdown">
+                <a 
+                  class="nav-link dropdown-toggle" 
+                  href="#" id="navbarDropdownMenuLink" 
+                  data-toggle="dropdown" 
+                  aria-haspopup="true" 
+                  aria-expanded="false"
+                >
+                  Database
+                </a>
+
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                  <a 
+                    class="dropdown-item" 
+                    href="{{ url_for('db_admin.add_school', race_id=0) }}"
+                  >
+                    Add a School
+                  </a>
+
+                  <a class="dropdown-item" href="{{url_for('core.choose_school')}}">
+                      Add/Edit/Remove Runner
+                  </a>
+
+                  <a class="dropdown-item" href="{{ url_for('users.schools') }}">
+                    Full School List
+                  </a>
+                  <a class="dropdown-item" href="{{ url_for('users.runners') }}">
+                    Full Runners List
+                  </a>
+                  <a class="dropdown-item" href="{{url_for('users.current_runners')}}">
+                    Current Runners List
+                  </a>
+                  <a class="dropdown-item" href="{{url_for('races.hypothetical_race')}}">
+                    Hypothetical Race
+                  </a>
+
+                </div>
+
+
+              </div>
+
+              <!-- direct link to register new users -->
+              <a class="nav-item nav-link" href="{{ url_for('users.register') }}">
+                Register New User
+              </a>
+              {% endif %}
+
+            {% endif %}
+
+          </div>
+
+          <!-- login/logout link as separate nav bar (to be on far right) -->
+          <div class="navbar-nav">
+            {% if current_user.is_authenticated %}
+            <a class="nav-item nav-link" href="{{ url_for('users.logout') }}">
+              Logout
+            </a>
+            {% else %}
+            <a class="nav-item nav-link" href="{{ url_for('users.login') }}">
+              Login
+            </a>
+            {% endif %}
+          </div>
+
+        </div>
+      </div>
+    </nav>
+
+    <!-- area to catch and display any messages flashed by server -->
+    <div class="container">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+      {% for category, message in messages %}
+      <div class="alert alert-{{ category }}">
+        {{ message }}
+      </div>
+      {% endfor %}
+      {% endif %}
+      {% endwith %}
+    </div>
+  </header>
+
+  <!-- content block -->
+  <div class="container">
+    {% block content %}
+    {% endblock %}
+  </div>
+  
+</body>
+
+</html>

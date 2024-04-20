@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="content-section py-3 mt-3 mb-3">
+  <legend class="h3 border-bottom">Confirm Schools in Race</legend>
+</div>
+
+<p>
+  Below is a list of school names found in the results file. Use the selector 
+  to chose the appropriate school if needed.
+</p>
+
+<form method="POST" action="{{ url_for('race_upload.confirm_school_mapping') }}">
+  <div class="container mt-5">
+    <div class="row">
+      <div class="col-md-3 mb-0 pb-0"><strong>Name Found in File</strong></div>
+      <div class="col-md-5 mb-0 pb-0"><strong>Corresponding School</strong></div>
+      <div class="col-md-4 mb-0 pb-0"></div>
+      <div class="col-md-12 mt-0 pt-0"><hr></div>
+      {% for school_name, schools in school_map.items() %}
+
+        <div class="col-md-3">
+          <div class="form-group">
+            <label for="{{ school_name }}">{{ school_name }}</label>
+          </div>
+        </div>
+
+        <div class="col-md-5">
+          <div class="form-group">
+            {% if schools is not iterable %}
+              <input 
+                type="text" 
+                class="form-control" 
+                id="{{ school_name }}" 
+                name="{{ school_name }}" 
+                value="{{ schools.long_name }}" 
+                readonly
+              >
+            {% else %}
+              <select 
+                class="form-control" 
+                id="{{ school_name }}" 
+                name="{{ school_name }}"
+              >
+                {% for school in schools %}
+                  <option value="{{ school.id }}">{{ school.long_name }}</option>
+                {% endfor %}
+              </select>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="col-md-4"></div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="col-md-3 d-flex mt-4 justify-content-center">
+    <button type="submit" class="btn btn-primary">Confirm Schools</button>
+  </div>
+
+</form>
+{% endblock %}

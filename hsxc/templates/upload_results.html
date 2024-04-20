@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+    <h2 class="my-4">Upload a Results File</h2>
+    <div class="container">
+        <div class="row">
+            <p class="pl-4">Upload a txt file with the race results. 
+              If the race has an official name, include it in the first row of the file.  
+              The date of the race should also be included in the first few ross.</p>
+              <p class="pl-4">The individual results rows should include the following data:</p>
+        </div>
+        <table class="table table-sm table-striped">
+          <thead>
+            <tr>
+              <th scope="col">Data</th>
+              <th scope="col">Description</th>
+              </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Place</td>
+              <td>the overall place earned by runner</td>
+            </tr>
+            <tr>
+              <td>Bib Number</td>
+              <td>(optional, may not come before place) runner's bib number</td>
+            </tr>
+            <tr>
+              <td>First Name</td>
+              <td>runner's first name</td>
+            </tr>
+            <tr>
+              <td>Last Name</td>
+              <td>runner's last name</td>
+            </tr>
+            <tr>
+              <td>Class/Grade</td>
+              <td>(optional, many not come before name) year of runner's graduation (e.g., 2025), or grade (e.g., 11)</td>
+            </tr>
+            <tr>
+              <td>Time</td>
+              <td>runner's time in MIN:SEC format (e.g., 21:34 or 21:34.5)</td>
+            </tr>
+            <tr>
+              <td>School</td>
+              <td>(must be separated from Name by Time or Class) runner's school (e.g., Newton Country Day School or NCDS)</td>
+            </tr>
+          </tbody>
+        </table>
+    </div>
+      
+    <form method="POST" enctype="multipart/form-data">
+        {{ form.csrf_token }}
+        <div class="mb-5">
+        {{ form.file(class="form-control") }}
+        {% for error in form.file.errors %}
+        <div class="alert alert-danger mt-2">{{ error }}</div>
+        {% endfor %}
+        </div>
+        {{ form.submit(class="btn btn-primary") }}
+    </form>
+</div>
+
+{% endblock %}

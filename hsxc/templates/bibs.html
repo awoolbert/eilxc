@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link 
+  rel="stylesheet" 
+  href="https://fonts.googleapis.com/icon?family=Material+Icons"
+>
+{% endblock %}
+
+
+{% block content %}
+<div class="content-section my-4" id="race_info" data-race_id="{{race.id}}">
+
+  <!-- school selection area -->
+  <legend class="h3 border-bottom mt-4 mb-4">Assign Bib Numbers</legend>
+  <div class="container">
+    <h5>Select a school to assign bib numbers:</h5>
+    {% for s in schools %}
+    <button 
+      type="button" 
+      class="btn btn-block school-btn my-3 mx-3" 
+      name="button" 
+      style="background-color:{{s.primary_color}}; color:{{s.text_color}};" 
+      data-school_id="{{s.id}}" 
+      onclick="displaySchoolParticipants({{s.id}});"
+    >
+      {{s.long_name}}
+    </button>
+    {% endfor %}
+  </div>
+
+  <div class="container my-4" id="bib-numbers-ctr">
+
+  </div>
+
+  <div class="container" id="bib-assign-ctr">
+
+  </div>
+
+  <div class="container" id="btns-ctr">
+    <div class="row" id="btns-row">
+      <div class="col-4" id="left-btn">
+        <button 
+          type="button" 
+          class="btn btn-primary text-left" 
+          onclick="previousPage();" 
+          id="race-detail-btn"
+        >
+          << Previous Page
+        </button>
+      </div>
+      <div class="col-4 text-center" id="middle-btn">
+      </div>
+      <div class="col-4 text-right" id="right-btn">
+      </div>
+    </div>
+  </div>
+
+  <!-- invalid bib modal -->
+  <div class="modal fade" id="invalidBibsModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header" style="background-color:#f8d7da;">
+          <h5 
+            class="modal-title" 
+            id="invalidBibsModalTitle" 
+            style="color:#8c4247;"
+          >
+              %title%
+          </h5>
+          <button 
+            type="button" 
+            class="close" 
+            data-dismiss="modal" 
+            aria-label="Close"
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div 
+          class="modal-body" 
+          style="color:#8c4247;" 
+          id="invalidBibsModalBody"
+        >
+          %modal_body%
+        </div>
+        <div class="modal-footer" style="background-color:#f8d7da;">
+          <button 
+            type="button" 
+            class="btn btn-danger" 
+            data-dismiss="modal" 
+            id="m_close_btn"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- email bibs modal -->
+  <div class="modal fade" id="emailBibsModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="emailBibsModalTitle">
+            Send Bib Assignments for %school%
+          </h5>
+          <button 
+            type="button" 
+            class="close" 
+            data-dismiss="modal" 
+            aria-label="Close"
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group row">
+            <label for="emailInput" class="col-2 col-form-label">Email</label>
+            <div class="col-10">
+              <input 
+                type="email" 
+                class="form-control" 
+                id="emailInput" 
+                placeholder="your@email.com" 
+                autofocus
+              >
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+
+          <button 
+            type="button" 
+            class="btn btn-secondary" 
+            data-dismiss="modal" 
+            id="m_close_btn"
+          >
+            Close
+          </button>
+
+          <button 
+            id="sendEmailBtn" 
+            onclick="sendEmail();" 
+            type="button" 
+            class="btn btn-primary"
+          >
+            Send
+          </button>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/static/js/bibs.js"></script>
+
+
+{% endblock %}

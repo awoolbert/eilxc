@@ -1,0 +1,25 @@
+.fa-arrows-alt {
+  cursor: move;
+  cursor: -webkit-grabbing;
+}
+.blue-white {
+  background-color: #007bff !important;
+  color: #ffffff;
+}
+table.table td i {
+    font-size: 15px;
+    margin-left: 1px;
+}
+table.table td a.edit-time i {
+    margin-left: 5px;
+    color: #007bff;
+}
+table.table td a.delete-time i {
+    color: red;
+}
+.btn-group-xs > .btn, .btn-xs {
+  padding: .25rem .4rem;
+  font-size: .875rem;
+  line-height: .75;
+  border-radius: .2rem;
+}

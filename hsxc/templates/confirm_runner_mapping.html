@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="content-section py-3 mt-3 mb-3">
+  <legend class="h3 border-bottom">Confirm Runners in Race</legend>
+</div>
+
+<p>
+  Below is a list of runner names found in the results file. Use the selector 
+  to chose the appropriate runner if needed.
+</p>
+
+<form method="POST" action="{{ url_for('race_upload.confirm_runner_mapping') }}">
+  <div class="container mt-5">
+    <table class="table table-sm table-striped">
+        <thead>
+          <tr>
+            <th scope="col" style="text-align:center;"">School</th>
+            <th scope="col">Name Found in File</th>
+            <th scope="col">Corresponding Runner</th>
+            </tr>
+        </thead>
+        <tbody>
+          {% for row in rows %}
+            <tr>
+                {# school column #}
+                <td 
+                  style="background-color:{{row.school_primary_color}}; 
+                         color:{{row.school_text_color}}; 
+                         text-align:center;"
+                >
+                    {{ row.school_short_name }}
+                </td>
+
+                {# name column #}
+                <td>{{ row.name_in_file }}</td>
+
+                {# runner selection column #}
+                <td>
+                {% if row.exact_match %}
+                  <input 
+                    type="text" 
+                    class="form-control" 
+                    id="{{ row.idx }}" 
+                    name="{{ row.idx }}" 
+                    value="{{ row.runner.name_plus_year() }}" 
+                    readonly
+                  >
+                {% else %}
+                  <select 
+                    class="form-control" 
+                    id="{{ row.idx }}" 
+                    name="{{ row.idx }}"
+                  >
+                    {% for runner in row.runners %}
+                      <option value="{{ runner.id }}">
+                        {{ runner.name_plus_year() }}
+                      </option>
+                    {% endfor %}
+                    <option value="-1">New runner, not in list</option>
+                  </select>
+                {% endif %}
+                </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+    </table>
+  </div>
+  <div class="col-md-3 d-flex mt-4 mb-4 justify-content-center">
+    <button type="submit" class="btn btn-primary">Confirm runners</button>
+  </div>
+</form>
+{% endblock %}

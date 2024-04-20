@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+{% endblock %}
+
+
+{% block content %}
+
+<div class="content-section">
+  <legend class="h3 border-bottom mt-4 mb-4">Welcome, {{current_user.display_name()}}</legend>
+</div>
+
+{% if data.new or data.setup %}
+<div class="container mb-4">
+  <h4>Continue Race Setup:</h4>
+  <ul>
+    {% for r in data.new %}
+    <li>
+      <a href="{{url_for('race_setup.race_metadata', race_id=r.id)}}">{{r.display_date_name_gender_jv()}}</a>
+    </li>
+    {% endfor %}
+    {% for r in data.setup %}
+    <li>
+      <a href="{{url_for('race_setup.race_detail', race_id=r.id)}}">{{r.display_date_name_gender_jv()}}</a>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}
+
+{% if data.bib %}
+<div class="container mb-4">
+  <h4>Assign Bib Numbers:</h4>
+  <ul>
+    {% for r in data.bib %}
+    <li>
+      <a href="{{url_for('race_setup.bibs', race_id=r.id)}}">{{r.display_date_name_gender_jv()}}</a>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}
+
+{% if data.ready %}
+<div class="container mb-4" style="border-style:solid; background-color:#cfd1d3">
+  <h4>Ready to Start Race:</h4>
+  <ul>
+    {% for r in data.ready %}
+    <li>
+      <a href="{{url_for('races.active', race_id=r.id)}}">{{r.display_date_name_gender_jv()}}</a>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}
+
+{% if data.active %}
+<div class="container mb-4">
+  <h4>Return to Race In-Progress:</h4>
+  <ul>
+    {% for r in data.active %}
+    <li>
+      <a href="{{url_for('races.active', race_id=r.id)}}">{{r.display_date_name_gender_jv()}}</a>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}
+
+{% if data.complete %}
+<div class="container mb-4">
+  <h4>View Results of Previous Races:</h4>
+  <ul>
+    {% for r in data.complete %}
+    <li>
+      <a href="{{url_for('races.results', race_id=r.id)}}">{{r.display_date_name_gender_jv()}}</a>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}
+
+
+<script>
+
+</script>
+
+{% endblock %}

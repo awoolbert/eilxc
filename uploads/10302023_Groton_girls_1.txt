@@ -1,0 +1,38 @@
+10/30/2021 Groton girls			
+Groton			
+			
+			
+			
+Pl	Name	Time	Sch
+1	Clark	19:39	Brooks
+2	Cliﬀord	19:50	Thayer
+3	Weldon	19:57	Tabor
+4	Fehm	20:17	Groton
+5	Fortunoﬀ	21:17	Groton
+6	Wipf	21:17	Thayer
+7	Stearns	21:59	Thayer
+8	Fitzgerald	22:05	Thayer
+9	B. Hansen	22:07	Thayer
+10	Puglia	22:09	Brooks
+11	Mukherjee	22:09	Brooks
+12	Leary	22:15	Thayer
+13	Correy	22:17	Thayer
+14	Chen	22:22	Groton
+15	S. Hansen	22:32	Thayer
+16	Creaasy	22:51	Groton
+17	Daniello	22:53	Thayer
+18	LaMatinna	22:57	Thayer
+19	Duckworth	22:59	Brooks
+20	Tregoe	23:04	Groton
+21	McLean	23:14	Thayer
+22	Reece	23:35	Groton
+23	L. Zhang	23:42	Groton
+24	Burgess	23:45	Groton
+25	Williams	23:59	Thayer
+26	Wilmerding	24:51	Brooks
+27	Barker	24:52	Brooks
+28	Robb	25:08	Tabor
+29	Liu	25:28	Tabor
+30	Cochran	25:41	Tabor
+31	Duval	27:46	Brooks
+32	Armstead	38:46	Brooks

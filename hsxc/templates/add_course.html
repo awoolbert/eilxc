@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block head %}
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="content-section mt-4">
+
+  <!-- location selection -->
+  <form class="mb-4">
+    <div class="form-group">
+      <label for="location-select">Location</label>
+      <select class="form-control" id="location-select">
+        <option selected data-location_id="{{location.id}}">
+          {{location.name}}
+        </option>
+        {% for l in location_list %}
+        <option data-location_id="{{l.id}}">{{l.name}}</option>
+        {% endfor %}
+        <option data-location_id="add">Add a location not in list</option>
+      </select>
+    </div>
+  </form>
+
+  <form method="post">
+
+    {# This hidden_tag is a CSRF security feature. #}
+    {{ form.hidden_tag() }}
+
+    <fieldset class="form-group">
+      <legend class="border-bottom">Course</legend>
+      <div class="form-row mb-3">
+        {{ form.course_name.label(class="form-control-lable") }}
+        {{ form.course_name(
+          class="form-control form-control-md", 
+          id="course_name", 
+          placeholder="Name of this course for future reference "
+                      "(e.g., Newton Country Day School 5K)"
+        )}}
+      </div>
+      <div class="form-row mb-3">
+        {{ form.course_description.label(class="form-control-lable") }}
+        {{ form.course_description(
+          class="form-control form-control-md", 
+          id="course_description", 
+          placeholder="Describe this course "
+                      "(e.g., Standard NCDS 5K Course, Shortened Course due to "
+                      "construction of athletic fields in 2020, etc.)"
+        )}}
+      </div>
+      <div class="form-row mb-3">
+        {{ form.distance.label(class="form-control-lable") }}
+        {{ form.distance(
+          class="form-control form-control-md", 
+          id="distance", 
+          placeholder="Distance in kilometers (e.g., 5.00, 4.86, etc.)")}}
+      </div>
+    </fieldset>
+
+    {{ form.submit(class="btn btn-primary") }}
+
+  </form>
+</div>
+
+<script src="/static/js/select_location.js"></script>
+
+{% endblock %}

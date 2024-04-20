@@ -1,0 +1,54 @@
+9/21/2019 bbn boys			
+BB&N			
+			
+			
+			
+Place	Name	Time	School
+1	Strang, AJ	16:28	Milton
+2	Wu, Alex	18:08	BB&N
+3	Rabieh, Sam	18:12	BB&N
+4	Mateo, Pedro	18:22	Milton
+5	Litvak, Max	18:31	Milton
+6	Loughran, Ryan	18:52	BB&N
+7	Li, Julian	18:53	BB&N
+8	Boer, Jehan	18:55	Milton
+9	Elkins, Jake	19:02	BB&N
+10	0	19:20	Milton
+11	Chan, Aston	19:26	Milton
+12	Leitzes, Peter	19:39	Milton
+13	Neri, Zach	19:48	Milton
+14	Tao, Nicholas	19:54	BB&N
+15	Likin Yelin, Konst	20:04	BB&N
+16	Hong, Matty	20:09	BB&N
+17	Batemen, Christian	20:12	BB&N
+18	Sullivan, Jack	20:15	Milton
+20	Mulliken, Coby	20:22	Milton
+21	Becker, Margo	20:25	Milton
+22	Burton, Jack	20:28	Milton
+23	Strong, Trew	20:29	Milton
+24	Rodriguez, Alex	20:50	Milton
+25	Park, Seb	20:59	Milton
+26	Rahaman, Zach	21:14	Milton
+27	Monsalve, Andrew	21:18	BB&N
+28	Levy, Louis	21:20	BB&N
+29	Fan, Tim	21:20	Milton
+30	Darling, Jack	21:27	Milton
+31	Hawk, Auggy	21:29	BB&N
+32	Liu, Lucas	21:42	BB&N
+35	Panayiotopoulos, Carlos	22:04	BB&N
+36	Goldman, Theo	22:12	BB&N
+37	Smith, Elliot	22:23	Milton
+38	Legg, Ford	22:25	BB&N
+39	Lin, , Justin	22:27	Milton
+40	Davis, Zane	22:30	BB&N
+42	Chen, Charles	24:04	BB&N
+43	Shue, Ryan	24:13	Milton
+44	Wang, Daniel	24:18	BB&N
+45	Rodriguez, Andrew	24:34	Milton
+46	Sheikh, Ameen	24:59	Milton
+47	Dowden, Owen	25:16	BB&N
+48	Guan, Tim	25:18	BB&N
+49	P, Dhruv	25:31	BB&N
+50	Ndiritu, Myles	26:23	Milton
+51	Avram, Alex	26:49	BB&N
+52	Parker, Asher	27:13	BB&N

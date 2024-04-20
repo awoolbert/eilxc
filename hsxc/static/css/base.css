@@ -1,0 +1,15 @@
+tr {
+    line-height: 25px;
+    min-height: 25px;
+    height: 25px;
+}
+
+.table-hover tbody tr:hover td,
+.table-hover tbody tr:hover th {
+    background-color: #007bff;
+}
+
+.school {
+    cursor: pointer;
+} 
+

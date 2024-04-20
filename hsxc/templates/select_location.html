@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block head %}
+
+<link 
+  rel="stylesheet" 
+  href="https://fonts.googleapis.com/icon?family=Material+Icons"
+>
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="content-section mt-4">
+
+  <!-- location selection -->
+  <form class="mb-4">
+    <div class="form-group">
+      <label for="location-select">Location</label>
+      <select class="form-control" id="location-select">
+        <option selected disabled>Select a location</option>
+        {% for l in location_list %}
+        <option data-location_id="{{l.id}}">{{l.name}}</option>
+        {% endfor %}
+        <option data-location_id="add">Add a location not in list</option>
+      </select>
+    </div>
+  </form>
+
+</div>
+
+<script src="/static/js/select_location.js"></script>
+
+{% endblock %}

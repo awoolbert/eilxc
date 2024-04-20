@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  <style>
+  img {
+    max-width: 50%;
+  }
+  .button {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    outline: none;
+    color: #fff;
+    background-color: blue;
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 3px #999;    
+  }
+  </style>
+</head>
+
+<body>
+  <div class="mb-4 mt-3" style="border: 7px solid {{school.primary_color}};">
+    <div class="d-flex" style="border: 6px solid {{school.secondary_color}};">
+      <div
+        class="px-3 py-1" 
+        style="border: 7px solid {{school.primary_color}};  
+               color:{{school.primary_color}};
+               width: 100%;"
+      >
+        <div class="row">
+          <div class="col">
+            <h5>Hi {{user.first_name}}!</h5>
+            <p>
+                Welcome to www.neprepxc.com, a web-based app for managing and 
+                monitoring New England Prep Cross-Country teams.
+            </p>
+            <p>
+                You are receiving this email, because you have been invited to 
+                join as a "coach" for {{school.long_name}}.  This designation 
+                will enable you to setup, run and score races, as well as edit 
+                rosters for {{school.long_name}}.  In addition, you will have 
+                access to review statistics for any team or runner in the 
+                system including: league standings, race results, season 
+                leaderboards, runner race history and more.  Should you have 
+                any issues in registering or if you would like an overview of 
+                the app and its capabilities, please email neprepxc@gmail.com 
+                to arrange for a convenient time.
+            </p>
+
+            <p>
+                Your account has already been created.  Your login ID is this 
+                email address.  Please click the button below to finalize your 
+                registration by setting your password.
+            </p>
+            
+            <p>
+                Go {{school.short_name}}!
+            </p>
+
+            <div class="container mt-4 mb-4 text-center">
+              <a href="{{reset_link}}" class="button">Finalize Registration</a>
+            </div>
+         
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

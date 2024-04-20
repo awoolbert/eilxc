@@ -1,0 +1,211 @@
+{% extends "base.html" %}
+
+{% block head %}
+<style>
+    .custom-select-width {
+        width: 100%; /* or you can set a fixed width like 200px */
+    }
+
+    .custom-btn-height {
+        height: calc(1.5em + .75rem + 2px); /* This is the default height of form-control in Bootstrap 4 */
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="content-section mt-2 mb-5">
+
+  {# filter area #}
+  <div class="container mb-4">
+
+    <!-- Dropdowns and Button -->
+    <div class="row mt-5">
+      <div class="col-sm">
+        <select id="league-select" class="form-control custom-select-width">
+          {% for value, display_value in league_list %}
+            <option value="{{ value }}">{{ display_value }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-sm">
+        <select id="school-select" class="form-control custom-select-width">
+          {% for value, display_value in school_list %}
+            <option value="{{ value }}">{{ display_value }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-sm">
+        <select id="year-select" class="form-control custom-select-width">
+          {% for value, display_value in year_list %}
+            <option value="{{ value }}">{{ display_value }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-sm">
+        <select id="champ-select" class="form-control custom-select-width">
+          {% for value, display_value in champ_list %}
+            <option value="{{ value }}">{{ display_value }}</option>
+          {% endfor %}
+        </select>
+      </div>
+        <div class="col-sm">
+          <button id="filter-button" class="btn btn-primary custom-select-width custom-btn-height">Filter</button>
+        </div>
+    </div>
+  </div>
+
+  <!-- leaderboards -->
+  <div class="container">
+    <h3 class="text-center mb-3 pt-2 border-top">
+      Top Performances {% if year !=0 %}{{year}}{% else %}2019 - {{current_year}}{% endif %}
+    </h3>
+    <div class="row">
+      {% for gender, leaderboard in leaderboards.items() %}
+      <div class="col">
+        <h4 class="text-center">{{ gender.title() }} Top 100 Times*</h4>
+        <table class="table table-striped table-sm mb-2">
+          <thead>
+            <tr>
+              <th scope="col">No.</th>
+              <th scope="col">Time*</th>
+              <th scope="col">Runner</th>
+              <th scope="col">School</th>
+              <th scope="col">Date</th>
+            </tr>
+          </thead>
+      
+          <tbody id="leaderboard-{{gender}}">
+            {% for res in leaderboard %} 
+              <tr>
+                <td>{{ loop.index }}</td>
+    
+                <td>
+                  <a href="{{url_for('races.results', race_id=res.race.id)}}">
+                    {{ res.adj_time_f() }}
+                  </a>
+                </td>
+    
+                <td>
+                  <a href="{{url_for('core.runner', runner_id=res.runner.id)}}">
+                    {{ res.runner.display_name() }}
+                  </a>
+                </td>
+                <td class="school" 
+                    data-school_id="{{res.team.school.id}}" 
+                    style="background-color:{{res.team.school.primary_color}};  
+                           color:{{res.team.school.text_color}};"
+                >
+                  {{ res.team.school.short_name }}
+                </td>
+                <td>
+                  <a href="{{url_for('races.results', race_id=res.race.id)}}">
+                    {{ res.race.date_f() }}
+                  </a>
+                </td>
+              </tr>
+            {% endfor %}
+        
+          </tbody>
+        </table>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="row">
+      <p>* All times are adjusted to normalize for differences in courses</p>
+    </div>
+  </div>
+
+</div>
+
+<script type="text/javascript">
+  $(document).ready(function(){
+    // Store the original list of schools
+    var originalSchoolList = [];
+    {% for value, display_value in school_list %}
+      originalSchoolList.push({value: "{{ value }}", display_value: "{{ display_value|safe }}"});
+    {% endfor %}
+
+    // Function to update school dropdown based on selected league
+    function updateSchoolDropdown(selectedSchoolValue) {
+      var selectedLeague = $('#league-select option:selected').text();
+      console.log(selectedLeague);
+      $('#school-select').empty();  // Clear existing options
+
+      // Restore original list if "All Schools" is selected
+      if (selectedLeague.startsWith('All')) {
+        $.each(originalSchoolList, function(index, school) {
+          $('#school-select').append(new Option(school.display_value, school.value));
+        });
+        return;
+      }
+
+      // Otherwise, only add schools from the selected league
+      else {
+        $('#school-select').append(new Option('All Schools', 0));
+        $.each(originalSchoolList, function(index, school) {
+          var leagueName = school.display_value.split(':')[0];
+          if (selectedLeague.startsWith(leagueName)) {
+            $('#school-select').append(new Option(school.display_value, school.value));
+          }
+        });
+      }
+
+      // Re-select the school if its value is provided
+      if (selectedSchoolValue && !selectedLeague.startsWith('All')) {
+        $('#school-select').val(selectedSchoolValue);
+      }
+    }
+
+    // Function to update league dropdown based on selected school
+    function updateLeagueDropdown() {
+      var selectedSchool = $('#school-select option:selected').text();
+      var selectedSchoolValue = $('#school-select').val();
+      var leagueName = selectedSchool.split(':')[0];
+      
+      $('#league-select option').each(function() {
+        if ($(this).text().startsWith(leagueName)) {
+          $('#league-select').val($(this).val()).change();  // Set and trigger change event
+          return false;  // Break out of the each loop
+        }
+      });
+
+      // Ensure the selected school remains selected
+      updateSchoolDropdown(selectedSchoolValue);
+
+    }
+
+    // Call updateSchoolDropdown on page load and whenever the league dropdown changes
+    updateSchoolDropdown();
+    $('#league-select').on('change', function() {
+      updateSchoolDropdown();
+    });
+
+    // Call updateLeagueDropdown whenever the school dropdown changes
+    $('#school-select').on('change', updateLeagueDropdown);
+
+    $('#filter-button').on('click', function() {
+      var league = $('#league-select').val();
+      var school = $('#school-select').val();
+      var year = $('#year-select').val();
+      var champ = $('#champ-select').val();
+      var url = '/' + league + '/' + school + '/' + year + '/' + champ + '/leaderboards';
+      window.location.href = url;
+    });
+
+    // route to school page if school box on individual results table is clicked
+    $('.school').click(function(e) {
+      console.log(`school = ${$(this).data('school_id')}`);
+      if(!$(e.target).closest('.runner-link').length) {
+        sID = $(this).data('school_id')
+        var currentURL = window.location.protocol + "//" + window.location.host + window.location.pathname;
+        var newURL = currentURL.replace(`/leaderboards`, `/${sID}/school`);
+        window.location.href = newURL;
+      }
+    });
+
+  });
+</script>
+
+{% endblock %}

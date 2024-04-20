@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th scope="col">ID</th>
+      <th scope="col">first_name</th>
+      <th scope="col">last_name</th>
+      <th scope="col">email</th>
+      <th scope="col">school</th>
+    </tr>
+  </thead>
+  <tbody>
+
+    {% for user in users %}
+    <tr>
+      <td>{{user.id}}</td>
+      <td>{{user.first_name}}</td>
+      <td>{{user.last_name}}</td>
+      <td>{{user.email}}</td>
+      {% if user.schools_coached|length == 1 %}
+      <td style="background-color:{{user.schools_coached[0].primary_color}}; color:{{user.schools_coached[0].text_color}};">{{user.schools_coached[0].short_name}}</td>
+      {% else %}
+      <td>Multiple </td>
+      {% endif %}
+
+    </tr>
+    {% endfor %}
+
+  </tbody>
+</table>
+
+{% endblock %}

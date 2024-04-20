@@ -1,0 +1,33974 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 15.2
+-- Dumped by pg_dump version 15.2
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- Name: alembic_version; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.alembic_version (
+    version_num character varying(32) NOT NULL
+);
+
+
+--
+-- Name: courses; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.courses (
+    id integer NOT NULL,
+    name character varying(128),
+    description text,
+    distance double precision,
+    location_id integer,
+    adj double precision
+);
+
+
+--
+-- Name: league_managers; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.league_managers (
+    manager_id integer,
+    league_id integer
+);
+
+
+--
+-- Name: leagues; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.leagues (
+    id integer NOT NULL,
+    long_name character varying(64) NOT NULL,
+    short_name character varying(16) NOT NULL
+);
+
+
+--
+-- Name: locations; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.locations (
+    id integer NOT NULL,
+    name character varying(64),
+    street_address character varying(64),
+    city character varying(32),
+    state_abbr character varying(2),
+    zip character varying(5)
+);
+
+
+--
+-- Name: non_duplicates; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.non_duplicates (
+    id integer NOT NULL,
+    runner1_id integer NOT NULL,
+    runner2_id integer NOT NULL,
+    created_at timestamp without time zone
+);
+
+
+--
+-- Name: non_duplicates_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.non_duplicates_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: non_duplicates_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.non_duplicates_id_seq OWNED BY public.non_duplicates.id;
+
+
+--
+-- Name: race_schools; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.race_schools (
+    race_id integer,
+    school_id integer
+);
+
+
+--
+-- Name: race_scores; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.race_scores (
+    id integer NOT NULL,
+    race_id integer NOT NULL,
+    winner_id integer NOT NULL,
+    loser_id integer NOT NULL,
+    winner_score integer,
+    loser_score integer
+);
+
+
+--
+-- Name: race_scores_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.race_scores_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: race_scores_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.race_scores_id_seq OWNED BY public.race_scores.id;
+
+
+--
+-- Name: race_teams; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.race_teams (
+    race_id integer,
+    team_id integer
+);
+
+
+--
+-- Name: races; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.races (
+    id integer NOT NULL,
+    name character varying(128),
+    date timestamp without time zone,
+    gender character varying(5),
+    temperature double precision,
+    weather character varying(32),
+    conditions character varying(32),
+    scoring_type character varying(16),
+    host_school_id integer,
+    location_id integer,
+    course_id integer,
+    user_id integer,
+    group_id integer,
+    status character varying(8),
+    is_jv boolean
+);
+
+
+--
+-- Name: results; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.results (
+    id integer NOT NULL,
+    bib integer,
+    "time" integer,
+    runner_id integer NOT NULL,
+    race_id integer NOT NULL,
+    team_id integer NOT NULL,
+    place integer,
+    status character varying(1)
+);
+
+
+--
+-- Name: results_race_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.results_race_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: results_race_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.results_race_id_seq OWNED BY public.results.race_id;
+
+
+--
+-- Name: results_runner_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.results_runner_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: results_runner_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.results_runner_id_seq OWNED BY public.results.runner_id;
+
+
+--
+-- Name: results_team_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.results_team_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: results_team_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.results_team_id_seq OWNED BY public.results.team_id;
+
+
+--
+-- Name: runners; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.runners (
+    id integer NOT NULL,
+    first_name character varying(64),
+    last_name character varying(64),
+    grad_year integer NOT NULL,
+    seed_time integer
+);
+
+
+--
+-- Name: school_coaches; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.school_coaches (
+    coach_id integer,
+    school_id integer
+);
+
+
+--
+-- Name: school_locations; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.school_locations (
+    school_id integer,
+    location_id integer
+);
+
+
+--
+-- Name: schools; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.schools (
+    id integer NOT NULL,
+    long_name character varying(64) NOT NULL,
+    short_name character varying(16) NOT NULL,
+    primary_color character varying(10),
+    secondary_color character varying(10),
+    text_color character varying(10),
+    league_id integer NOT NULL,
+    city character varying(32),
+    state_abbr character varying(2)
+);
+
+
+--
+-- Name: schools_league_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.schools_league_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: schools_league_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.schools_league_id_seq OWNED BY public.schools.league_id;
+
+
+--
+-- Name: session_table; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.session_table (
+    id integer NOT NULL,
+    session_id character varying,
+    data bytea,
+    expiry timestamp without time zone
+);
+
+
+--
+-- Name: session_table_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.session_table_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: session_table_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.session_table_id_seq OWNED BY public.session_table.id;
+
+
+--
+-- Name: team_roster; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.team_roster (
+    team_id integer,
+    runner_id integer
+);
+
+
+--
+-- Name: teams; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.teams (
+    id integer NOT NULL,
+    gender character varying(5) NOT NULL,
+    year integer NOT NULL,
+    school_id integer NOT NULL,
+    losses integer,
+    wins integer,
+    league_losses integer,
+    league_wins integer
+);
+
+
+--
+-- Name: users; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.users (
+    id integer NOT NULL,
+    first_name character varying(64),
+    last_name character varying(64),
+    email character varying(64),
+    password_hash character varying(128)
+);
+
+
+--
+-- Name: non_duplicates id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.non_duplicates ALTER COLUMN id SET DEFAULT nextval('public.non_duplicates_id_seq'::regclass);
+
+
+--
+-- Name: race_scores id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.race_scores ALTER COLUMN id SET DEFAULT nextval('public.race_scores_id_seq'::regclass);
+
+
+--
+-- Name: schools league_id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.schools ALTER COLUMN league_id SET DEFAULT nextval('public.schools_league_id_seq'::regclass);
+
+
+--
+-- Name: session_table id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.session_table ALTER COLUMN id SET DEFAULT nextval('public.session_table_id_seq'::regclass);
+
+
+--
+-- Data for Name: alembic_version; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+COPY public.alembic_version (version_num) FROM stdin;
+4bde90b74cb9
+\.
+
+
+--
+-- Data for Name: courses; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+COPY public.courses (id, name, description, distance, location_id, adj) FROM stdin;
+3	St. Mark's School Championship Course	ISL and NEPSTA Championship Course	4.9	3	0
+11	Brooks School 5K	Standard 5K Course	5	11	0
+13	Governor's 5K Course	Standard 5K course	5	13	-0.003206503962974983
+16	RL 5K Course	Standard 5K course	5	16	-0.026617527988374214
+33	NEPSTA Championship Course	Used in 2023 NEPSTA Division I Championship	5	31	0
+29	Rock Meadow Short Loop 5K	Course using only the two smaller loops	5	24	2.4906315717688858e-05
+28	Hypothetical 5K Course	Standard 5K course	5	28	0
+2	Noble and Greenough School 5K	Standard 5K course at Nobles	5	2	-0.03967248013312362
+17	LA 5K Course	Standard 5K course	5	17	-0.03302718347421804
+15	Groton School	Groton School 5K Course	5	15	0.016554274885189565
+18	St. Paul's School 5K	Standard 5K Course	5	18	0
+9	Milton Standard 5K	Standard 5K course at Miltion	5	9	0
+30	Nobles NEPSTA Course	Course used in 2019 NEPSTA championship	5	2	0
+22	St. Georges 5K	Standard 5k Course	5	22	-0.011311842851239142
+1	Great Brook Farm 5K	Standard 5K course at Great Brook Farm	5	1	0.020747634569239642
+24	Rock Meadow 5K	Standard 5K course	5	24	0.0059399274934264345
+34	Championship 5K	Used in 2023 NEPSTA Division III Championship	5	32	0
+21	WNH 5K	Championship 5K course	5	21	0
+10	Wrentham Championship 5K	Championship course 5K	5	10	0
+32	NEPSTA DIII 2019 Championship Course	NEPSTA DIII 2019 Championship Course	4.65	30	0
+23	BB&N 5K Course	Standard 5K course	5	23	0.04510344801183977
+27	Bouchard Park 5K	Standard 5K course	5	27	0.02582518985733452
+14	St. Sebastian's 5K Course	Standard 5K course	5	14	-0.014154789677181425
+4	Newton Country Day School 5K	Standard 5K Course	5	4	0
+6	NCDS 5K (Martin Center Construction)	Modified NCDS 5K course to re-route for Martin Center Construction	5	4	0
+7	Missing Course	Placeholder for missing course	5	7	0
+8	Larz Anderson 5K	Standard Larz Anderson 5K course	5	6	0
+25	Thayer 5K Course	Standard 5K course	5	25	0.03266020609660828
+12	Middlesex 5K Course	Standard 5K course	5	12	-0.011816599433115743
+31	NMH Championship Course	Course used in 2019 NEPSTA DI Championship	5	29	0
+26	Washington Park 5K Course	Standard 5K course	5	26	0.00306899453926555
+19	Canterbury School 5K	Standard 5K Course	5	19	0.009179514886370697
+5	Franklin Park 5K	Traditional 5K at Franklin Park	5	5	0.0026415988029169345
+20	Andover 5K	Championship 5K Course	5	20	0
+\.
+
+
+--
+-- Data for Name: league_managers; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+COPY public.league_managers (manager_id, league_id) FROM stdin;
+\.
+
+
+--
+-- Data for Name: leagues; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+COPY public.leagues (id, long_name, short_name) FROM stdin;
+1	Eastern Independent League	EIL
+2	Independent School League	ISL
+3	Other	Other
+\.
+
+
+--
+-- Data for Name: locations; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+COPY public.locations (id, name, street_address, city, state_abbr, zip) FROM stdin;
+6	Larz Anderson Park	25 Newton Street	Brookline	MA	02445
+4	Newton Country Day School	785  Centre Street	Newton	MA	02458
+1	Great Brook Farm	1018 Lowell Street	Carlisle	MA	01741
+2	Nobles and Greenough School	10 Campus Drive	Dedham	MA	02026
+3	St. Mark's School	25 Marlboro Road	Southborough	MA	01772
+5	Franklin Park	1  Franklin Park Road	Boston	MA	02121
+7	Missing Location	999 Anywhere Street	Whoknows	MA	02445
+8	Northfield Mount Hermon	One Lamplighter Way	Gill	MA	01354
+9	Milton Academy	170 Centre Street	Milton	MA	02186
+10	Wrentham Development Center	131 Emerald Street	Wrentham	MA	02093
+11	Brooks School	1160 Great Pond Road	North Andover	MA	01845
+12	Middlesex School	1400 Lowell Road	Concord	MA	01742
+13	Governor's Academy	1 Elm Street	Newbury	MA	01922
+14	St. Sebastian's School	1191 Greendale Avenue	Needham	MA	02492
+15	Groton School	282 Farmers Row	Groton	MA	01450
+16	Roxbury Latin	101 Saint Theresa Avenue	Boston	MA	02132
+17	Lawrence Academy	26 Powderhouse Road	Groton	MA	01450
+18	St. Paul's School	325 Pleasant Street	Concord	NH	03301
+19	Canterbury School	101 Aspetuck Avenue	New Milford	CT	06776
+20	Phillips Andover	7 Chapel Avenue	Andover	MA	01810
+21	Williston Northampton School	19 Payson Avenue	Easthampton	MA	01027
+22	St. George's School	372 Purgatory Road	Middletown	RI	02842
+23	BB&N	80 Gerrys Landing Road	Cambridge	MA	02138
+24	Belmont Hill Rock Meadow	350 Prospect Street	Belmont	MA	02478
+25	Thayer Academy	745 Washington Street	Braintree	MA	02184
+26	Tabor Academy	232 Front Street	Marion	MA	02738
+27	Rivers Bouchard Park	269 Concord Road	Weston	MA	02493
+28	Hypothetical Location	0 Imaginary Road	Nowhere	US	00000
+29	Northfield Mount Hermon	1 Lamplighter Way	Gill	MA	01354
+30	White Memorial Conservation Center	80 Whitehall Road	Litchfield	CT	06759
+31	Loomis Chaffee	4 Batchelder Road	Windsor	CT	06095
+32	Mark Coogan X-C Course at Highland Park	104 Mechanic Street	Attleboro	MA	02703
+\.
+
+
+--
+-- Data for Name: non_duplicates; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+COPY public.non_duplicates (id, runner1_id, runner2_id, created_at) FROM stdin;
+1	3935	5853	2023-11-07 13:48:35.541876
+3	3528	6022	2023-11-07 13:53:39.784251
+4	4896	5461	2023-11-07 14:07:14.612223
+5	4197	4953	2023-11-07 14:10:31.603914
+6	5267	5742	2023-11-07 14:11:19.797897
+7	5271	5742	2023-11-07 14:12:03.366818
+8	5374	5742	2023-11-07 14:12:47.796618
+9	110	4057	2023-12-19 15:47:40.276908
+10	3860	3873	2023-12-19 15:49:37.098036
+11	5818	6771	2023-12-19 15:50:26.716531
+12	4362	5201	2023-12-19 15:51:20.142224
+\.
+
+
+--
+-- Data for Name: race_schools; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+COPY public.race_schools (race_id, school_id) FROM stdin;
+1	1
+1	2
+1	3
+1	4
+1	5
+1	6
+1	7
+1	8
+1	9
+1	10
+2	32
+2	33
+2	34
+2	3
+2	1
+2	13
+2	14
+2	15
+2	17
+2	23
+2	25
+2	26
+2	27
+2	28
+2	29
+2	30
+2	31
+3	1
+3	33
+3	13
+3	14
+3	15
+3	17
+3	23
+3	25
+3	26
+3	29
+3	30
+3	31
+4	35
+4	4
+4	5
+4	6
+4	7
+4	8
+4	9
+4	10
+5	11
+5	12
+5	13
+5	14
+5	15
+5	16
+5	17
+5	18
+5	19
+5	20
+5	21
+5	22
+5	23
+5	24
+5	25
+5	26
+6	11
+6	12
+6	13
+6	14
+6	15
+6	16
+6	17
+6	18
+6	19
+6	20
+6	21
+6	22
+6	23
+6	24
+6	25
+6	26
+7	12
+7	13
+7	14
+7	15
+7	16
+7	17
+7	18
+7	19
+7	20
+7	22
+7	23
+7	25
+7	26
+8	13
+8	14
+8	15
+8	16
+8	17
+8	18
+8	19
+8	22
+8	23
+8	25
+8	26
+9	32
+9	33
+9	34
+9	36
+9	13
+9	14
+9	15
+9	17
+9	19
+9	21
+9	25
+9	26
+9	27
+9	29
+9	30
+9	31
+10	32
+10	33
+10	34
+10	13
+10	14
+10	15
+10	17
+10	19
+10	21
+10	25
+10	26
+10	27
+10	29
+10	30
+10	31
+11	11
+12	11
+13	11
+14	11
+15	11
+16	11
+11	19
+17	19
+18	19
+19	19
+16	19
+20	19
+21	19
+22	19
+23	19
+24	19
+25	19
+26	19
+11	17
+20	17
+17	17
+19	17
+18	17
+16	17
+21	17
+27	17
+28	17
+29	17
+26	17
+30	17
+11	21
+18	21
+19	21
+17	21
+16	21
+20	21
+11	15
+20	15
+18	15
+17	15
+19	15
+16	15
+21	15
+30	15
+28	15
+27	15
+29	15
+26	15
+11	18
+14	18
+15	18
+13	18
+16	18
+12	18
+21	18
+22	18
+23	18
+24	18
+26	18
+25	18
+11	24
+16	24
+11	16
+31	16
+32	16
+33	16
+34	16
+16	16
+26	16
+35	16
+11	20
+31	20
+33	20
+32	20
+34	20
+16	20
+26	20
+35	20
+36	20
+11	12
+31	12
+33	12
+32	12
+34	12
+16	12
+21	12
+35	12
+37	12
+38	12
+26	12
+11	13
+17	13
+18	13
+19	13
+16	13
+20	13
+21	13
+30	13
+28	13
+27	13
+29	13
+26	13
+11	23
+14	23
+19	23
+16	23
+12	23
+18	23
+21	23
+30	23
+27	23
+28	23
+29	23
+26	23
+11	26
+17	26
+18	26
+19	26
+16	26
+20	26
+21	26
+27	26
+28	26
+29	26
+26	26
+30	26
+11	25
+20	25
+17	25
+19	25
+16	25
+21	25
+26	25
+30	25
+28	25
+11	22
+32	22
+31	22
+16	22
+33	22
+34	22
+21	22
+37	22
+38	22
+36	22
+26	22
+35	22
+11	14
+16	14
+20	14
+19	14
+17	14
+18	14
+21	14
+26	14
+30	14
+27	14
+28	14
+29	14
+14	47
+13	47
+15	47
+12	47
+23	47
+25	47
+24	47
+22	47
+14	37
+15	37
+13	37
+12	37
+23	37
+25	37
+24	37
+22	37
+14	44
+13	44
+15	44
+12	44
+23	44
+25	44
+24	44
+22	44
+14	48
+15	48
+12	48
+13	48
+23	48
+24	48
+22	48
+25	48
+14	43
+13	43
+15	43
+12	43
+23	43
+24	43
+22	43
+25	43
+14	46
+13	46
+15	46
+12	46
+23	46
+24	46
+22	46
+25	46
+14	40
+13	40
+15	40
+12	40
+23	40
+24	40
+25	40
+22	40
+14	41
+15	41
+12	41
+13	41
+23	41
+25	41
+24	41
+22	41
+14	49
+13	49
+12	49
+23	49
+25	49
+24	49
+22	49
+15	49
+14	38
+15	38
+12	38
+13	38
+14	39
+13	39
+12	39
+15	39
+14	50
+12	50
+23	2
+24	2
+39	2
+22	2
+25	2
+23	42
+24	42
+25	42
+22	42
+22	45
+25	45
+24	45
+17	29
+19	29
+18	29
+20	29
+27	29
+29	29
+28	29
+30	29
+17	33
+19	33
+18	33
+20	33
+27	33
+28	33
+29	33
+30	33
+17	30
+19	30
+18	30
+20	30
+27	30
+30	30
+28	30
+18	25
+17	27
+20	27
+18	27
+30	27
+28	27
+17	31
+20	31
+18	31
+30	31
+28	31
+17	32
+19	32
+18	32
+20	32
+27	32
+30	32
+28	32
+29	32
+20	36
+18	36
+20	60
+18	60
+30	60
+28	60
+20	34
+30	34
+28	34
+19	34
+18	34
+27	1
+39	1
+28	1
+30	1
+27	28
+30	28
+28	28
+30	3
+28	3
+39	3
+32	6
+31	6
+37	6
+35	6
+34	6
+40	6
+33	6
+36	6
+39	6
+38	6
+32	5
+40	5
+33	5
+34	5
+31	5
+37	5
+39	5
+35	5
+38	5
+32	35
+40	35
+31	35
+33	35
+32	67
+34	67
+31	67
+33	67
+37	67
+38	67
+35	67
+32	59
+33	59
+31	59
+35	59
+38	59
+34	59
+38	20
+32	52
+33	52
+34	52
+31	52
+37	52
+36	52
+35	52
+38	52
+38	16
+32	57
+33	57
+31	57
+35	57
+38	57
+34	57
+32	71
+34	71
+31	71
+33	71
+35	71
+38	71
+32	64
+33	64
+34	64
+31	64
+37	64
+35	64
+38	64
+32	54
+31	54
+35	54
+38	54
+32	65
+34	65
+31	65
+33	65
+37	65
+36	65
+35	65
+38	65
+31	68
+33	68
+35	68
+38	68
+31	61
+33	61
+35	61
+38	61
+31	58
+33	58
+35	58
+38	58
+31	63
+35	63
+33	63
+38	63
+31	4
+40	4
+37	4
+36	4
+39	4
+35	4
+38	4
+33	4
+31	53
+33	53
+38	53
+37	66
+38	66
+35	66
+36	66
+37	56
+35	56
+38	56
+37	69
+35	69
+38	69
+40	10
+39	10
+40	7
+39	7
+40	9
+39	9
+40	8
+39	8
+29	1
+29	30
+19	60
+19	51
+18	51
+29	51
+28	51
+19	31
+28	62
+34	70
+33	70
+36	70
+38	70
+34	54
+33	54
+34	55
+33	55
+36	55
+38	55
+41	18
+42	18
+43	18
+45	18
+47	18
+46	18
+41	11
+42	11
+43	11
+45	11
+43	23
+45	23
+47	23
+46	23
+47	19
+46	19
+43	19
+45	19
+43	15
+45	15
+47	15
+46	15
+43	21
+45	21
+43	25
+45	25
+47	25
+46	25
+43	26
+45	26
+47	26
+46	26
+43	20
+45	20
+47	20
+46	20
+43	16
+45	16
+47	16
+43	12
+45	12
+47	12
+43	17
+45	17
+47	17
+46	17
+43	13
+45	13
+47	13
+46	13
+43	14
+45	14
+47	14
+46	14
+43	22
+45	22
+47	22
+46	22
+43	24
+45	24
+48	23
+48	16
+50	26
+50	12
+52	13
+52	17
+52	51
+54	20
+54	14
+55	22
+55	19
+57	24
+57	48
+57	15
+60	21
+60	25
+60	55
+61	2
+61	18
+62	2
+62	18
+63	26
+63	12
+64	20
+64	14
+65	13
+65	17
+65	51
+66	22
+66	19
+68	23
+68	16
+69	23
+69	16
+70	1
+70	2
+70	3
+70	4
+70	5
+70	6
+70	7
+70	8
+70	9
+70	10
+71	35
+71	4
+71	5
+71	6
+71	7
+71	8
+71	9
+71	10
+72	23
+72	24
+72	26
+72	19
+73	12
+73	13
+73	16
+73	18
+74	21
+74	11
+74	14
+74	17
+76	20
+76	22
+76	25
+76	15
+77	12
+77	13
+77	18
+78	23
+78	26
+78	19
+79	23
+79	26
+79	19
+80	14
+80	17
+81	20
+81	22
+81	25
+81	15
+82	24
+82	25
+82	11
+82	12
+83	20
+83	16
+83	17
+83	19
+84	23
+84	14
+84	15
+84	18
+85	21
+85	22
+85	26
+85	13
+86	24
+86	25
+86	11
+86	12
+87	23
+87	14
+87	15
+87	18
+88	25
+88	12
+89	20
+89	16
+89	17
+89	19
+90	22
+90	26
+90	13
+91	22
+91	23
+91	12
+91	17
+93	25
+93	13
+93	14
+93	19
+94	25
+94	13
+94	14
+94	19
+95	26
+95	11
+95	15
+95	16
+96	11
+96	15
+96	16
+98	20
+98	21
+98	24
+98	18
+99	20
+99	21
+99	24
+99	18
+100	25
+100	13
+100	14
+100	19
+101	25
+101	13
+101	14
+101	19
+102	26
+102	15
+102	16
+103	20
+103	18
+104	22
+104	23
+104	12
+104	17
+105	22
+105	23
+105	17
+106	34
+106	12
+106	14
+107	21
+107	23
+108	22
+108	18
+109	15
+109	17
+111	11
+111	19
+112	11
+112	19
+114	20
+114	26
+116	25
+116	16
+117	24
+117	13
+117	55
+118	34
+118	12
+118	14
+119	22
+119	18
+120	15
+120	17
+121	20
+121	26
+122	25
+122	16
+123	13
+123	55
+124	26
+124	14
+125	24
+125	17
+126	20
+126	12
+127	13
+127	15
+128	21
+128	16
+128	55
+129	18
+129	19
+130	22
+130	11
+131	23
+131	25
+132	18
+132	19
+133	16
+133	55
+134	26
+134	14
+135	2
+135	17
+136	20
+136	12
+137	23
+137	25
+138	13
+138	15
+139	21
+139	11
+139	14
+139	17
+140	25
+140	26
+140	17
+140	18
+141	25
+141	17
+141	18
+142	21
+142	12
+142	15
+142	19
+143	21
+143	12
+143	15
+143	19
+145	20
+145	23
+145	11
+145	13
+145	55
+146	20
+146	23
+146	11
+146	13
+146	55
+147	22
+147	24
+147	14
+147	16
+148	25
+148	26
+148	17
+148	18
+149	25
+149	26
+149	17
+149	18
+150	12
+150	15
+150	19
+151	20
+151	23
+151	13
+151	55
+152	22
+152	14
+152	16
+153	26
+153	11
+154	24
+154	18
+155	14
+155	17
+156	12
+156	13
+157	15
+157	19
+158	15
+158	19
+159	23
+159	48
+159	16
+160	21
+160	22
+161	20
+161	25
+161	67
+162	13
+162	18
+163	14
+163	17
+164	15
+164	19
+165	12
+165	13
+166	23
+166	48
+166	16
+167	2
+167	18
+168	20
+168	25
+168	26
+168	67
+169	17
+169	19
+170	20
+170	23
+170	12
+171	22
+171	25
+171	5
+231	23
+231	25
+231	18
+231	17
+233	34
+233	12
+233	18
+235	17
+235	15
+236	23
+236	26
+236	16
+238	18
+238	15
+239	22
+239	23
+239	12
+239	19
+241	22
+241	13
+241	17
+247	26
+247	18
+247	19
+247	11
+248	21
+250	25
+250	12
+250	19
+250	24
+260	22
+260	15
+265	23
+265	37
+265	39
+265	40
+265	41
+265	43
+265	44
+265	46
+265	47
+265	48
+265	49
+265	50
+265	18
+265	38
+265	11
+268	23
+268	16
+269	23
+269	19
+269	17
+269	16
+274	22
+274	23
+274	25
+274	11
+275	20
+276	16
+277	20
+277	26
+278	23
+278	13
+278	11
+278	15
+279	23
+279	13
+279	11
+279	15
+281	26
+281	18
+282	23
+282	41
+282	47
+282	18
+283	40
+283	44
+283	48
+283	19
+284	23
+284	43
+284	48
+284	38
+285	40
+285	44
+285	48
+285	19
+286	21
+286	29
+286	34
+286	19
+286	17
+287	25
+287	26
+287	30
+287	31
+287	1
+287	3
+172	26
+172	14
+172	16
+173	13
+173	18
+174	26
+174	14
+174	16
+175	19
+175	17
+176	20
+176	21
+177	23
+177	11
+178	23
+178	11
+179	12
+179	24
+180	22
+180	25
+180	5
+181	21
+181	12
+181	17
+181	16
+182	20
+182	23
+182	13
+182	15
+183	22
+183	26
+183	14
+183	18
+184	25
+184	19
+184	11
+184	24
+185	25
+185	19
+185	11
+185	24
+186	20
+186	12
+186	14
+186	11
+187	20
+187	12
+187	14
+187	11
+188	21
+188	26
+188	13
+188	19
+188	55
+188	24
+189	22
+189	16
+189	15
+190	23
+190	25
+190	18
+190	17
+191	23
+191	26
+192	20
+192	22
+193	34
+193	12
+193	18
+194	17
+194	15
+195	11
+195	16
+196	14
+196	19
+232	20
+232	22
+198	20
+198	26
+198	17
+198	24
+199	22
+199	23
+199	12
+199	19
+200	21
+200	18
+200	11
+200	15
+234	14
+234	19
+201	21
+201	25
+202	25
+202	13
+202	14
+202	16
+203	21
+203	18
+203	11
+203	15
+237	20
+237	26
+237	17
+240	25
+240	13
+204	21
+204	23
+204	14
+204	55
+204	24
+205	21
+205	23
+205	14
+205	55
+205	24
+206	22
+206	13
+206	11
+206	17
+207	25
+207	26
+207	12
+207	15
+208	20
+208	18
+208	19
+208	16
+240	14
+240	16
+242	25
+242	26
+242	12
+242	15
+209	12
+209	17
+209	16
+210	22
+210	26
+210	14
+210	18
+211	20
+211	23
+211	13
+211	14
+212	25
+212	19
+213	20
+213	12
+213	14
+214	22
+214	16
+214	15
+215	26
+215	13
+215	19
+216	20
+216	14
+217	26
+217	13
+218	23
+218	12
+219	48
+219	24
+219	15
+220	51
+220	11
+220	17
+221	21
+221	25
+222	23
+222	26
+223	11
+223	15
+224	11
+224	15
+225	12
+225	13
+226	21
+226	18
+227	17
+227	24
+228	14
+228	19
+229	20
+229	22
+230	25
+230	16
+243	25
+243	26
+243	15
+244	20
+244	18
+244	19
+244	16
+245	23
+245	14
+245	55
+248	22
+251	26
+251	12
+260	12
+262	37
+262	40
+262	41
+262	42
+262	43
+262	44
+262	45
+262	46
+262	47
+262	48
+262	49
+262	2
+262	18
+262	19
+266	20
+266	22
+266	35
+266	4
+266	5
+266	6
+266	12
+266	52
+266	53
+266	54
+266	57
+266	59
+266	63
+266	65
+266	66
+266	68
+266	69
+266	56
+266	58
+266	71
+266	61
+266	64
+266	67
+266	16
+267	20
+267	35
+267	5
+267	12
+267	53
+267	57
+267	63
+267	68
+267	71
+267	64
+267	16
+268	48
+270	21
+270	13
+270	19
+270	15
+275	12
+276	26
+278	20
+278	21
+278	25
+278	26
+278	14
+278	18
+278	17
+278	24
+279	22
+279	25
+279	12
+248	26
+249	25
+252	23
+252	14
+252	18
+252	15
+253	20
+253	19
+254	23
+254	13
+256	17
+256	15
+258	25
+258	13
+258	14
+258	17
+259	25
+259	13
+259	14
+259	17
+261	20
+261	21
+261	23
+261	24
+263	23
+263	37
+263	39
+263	40
+263	41
+263	43
+263	44
+263	46
+263	47
+263	48
+263	49
+263	50
+263	18
+263	38
+263	11
+267	22
+267	4
+267	6
+267	52
+267	54
+267	59
+267	65
+267	58
+267	61
+267	67
+267	72
+268	19
+271	21
+271	13
+271	19
+271	15
+273	21
+273	12
+273	14
+273	11
+275	18
+276	24
+277	25
+279	14
+279	17
+280	20
+280	23
+280	26
+280	13
+280	18
+280	17
+280	15
+281	22
+281	23
+281	13
+281	14
+281	17
+281	15
+282	39
+282	40
+282	44
+282	46
+282	49
+282	50
+282	11
+283	37
+283	41
+283	43
+283	45
+283	47
+283	49
+283	18
+284	37
+284	41
+284	44
+284	47
+284	49
+284	18
+284	11
+285	41
+285	45
+285	49
+286	27
+286	32
+286	14
+286	51
+287	27
+287	32
+287	13
+287	60
+287	51
+287	17
+288	21
+288	27
+288	29
+288	13
+288	14
+288	33
+288	51
+289	26
+289	30
+289	13
+289	33
+289	17
+290	20
+290	22
+290	4
+290	5
+290	6
+290	12
+290	52
+290	53
+290	54
+290	57
+290	59
+290	63
+290	65
+290	66
+290	68
+290	69
+290	70
+290	58
+290	55
+290	71
+290	61
+290	64
+290	67
+290	16
+292	20
+292	22
+292	4
+292	6
+292	12
+292	52
+292	65
+292	66
+292	58
+292	55
+292	61
+292	64
+292	67
+294	21
+294	13
+294	14
+294	11
+295	21
+295	13
+295	14
+295	11
+297	48
+297	12
+297	15
+299	18
+299	24
+301	22
+301	23
+302	13
+302	14
+303	48
+303	12
+303	15
+305	26
+305	19
+307	20
+307	25
+307	55
+307	67
+308	22
+309	21
+310	13
+310	18
+312	16
+312	15
+313	20
+313	26
+315	23
+315	48
+315	11
+316	23
+316	48
+316	11
+246	26
+246	18
+246	19
+246	11
+248	17
+249	18
+255	22
+255	14
+257	11
+257	24
+260	16
+264	37
+264	40
+264	41
+264	42
+264	43
+264	44
+264	45
+264	46
+264	47
+264	48
+264	49
+264	2
+264	18
+264	19
+268	17
+272	21
+272	12
+272	14
+272	11
+275	17
+276	14
+277	15
+278	22
+278	12
+278	19
+278	16
+279	21
+279	26
+279	18
+279	19
+279	24
+279	16
+280	22
+280	25
+280	12
+280	14
+280	19
+280	16
+281	20
+281	12
+281	19
+282	37
+282	43
+282	48
+282	38
+283	42
+283	46
+283	2
+284	40
+284	46
+284	50
+285	37
+285	42
+285	43
+285	46
+285	47
+285	2
+285	18
+286	25
+286	26
+286	30
+286	31
+286	36
+286	13
+286	60
+286	33
+286	15
+287	23
+287	29
+287	34
+287	14
+287	33
+287	28
+287	15
+288	25
+288	26
+288	30
+288	34
+288	19
+288	60
+288	17
+288	15
+289	23
+289	29
+289	1
+289	14
+289	51
+289	15
+291	20
+291	22
+291	35
+291	4
+291	5
+291	6
+291	12
+291	52
+291	53
+291	54
+291	57
+291	59
+291	63
+291	65
+291	68
+291	70
+291	58
+291	55
+291	71
+291	61
+291	64
+291	67
+291	24
+291	16
+293	22
+293	35
+293	5
+293	6
+293	12
+293	52
+293	54
+293	59
+293	68
+293	70
+293	58
+293	71
+293	64
+293	67
+293	24
+293	16
+296	17
+296	16
+298	26
+298	19
+300	20
+300	25
+300	55
+300	67
+304	17
+304	16
+306	22
+306	23
+308	14
+309	24
+311	12
+311	17
+314	25
+314	19
+\.
+
+
+--
+-- Data for Name: race_scores; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+COPY public.race_scores (id, race_id, winner_id, loser_id, winner_score, loser_score) FROM stdin;
+1	42	195	189	20	40
+374	106	337	243	19	44
+375	106	274	337	26	29
+376	107	212	197	23	37
+135	54	266	337	18	45
+122	52	331	341	15	49
+124	52	331	335	15	50
+257	72	203	197	23	36
+258	72	203	359	21	40
+259	72	203	225	15	50
+260	72	197	359	27	28
+261	72	197	225	17	41
+262	72	359	225	18	39
+263	73	335	272	20	37
+264	73	189	335	15	50
+265	73	274	335	21	34
+266	73	189	272	15	50
+267	73	274	272	19	36
+268	73	189	274	21	38
+269	74	195	337	19	44
+270	74	195	331	26	30
+271	74	212	195	27	29
+272	74	331	337	18	45
+273	74	212	337	17	46
+274	74	212	331	26	29
+275	76	210	266	24	31
+276	76	210	352	22	35
+277	76	223	210	25	31
+278	76	266	352	22	35
+279	76	223	266	25	30
+280	76	223	352	20	38
+281	77	336	275	20	38
+282	77	190	275	20	43
+283	77	190	336	24	31
+284	78	202	198	16	47
+285	78	226	202	20	35
+286	78	226	198	15	44
+287	80	332	338	21	40
+288	81	211	267	27	28
+289	81	353	211	20	35
+290	81	211	224	27	28
+291	81	353	267	19	36
+292	81	224	267	27	28
+293	81	353	224	22	34
+294	82	195	359	27	30
+295	82	195	274	15	48
+296	82	195	223	25	31
+297	82	359	274	18	40
+298	82	223	359	29	29
+299	82	223	274	16	46
+300	83	203	272	15	50
+301	83	203	266	21	40
+302	83	203	331	26	31
+303	83	266	272	18	45
+304	83	331	272	15	49
+305	83	331	266	22	37
+306	84	189	197	25	34
+307	84	210	197	23	36
+308	84	197	337	22	39
+309	84	210	189	27	28
+310	84	189	337	20	43
+311	84	210	337	19	44
+312	85	225	335	26	29
+313	85	212	225	15	47
+314	85	352	225	24	31
+315	85	212	335	15	50
+316	85	352	335	20	35
+317	85	212	352	20	42
+318	87	190	198	15	43
+319	87	338	198	15	55
+320	87	211	198	15	48
+321	87	338	190	26	32
+322	87	190	211	26	30
+323	87	338	211	21	35
+327	88	224	275	22	35
+328	89	332	202	17	46
+80	48	197	272	16	46
+329	89	332	267	17	46
+330	89	202	267	21	40
+331	90	336	353	16	41
+332	90	336	226	21	34
+333	90	226	353	18	43
+334	91	197	352	25	31
+335	91	352	274	25	30
+336	91	331	352	20	43
+337	91	197	274	19	39
+338	91	331	197	21	38
+339	91	331	274	15	46
+340	93	335	337	21	38
+341	93	203	335	15	50
+342	93	223	335	15	50
+343	93	203	337	20	43
+344	93	223	337	20	43
+345	93	203	223	19	41
+346	95	195	210	25	33
+347	95	195	225	15	48
+348	95	195	272	15	49
+349	95	210	225	17	44
+350	95	210	272	17	46
+351	95	272	225	25	32
+352	98	359	189	24	32
+353	98	212	359	24	33
+354	98	359	266	24	31
+355	98	212	189	17	41
+356	98	266	189	25	30
+357	98	212	266	20	39
+358	100	224	336	26	30
+359	100	338	336	22	37
+360	100	202	336	29	30
+361	100	338	224	24	35
+362	100	224	202	29	30
+363	100	338	202	20	36
+364	102	226	211	20	37
+365	103	190	267	17	44
+118	57	171	210	27	28
+119	57	171	359	27	30
+120	57	210	359	27	30
+121	62	190	205	22	37
+123	52	341	335	27	29
+125	65	342	332	23	35
+126	65	342	336	17	42
+127	65	332	336	27	30
+128	60	212	356	22	39
+129	60	223	356	25	36
+130	60	212	223	24	33
+131	66	202	353	27	31
+133	50	274	225	24	32
+134	63	226	275	20	43
+136	64	338	267	17	42
+366	104	353	198	15	50
+367	104	353	275	22	39
+368	104	332	353	22	35
+369	104	275	198	28	29
+370	104	332	198	15	45
+371	104	332	275	20	38
+132	55	203	352	20	43
+373	106	274	243	18	45
+377	108	189	352	21	39
+378	109	331	210	24	31
+379	111	203	195	25	30
+380	114	266	225	16	47
+381	116	223	272	17	44
+382	117	356	335	21	35
+383	117	359	356	26	30
+384	117	359	335	16	41
+385	118	275	244	19	36
+386	118	338	244	17	46
+387	118	338	275	22	39
+388	119	353	190	27	28
+389	120	332	211	15	50
+390	121	226	267	18	45
+391	123	336	357	16	44
+392	124	337	225	28	28
+393	125	331	359	26	31
+394	126	266	274	19	37
+395	127	210	335	15	50
+396	128	212	356	28	31
+397	128	356	272	20	35
+398	128	212	272	16	47
+400	130	195	352	20	43
+401	131	223	197	28	28
+404	135	332	205	20	43
+944	209	132	144	20	41
+945	210	150	154	18	44
+947	210	150	156	15	50
+949	210	154	156	23	33
+952	211	156	148	24	35
+955	213	144	156	24	32
+956	214	135	154	24	31
+957	215	150	130	20	39
+959	215	150	146	20	38
+960	216	374	442	25	31
+961	217	384	441	23	38
+964	219	416	493	27	32
+967	220	490	481	16	47
+970	222	384	379	19	42
+975	228	447	442	15	48
+976	229	377	374	27	28
+620	188	133	129	22	35
+984	232	154	142	21	40
+988	234	130	156	18	41
+993	237	150	142	15	48
+994	237	132	142	15	50
+995	237	132	150	24	37
+1003	240	146	140	15	47
+1004	240	152	140	19	36
+1005	240	156	140	15	47
+1006	240	146	152	20	37
+1007	240	146	156	19	36
+1008	240	156	152	24	34
+1012	242	150	135	23	38
+1013	242	150	144	20	39
+1014	242	135	144	27	30
+1015	244	130	142	17	46
+1016	244	137	142	15	48
+1017	244	137	130	21	34
+1186	246	444	384	19	42
+1187	246	447	384	15	50
+1188	246	490	384	15	50
+1189	246	447	444	21	40
+1190	246	490	444	22	39
+1191	246	447	490	20	35
+1192	248	376	377	20	43
+1194	248	376	384	15	50
+1196	248	377	384	27	28
+1199	250	381	493	26	32
+1200	250	381	439	17	46
+1201	250	381	447	24	31
+1202	250	493	439	18	43
+1203	250	447	493	26	33
+1204	250	447	439	18	45
+1206	252	497	379	19	42
+1207	252	442	379	26	29
+1208	252	444	379	18	45
+1209	252	497	442	19	42
+1210	252	497	444	26	29
+1211	252	444	442	18	45
+1214	255	442	377	28	28
+1216	257	490	493	29	30
+1225	260	377	495	23	36
+1228	260	439	495	26	31
+1229	261	374	379	26	29
+1230	261	376	379	15	50
+1231	261	493	379	18	43
+1232	261	376	374	15	48
+1233	261	493	374	19	42
+1234	261	376	493	28	31
+1235	268	416	379	18	42
+1237	268	492	379	19	42
+1239	268	447	416	25	30
+1241	268	416	495	18	43
+1243	268	447	495	18	43
+1245	270	447	376	23	33
+1246	270	376	441	16	47
+1247	270	376	497	20	43
+1248	270	447	441	15	49
+1249	270	447	497	19	44
+1250	270	497	441	21	38
+1257	274	381	379	19	40
+1258	274	377	379	25	33
+1259	274	490	379	20	41
+1260	274	381	377	22	34
+1261	274	381	490	24	32
+1262	274	490	377	20	40
+1263	275	492	374	22	37
+1265	275	444	374	23	37
+1267	275	492	444	25	30
+1269	276	384	495	22	39
+1271	276	493	495	19	42
+1272	276	384	442	22	36
+1273	276	493	384	23	33
+1275	277	381	374	19	38
+1278	277	497	374	25	34
+1279	277	384	374	27	32
+1281	294	53	43	16	45
+1282	294	43	45	27	28
+1283	294	43	46	20	39
+1284	294	53	45	15	48
+1285	294	53	46	15	48
+1286	294	45	46	20	39
+1288	297	47	44	19	42
+1289	297	520	44	15	46
+1290	297	520	47	17	38
+1292	299	50	56	26	31
+1299	301	55	54	16	47
+1300	302	13	14	15	50
+1301	303	15	59	22	34
+1302	303	15	509	25	30
+1303	303	509	59	22	33
+1305	305	62	26	25	30
+1307	307	25	534	26	30
+1308	307	555	25	21	40
+1309	307	555	534	15	50
+1310	308	54	46	20	39
+1313	311	49	44	15	50
+1316	314	57	51	18	40
+399	129	203	189	19	37
+402	132	190	202	20	41
+403	134	338	226	28	30
+405	136	267	275	23	34
+406	137	198	224	25	32
+407	138	336	211	23	32
+408	140	223	225	16	45
+409	140	331	223	23	32
+410	140	223	189	20	35
+411	140	331	225	16	47
+412	140	189	225	19	44
+413	140	331	189	20	37
+414	142	212	210	25	30
+415	142	212	274	16	47
+416	142	203	212	25	34
+417	142	210	274	18	45
+418	142	203	210	25	36
+419	142	203	274	15	50
+420	145	195	356	29	29
+421	145	356	266	26	31
+422	145	356	197	25	32
+423	145	356	335	21	35
+424	145	195	266	24	34
+425	145	195	197	20	39
+426	145	195	335	15	50
+427	145	266	197	25	30
+428	145	266	335	15	42
+429	145	197	335	15	42
+430	147	359	352	20	41
+431	147	359	337	20	43
+432	147	359	272	15	49
+433	147	337	352	28	29
+434	147	352	272	23	32
+435	147	337	272	19	42
+436	148	332	224	20	43
+437	148	332	226	15	48
+438	148	332	190	21	36
+439	148	226	224	20	41
+440	148	190	224	20	43
+441	148	190	226	16	42
+442	150	211	275	23	38
+443	150	202	211	21	38
+444	150	202	275	23	38
+445	151	357	267	27	28
+446	151	357	198	17	40
+447	151	336	357	19	39
+448	151	267	198	20	35
+449	151	336	267	21	38
+450	151	336	198	15	48
+451	152	338	353	21	40
+452	153	128	149	25	34
+453	154	136	138	25	33
+454	155	131	155	19	44
+455	156	143	145	23	33
+624	188	133	138	18	39
+623	188	138	145	22	34
+631	188	133	498	18	37
+627	188	133	149	20	37
+619	188	129	145	15	49
+629	188	133	145	16	41
+630	188	498	145	22	35
+626	188	149	145	21	34
+557	170	144	142	20	35
+558	170	144	148	23	33
+534	157	134	129	22	33
+535	159	169	147	17	46
+536	159	169	139	15	50
+537	159	147	139	18	43
+538	160	133	153	21	38
+539	161	151	141	27	28
+540	161	141	258	23	36
+541	161	151	258	19	36
+542	162	137	146	28	29
+543	163	132	156	15	50
+544	164	130	135	27	28
+545	165	146	144	27	31
+546	166	170	140	15	50
+547	166	170	148	19	44
+548	166	148	140	21	34
+549	167	137	204	20	35
+550	168	150	142	17	46
+551	168	142	152	21	40
+552	168	142	259	25	30
+553	168	150	152	20	43
+554	168	150	259	15	50
+555	168	259	152	22	33
+556	169	132	130	20	41
+559	170	148	142	27	28
+560	171	154	255	18	45
+561	171	154	152	24	35
+562	171	152	255	18	41
+582	172	150	140	15	50
+583	172	156	140	21	39
+584	172	150	156	15	50
+585	173	136	145	17	43
+586	174	139	155	27	28
+587	174	149	139	17	45
+588	174	149	155	19	44
+589	175	129	131	27	30
+590	176	133	141	16	47
+591	177	128	147	18	45
+592	179	138	143	21	36
+593	180	151	153	26	33
+594	180	254	153	27	31
+595	180	151	254	21	37
+596	181	133	143	18	43
+597	181	131	143	23	36
+598	181	133	131	18	39
+599	182	147	145	22	34
+600	182	134	145	16	45
+601	182	134	147	18	39
+602	183	149	155	20	41
+603	183	136	149	26	33
+604	183	136	155	20	43
+605	184	129	151	23	36
+606	184	138	151	24	31
+607	184	128	151	19	40
+608	184	129	138	27	32
+609	184	128	129	20	35
+610	184	128	138	21	38
+611	186	143	155	21	40
+612	186	143	141	25	32
+613	186	128	143	21	39
+614	186	141	155	21	37
+615	186	128	155	19	44
+616	186	128	141	18	43
+617	188	129	138	28	31
+618	188	129	149	28	31
+621	188	129	498	28	31
+622	188	149	138	26	29
+625	188	138	498	28	29
+628	188	149	498	27	30
+632	189	153	139	20	35
+633	189	134	139	15	50
+634	189	134	153	20	40
+635	190	151	147	21	36
+636	190	131	147	15	44
+637	190	136	147	15	48
+638	190	131	151	21	36
+639	190	136	151	25	34
+640	190	131	136	21	34
+641	191	147	149	23	36
+642	192	141	153	24	35
+643	193	143	241	15	50
+644	193	136	143	23	37
+645	193	136	241	15	50
+646	194	131	134	27	28
+647	195	128	139	15	50
+648	196	129	155	20	43
+946	210	137	150	25	30
+650	198	138	141	27	28
+651	198	138	149	28	28
+652	198	131	138	22	37
+653	198	141	149	28	28
+654	198	131	141	19	38
+655	198	131	149	21	36
+656	199	129	143	21	38
+657	199	129	153	25	36
+658	199	129	147	15	44
+659	199	153	143	27	28
+660	199	143	147	24	35
+661	199	153	147	24	31
+662	200	133	134	22	35
+663	200	133	128	22	37
+664	200	133	136	17	42
+665	200	134	128	22	33
+666	200	134	136	21	34
+667	200	136	128	26	29
+948	210	137	154	17	41
+669	201	133	151	17	41
+670	202	145	155	22	35
+671	202	151	145	21	36
+672	202	145	139	24	32
+673	202	151	155	20	39
+674	202	139	155	25	32
+675	202	151	139	18	39
+676	205	138	155	20	41
+677	205	147	138	25	31
+678	205	133	138	18	41
+679	205	498	138	19	40
+680	205	147	155	20	42
+681	205	133	155	20	43
+682	205	498	155	19	44
+683	205	133	147	16	42
+684	205	498	147	19	39
+685	205	133	498	25	31
+686	206	145	153	28	29
+687	206	131	153	20	41
+688	206	128	153	23	38
+689	206	131	145	17	44
+690	206	128	145	19	43
+691	206	131	128	22	33
+692	207	149	151	24	31
+693	207	143	151	27	28
+694	207	134	151	15	43
+695	207	149	143	28	29
+696	207	134	149	20	38
+697	207	134	143	17	41
+698	208	129	141	23	38
+699	208	141	139	24	35
+700	208	136	141	24	37
+701	208	129	139	15	50
+702	208	136	129	26	29
+703	208	136	139	15	44
+950	210	137	156	15	45
+953	211	156	146	25	31
+954	212	130	152	20	42
+958	215	146	130	26	29
+963	219	497	493	27	32
+965	219	416	497	24	32
+966	220	490	492	20	43
+968	220	492	481	21	34
+969	221	376	381	24	31
+971	223	490	497	20	43
+972	225	441	439	24	35
+973	226	376	444	15	43
+974	227	492	493	28	29
+977	230	381	495	16	46
+951	211	146	148	23	37
+962	218	379	439	24	33
+978	231	132	152	20	43
+979	231	132	148	18	45
+980	231	132	137	26	33
+981	231	152	148	28	29
+982	231	137	152	18	41
+983	231	137	148	20	41
+985	233	137	144	25	32
+986	233	144	242	19	44
+987	233	137	242	18	45
+989	235	132	135	20	40
+990	236	150	140	15	50
+991	236	148	140	19	40
+992	236	150	148	17	46
+996	238	137	135	24	31
+997	239	130	154	18	43
+998	239	130	144	27	30
+999	239	130	148	22	38
+1000	239	144	154	22	33
+1001	239	154	148	28	30
+1002	239	144	148	23	34
+1009	241	132	154	15	47
+1010	241	146	154	19	36
+1011	241	132	146	16	42
+1019	245	499	148	26	29
+1018	245	156	148	24	34
+1020	245	156	499	26	30
+1193	248	376	492	18	42
+1195	248	492	377	26	30
+1197	248	492	384	23	33
+1198	249	381	444	21	34
+1205	251	384	439	21	38
+1212	253	447	374	15	46
+1213	254	441	379	27	30
+1215	256	497	492	23	32
+1217	258	381	441	15	46
+1218	258	381	442	15	48
+1219	258	381	492	20	39
+1220	258	441	442	23	32
+1221	258	492	441	20	37
+1222	258	492	442	20	40
+1223	260	497	377	21	38
+1224	260	377	439	22	35
+1226	260	497	439	19	44
+1227	260	497	495	21	40
+1236	268	447	379	18	44
+1238	268	379	495	23	38
+1240	268	416	492	21	34
+1242	268	447	492	21	34
+1244	268	492	495	22	39
+1251	272	376	490	19	36
+1252	272	376	442	15	48
+1253	272	376	439	16	47
+1254	272	490	442	17	46
+1255	272	490	439	18	45
+1256	272	442	439	26	29
+1264	275	374	439	18	37
+1266	275	492	439	15	49
+1268	275	444	439	15	49
+1270	276	442	495	24	37
+1274	276	493	442	19	42
+1276	277	381	497	24	31
+1277	277	381	384	18	37
+1280	277	497	384	20	35
+1287	296	49	48	20	43
+1291	298	51	58	20	43
+1293	300	57	52	24	31
+1294	300	52	548	18	43
+1295	300	52	554	16	40
+1296	300	57	548	15	47
+1297	300	57	554	15	47
+1298	300	554	548	23	32
+1304	304	17	60	15	50
+1306	306	23	64	23	33
+1311	309	53	56	15	44
+1312	310	45	50	27	28
+1314	312	47	48	20	43
+1315	313	52	58	23	32
+1317	315	520	55	24	32
+1318	315	55	43	21	35
+1319	315	520	43	18	41
+\.
+
+
+--
+-- Data for Name: race_teams; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+COPY public.race_teams (race_id, team_id) FROM stdin;
+1	1
+1	2
+1	3
+1	4
+1	5
+1	6
+1	7
+1	8
+1	9
+1	10
+2	32
+2	33
+2	34
+2	3
+2	1
+2	13
+2	14
+2	15
+2	17
+2	23
+2	25
+2	26
+2	27
+2	28
+2	29
+2	30
+2	31
+3	1
+3	33
+3	13
+3	14
+3	15
+3	17
+3	23
+3	25
+3	26
+3	29
+3	30
+3	31
+4	35
+4	36
+4	37
+4	38
+4	39
+4	40
+4	41
+4	42
+5	43
+5	44
+5	45
+5	46
+5	47
+5	48
+5	49
+5	50
+5	51
+5	52
+5	53
+5	54
+5	55
+5	56
+5	57
+5	58
+6	43
+6	44
+6	45
+6	46
+6	47
+6	48
+6	49
+6	50
+6	51
+6	52
+6	53
+6	54
+6	55
+6	56
+6	57
+6	58
+7	64
+7	13
+7	14
+7	15
+7	17
+7	23
+7	25
+7	26
+7	59
+7	60
+7	61
+7	62
+7	63
+8	64
+8	13
+8	14
+8	15
+8	17
+8	23
+8	25
+8	26
+8	60
+8	61
+8	62
+9	122
+9	45
+9	127
+9	47
+9	46
+9	49
+9	51
+9	53
+9	120
+9	121
+9	58
+9	123
+9	124
+9	125
+9	126
+9	57
+10	121
+10	58
+10	45
+10	46
+10	47
+10	49
+10	51
+10	53
+10	120
+10	57
+10	122
+10	123
+10	124
+10	125
+10	126
+11	128
+12	128
+13	195
+14	128
+15	195
+16	128
+11	129
+17	129
+18	203
+19	203
+16	129
+20	129
+21	130
+22	130
+23	130
+24	202
+25	202
+26	130
+11	131
+20	131
+17	131
+19	331
+18	331
+16	131
+21	132
+27	132
+28	332
+29	332
+26	132
+30	132
+11	133
+18	212
+19	212
+17	133
+16	133
+20	133
+11	134
+20	134
+18	210
+17	134
+19	210
+16	134
+21	135
+30	135
+28	211
+27	135
+29	211
+26	135
+11	136
+14	136
+15	189
+13	189
+16	136
+12	136
+21	137
+22	137
+23	137
+24	190
+26	137
+25	190
+11	138
+16	138
+11	139
+31	139
+32	139
+33	272
+34	272
+16	139
+26	140
+35	140
+11	141
+31	141
+33	266
+32	141
+34	266
+16	141
+26	142
+35	142
+36	267
+11	143
+31	143
+33	274
+32	143
+34	274
+16	143
+21	144
+35	144
+37	144
+38	275
+26	144
+11	145
+17	145
+18	335
+19	335
+16	145
+20	145
+21	146
+30	146
+28	336
+27	146
+29	336
+26	146
+11	147
+14	147
+19	197
+16	147
+12	147
+18	197
+21	148
+30	148
+27	148
+28	198
+29	198
+26	148
+11	149
+17	149
+18	225
+19	225
+16	149
+20	149
+21	150
+27	150
+28	226
+29	226
+26	150
+30	150
+11	151
+20	151
+17	151
+19	223
+16	151
+21	152
+26	152
+30	152
+28	224
+11	153
+32	153
+31	153
+16	153
+33	352
+34	352
+21	154
+37	154
+38	353
+36	353
+26	154
+35	154
+11	155
+16	155
+20	155
+19	337
+17	155
+18	337
+21	156
+26	156
+30	156
+27	156
+28	338
+29	338
+14	157
+13	159
+15	159
+12	157
+23	158
+25	160
+24	160
+22	158
+14	161
+15	163
+13	163
+12	161
+23	162
+25	164
+24	164
+22	162
+14	165
+13	167
+15	167
+12	165
+23	166
+25	168
+24	168
+22	166
+14	169
+15	171
+12	169
+13	171
+23	170
+24	172
+22	170
+25	172
+14	173
+13	175
+15	175
+12	173
+23	174
+24	176
+22	174
+25	176
+14	177
+13	179
+15	179
+12	177
+23	178
+24	180
+22	178
+25	180
+14	181
+13	183
+15	183
+12	181
+23	182
+24	184
+25	184
+22	182
+14	185
+15	187
+12	185
+13	187
+23	186
+25	188
+24	188
+22	186
+14	191
+13	193
+12	191
+23	192
+25	194
+24	194
+22	192
+15	193
+14	196
+15	330
+12	196
+13	330
+14	199
+13	200
+12	199
+15	200
+14	201
+12	201
+23	204
+24	205
+39	205
+22	204
+25	205
+23	206
+24	207
+25	207
+22	206
+22	208
+25	209
+24	209
+17	213
+19	215
+18	215
+20	213
+27	214
+29	216
+28	216
+30	214
+17	217
+19	219
+18	219
+20	217
+27	218
+28	220
+29	220
+30	218
+17	221
+19	333
+18	333
+20	221
+27	222
+30	222
+28	334
+18	223
+17	227
+20	227
+18	229
+30	228
+28	230
+17	231
+20	231
+18	343
+30	232
+28	344
+17	233
+19	235
+18	235
+20	233
+27	234
+30	234
+28	236
+29	236
+20	237
+18	238
+20	239
+18	339
+30	240
+28	340
+20	241
+30	242
+28	244
+19	243
+18	243
+27	245
+39	329
+28	329
+30	245
+27	246
+30	246
+28	247
+30	248
+28	249
+39	249
+32	250
+31	250
+37	251
+35	251
+34	252
+40	252
+33	252
+36	253
+39	253
+38	253
+32	254
+40	319
+33	319
+34	319
+31	254
+37	255
+39	320
+35	255
+38	320
+32	256
+40	257
+31	256
+33	257
+32	258
+34	260
+31	258
+33	260
+37	259
+38	261
+35	259
+32	262
+33	264
+31	262
+35	263
+38	265
+34	264
+38	267
+32	268
+33	270
+34	270
+31	268
+37	269
+36	271
+35	269
+38	271
+38	273
+32	276
+33	278
+31	276
+35	277
+38	279
+34	278
+32	280
+34	350
+31	280
+33	350
+35	281
+38	351
+32	282
+33	348
+34	348
+31	282
+37	283
+35	283
+38	349
+32	284
+31	284
+35	285
+38	355
+32	286
+34	288
+31	286
+33	288
+37	287
+36	289
+35	287
+38	289
+31	290
+33	292
+35	291
+38	293
+31	294
+33	296
+35	295
+38	297
+31	298
+33	300
+35	299
+38	301
+31	302
+35	303
+33	304
+38	305
+31	306
+40	308
+37	307
+36	309
+39	309
+35	307
+38	309
+33	308
+31	310
+33	311
+38	312
+37	313
+38	314
+35	313
+36	314
+37	315
+35	315
+38	316
+37	317
+35	317
+38	318
+40	321
+39	322
+40	323
+39	324
+40	325
+39	326
+40	327
+39	328
+29	329
+29	334
+19	339
+19	341
+18	341
+29	342
+28	342
+19	343
+28	345
+34	346
+33	346
+36	347
+38	347
+34	354
+33	354
+34	356
+33	356
+36	357
+38	357
+41	195
+41	189
+42	195
+42	189
+43	352
+43	225
+43	195
+43	197
+43	359
+43	266
+43	331
+43	203
+43	335
+43	272
+43	337
+43	210
+43	274
+43	212
+43	189
+43	223
+45	352
+45	225
+45	195
+45	197
+45	359
+45	266
+45	331
+45	203
+45	335
+45	272
+45	337
+45	210
+45	274
+45	212
+45	189
+45	223
+46	224
+46	353
+46	226
+46	198
+46	202
+46	267
+46	332
+46	336
+46	338
+46	211
+46	190
+47	224
+47	353
+47	226
+47	198
+47	202
+47	267
+47	332
+47	336
+47	273
+47	338
+47	275
+47	211
+47	190
+48	272
+48	197
+50	225
+50	274
+52	331
+52	341
+52	335
+54	337
+54	266
+55	352
+55	203
+57	210
+57	171
+57	359
+60	356
+60	212
+60	223
+61	205
+61	190
+62	205
+62	190
+63	226
+63	275
+64	338
+64	267
+66	353
+66	202
+65	336
+65	332
+65	342
+68	273
+68	198
+69	273
+69	198
+70	363
+70	364
+70	204
+70	366
+70	365
+70	307
+70	245
+70	248
+70	251
+70	255
+71	256
+71	367
+71	368
+71	369
+71	370
+71	306
+71	250
+71	254
+72	225
+72	203
+72	197
+72	359
+73	272
+73	274
+73	189
+73	335
+74	337
+74	331
+74	212
+74	195
+76	352
+76	210
+76	266
+76	223
+77	336
+77	275
+77	190
+78	202
+78	226
+78	198
+79	226
+79	198
+79	202
+80	338
+80	332
+81	224
+81	353
+81	267
+81	211
+82	274
+82	223
+82	195
+82	359
+83	272
+83	266
+83	331
+83	203
+84	337
+84	210
+84	197
+84	189
+85	352
+85	225
+85	212
+85	335
+86	274
+86	195
+86	359
+86	223
+87	198
+87	338
+87	211
+87	190
+88	224
+88	275
+89	273
+89	202
+89	267
+89	332
+90	336
+90	353
+90	226
+91	352
+91	274
+91	331
+91	197
+93	337
+93	203
+93	335
+93	223
+94	337
+94	203
+94	335
+94	223
+95	272
+95	225
+95	210
+95	195
+96	272
+96	210
+96	195
+98	266
+98	212
+98	189
+98	359
+99	266
+99	212
+99	189
+99	359
+100	224
+100	202
+100	338
+100	336
+101	224
+101	202
+101	336
+101	338
+102	273
+102	226
+102	211
+103	267
+103	190
+104	353
+104	275
+104	332
+104	198
+105	353
+105	332
+105	198
+106	337
+106	274
+106	243
+107	212
+107	197
+108	352
+108	189
+109	210
+109	331
+111	195
+111	203
+112	195
+112	203
+114	225
+114	266
+116	272
+116	223
+117	356
+117	335
+117	359
+118	338
+118	275
+118	244
+119	353
+119	190
+120	211
+120	332
+121	226
+121	267
+122	224
+122	273
+123	336
+123	357
+124	337
+124	225
+125	331
+125	359
+126	266
+126	274
+127	210
+127	335
+128	272
+128	212
+128	356
+129	203
+129	189
+130	352
+130	195
+131	197
+131	223
+132	202
+132	190
+133	273
+133	357
+134	338
+134	226
+135	332
+135	205
+136	275
+136	267
+137	224
+137	198
+138	336
+138	211
+139	337
+139	331
+139	195
+139	212
+140	225
+140	331
+140	189
+140	223
+141	331
+141	189
+141	223
+142	274
+142	210
+142	203
+142	212
+143	274
+143	210
+143	203
+143	212
+145	195
+145	356
+145	197
+145	266
+145	335
+146	195
+146	356
+146	197
+146	266
+146	335
+148	224
+148	226
+148	332
+148	190
+248	384
+248	376
+249	381
+250	439
+250	381
+250	493
+250	447
+260	497
+260	495
+237	142
+237	132
+237	150
+242	144
+242	152
+242	150
+242	135
+243	152
+243	150
+243	135
+244	137
+244	130
+244	140
+244	142
+245	499
+245	148
+245	156
+262	509
+262	2
+262	510
+262	500
+262	501
+262	502
+262	503
+262	504
+262	505
+262	506
+262	507
+262	508
+262	61
+262	62
+265	512
+265	513
+265	514
+265	515
+265	516
+265	517
+265	518
+265	519
+265	520
+265	521
+265	522
+265	43
+265	50
+265	55
+265	511
+268	492
+269	495
+269	379
+269	492
+269	447
+272	376
+272	442
+272	490
+272	439
+275	492
+276	384
+276	495
+277	384
+278	490
+278	495
+278	376
+278	444
+279	441
+279	497
+279	442
+279	447
+280	494
+280	440
+280	445
+282	420
+282	402
+282	410
+283	417
+283	422
+283	399
+283	406
+283	408
+283	413
+283	414
+284	480
+284	490
+284	407
+284	415
+285	414
+285	422
+285	403
+285	406
+285	408
+285	411
+285	446
+286	384
+286	385
+286	389
+286	393
+286	492
+286	398
+286	497
+286	441
+286	381
+287	392
+287	423
+287	475
+287	496
+288	385
+288	387
+288	492
+288	461
+288	376
+288	441
+288	447
+289	388
+289	390
+289	496
+289	440
+289	380
+291	397
+291	424
+291	426
+291	428
+291	439
+291	448
+291	450
+291	452
+291	455
+291	457
+291	458
+291	462
+291	465
+291	468
+291	472
+291	477
+291	478
+291	483
+291	485
+291	487
+291	493
+291	495
+291	374
+291	377
+293	448
+293	452
+293	485
+293	487
+293	457
+293	426
+293	428
+293	493
+293	397
+293	495
+293	465
+293	468
+293	439
+293	472
+293	377
+293	478
+296	48
+296	49
+298	58
+298	51
+300	57
+300	554
+300	52
+300	548
+304	17
+304	60
+306	64
+306	23
+308	46
+310	50
+310	45
+312	48
+312	47
+313	58
+313	52
+147	352
+147	337
+147	272
+147	359
+149	224
+149	226
+149	332
+149	190
+150	202
+150	275
+150	211
+151	336
+151	267
+151	357
+151	198
+152	353
+152	338
+152	273
+153	128
+153	149
+154	136
+154	138
+155	131
+155	155
+156	145
+156	143
+157	129
+157	134
+158	129
+158	134
+159	169
+159	147
+159	139
+160	153
+160	133
+161	258
+161	141
+161	151
+162	137
+162	146
+163	156
+163	132
+164	130
+164	135
+165	144
+165	146
+166	140
+166	170
+166	148
+167	137
+167	204
+168	152
+168	259
+168	142
+168	150
+169	130
+169	132
+170	142
+170	144
+170	148
+171	152
+171	154
+171	255
+248	492
+248	377
+249	444
+251	384
+251	439
+260	439
+263	512
+263	513
+263	514
+263	515
+263	516
+263	517
+263	518
+263	519
+263	520
+231	152
+231	137
+231	132
+231	148
+233	144
+233	137
+233	242
+235	132
+235	135
+238	137
+238	135
+239	144
+239	130
+239	148
+239	154
+172	156
+172	140
+172	150
+173	136
+173	145
+174	155
+174	139
+174	149
+175	129
+175	131
+176	133
+176	141
+177	128
+177	147
+178	128
+178	147
+179	138
+179	143
+180	153
+180	254
+180	151
+181	131
+181	139
+181	133
+181	143
+182	145
+182	147
+182	141
+182	134
+183	136
+183	153
+183	155
+183	149
+184	128
+184	129
+184	138
+184	151
+185	128
+185	129
+185	138
+185	151
+186	128
+186	155
+186	141
+186	143
+187	128
+187	155
+187	141
+187	143
+188	129
+188	133
+188	138
+188	145
+188	498
+188	149
+189	153
+189	139
+189	134
+190	136
+190	131
+190	147
+190	151
+191	147
+191	149
+192	153
+192	141
+193	136
+193	241
+193	143
+194	131
+194	134
+195	128
+195	139
+196	129
+196	155
+198	138
+198	131
+198	149
+198	141
+199	153
+199	129
+199	147
+199	143
+200	128
+200	136
+200	133
+200	134
+201	133
+201	151
+202	145
+202	155
+202	139
+202	151
+203	128
+203	136
+203	133
+203	134
+204	133
+204	138
+204	498
+204	147
+204	155
+205	133
+205	138
+205	498
+205	147
+205	155
+206	128
+206	153
+206	145
+206	131
+207	151
+207	149
+207	134
+207	143
+208	136
+208	129
+208	139
+208	141
+209	144
+209	140
+209	132
+210	137
+210	154
+210	156
+210	150
+211	142
+211	146
+211	148
+211	156
+212	152
+212	130
+213	144
+213	142
+214	154
+214	135
+215	130
+215	146
+216	442
+217	384
+218	439
+219	497
+220	481
+220	490
+220	492
+246	384
+246	490
+246	444
+246	447
+252	497
+252	442
+252	379
+252	444
+253	374
+253	447
+254	441
+254	379
+256	497
+256	492
+258	441
+258	442
+258	492
+258	381
+259	441
+259	442
+259	492
+259	381
+232	154
+232	142
+234	130
+234	156
+240	152
+240	140
+240	146
+240	156
+261	376
+261	379
+261	493
+261	374
+263	521
+263	522
+263	43
+263	50
+263	55
+263	511
+266	4
+266	5
+266	6
+266	523
+266	524
+266	525
+266	526
+266	527
+266	528
+266	529
+266	530
+266	531
+266	532
+266	533
+266	534
+266	535
+266	536
+266	537
+266	538
+266	539
+266	59
+266	60
+266	63
+266	64
+267	540
+267	542
+267	544
+267	546
+267	36
+267	548
+267	550
+267	42
+267	44
+267	553
+267	52
+268	495
+270	376
+270	497
+270	441
+270	447
+274	377
+274	490
+274	379
+274	381
+275	374
+276	493
+277	497
+278	492
+278	374
+278	442
+278	447
+279	492
+279	439
+279	379
+280	491
+280	375
+280	380
+281	491
+281	438
+281	440
+281	443
+281	445
+281	383
+282	480
+282	490
+282	405
+282	379
+283	446
+283	404
+283	411
+284	444
+284	402
+284	379
+285	419
+285	404
+285	409
+286	387
+286	395
+286	442
+286	474
+287	388
+287	396
+287	443
+287	489
+287	382
+292	449
+292	484
+292	486
+292	488
+292	425
+292	429
+292	463
+292	464
+292	438
+292	375
+292	473
+292	378
+292	476
+301	54
+301	55
+309	56
+311	49
+311	44
+314	57
+314	51
+315	520
+315	43
+315	55
+213	156
+214	140
+215	150
+216	374
+217	441
+218	379
+219	416
+219	493
+221	376
+221	381
+222	384
+222	379
+223	497
+223	490
+224	497
+224	490
+225	441
+225	439
+226	376
+226	444
+227	492
+227	493
+228	442
+228	447
+229	377
+229	374
+230	381
+230	495
+247	384
+247	490
+247	444
+247	447
+255	377
+255	442
+257	490
+257	493
+260	377
+236	140
+236	148
+236	150
+241	146
+241	132
+241	154
+264	509
+264	2
+264	504
+264	500
+264	501
+264	502
+264	503
+264	62
+264	505
+264	506
+264	507
+264	508
+264	61
+264	510
+267	541
+267	543
+267	545
+267	35
+267	37
+267	547
+267	552
+267	549
+267	551
+267	48
+267	54
+268	416
+268	379
+268	447
+271	376
+271	497
+271	441
+271	447
+273	376
+273	442
+273	490
+273	439
+275	444
+275	439
+276	442
+277	381
+277	374
+278	384
+278	441
+278	493
+278	497
+278	439
+278	377
+278	379
+278	381
+279	384
+279	490
+279	493
+279	495
+279	376
+279	377
+279	444
+279	381
+280	382
+280	496
+280	438
+280	378
+280	443
+280	446
+280	383
+281	496
+281	375
+281	378
+281	380
+281	446
+282	416
+282	418
+282	400
+282	401
+282	407
+282	412
+282	444
+282	415
+283	419
+283	403
+283	409
+283	445
+284	416
+284	418
+284	420
+284	400
+284	405
+284	410
+284	412
+285	417
+285	399
+285	413
+285	445
+286	481
+286	391
+286	461
+286	376
+286	447
+287	386
+287	390
+287	394
+287	421
+287	440
+287	460
+287	482
+287	491
+287	380
+287	383
+288	384
+288	481
+288	389
+288	395
+288	442
+288	497
+288	474
+288	381
+289	482
+289	421
+289	491
+289	475
+289	443
+289	383
+290	425
+290	427
+290	429
+290	438
+290	449
+290	451
+290	453
+290	454
+290	456
+290	459
+290	463
+290	464
+290	466
+290	467
+290	469
+290	473
+290	476
+290	479
+290	484
+290	486
+290	488
+290	494
+290	375
+290	378
+294	45
+294	43
+294	53
+294	46
+295	53
+295	43
+295	45
+295	46
+297	520
+297	44
+297	47
+299	56
+299	50
+302	13
+302	14
+303	59
+303	509
+303	15
+305	26
+305	62
+307	25
+307	555
+307	534
+307	63
+308	54
+309	53
+316	520
+316	43
+316	55
+\.
+
+
+--
+-- Data for Name: races; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+COPY public.races (id, name, date, gender, temperature, weather, conditions, scoring_type, host_school_id, location_id, course_id, user_id, group_id, status, is_jv) FROM stdin;
+4	Eastern Independent League (EIL) Championship	2019-11-01 14:00:00	boys	57	Sunny	normal	invitational	\N	1	1	1	1	complete	f
+5	Independent School League (ISL) Championship	2019-11-01 14:00:00	boys	57	Sunny	normal	invitational	\N	3	3	1	2	complete	f
+6	Independent School League (ISL) Championship	2019-11-01 14:00:00	boys	57	Sunny	normal	invitational	\N	3	3	1	2	complete	t
+8	Independent School League (ISL) Championship	2019-11-01 14:00:00	girls	57	Sunny	normal	invitational	\N	3	3	1	2	complete	t
+26	Independent School League (ISL) Championship	2021-11-05 14:00:00	girls	50	Sunny	normal	invitational	\N	10	10	1	4	complete	f
+69	Lawrence at St. Mark's	2022-09-17 16:00:00	girls	\N	\N	\N	dual	\N	3	3	1	33	complete	f
+21	Independent School League (ISL) Championship	2021-11-05 14:00:00	girls	50	Sunny	normal	invitational	\N	10	10	1	4	complete	t
+41	BH at Milton	2022-09-17 16:00:00	boys	\N	\N	\N	dual	18	9	9	1	12	complete	t
+16	Independent School League (ISL) Championship	2021-11-05 14:00:00	boys	50	Sunny	normal	invitational	\N	10	10	1	4	complete	f
+11	Independent School League (ISL) Championship	2021-11-05 14:00:00	boys	50	Sunny	normal	invitational	\N	10	10	1	4	complete	t
+25	NEPSTA Division I Championship	2022-11-12 14:00:00	girls	50	Sunny	normal	invitational	\N	18	18	1	9	complete	f
+24	NEPSTA Division I Championship	2022-11-12 14:00:00	girls	50	Sunny	normal	invitational	\N	18	18	1	9	complete	t
+29	NEPSTA Division II Championship	2022-11-12 14:00:00	girls	50	Sunny	normal	invitational	\N	3	3	1	10	complete	t
+28	NEPSTA Division II Championship	2022-11-12 14:00:00	girls	50	Sunny	normal	invitational	\N	3	3	1	10	complete	f
+27	NEPSTA Division II Championship	2021-11-13 14:00:00	girls	50	Sunny	normal	invitational	\N	21	21	1	6	complete	t
+15	NEPSTA Division I Championship	2022-11-12 14:00:00	boys	50	Sunny	normal	invitational	\N	18	18	1	9	complete	t
+13	NEPSTA Division I Championship	2022-11-12 14:00:00	boys	50	Sunny	normal	invitational	\N	18	18	1	9	complete	f
+42	BH at Milton	2022-09-17 16:00:00	boys	\N	\N	\N	dual	18	9	9	1	13	complete	f
+38	NEPSTA Division III Championship	2022-11-12 14:00:00	girls	50	Sunny	normal	invitational	\N	19	19	1	11	complete	f
+19	NEPSTA Division II Championship	2022-11-12 14:00:00	boys	50	Sunny	normal	invitational	\N	3	3	1	10	complete	t
+37	NEPSTA Division III Championship	2021-11-13 14:00:00	girls	50	Sunny	normal	invitational	\N	1	1	1	7	complete	t
+18	NEPSTA Division II Championship	2022-11-12 14:00:00	boys	50	Sunny	normal	invitational	\N	3	3	1	10	complete	f
+36	NEPSTA Division III Championship	2022-11-12 14:00:00	girls	50	Sunny	normal	invitational	\N	19	19	1	11	complete	t
+34	NEPSTA Division III Championship	2022-11-12 14:00:00	boys	50	Sunny	normal	invitational	\N	19	19	1	11	complete	t
+33	NEPSTA Division III Championship	2022-11-12 14:00:00	boys	50	Sunny	normal	invitational	\N	19	19	1	11	complete	f
+40	Eastern Independent League (EIL) Championship	2022-11-04 14:00:00	boys	50	Sunny	normal	invitational	\N	5	5	1	8	complete	f
+39	Eastern Independent League (EIL) Championship	2022-11-04 14:00:00	girls	50	Sunny	normal	invitational	\N	5	5	1	8	complete	f
+23	NEPSTA Division I Championship	2021-11-13 14:00:00	girls	50	Sunny	normal	invitational	\N	20	20	1	5	complete	t
+22	NEPSTA Division I Championship	2021-11-13 14:00:00	girls	50	Sunny	normal	invitational	\N	20	20	1	5	complete	f
+14	NEPSTA Division I Championship	2021-11-13 14:00:00	boys	50	Sunny	normal	invitational	\N	20	20	1	5	complete	t
+12	NEPSTA Division I Championship	2021-11-13 14:00:00	boys	50	Sunny	normal	invitational	\N	20	20	1	5	complete	f
+30	NEPSTA Division II Championship	2021-11-13 14:00:00	girls	50	Sunny	normal	invitational	\N	21	21	1	6	complete	f
+20	NEPSTA Division II Championship	2021-11-13 14:00:00	boys	50	Sunny	normal	invitational	\N	21	21	1	6	complete	f
+17	NEPSTA Division II Championship	2021-11-13 14:00:00	boys	50	Sunny	normal	invitational	\N	21	21	1	6	complete	t
+35	NEPSTA Division III Championship	2021-11-13 14:00:00	girls	50	Sunny	normal	invitational	\N	1	1	1	7	complete	f
+32	NEPSTA Division III Championship	2021-11-13 14:00:00	boys	50	Sunny	normal	invitational	\N	1	1	1	7	complete	t
+31	NEPSTA Division III Championship	2021-11-13 14:00:00	boys	50	Sunny	normal	invitational	\N	1	1	1	7	complete	f
+70	Eastern Independent League (EIL) Championship	2021-11-05 16:00:00	girls	\N	\N	\N	invitational	\N	5	5	1	34	complete	f
+71	Eastern Independent League (EIL) Championship	2021-11-05 16:00:00	boys	\N	\N	\N	invitational	\N	5	5	1	35	complete	f
+47	Independent School League (ISL) Championship	2022-11-04 16:00:00	girls	\N	\N	\N	invitational	19	10	10	1	18	complete	f
+234	Governor's at Nobles	2021-10-16 16:00:00	girls	\N	\N	\N	dual	\N	2	2	1	191	complete	f
+43	Independent School League (ISL) Championship	2022-11-04 16:00:00	boys	\N	\N	\N	invitational	19	10	10	1	14	complete	f
+48	Lawrence at St. Mark's	2022-09-17 16:00:00	boys	\N	\N	\N	dual	\N	3	3	1	19	complete	f
+50	Thayer at Brooks	2022-09-17 16:00:00	boys	\N	\N	\N	dual	\N	11	11	1	20	complete	f
+52	Austin, BB&N at Middlesex	2022-09-17 16:00:00	boys	\N	\N	\N	dual	\N	12	12	1	21	complete	f
+54	Rivers at Governors	2022-09-17 16:00:00	boys	\N	\N	\N	dual	\N	13	13	1	22	complete	f
+55	St. George's at Nobles	2022-09-17 16:00:00	boys	\N	\N	\N	dual	\N	2	2	1	23	complete	f
+238	Milton at Groton	2021-10-23 16:00:00	girls	\N	\N	\N	dual	\N	15	15	1	195	complete	f
+248	Middlesex, St. George's, Thayer at Latin	2023-09-30 16:00:00	boys	\N	\N	\N	dual	\N	16	16	1	205	complete	f
+94	Governor's, Nobles, Tabor at BB&N	2022-10-08 16:00:00	boys	\N	\N	\N	dual	\N	23	23	1	56	complete	t
+57	SPS, Sebs at Groton	2022-09-17 16:00:00	boys	\N	\N	\N	dual	\N	15	15	1	24	complete	f
+95	BH, Lawrence, Thayer at Groton	2022-10-08 16:00:00	boys	\N	\N	\N	dual	\N	15	15	1	57	complete	f
+96	BH, Lawrence at Groton	2022-10-08 16:00:00	boys	\N	\N	\N	dual	\N	15	15	1	58	complete	t
+62	Winsor at Milton	2022-09-17 16:00:00	girls	\N	\N	\N	dual	\N	9	9	1	27	complete	f
+63	Thayer at Brooks	2022-09-17 16:00:00	girls	\N	\N	\N	dual	\N	11	11	1	28	complete	f
+64	Rivers at Governor's	2022-09-17 16:00:00	girls	\N	\N	\N	dual	\N	13	13	1	29	complete	f
+65	Austin, BB&N at Middlesex	2022-09-17 16:00:00	girls	\N	\N	\N	dual	\N	12	12	1	30	complete	f
+66	St. George's at Nobles	2022-09-17 16:00:00	girls	\N	\N	\N	dual	\N	2	2	1	31	complete	f
+68	St. Mark's at Lawrence	2022-09-17 16:00:00	girls	\N	\N	\N	dual	\N	17	17	1	32	complete	f
+1	Eastern Independent League (EIL) Championship	2019-11-01 14:00:00	girls	57	Sunny	normal	invitational	\N	1	1	1	1	complete	f
+7	Independent School League (ISL) Championship	2019-11-01 14:00:00	girls	57	Sunny	normal	invitational	\N	3	3	1	2	complete	f
+130	St. George's at BH	2022-10-22 16:00:00	boys	\N	\N	\N	dual	\N	24	29	1	88	complete	f
+112	Nobles at BH	2022-10-15 16:00:00	boys	\N	\N	\N	dual	\N	24	24	1	72	complete	t
+45	Independent School League (ISL) Championship	2022-11-04 16:00:00	boys	\N	\N	\N	invitational	19	10	10	1	16	complete	t
+46	Independent School League (ISL) Championship	2022-11-04 16:00:00	girls	\N	\N	\N	invitational	19	10	10	1	17	complete	t
+61	Winsor at Milton	2022-09-17 16:00:00	girls	\N	\N	\N	dual	\N	9	9	1	26	complete	t
+72	Nobles, Sebs, Thayer at St. Mark's	2022-09-24 16:00:00	boys	\N	\N	\N	dual	\N	3	3	1	36	complete	f
+73	BB&N, Brooks, Lawrence at Milton	2022-09-24 16:00:00	boys	\N	\N	\N	dual	\N	9	9	1	37	complete	f
+74	BH, Governor's, Middlesex at Latin	2022-09-24 16:00:00	boys	\N	\N	\N	dual	\N	16	16	1	38	complete	f
+120	Groton at Middlesex	2022-10-15 16:00:00	girls	\N	\N	\N	dual	\N	12	12	1	78	complete	f
+76	Groton, Rivers, Tabor at St. George's	2022-09-24 16:00:00	boys	\N	\N	\N	dual	\N	22	22	1	39	complete	f
+77	Brooks, BB&N at Milton	2022-09-24 16:00:00	girls	\N	\N	\N	dual	\N	9	9	1	40	complete	f
+78	Thayer, Nobles at St. Mark's	2022-09-24 16:00:00	girls	\N	\N	\N	dual	\N	3	3	1	41	complete	f
+79	Nobles, Thayer at St. Mark's	2022-09-24 16:00:00	girls	\N	\N	\N	dual	\N	3	3	1	42	complete	t
+80	Governor's, Middlesex	2022-09-24 16:00:00	girls	\N	\N	\N	dual	\N	16	16	1	43	complete	f
+81	Groton, Rivers, Tabor at St. George's	2022-09-24 16:00:00	girls	\N	\N	\N	dual	\N	22	22	1	44	complete	f
+82	BH, Sebs, Tabor at Brooks	2022-10-01 16:00:00	boys	\N	\N	\N	dual	\N	11	11	1	45	complete	f
+83	Lawrence, Middlesex, Rivers at Nobles	2022-10-01 16:00:00	boys	\N	\N	\N	dual	\N	2	2	1	46	complete	f
+84	Governor's, Groton, Milton at St. Mark's	2022-10-01 16:00:00	boys	\N	\N	\N	dual	\N	3	3	1	47	complete	f
+85	BB&N, Latin, Thayer at St. George's	2022-10-01 16:00:00	boys	\N	\N	\N	dual	\N	22	22	1	48	complete	f
+86	BH, Tabor, Sebs at Brooks	2022-10-01 16:00:00	boys	\N	\N	\N	dual	\N	11	11	1	49	complete	t
+87	Governor's, Groton, Milton at St. Mark's	2022-10-01 16:00:00	girls	\N	\N	\N	dual	\N	3	3	1	50	complete	f
+88	Tabor at Brooks	2022-10-01 16:00:00	girls	\N	\N	\N	dual	\N	11	11	1	51	complete	f
+89	Lawrence, Middlesex, Rivers at Nobles	2022-10-01 16:00:00	girls	\N	\N	\N	dual	\N	2	2	1	52	complete	f
+90	BB&N, Thayer at St. George's	2022-10-01 16:00:00	girls	\N	\N	\N	dual	\N	22	22	1	53	complete	f
+91	St. George's, Middlesex, St. Mark's at Brooks	2022-10-08 16:00:00	boys	\N	\N	\N	dual	\N	11	11	1	54	complete	f
+123	D-S at BB&N	2022-10-15 16:00:00	girls	\N	\N	\N	dual	\N	23	23	1	81	complete	f
+114	Rivers at Thayer	2022-10-15 16:00:00	boys	\N	\N	\N	dual	\N	25	25	1	73	complete	f
+93	Governor's, Nobles, Tabor at BB&N	2022-10-08 16:00:00	boys	\N	\N	\N	dual	\N	23	23	1	55	complete	f
+105	St. George's, Middlesex, St. Mark's	2022-10-08 16:00:00	girls	\N	\N	\N	dual	\N	11	11	1	66	complete	t
+98	Rivers, Latin, Milton at Sebs	2022-10-08 16:00:00	boys	\N	\N	\N	dual	\N	14	14	1	59	complete	f
+99	Milton, Rivers, Latin at Sebs	2022-10-08 16:00:00	boys	\N	\N	\N	dual	\N	14	14	1	60	complete	t
+100	Governor's, Nobles, Tabor at BB&N	2022-10-08 16:00:00	girls	\N	\N	\N	dual	\N	23	23	1	61	complete	f
+101	Governor's, Nobles, Tabor at BB&N	2022-10-08 16:00:00	girls	\N	\N	\N	dual	\N	23	23	1	62	complete	t
+102	Lawrence, Thayer at Groton	2022-10-08 16:00:00	girls	\N	\N	\N	dual	\N	15	15	1	63	complete	f
+103	Rivers at Milton	2022-10-08 16:00:00	girls	\N	\N	\N	dual	\N	9	9	1	64	complete	f
+104	St. George's, Middlesex, St. Mark's at Brooks	2022-10-08 16:00:00	girls	\N	\N	\N	dual	\N	11	11	1	65	complete	f
+106	Brooks, WA at Governor's	2022-10-15 16:00:00	boys	\N	\N	\N	dual	\N	13	13	1	67	complete	f
+107	St. Mark's at Latin	2022-10-15 16:00:00	boys	\N	\N	\N	dual	\N	16	16	1	68	complete	f
+108	Milton at St. George's	2022-10-15 16:00:00	boys	\N	\N	\N	dual	\N	22	22	1	69	complete	f
+109	Groton at Middlesex	2022-10-15 16:00:00	boys	\N	\N	\N	dual	\N	12	12	1	70	complete	f
+121	Rivers at Thayer	2022-10-15 16:00:00	girls	\N	\N	\N	dual	\N	25	25	1	79	complete	f
+111	Nobles at BH	2022-10-15 16:00:00	boys	\N	\N	\N	dual	\N	24	24	1	71	complete	f
+124	Thayer at Governor's	2022-10-22 16:00:00	boys	\N	\N	\N	dual	\N	13	13	1	82	complete	f
+116	Lawrence at Tabor	2022-10-15 16:00:00	boys	\N	\N	\N	dual	\N	26	26	1	74	complete	f
+117	Sebs, D-S at BB&N	2022-10-15 16:00:00	boys	\N	\N	\N	dual	\N	23	23	1	75	complete	f
+118	Brooks, WA at Governor's	2022-10-15 16:00:00	girls	\N	\N	\N	dual	\N	13	13	1	76	complete	f
+119	Milton at St. George's	2022-10-15 16:00:00	girls	\N	\N	\N	dual	\N	22	22	1	77	complete	f
+122	Lawrence at Tabor	2022-10-15 16:00:00	girls	\N	\N	\N	dual	\N	26	26	1	80	complete	f
+125	Sebs at Middlesex	2022-10-22 16:00:00	boys	\N	\N	\N	dual	\N	12	12	1	83	complete	f
+126	Rivers at Brooks	2022-10-22 16:00:00	boys	\N	\N	\N	dual	\N	11	11	1	84	complete	f
+127	BB&N at Groton	2022-10-22 16:00:00	boys	\N	\N	\N	dual	\N	15	15	1	85	complete	f
+128	D-S, Latin at Lawrence	2022-10-22 16:00:00	boys	\N	\N	\N	dual	\N	17	17	1	86	complete	f
+129	Nobles at Milton	2022-10-22 16:00:00	boys	\N	\N	\N	dual	\N	9	9	1	87	complete	f
+131	Tabor at St. Mark's	2022-10-22 16:00:00	boys	\N	\N	\N	dual	\N	3	3	1	89	complete	f
+132	Nobles at Milton	2022-10-22 16:00:00	girls	\N	\N	\N	dual	\N	9	9	1	90	complete	f
+134	Thayer at Governor's	2022-10-22 16:00:00	girls	\N	\N	\N	dual	\N	13	13	1	92	complete	f
+136	Rivers at Brooks	2022-10-22 16:00:00	girls	\N	\N	\N	dual	\N	11	11	1	94	complete	f
+138	BB&N at Groton	2022-10-22 16:00:00	girls	\N	\N	\N	dual	\N	15	15	1	96	complete	f
+235	Middlesex at Groton	2021-10-15 16:00:00	girls	\N	\N	\N	dual	\N	15	15	1	192	complete	f
+239	Nobles, St. George's, St. Mark's at Brooks	2021-10-23 16:00:00	girls	\N	\N	\N	dual	\N	11	11	1	196	complete	f
+242	Brooks, Tabor, Thayer at Groton	2021-10-30 16:00:00	girls	\N	\N	\N	dual	\N	15	15	1	199	complete	f
+244	Lawrence, Milton, Rivers at Nobles	2021-10-30 16:00:00	girls	\N	\N	\N	dual	\N	2	2	1	201	complete	f
+245	D-S, Governor's at St. Mark's	2021-10-30 16:00:00	girls	\N	\N	\N	dual	\N	3	3	1	202	complete	f
+249	Tabor at Milton	2023-10-14 16:00:00	boys	\N	\N	\N	dual	\N	9	9	1	206	complete	f
+255	Governor's at St. George's	2023-10-14 16:00:00	boys	\N	\N	\N	dual	\N	22	22	1	212	complete	f
+257	BH at Sebs	2023-10-13 16:00:00	boys	\N	\N	\N	dual	\N	14	14	1	214	complete	f
+260	Brooks, Groton, Lawrence at St. George's	2023-10-07 16:00:00	boys	\N	\N	\N	dual	\N	22	22	1	217	complete	f
+243	Brooks, Tabor, Thayer at Groton	2021-10-30 16:00:00	girls	\N	\N	\N	dual	\N	15	15	1	200	complete	t
+263	NEPSTA Division I Championship	2019-11-09 16:00:00	boys	\N	\N	\N	invitational	\N	29	31	1	220	complete	f
+266	NEPSTA Division III Championship	2019-11-09 16:00:00	girls	\N	\N	\N	invitational	\N	30	32	1	223	complete	f
+269	Lawrence, Nobles, St. Mark's at Middlesex	2023-10-28 16:00:00	boys	\N	\N	\N	dual	\N	12	12	1	226	complete	t
+272	BH, Brooks, Latin at Governor's	2023-10-28 16:00:00	boys	\N	\N	\N	dual	\N	13	13	1	229	complete	f
+276	Lawrence, Thayer, Sebs at Governor's	2023-10-21 16:00:00	boys	\N	\N	\N	dual	\N	13	13	1	233	complete	f
+280	Independent School League (ISL) Championship	2023-11-03 16:00:00	girls	\N	\N	\N	invitational	\N	10	10	1	237	complete	f
+282	NEPSTA Division I Championship	2023-11-11 16:00:00	boys	\N	\N	\N	invitational	\N	31	33	1	239	complete	f
+291	NEPSTA Division III Championship	2023-11-11 16:00:00	boys	\N	\N	\N	invitational	\N	32	34	1	248	complete	f
+293	NEPSTA Division III Championship	2023-11-11 16:00:00	boys	\N	\N	\N	invitational	\N	32	34	1	250	complete	t
+296	Lawrence at Middlesex	2019-09-14 16:00:00	boys	\N	\N	\N	dual	\N	12	12	1	253	complete	f
+298	Thayer at Nobles	2019-09-14 16:00:00	boys	\N	\N	\N	dual	\N	2	2	1	255	complete	f
+300	D-S, Pomfret, Rivers at Tabor	2019-09-14 16:00:00	boys	\N	\N	\N	dual	\N	26	26	1	257	complete	f
+304	Lawrence at Middlesex	2019-09-14 16:00:00	girls	\N	\N	\N	dual	\N	12	12	1	261	complete	f
+306	St. George's at St. Mark's	2019-09-14 16:00:00	girls	\N	\N	\N	dual	\N	3	3	1	263	complete	f
+309	Sebs at Latin	2019-09-21 16:00:00	boys	\N	\N	\N	dual	\N	16	16	1	266	complete	f
+316	BH, SPS at St. Mark's	2019-09-21 16:00:00	boys	\N	\N	\N	dual	\N	3	3	1	273	complete	t
+247	BH, Nobles, Thayer at Milton	2023-10-07 16:00:00	boys	\N	\N	\N	dual	\N	9	9	1	204	complete	t
+133	D-S at Lawrence	2022-10-22 16:00:00	girls	\N	\N	\N	dual	\N	17	17	1	91	complete	f
+135	Winsor at Middlesex	2022-10-22 16:00:00	girls	\N	\N	\N	dual	\N	12	12	1	93	complete	f
+137	Tabor at St. Mark's	2022-10-22 16:00:00	girls	\N	\N	\N	dual	\N	3	3	1	95	complete	f
+139	BH, Governor's, Middlesex at Latin	2022-09-24 16:00:00	boys	\N	\N	\N	dual	\N	16	16	1	97	complete	t
+250	Brooks, Sebs, Tabor at Nobles	2023-09-30 16:00:00	boys	\N	\N	\N	dual	\N	2	2	1	207	complete	f
+185	BH, Tabor, Sebs at Nobles	2021-10-02 16:00:00	boys	\N	\N	\N	dual	\N	2	2	1	142	complete	t
+188	BB&N, D-S, Nobles, Sebs, Thayer at Latin	2021-10-08 16:00:00	boys	\N	\N	\N	dual	\N	16	16	1	145	complete	f
+194	Middlesex at Groton	2021-10-15 16:00:00	boys	\N	\N	\N	dual	\N	15	15	1	151	complete	f
+202	BB&N, Tabor,  Lawrence at Governor's	2021-10-23 16:00:00	boys	\N	\N	\N	dual	\N	13	13	1	159	complete	f
+172	Governor's, Lawrence at Thayer	2021-09-25 16:00:00	girls	\N	\N	\N	dual	\N	25	25	1	129	complete	f
+173	Milton at BB&N	2021-09-25 16:00:00	boys	\N	\N	\N	dual	\N	23	23	1	130	complete	f
+174	Governor's, Lawrence at Thayer	2021-09-25 16:00:00	boys	\N	\N	\N	dual	\N	25	25	1	131	complete	f
+140	Middlesex, Milton, Thayer at Tabor	2022-10-29 16:00:00	boys	\N	\N	\N	dual	\N	26	26	1	98	complete	f
+141	Middlesex, Milton at Tabor	2022-10-29 16:00:00	boys	\N	\N	\N	dual	\N	26	26	1	99	complete	t
+142	Brooks, Groton, Nobles at Latin	2022-10-29 16:00:00	boys	\N	\N	\N	dual	\N	16	16	1	100	complete	f
+143	Brooks, Groton, Nobles at Latin	2022-10-29 16:00:00	boys	\N	\N	\N	dual	\N	16	16	1	101	complete	t
+175	Middlesex at Nobles	2021-09-25 16:00:00	boys	\N	\N	\N	dual	\N	2	2	1	132	complete	f
+176	Rivers at Latin	2021-09-25 16:00:00	boys	\N	\N	\N	dual	\N	16	16	1	133	complete	f
+145	BH, D-S, BB&N, St. Mark's at Rivers	2022-10-28 16:00:00	boys	\N	\N	\N	dual	\N	27	27	1	102	complete	f
+146	BH, D-S, BB&N, St. Mark's at Rivers	2022-10-28 16:00:00	boys	\N	\N	\N	dual	\N	27	27	1	103	complete	t
+147	Governor's, Sebs, St. George's at Lawrence	2022-10-29 16:00:00	boys	\N	\N	\N	dual	\N	17	17	1	104	complete	f
+148	Middlesex, Milton, Thayer at Tabor	2022-10-29 16:00:00	girls	\N	\N	\N	dual	\N	26	26	1	105	complete	f
+149	Middlesex, Milton, Thayer at Tabor	2022-10-29 16:00:00	girls	\N	\N	\N	dual	\N	26	26	1	106	complete	t
+150	Brooks, Groton, Nobles at Latin	2022-10-29 16:00:00	girls	\N	\N	\N	dual	\N	16	16	1	107	complete	f
+151	D-S, BB&N, St. Mark's at Rivers	2022-10-28 16:00:00	girls	\N	\N	\N	dual	\N	27	27	1	108	complete	f
+152	Governor's, St. George's at Lawrence	2022-10-29 16:00:00	girls	\N	\N	\N	dual	\N	17	17	1	109	complete	f
+153	BH at Thayer	2021-09-18 16:00:00	boys	\N	\N	\N	dual	\N	25	25	1	110	complete	f
+154	Sebs at Milton	2021-09-18 16:00:00	boys	\N	\N	\N	dual	\N	9	9	1	111	complete	f
+155	Governor's at Middlesex	2021-09-18 16:00:00	boys	\N	\N	\N	dual	\N	12	12	1	112	complete	f
+157	Nobles at Groton	2021-09-18 16:00:00	boys	\N	\N	\N	dual	\N	15	15	1	114	complete	f
+158	Nobles at Groton	2021-09-18 16:00:00	boys	\N	\N	\N	dual	\N	15	15	1	115	complete	t
+159	St. Mark's, SPS at Lawrence	2021-09-18 16:00:00	boys	\N	\N	\N	dual	\N	17	17	1	116	complete	f
+156	Brooks at BB&N	2021-09-18 16:00:00	boys	\N	\N	\N	dual	\N	23	23	1	113	complete	f
+160	St. George's at Latin\n	2021-09-18 16:00:00	boys	\N	\N	\N	dual	\N	16	16	1	117	complete	f
+161	Pomfret, Rivers at Tabor	2021-09-18 16:00:00	boys	\N	\N	\N	dual	\N	26	26	1	118	complete	f
+60	Latin, D-S at Tabor	2022-09-17 16:00:00	boys	\N	\N	\N	dual	\N	26	26	1	25	complete	f
+163	Governor's at Middlesex	2021-09-18 16:00:00	girls	\N	\N	\N	dual	\N	12	12	1	120	complete	f
+164	Nobles at Groton	2021-09-18 16:00:00	girls	\N	\N	\N	dual	\N	15	15	1	121	complete	f
+162	Milton at BB&N	2021-09-25 16:00:00	girls	\N	\N	\N	dual	\N	23	23	1	119	complete	f
+165	Brooks at BB&N	2021-09-18 16:00:00	girls	\N	\N	\N	dual	\N	23	23	1	122	complete	f
+166	St. Mark's, SPS at Lawrence	2021-09-18 16:00:00	girls	\N	\N	\N	dual	\N	17	17	1	123	complete	f
+167	Winsor at Milton	2021-09-18 16:00:00	girls	\N	\N	\N	dual	\N	9	9	1	124	complete	f
+168	Pomfret, Rivers, Thayer at Tabor	2021-09-18 16:00:00	girls	\N	\N	\N	dual	\N	26	26	1	125	complete	f
+169	Middlesex at Nobles	2021-09-25 16:00:00	girls	\N	\N	\N	dual	\N	2	2	1	126	complete	f
+170	Brooks, Rivers at St. Mark's	2021-09-25 16:00:00	girls	\N	\N	\N	dual	\N	3	3	1	127	complete	f
+171	PA, Tabor at St. George's	2021-09-25 16:00:00	girls	\N	\N	\N	dual	\N	22	22	1	128	complete	f
+179	Sebs at Brooks	2021-09-25 16:00:00	boys	\N	\N	\N	dual	\N	11	11	1	136	complete	f
+180	PA, Tabor at St. George's	2021-09-25 16:00:00	boys	\N	\N	\N	dual	\N	22	22	1	137	complete	f
+181	Lawrence, Middlesex, Latin at Brooks	2021-10-02 16:00:00	boys	\N	\N	\N	dual	\N	11	11	1	138	complete	f
+182	BB&N, Groton, Rivers at St. Mark's	2021-10-02 16:00:00	boys	\N	\N	\N	dual	\N	3	3	1	139	complete	f
+183	Governor's, St. George's, Thayer at Milton	2021-10-02 16:00:00	boys	\N	\N	\N	dual	\N	9	9	1	140	complete	f
+186	BH, Brooks, Rivers at Governor's	2021-10-09 16:00:00	boys	\N	\N	\N	dual	\N	13	13	1	143	complete	f
+187	BH, Brooks, Rivers at Governor's	2021-10-09 16:00:00	boys	\N	\N	\N	dual	\N	13	13	1	144	complete	t
+201	Latin at Tabor	2021-10-16 16:00:00	boys	\N	\N	\N	dual	\N	26	26	1	158	complete	f
+189	Groton, Lawrence at St. George's	2021-10-09 16:00:00	boys	\N	\N	\N	dual	\N	22	22	1	146	complete	f
+190	Middlesex, Milton, St. Mark's at Tabor	2021-10-09 16:00:00	boys	\N	\N	\N	dual	\N	26	26	1	147	complete	f
+191	Thayer at St. Mark's	2021-10-16 16:00:00	boys	\N	\N	\N	dual	\N	3	3	1	148	complete	f
+192	St. George's at Rivers	2021-10-16 16:00:00	boys	\N	\N	\N	dual	\N	27	27	1	149	complete	f
+195	BH at Lawrence	2021-10-16 16:00:00	boys	\N	\N	\N	dual	\N	17	17	1	152	complete	f
+193	Brooks, WA at Milton	2021-10-16 16:00:00	boys	\N	\N	\N	dual	\N	9	9	1	150	complete	f
+196	Governor's at Nobles	2021-10-16 16:00:00	boys	\N	\N	\N	dual	\N	2	2	1	153	complete	f
+198	Rivers, Thayer, Sebs at Middlesex	2021-10-23 16:00:00	boys	\N	\N	\N	dual	\N	12	12	1	155	complete	f
+199	Nobles, St. George's, St. Mark's at Brooks	2021-10-23 16:00:00	boys	\N	\N	\N	dual	\N	11	11	1	156	complete	f
+200	BH, Milton, Latin at Groton	2021-10-23 16:00:00	boys	\N	\N	\N	dual	\N	15	15	1	157	complete	f
+203	BH, Milton, Latin at Groton	2021-10-23 16:00:00	boys	\N	\N	\N	dual	\N	15	15	1	160	complete	t
+204	D-S, Governor's, Latin, Sebs at St. Mark's	2021-10-30 16:00:00	boys	\N	\N	\N	dual	\N	3	3	1	161	complete	t
+205	D-S, Governor's, Latin, Sebs at St. Mark's	2021-10-30 16:00:00	boys	\N	\N	\N	dual	\N	3	3	1	162	complete	f
+207	Brooks, Tabor, Thayer at Groton	2021-10-30 16:00:00	boys	\N	\N	\N	dual	\N	15	15	1	164	complete	f
+208	Lawrence, Milton, Rivers at Nobles	2021-10-30 16:00:00	boys	\N	\N	\N	dual	\N	2	2	1	165	complete	f
+251	Thayer at Brooks	2023-10-14 16:00:00	boys	\N	\N	\N	dual	\N	11	11	1	208	complete	f
+2	NEPSTA Division II Championship	2019-11-09 14:00:00	girls	50	Sunny	normal	invitational	\N	2	30	1	3	complete	f
+231	Middlesex, Milton, St. Mark's at Tabor	2021-10-09 16:00:00	girls	\N	\N	\N	dual	\N	26	26	1	188	complete	f
+3	NEPSTA Division II Championship	2019-11-09 14:00:00	girls	50	Sunny	normal	invitational	\N	2	30	1	3	complete	t
+9	NEPSTA Division II Championship	2019-11-09 14:00:00	boys	50	Sunny	normal	invitational	\N	2	30	1	3	complete	f
+10	NEPSTA Division II Championship	2019-11-09 14:00:00	boys	50	Sunny	normal	invitational	\N	2	30	1	3	complete	t
+184	BH, Tabor, Sebs at Nobles	2021-10-02 16:00:00	boys	\N	\N	\N	dual	\N	2	2	1	141	complete	f
+233	Brooks, WA at Milton	2021-10-16 16:00:00	girls	\N	\N	\N	dual	\N	9	9	1	190	complete	f
+236	Thayer, Lawrence at St. Mark's	2021-10-16 16:00:00	girls	\N	\N	\N	dual	\N	3	3	1	193	complete	f
+240	BB&N, Tabor, Lawrence at Governor's	2021-10-23 16:00:00	girls	\N	\N	\N	dual	\N	13	13	1	197	complete	f
+264	NEPSTA Division I Championship	2019-11-09 16:00:00	girls	\N	\N	\N	invitational	\N	29	31	1	221	complete	t
+177	St. Mark's at BH	2021-09-25 16:00:00	boys	\N	\N	\N	dual	\N	24	29	1	134	complete	f
+178	St. Mark's at BH	2021-09-25 16:00:00	boys	\N	\N	\N	dual	\N	24	29	1	135	complete	t
+267	NEPSTA Division III Championship	2019-11-09 16:00:00	boys	\N	\N	\N	invitational	\N	30	32	1	224	complete	f
+270	Groton, Nobles, Latin at BB&N	2023-10-21 16:00:00	boys	\N	\N	\N	dual	\N	23	23	1	227	complete	f
+274	BH, St. George's, St. Mark's at Tabor	2023-10-21 16:00:00	boys	\N	\N	\N	dual	\N	26	26	1	231	complete	f
+279	Independent School League (ISL) Championship	2023-11-03 16:00:00	boys	\N	\N	\N	invitational	\N	10	10	1	236	complete	t
+283	NEPSTA Division I Championship	2023-11-11 16:00:00	girls	\N	\N	\N	invitational	\N	31	33	1	240	complete	f
+288	NEPSTA Division II Championship	2023-11-11 16:00:00	boys	\N	\N	\N	invitational	\N	16	16	1	245	complete	t
+289	NEPSTA Division II Championship	2023-11-11 16:00:00	girls	\N	\N	\N	invitational	\N	16	16	1	246	complete	t
+292	NEPSTA Division III Championship	2023-11-11 16:00:00	girls	\N	\N	\N	invitational	\N	32	34	1	249	complete	t
+301	St. George's at St. Mark's	2019-09-14 16:00:00	boys	\N	\N	\N	dual	\N	3	3	1	258	complete	f
+310	Milton at BB&N	2019-09-21 16:00:00	boys	\N	\N	\N	dual	\N	23	23	1	267	complete	f
+312	Lawrence at Groton	2019-09-21 16:00:00	boys	\N	\N	\N	dual	\N	15	15	1	269	complete	f
+313	Rivers at Thayer	2019-09-21 16:00:00	boys	\N	\N	\N	dual	\N	25	25	1	270	complete	f
+315	BH, SPS at St. Mark's	2019-09-21 16:00:00	boys	\N	\N	\N	dual	\N	3	3	1	272	complete	f
+206	BB&N, BH, St. George's at Middlesex	2021-10-30 16:00:00	boys	\N	\N	\N	dual	\N	12	12	1	163	complete	f
+252	Governor's, Groton, Milton at St. Mark's	2023-09-30 16:00:00	boys	\N	\N	\N	dual	\N	3	3	1	209	complete	f
+254	BB&N at St. Mark's	2023-10-14 16:00:00	boys	\N	\N	\N	dual	\N	3	3	1	211	complete	f
+237	Rivers, Thayer at Middlesex	2021-10-23 16:00:00	girls	\N	\N	\N	dual	\N	12	12	1	194	complete	f
+256	Middlesex at Groton	2023-10-13 16:00:00	boys	\N	\N	\N	dual	\N	15	15	1	213	complete	f
+258	Governor's, Tabor, BB&N at Middlesex	2023-10-07 16:00:00	boys	\N	\N	\N	dual	\N	12	12	1	215	complete	f
+259	Governor's, Tabor, BB&N at Middlesex	2023-10-07 16:00:00	boys	\N	\N	\N	dual	\N	12	12	1	216	complete	t
+285	NEPSTA Division I Championship	2023-11-11 16:00:00	girls	\N	\N	\N	invitational	\N	31	33	1	242	complete	t
+253	Nobles at Rivers	2023-10-13 16:00:00	boys	\N	\N	\N	dual	\N	27	27	1	210	complete	f
+232	St. George's at Rivers	2021-10-16 16:00:00	girls	\N	\N	\N	dual	\N	27	27	1	189	complete	f
+215	BB&N, Nobles, Thayer	2021-10-08 16:00:00	girls	\N	\N	\N	dual	\N	16	16	1	172	complete	f
+241	BB&N, St. George's at Middlesex	2021-10-30 16:00:00	girls	\N	\N	\N	dual	\N	12	12	1	198	complete	f
+223	Groton at BH	2023-09-23 16:00:00	boys	\N	\N	\N	dual	\N	24	24	1	180	complete	f
+224	Groton at BH	2023-09-23 16:00:00	boys	\N	\N	\N	dual	\N	24	24	1	181	complete	t
+225	Brooks at BB&N	2023-09-23 16:00:00	boys	\N	\N	\N	dual	\N	23	23	1	182	complete	f
+226	Milton at Latin	2023-09-23 16:00:00	boys	\N	\N	\N	dual	\N	16	16	1	183	complete	f
+227	Sebs at Middlesex	2023-09-23 16:00:00	boys	\N	\N	\N	dual	\N	12	12	1	184	complete	f
+228	Governor's at Nobles	2023-09-23 16:00:00	boys	\N	\N	\N	dual	\N	2	2	1	185	complete	f
+229	Rivers at St. George's	2023-09-23 16:00:00	boys	\N	\N	\N	dual	\N	22	22	1	186	complete	f
+222	St. Mark's at Thayer	2023-09-22 16:00:00	boys	\N	\N	\N	dual	\N	25	25	1	179	complete	f
+287	NEPSTA Division II Championship	2023-11-11 16:00:00	girls	\N	\N	\N	invitational	\N	16	16	1	244	complete	f
+209	Lawrence, Middlesex at Brooks	2021-10-02 16:00:00	girls	\N	\N	\N	dual	\N	11	11	1	166	complete	f
+210	Governor's, St. George's, Thayer at Milton	2021-10-02 16:00:00	girls	\N	\N	\N	dual	\N	9	9	1	167	complete	f
+211	BB&N, Governor's, Rivers at St. Mark's	2021-10-02 16:00:00	girls	\N	\N	\N	dual	\N	3	3	1	168	complete	f
+212	Tabor at Nobles	2021-10-02 16:00:00	girls	\N	\N	\N	dual	\N	2	2	1	169	complete	f
+213	Brooks, Rivers at Governor's	2021-10-09 16:00:00	girls	\N	\N	\N	dual	\N	13	13	1	170	complete	f
+214	Groton, Lawrence at St. George's	2021-10-09 16:00:00	girls	\N	\N	\N	dual	\N	22	22	1	171	complete	f
+216	Rivers at Governor's	2023-09-14 16:00:00	boys	\N	\N	\N	dual	\N	13	13	1	173	complete	f
+217	Thayer at BB&N	2023-09-15 16:00:00	boys	\N	\N	\N	dual	\N	23	23	1	174	complete	f
+218	Brooks at St. Mark's	2023-09-14 16:00:00	boys	\N	\N	\N	dual	\N	3	3	1	175	complete	f
+219	SPS, Sebs at Groton	2023-09-15 16:00:00	boys	\N	\N	\N	dual	\N	15	15	1	176	complete	f
+220	Austin, BH at Middlesex	2023-09-15 16:00:00	boys	\N	\N	\N	dual	\N	12	12	1	177	complete	f
+221	Latin at Tabor	2023-09-15 16:00:00	boys	\N	\N	\N	dual	\N	26	26	1	178	complete	f
+230	Lawrence at Tabor	2023-09-23 16:00:00	boys	\N	\N	\N	dual	\N	26	26	1	187	complete	f
+261	Rivers, St. Mark's, Sebs at Latin	2023-10-06 16:00:00	boys	\N	\N	\N	dual	\N	16	16	1	218	complete	f
+262	NEPSTA Division I Championship	2019-11-09 16:00:00	girls	\N	\N	\N	invitational	\N	29	31	1	219	complete	f
+265	NEPSTA Division I Championship	2019-11-09 16:00:00	boys	\N	\N	\N	invitational	\N	29	31	1	222	complete	t
+286	NEPSTA Division II Championship	2023-11-11 16:00:00	boys	\N	\N	\N	invitational	\N	16	16	1	243	complete	f
+290	NEPSTA Division III Championship	2023-11-11 16:00:00	girls	\N	\N	\N	invitational	\N	32	34	1	247	complete	f
+246	BH, Nobles, Thayer at Milton	2023-10-07 16:00:00	boys	\N	\N	\N	dual	\N	9	9	1	203	complete	f
+268	Lawrence, Nobles, St. Mark's, SPS at Middlesex	2023-10-28 16:00:00	boys	\N	\N	\N	dual	\N	12	12	1	225	complete	f
+271	Groton, Nobles, Latin at BB&N	2023-10-21 16:00:00	boys	\N	\N	\N	dual	\N	23	23	1	228	complete	t
+273	Brooks, BH, Latin at Governor's	2023-10-28 16:00:00	boys	\N	\N	\N	dual	\N	13	13	1	230	complete	t
+275	Middlesex, Milton, Rivers at Brooks	2023-10-21 16:00:00	boys	\N	\N	\N	dual	\N	11	11	1	232	complete	f
+277	Rivers, Tabor, Thayer at Groton	2023-10-28 16:00:00	boys	\N	\N	\N	dual	\N	15	15	1	234	complete	f
+278	Independent School League (ISL) Championship	2023-11-03 16:00:00	boys	\N	\N	\N	invitational	\N	10	10	1	235	complete	f
+281	Independent School League (ISL) Championship	2023-11-03 16:00:00	girls	\N	\N	\N	invitational	\N	10	10	1	238	complete	t
+294	BH, Governor's, Latin at BB&N	2019-09-14 16:00:00	boys	\N	\N	\N	dual	\N	23	23	1	251	complete	f
+295	BH, Governor's, Latin at BB&N	2019-09-14 16:00:00	boys	\N	\N	\N	dual	\N	23	23	1	252	complete	t
+297	Groton, SPS at Brooks	2019-09-14 16:00:00	boys	\N	\N	\N	dual	\N	11	11	1	254	complete	f
+299	Sebs at Milton	2019-09-14 16:00:00	boys	\N	\N	\N	dual	\N	9	9	1	256	complete	f
+302	Governor's at BB&N	2019-09-14 16:00:00	girls	\N	\N	\N	dual	\N	23	23	1	259	complete	f
+284	NEPSTA Division I Championship	2023-11-11 16:00:00	boys	\N	\N	\N	invitational	\N	31	33	1	241	complete	t
+303	Groton, SPS at Brooks	2019-09-14 16:00:00	girls	\N	\N	\N	dual	\N	11	11	1	260	complete	f
+305	Thayer at Nobles	2019-09-14 16:00:00	girls	\N	\N	\N	dual	\N	2	2	1	262	complete	f
+307	D-S, Pomfret, Rivers at Tabor	2019-09-14 16:00:00	girls	\N	\N	\N	dual	\N	26	26	1	264	complete	f
+308	Governor's at St. George's	2019-09-21 16:00:00	boys	\N	\N	\N	dual	\N	22	22	1	265	complete	f
+311	Brooks at Middlesex	2019-09-21 16:00:00	boys	\N	\N	\N	dual	\N	12	12	1	268	complete	f
+314	Tabor at Nobles	2019-09-21 16:00:00	boys	\N	\N	\N	dual	\N	2	2	1	271	complete	f
+\.
+
+
+--
+-- Data for Name: results; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+COPY public.results (id, bib, "time", runner_id, race_id, team_id, place, status) FROM stdin;
+2	4	1676000	2	1	9	92	c
+3	2	1678000	3	1	9	94	c
+5	5	1706000	5	1	9	99	c
+6	8	1788000	6	1	10	110	c
+7	11	2011000	7	1	10	117	c
+8	13	1367000	8	1	7	19	c
+9	16	1436000	9	1	7	42	c
+10	15	1442000	10	1	7	43	c
+11	18	1572000	11	1	7	79	c
+12	12	1634000	12	1	7	84	c
+13	14	1644000	13	1	7	86	c
+14	17	1662000	14	1	7	89	c
+15	22	1417000	15	1	6	38	c
+16	25	1420000	16	1	6	40	c
+18	26	1452000	18	1	6	46	c
+20	28	1512000	20	1	6	60	c
+23	27	1555000	23	1	6	73	c
+24	31	1918000	24	1	6	113	c
+25	54	1265000	25	1	3	7	c
+26	40	1323000	26	1	3	13	c
+27	38	1324000	27	1	3	14	c
+28	35	1378000	28	1	3	22	c
+29	56	1389000	29	1	3	26	c
+30	48	1416000	30	1	3	37	c
+31	47	1423000	31	1	3	41	c
+32	41	1508000	32	1	3	58	c
+33	53	1515000	33	1	3	61	c
+34	42	1571000	34	1	3	78	c
+35	36	1578000	35	1	3	80	c
+36	33	1651000	36	1	3	87	c
+38	46	1681000	38	1	3	96	c
+39	44	1700000	39	1	3	98	c
+40	49	1731000	40	1	3	102	c
+41	50	1776000	41	1	3	108	c
+42	58	1786000	42	1	3	109	c
+43	55	1829000	43	1	3	111	c
+44	37	2012000	44	1	3	118	c
+45	64	1248000	45	1	8	5	c
+46	69	1525000	46	1	8	63	c
+47	67	1528000	47	1	8	65	c
+48	61	1545000	48	1	8	71	c
+49	68	1552000	49	1	8	72	c
+50	59	1562000	50	1	8	74	c
+51	65	1638000	51	1	8	85	c
+53	70	1728000	53	1	8	101	c
+54	63	1838000	54	1	8	112	c
+55	66	1962000	55	1	8	116	c
+56	84	1247000	56	1	1	4	c
+57	79	1255000	57	1	1	6	c
+58	71	1330000	58	1	1	15	c
+59	86	1349000	59	1	1	16	c
+60	80	1383000	60	1	1	24	c
+61	87	1396000	61	1	1	27	c
+62	75	1457100	62	1	1	48	c
+63	81	1474000	63	1	1	52	c
+64	77	1479000	64	1	1	53	c
+65	78	1529000	65	1	1	66	c
+66	83	1531000	66	1	1	68	c
+68	72	1629000	68	1	1	83	c
+69	82	1680000	69	1	1	95	c
+70	76	1757000	70	1	1	106	c
+71	105	1353000	71	1	4	17	c
+72	95	1376000	72	1	4	21	c
+73	104	1381000	73	1	4	23	c
+75	107	1409000	75	1	4	31	c
+76	103	1410000	76	1	4	32	c
+77	100	1412000	77	1	4	34	c
+78	99	1413000	78	1	4	36	c
+79	101	1419000	79	1	4	39	c
+80	108	1463000	80	1	4	50	c
+81	90	1481000	81	1	4	55	c
+82	102	1496000	82	1	4	56	c
+84	97	1665000	84	1	4	90	c
+85	94	1732000	85	1	4	103	c
+86	93	1746000	86	1	4	104	c
+87	89	1748000	87	1	4	105	c
+88	110	1074000	88	1	5	1	c
+89	114	1413000	89	1	5	35	c
+90	121	1457000	90	1	5	47	c
+91	117	1480000	91	1	5	54	c
+92	120	1500000	92	1	5	57	c
+93	123	1525000	93	1	5	64	c
+94	125	1566000	94	1	5	77	c
+95	118	1566000	95	1	5	76	c
+96	126	1601000	96	1	5	81	c
+97	109	1758000	97	1	5	107	c
+99	115	1934000	99	1	5	115	c
+100	124	2116000	100	1	5	119	c
+101	111	2118000	101	1	5	120	c
+102	138	1086000	102	1	2	2	c
+103	145	1235000	103	1	2	3	c
+104	144	1273000	104	1	2	8	c
+105	136	1278000	105	1	2	9	c
+106	127	1281000	106	1	2	10	c
+107	132	1358000	107	1	2	18	c
+108	128	1374000	108	1	2	20	c
+109	139	1385000	109	1	2	25	c
+110	135	1405000	110	1	2	29	c
+111	141	1408000	111	1	2	30	c
+112	130	1410000	112	1	2	33	c
+114	142	1463000	114	1	2	49	c
+115	134	1510000	115	1	2	59	c
+116	143	1544000	116	1	2	70	c
+117	131	1563000	117	1	2	75	c
+118	140	1626000	118	1	2	82	c
+119	133	1673000	119	1	2	91	c
+19	20	1464000	5157	1	6	51	c
+22	23	1531000	5177	1	6	67	c
+74	91	1402000	5297	1	4	28	c
+201	207	1012000	201	4	37	1	c
+202	254	1020000	202	4	42	2	c
+203	287	1022000	203	4	36	3	c
+204	273	1056000	204	4	35	4	c
+206	174	1076000	206	4	41	6	c
+209	271	1090000	209	4	35	9	c
+210	252	1102000	210	4	42	10	c
+211	255	1104000	211	4	42	12	c
+212	225	1104000	212	4	37	11	c
+213	209	1107000	213	4	37	13	c
+214	245	1108000	214	4	42	14	c
+216	229	1118000	216	4	42	16	c
+217	290	1122000	217	4	36	17	c
+205	218	1065000	5201	4	37	5	c
+207	244	1079000	5291	4	42	7	c
+218	259	1127000	218	4	39	18	c
+219	247	1146000	219	4	42	19	c
+1002	616	1158000	1003	2	26	1	c
+1003	482	1170000	1004	2	15	2	c
+1005	678	1185000	1006	2	33	4	c
+1006	688	1211000	1007	2	32	5	c
+1007	657	1212000	1008	2	34	6	c
+1008	672	1214000	1009	2	33	7	c
+1009	554	1221000	1010	2	17	8	c
+1010	575	1233000	1011	2	31	9	c
+1011	638	1241000	1012	2	26	10	c
+1012	625	1242000	1013	2	26	11	c
+1013	681	1250000	1014	2	32	12	c
+1014	496	1251000	1015	2	29	13	c
+1016	449	1252000	25	2	3	15	c
+1019	588	1258000	1020	2	28	18	c
+1020	564	1259000	57	2	1	19	c
+1021	569	1263000	56	2	1	20	c
+1023	642	1269000	1024	2	25	22	c
+1024	552	1270000	1025	2	17	23	c
+1018	618	1254000	5282	2	26	17	c
+1017	573	1253000	5284	2	31	16	c
+1025	550	1273000	1026	2	17	24	c
+1026	425	1283000	1027	2	13	25	c
+1028	668	1292000	1029	2	33	27	c
+1029	545	1294000	1030	2	17	28	c
+220	182	1149000	220	4	41	20	c
+221	221	1150000	221	4	37	21	c
+222	199	1154000	222	4	38	22	c
+223	205	1155000	223	4	37	23	c
+224	150	1155000	224	4	40	24	c
+225	179	1157000	225	4	41	25	c
+227	279	1160000	227	4	35	27	c
+228	212	1160000	228	4	37	28	c
+229	176	1161000	229	4	41	29	c
+230	173	1164000	230	4	41	30	c
+232	217	1169000	232	4	37	32	c
+234	214	1176000	234	4	37	34	c
+235	228	1185000	235	4	37	35	c
+237	158	1187000	237	4	40	37	c
+238	242	1188000	238	4	42	38	c
+239	285	1195000	239	4	35	39	c
+240	197	1198000	240	4	38	40	c
+241	239	1205000	241	4	42	41	c
+242	231	1207000	242	4	42	42	c
+243	155	1212000	243	4	40	43	c
+245	280	1220000	245	4	35	45	c
+246	251	1220000	246	4	42	46	c
+247	309	1228000	247	4	36	47	c
+248	167	1230000	248	4	41	48	c
+249	278	1232000	249	4	35	49	c
+250	213	1233000	250	4	37	50	c
+251	169	1235000	251	4	41	51	c
+252	300	1235000	252	4	36	52	c
+253	302	1238000	253	4	36	53	c
+255	153	1245000	255	4	40	55	c
+256	305	1248000	256	4	36	56	c
+257	152	1254000	257	4	40	57	c
+258	161	1260000	258	4	40	58	c
+259	274	1268000	259	4	35	59	c
+261	295	1278000	261	4	36	61	c
+262	206	1279000	262	4	37	62	c
+263	291	1280000	263	4	36	63	c
+264	162	1281000	264	4	40	64	c
+265	262	1292000	265	4	39	65	c
+266	203	1295000	266	4	38	67	c
+267	275	1295000	267	4	35	66	c
+268	276	1300000	268	4	35	68	c
+269	151	1301000	269	4	40	70	c
+270	202	1301000	270	4	38	71	c
+271	292	1301000	271	4	36	69	c
+272	283	1302000	272	4	35	72	c
+273	312	1307000	273	4	36	74	c
+274	159	1307000	274	4	40	73	c
+276	194	1310000	276	4	38	76	c
+278	269	1322000	278	4	35	78	c
+279	170	1323000	279	4	41	79	c
+280	168	1326000	280	4	41	80	c
+281	304	1334000	281	4	36	81	c
+282	185	1336000	282	4	41	82	c
+283	261	1337000	283	4	39	83	c
+284	165	1337000	284	4	40	84	c
+285	190	1343000	285	4	41	85	c
+286	303	1348000	286	4	36	86	c
+287	191	1348000	287	4	38	87	c
+289	294	1352000	289	4	36	89	c
+290	210	1354000	290	4	37	90	c
+291	227	1359000	291	4	37	91	c
+293	164	1368000	293	4	40	93	c
+295	181	1385000	295	4	41	95	c
+296	263	1386000	296	4	39	96	c
+297	272	1390000	297	4	35	97	c
+298	268	1390000	298	4	35	98	c
+299	256	1391000	299	4	42	99	c
+300	267	1400000	300	4	39	100	c
+301	308	1409000	301	4	36	101	c
+302	171	1411000	302	4	41	102	c
+303	311	1414000	303	4	36	103	c
+305	178	1433000	305	4	41	105	c
+306	266	1441000	306	4	39	106	c
+307	238	1445000	307	4	42	107	c
+308	282	1464000	308	4	35	108	c
+310	201	1472000	310	4	38	110	c
+311	223	1472000	311	4	37	111	c
+312	296	1474000	312	4	36	112	c
+313	160	1489000	313	4	40	113	c
+314	211	1501000	314	4	37	114	c
+315	198	1502000	315	4	38	115	c
+316	289	1507000	316	4	36	116	c
+317	265	1538000	317	4	39	117	c
+318	299	1541000	318	4	36	118	c
+319	307	1587000	319	4	36	119	c
+320	220	1640000	320	4	37	120	c
+321	260	1647000	321	4	39	121	c
+322	193	1653000	322	4	38	122	c
+323	166	1712000	323	4	40	123	c
+325	224	1717000	325	4	37	125	c
+326	187	1718000	326	4	41	126	c
+327	293	1736000	327	4	36	127	c
+328	196	1885000	328	4	38	128	c
+329	253	1933000	329	4	42	129	c
+330	286	1938000	330	4	35	130	c
+294	204	1378000	5147	4	37	94	c
+277	237	1322000	5161	4	42	77	c
+254	177	1239000	5196	4	41	54	c
+231	180	1167000	5205	4	41	31	c
+233	219	1176000	5208	4	37	33	c
+304	310	1424000	5298	4	36	104	c
+16502	\N	1101900	5156	280	438	1	c
+1030	438	1297000	1031	2	27	29	c
+1031	636	1300000	1032	2	26	30	c
+1032	535	1301000	1033	2	17	31	c
+1034	426	1305000	1035	2	13	34	c
+1035	549	1305000	1036	2	17	33	c
+1036	536	1308000	1037	2	17	35	c
+1037	490	1309000	1038	2	29	37	c
+1038	444	1309000	26	2	3	36	c
+1039	663	1313000	1040	2	33	38	c
+1040	491	1317000	1041	2	29	39	c
+1041	692	1326000	1042	2	32	40	c
+1042	613	1327000	1043	2	23	41	c
+1043	576	1329000	1044	2	31	42	c
+1044	682	1329000	1045	2	32	43	c
+1046	481	1334000	1047	2	15	44	c
+1047	595	1337000	1048	2	23	46	c
+1048	581	1337000	1049	2	31	47	c
+1050	521	1344000	1051	2	30	49	c
+1051	514	1345000	1052	2	30	50	c
+1052	556	1345000	58	2	1	51	c
+1053	503	1349000	1054	2	29	52	c
+1054	440	1350000	1055	2	27	53	c
+1055	434	1353000	1056	2	13	54	c
+1056	480	1354000	1057	2	15	55	c
+1057	458	1355000	1058	2	14	56	c
+1058	671	1360000	1059	2	33	57	c
+1059	488	1362000	1060	2	29	59	c
+1060	455	1362000	1061	2	14	58	c
+1061	570	1366000	120	2	1	60	c
+1062	443	1367000	27	2	3	62	c
+1064	583	1368000	1065	2	28	63	c
+1066	604	1375000	1067	2	23	65	c
+1067	579	1376000	1068	2	31	66	c
+1068	571	1377000	59	2	1	67	c
+1070	414	1388000	1071	2	13	69	c
+1071	585	1390000	1072	2	28	70	c
+1072	587	1392000	1073	2	28	71	c
+1073	456	1393000	1074	2	14	72	c
+1074	591	1395000	1075	2	28	73	c
+1075	639	1397000	1076	2	25	74	c
+1076	441	1400000	28	2	3	75	c
+1077	572	1401000	61	2	1	76	c
+1078	689	1402000	1079	2	32	77	c
+1079	679	1403000	1080	2	33	78	c
+1080	523	1404000	1081	2	30	79	c
+1082	421	1407000	1083	2	13	81	c
+1083	437	1411000	1084	2	27	82	c
+1084	607	1412000	1085	2	23	83	c
+1085	416	1413000	1086	2	13	84	c
+1086	646	1414000	1087	2	25	85	c
+1087	450	1419000	29	2	3	86	c
+1088	565	1420000	60	2	1	87	c
+1089	483	1423000	1090	2	15	88	c
+1090	457	1430000	1091	2	14	89	c
+1091	577	1431000	1092	2	31	90	c
+1092	447	1434000	30	2	3	91	c
+1093	596	1435000	1094	2	23	92	c
+1094	608	1439000	1095	2	23	93	c
+1095	664	1450000	1096	2	33	94	c
+1097	466	1455000	1098	2	15	96	c
+1098	446	1462000	31	2	3	97	c
+1099	510	1462000	1100	2	30	98	c
+1100	436	1463000	1101	2	27	99	c
+1101	463	1464000	1102	2	14	100	c
+1102	461	1479000	1103	2	14	101	c
+1103	484	1481000	1104	2	15	102	c
+1104	512	1495000	1105	2	30	103	c
+1105	529	1497000	1106	2	30	104	c
+1106	582	1510000	1107	2	31	105	c
+1107	526	1519000	1108	2	30	106	c
+1108	641	1528000	1109	2	25	107	c
+1109	654	1539000	1110	2	34	108	c
+1110	645	1549000	1111	2	25	109	c
+1112	687	1589000	1113	2	32	111	c
+1113	648	1611000	1114	2	25	112	c
+1114	658	1831000	1115	2	34	113	c
+1115	656	1942000	1116	2	34	114	c
+1069	589	1380000	5204	2	28	68	c
+1027	622	1283000	5283	2	26	26	c
+1500	578	984000	1500	5	53	1	c
+1501	434	988000	1501	5	48	2	c
+1503	625	994000	1503	5	55	4	c
+1504	690	1003000	1504	5	58	5	c
+1505	473	1004000	1505	5	49	6	c
+1506	305	1025000	1506	5	43	7	c
+1507	504	1026000	1507	5	50	9	c
+1508	443	1026000	1508	5	49	8	c
+1510	459	1033000	1510	5	49	11	c
+1511	560	1040000	1511	5	52	12	c
+1512	460	1046000	1512	5	49	13	c
+1513	586	1049000	1513	5	53	14	c
+1514	643	1051000	1514	5	55	15	c
+1515	597	1054000	1515	5	53	16	c
+1516	465	1060000	1516	5	49	17	c
+1517	409	1068000	1517	5	47	18	c
+1518	677	1073000	1518	5	57	19	c
+1519	521	1074000	1519	5	51	20	c
+1520	479	1080000	1520	5	49	21	c
+1521	631	1081000	1521	5	55	22	c
+1522	461	1082000	1522	5	49	23	c
+1523	345	1083000	1523	5	44	24	c
+1525	587	1091000	1525	5	53	26	c
+1526	398	1093000	1526	5	47	27	c
+1527	411	1095000	1527	5	47	28	c
+1528	684	1097000	1528	5	57	29	c
+1529	665	1098000	1529	5	56	30	c
+1530	314	1099000	1530	5	43	31	c
+1531	662	1104000	1531	5	56	32	c
+1532	659	1105000	1532	5	56	33	c
+1533	633	1108000	1533	5	55	34	c
+1534	638	1109000	1534	5	55	35	c
+1535	593	1115000	1535	5	53	36	c
+1536	545	1116000	1536	5	51	38	c
+1537	376	1116000	1537	5	45	37	c
+1538	490	1117000	1538	5	50	39	c
+1540	562	1120000	1540	5	52	42	c
+1541	673	1120000	1541	5	57	43	c
+1542	417	1120000	1542	5	47	41	c
+1543	658	1120000	1543	5	56	44	c
+1544	698	1122000	1544	5	58	45	c
+1545	525	1128000	1545	5	51	46	c
+1546	683	1129000	1546	5	57	47	c
+1547	509	1131000	1547	5	50	48	c
+1548	666	1133000	1548	5	56	49	c
+1549	651	1134000	1549	5	55	50	c
+1550	685	1136000	1550	5	57	52	c
+1552	401	1136000	1552	5	47	51	c
+1553	522	1137000	1553	5	51	54	c
+1555	423	1139000	1555	5	47	56	c
+1556	481	1140000	1556	5	50	57	c
+1557	306	1142000	1557	5	43	58	c
+1558	323	1144000	1558	5	43	59	c
+1559	675	1144000	1559	5	57	60	c
+1560	403	1145000	1560	5	47	62	c
+1561	429	1145000	1561	5	48	61	c
+1562	364	1145000	1562	5	45	63	c
+1563	528	1147000	1563	5	51	64	c
+1564	632	1148000	1564	5	55	65	c
+1565	483	1151000	1565	5	50	66	c
+1566	318	1152000	1566	5	43	67	c
+1567	668	1154000	1567	5	57	68	c
+1568	559	1156000	1568	5	52	69	c
+1570	621	1160000	1570	5	54	71	c
+1571	689	1161000	1571	5	58	73	c
+1572	607	1161000	1572	5	54	72	c
+1573	304	1163000	1573	5	43	74	c
+1574	436	1165000	1574	5	48	75	c
+1575	692	1166000	1575	5	58	76	c
+1576	367	1168000	1576	5	45	78	c
+1577	533	1168000	1577	5	51	77	c
+1579	377	1173000	1579	5	46	80	c
+1580	688	1173000	1580	5	58	81	c
+1582	693	1174000	2889	5	58	82	c
+1583	615	1174000	1583	5	54	84	c
+1584	565	1179000	1584	5	52	85	c
+1585	368	1180000	1585	5	45	86	c
+1587	491	1183000	1587	5	50	88	c
+1588	619	1190000	1588	5	54	90	c
+1589	383	1190000	1589	5	46	89	c
+1590	540	1191000	1590	5	51	91	c
+1591	605	1198000	1591	5	54	92	c
+1592	347	1202000	1592	5	44	93	c
+1593	381	1212000	1593	5	46	94	c
+1594	357	1217000	1594	5	45	95	c
+1595	667	1226000	1595	5	56	96	c
+1596	382	1227000	1596	5	46	97	c
+1597	327	1230000	1597	5	44	98	c
+1598	438	1234000	1598	5	48	99	c
+1599	331	1242000	1599	5	44	100	c
+1600	379	1243000	1600	5	46	101	c
+1602	321	1248000	1602	5	43	103	c
+1604	337	1252000	1604	5	44	105	c
+1605	566	1253000	1605	5	52	106	c
+1606	570	1255000	1606	5	52	107	c
+1608	433	1259000	1608	5	48	109	c
+1610	661	1265000	1610	5	56	111	c
+1611	442	1280000	1611	5	48	112	c
+1607	694	1258000	5188	5	58	108	c
+1578	573	1170000	5198	5	52	79	c
+1581	363	1174000	5306	5	45	83	c
+1609	390	1263000	5321	5	46	110	c
+1613	458	1115000	1613	6	49	1	c
+1614	464	1116000	1614	6	49	2	c
+1615	455	1124000	1615	6	49	4	c
+1617	453	1129000	1617	6	49	5	c
+1618	595	1130000	1618	6	53	6	c
+1619	446	1135000	1619	6	49	7	c
+1620	413	1143000	1620	6	47	8	c
+1621	582	1144000	1621	6	53	9	c
+1622	416	1146000	1622	6	47	10	c
+1623	396	1157000	1623	6	47	11	c
+1624	394	1164000	1624	6	47	12	c
+1625	399	1166000	1625	6	47	13	c
+1626	589	1169000	1626	6	53	14	c
+1627	642	1173000	1627	6	55	15	c
+1628	494	1176000	1628	6	50	16	c
+1631	654	1183000	1631	6	55	19	c
+1633	474	1185000	1633	6	49	21	c
+1635	553	1193000	1635	6	51	23	c
+1636	514	1194000	1636	6	51	24	c
+1637	628	1194000	1637	6	55	25	c
+1639	669	1197000	1639	6	57	26	c
+1640	636	1200000	1640	6	55	28	c
+1641	447	1201000	1641	6	49	29	c
+1643	579	1202000	1643	6	53	31	c
+1644	510	1204000	1644	6	50	32	c
+1645	679	1206000	1645	6	57	33	c
+1646	567	1207000	1646	6	52	34	c
+1647	526	1208000	1647	6	51	35	c
+1648	680	1208000	1648	6	57	36	c
+1649	412	1211000	1649	6	47	37	c
+1650	310	1211000	1650	6	43	38	c
+1652	480	1213000	1652	6	50	39	c
+1653	626	1215000	1653	6	55	41	c
+1654	482	1216000	1654	6	50	43	c
+1656	596	1217000	1656	6	53	45	c
+1657	393	1217000	1657	6	47	44	c
+1659	529	1219000	1659	6	51	46	c
+1660	408	1222000	1660	6	47	48	c
+1661	546	1223000	1661	6	51	49	c
+1662	303	1224000	1662	6	43	51	c
+1663	513	1224000	1663	6	51	50	c
+1664	581	1226000	1664	6	53	52	c
+1665	307	1227000	1665	6	43	53	c
+1666	606	1227000	1666	6	54	54	c
+1667	497	1230000	1667	6	50	55	c
+1669	462	1235000	1669	6	49	57	c
+1670	486	1236000	1670	6	50	58	c
+1671	308	1240000	1671	6	43	59	c
+1672	536	1242000	1672	6	51	60	c
+1673	530	1243000	1673	6	51	61	c
+1674	609	1243000	1674	6	54	62	c
+1675	558	1245000	1675	6	51	63	c
+1676	672	1247000	1676	6	57	64	c
+1677	311	1247000	1677	6	43	65	c
+1678	515	1251000	1678	6	51	66	c
+1679	646	1253000	1679	6	55	67	c
+1680	422	1255000	1680	6	47	68	c
+1681	517	1255000	1681	6	51	69	c
+1638	637	1197000	5183	6	55	27	c
+1632	590	1185000	5213	6	53	20	c
+1642	591	1202000	5216	6	53	30	c
+1658	505	1219000	5226	6	50	47	c
+1629	397	1181000	5333	6	47	17	c
+1682	691	1256000	1682	6	58	70	c
+1683	506	1259000	1683	6	50	71	c
+1684	511	1263000	1684	6	50	72	c
+1685	404	1264000	1685	6	47	73	c
+1686	351	1264000	1686	6	45	74	c
+1687	571	1265000	1687	6	52	75	c
+1689	495	1267000	1689	6	50	77	c
+1690	542	1269000	1690	6	51	78	c
+16503	\N	1110900	6316	280	440	2	c
+12979	\N	1279000	5156	209	144	1	c
+12980	\N	1296000	3136	209	132	2	c
+1692	518	1270000	1692	6	51	80	c
+1694	647	1274000	1694	6	55	82	c
+1695	392	1275000	1695	6	47	83	c
+1696	302	1278000	1696	6	43	84	c
+1697	410	1279000	1697	6	47	85	c
+1698	406	1280000	1698	6	47	86	c
+1700	319	1286000	1700	6	43	88	c
+1701	576	1288000	1701	6	52	89	c
+1702	300	1291000	1702	6	43	90	c
+1703	457	1292000	1703	6	49	91	c
+1704	524	1292000	1704	6	51	92	c
+1705	534	1292000	1705	6	51	93	c
+1707	629	1296000	1707	6	55	95	c
+1708	575	1296000	1708	6	52	96	c
+1709	532	1297000	1709	6	51	97	c
+1712	617	1303000	1712	6	54	100	c
+1714	599	1305000	1714	6	53	102	c
+1715	456	1306000	1715	6	49	103	c
+1716	414	1307000	1716	6	47	104	c
+1717	322	1312000	1717	6	43	105	c
+1718	653	1313000	1718	6	55	106	c
+1719	503	1314000	1719	6	50	107	c
+1720	362	1315000	1720	6	45	108	c
+1722	485	1318000	1722	6	50	110	c
+1723	370	1318000	1723	6	45	111	c
+1724	365	1320000	1724	6	45	112	c
+1725	523	1321000	1725	6	51	113	c
+1726	312	1322000	1726	6	43	114	c
+1727	400	1325000	1727	6	47	115	c
+1730	641	1328000	1730	6	55	117	c
+1731	309	1328000	1731	6	43	118	c
+1733	366	1332000	1733	6	45	121	c
+1734	316	1333000	1734	6	43	122	c
+1735	611	1335000	1735	6	54	123	c
+1736	444	1336000	1736	6	49	124	c
+1737	317	1337000	1737	6	43	125	c
+1738	424	1338000	1738	6	47	126	c
+1739	405	1339000	1739	6	47	127	c
+1740	535	1341000	1740	6	51	128	c
+1741	470	1341000	1741	6	49	129	c
+1742	598	1343000	1742	6	53	130	c
+1743	601	1345000	1743	6	54	131	c
+1744	552	1347000	1744	6	51	132	c
+1747	550	1356000	1747	6	51	135	c
+1748	466	1359000	1748	6	49	136	c
+1749	539	1360000	1749	6	51	137	c
+1750	682	1363000	1750	6	57	138	c
+1751	674	1364000	1751	6	57	139	c
+1752	656	1366000	1752	6	56	140	c
+1753	420	1367000	1753	6	47	141	c
+1754	608	1369000	1754	6	54	142	c
+1755	452	1369000	1755	6	49	143	c
+1756	451	1370000	1756	6	49	144	c
+1757	655	1370000	1757	6	56	145	c
+1758	624	1372000	1758	6	54	146	c
+1759	508	1373000	1759	6	50	147	c
+1760	358	1373000	1760	6	45	148	c
+1762	348	1378000	1762	6	44	150	c
+1763	604	1378000	1763	6	54	151	c
+1764	541	1378000	1764	6	51	152	c
+1765	463	1385000	1765	6	49	153	c
+1766	519	1386000	1766	6	51	154	c
+1767	544	1387000	1767	6	51	155	c
+1768	697	1388000	1768	6	58	156	c
+1769	333	1389000	1769	6	44	157	c
+1770	435	1390000	1770	6	48	158	c
+1771	502	1390000	1771	6	50	159	c
+1772	622	1392000	1772	6	54	160	c
+1774	695	1394000	1774	6	58	162	c
+1775	493	1394000	1775	6	50	163	c
+1776	531	1396000	1776	6	51	164	c
+1778	432	1400000	1778	6	48	166	c
+1779	696	1403000	1779	6	58	167	c
+1780	602	1407000	1780	6	54	169	c
+1781	313	1407000	1781	6	43	168	c
+1782	556	1408000	1782	6	51	170	c
+1783	664	1414000	1783	6	56	171	c
+1784	454	1416000	1784	6	49	173	c
+1786	355	1417000	1786	6	45	174	c
+1788	686	1420000	1788	6	57	176	c
+1789	516	1424000	1789	6	51	177	c
+1790	385	1426000	1790	6	46	178	c
+1791	352	1426000	1791	6	45	179	c
+1792	369	1427000	1792	6	45	180	c
+1793	554	1427000	1793	6	51	181	c
+1795	326	1432000	1795	6	44	183	c
+1796	489	1440000	1796	6	50	184	c
+1797	527	1443000	1797	6	51	185	c
+1798	640	1447000	1798	6	55	187	c
+1799	437	1447000	1799	6	48	186	c
+1800	555	1457000	1800	6	51	188	c
+1801	344	1460000	1801	6	44	189	c
+1803	427	1464000	1803	6	48	191	c
+1804	448	1464000	1804	6	49	192	c
+1805	342	1467000	1805	6	44	193	c
+1806	501	1473000	1806	6	50	194	c
+1807	334	1473000	1807	6	44	195	c
+1808	320	1477000	1808	6	43	196	c
+1809	418	1478000	1809	6	47	197	c
+1811	389	1482000	1811	6	46	199	c
+1813	678	1483000	1813	6	57	201	c
+1814	349	1485000	1814	6	44	202	c
+1815	574	1487000	1815	6	52	203	c
+1816	498	1488000	1816	6	50	204	c
+1817	476	1498000	1817	6	49	205	c
+1699	402	1282000	5174	6	47	87	c
+1787	468	1420000	5190	6	49	175	c
+1728	569	1326000	5261	6	52	116	c
+1773	585	1392000	5262	6	53	161	c
+1721	645	1317000	5274	6	55	109	c
+1713	650	1304000	5275	6	55	101	c
+1785	657	1416000	5277	6	56	172	c
+1732	380	1329000	5318	6	46	120	c
+1818	324	1499000	1818	6	43	206	c
+1819	499	1503000	1819	6	50	207	c
+1820	614	1506000	1820	6	54	208	c
+1821	395	1510000	1821	6	47	209	c
+1822	336	1515000	1822	6	44	211	c
+1823	649	1515000	1823	6	55	210	c
+1825	472	1518000	1825	6	49	213	c
+1826	520	1519000	1826	6	51	214	c
+1827	439	1521000	1827	6	48	215	c
+1828	375	1534000	1828	6	45	216	c
+1746	623	1351000	5618	6	54	134	c
+16504	\N	1128000	4974	280	440	3	c
+2002	533	1308000	1118	3	17	1	c
+1829	663	1535000	1829	6	56	217	c
+2003	632	1309000	1119	3	26	2	c
+2005	427	1400000	1121	3	13	4	c
+2006	551	1401000	1122	3	17	5	c
+2007	631	1403000	1123	3	26	6	c
+2008	504	1407000	1124	3	29	7	c
+2009	502	1413000	1125	3	29	8	c
+2010	432	1419000	1126	3	13	9	c
+2011	609	1425000	1127	3	23	10	c
+2012	627	1432000	1128	3	26	11	c
+2013	566	1434000	63	3	1	12	c
+2014	674	1440000	1130	3	33	13	c
+2015	661	1441000	1131	3	33	14	c
+2016	543	1443000	1132	3	17	15	c
+2017	599	1445000	1133	3	23	16	c
+2018	662	1448000	1134	3	33	17	c
+2020	534	1453000	1136	3	17	19	c
+2021	562	1455000	64	3	1	20	c
+2022	614	1457000	1138	3	23	21	c
+2023	578	1459000	1139	3	31	22	c
+2024	634	1460000	1140	3	26	23	c
+2025	476	1466000	1141	3	15	24	c
+2026	628	1469000	1142	3	26	26	c
+2027	494	1469000	1143	3	29	25	c
+2028	464	1470000	1144	3	15	28	c
+2029	610	1470000	1145	3	23	27	c
+2030	422	1475000	1146	3	13	29	c
+2031	547	1477000	1147	3	17	30	c
+2032	637	1477000	1148	3	26	31	c
+2033	666	1483000	1149	3	33	32	c
+2035	633	1486000	1151	3	26	34	c
+2036	669	1487000	1152	3	33	35	c
+2037	601	1491000	1153	3	23	36	c
+2038	507	1494000	1154	3	29	37	c
+2039	612	1496000	1155	3	23	39	c
+2040	594	1496000	1156	3	23	38	c
+2041	542	1496000	1157	3	17	40	c
+2043	592	1498000	1159	3	23	41	c
+2044	593	1500000	1160	3	23	43	c
+2045	560	1501000	62	3	1	44	c
+2046	635	1502000	1162	3	26	45	c
+2047	532	1504000	1163	3	17	46	c
+2049	497	1510000	1165	3	29	48	c
+2050	500	1510000	1166	3	29	49	c
+2052	630	1520000	1168	3	26	50	c
+2053	568	1529000	66	3	1	52	c
+2054	495	1530000	1170	3	29	53	c
+2055	473	1534000	1171	3	15	54	c
+2056	465	1537000	1172	3	15	55	c
+2057	617	1539000	1173	3	26	56	c
+2058	527	1541000	1174	3	30	57	c
+2059	546	1542000	1175	3	17	58	c
+2060	563	1543000	65	3	1	60	c
+2061	478	1543000	1177	3	15	59	c
+2063	667	1544000	1179	3	33	62	c
+2064	597	1548000	1180	3	23	64	c
+2065	475	1548000	1181	3	15	63	c
+2066	518	1552000	1182	3	30	65	c
+2068	673	1564000	1184	3	33	67	c
+2069	623	1565000	1185	3	26	69	c
+2070	675	1565000	1186	3	33	68	c
+2071	670	1566000	1187	3	33	70	c
+2072	462	1568000	1188	3	14	71	c
+2073	506	1569000	1189	3	29	73	c
+2074	559	1569000	1190	3	1	72	c
+2075	676	1572000	1191	3	33	74	c
+2076	530	1585000	1192	3	30	75	c
+2077	525	1587000	1193	3	30	76	c
+2078	606	1592000	1194	3	23	77	c
+2079	431	1596000	1195	3	13	78	c
+2080	474	1603000	1196	3	15	79	c
+2081	501	1614000	1197	3	29	80	c
+2083	558	1624000	67	3	1	82	c
+2084	516	1627000	1200	3	30	83	c
+2085	544	1644000	1201	3	17	84	c
+2086	539	1653000	1202	3	17	85	c
+2087	522	1658000	1203	3	30	86	c
+2088	624	1660000	1204	3	26	87	c
+2089	477	1662000	1205	3	15	88	c
+2090	557	1684000	68	3	1	90	c
+2091	470	1684000	1207	3	15	89	c
+2042	600	1498000	5269	3	23	42	c
+2062	468	1544000	5332	3	15	61	c
+2092	469	1699000	1208	3	15	91	c
+2093	665	1701000	1209	3	33	92	c
+2094	528	1703000	1210	3	30	93	c
+2096	652	1721000	1212	3	25	95	c
+2099	580	1762000	1215	3	31	98	c
+2100	561	1766000	70	3	1	99	c
+2101	453	1766000	1217	3	14	100	c
+2048	418	1509000	5805	3	13	47	c
+1830	500	1537000	1830	6	50	218	c
+1831	359	1538000	1831	6	45	219	c
+1832	478	1539000	1832	6	49	220	c
+1833	388	1546000	1833	6	46	221	c
+1834	335	1550000	1834	6	44	222	c
+1835	373	1552000	1835	6	45	223	c
+1836	687	1552000	1836	6	58	224	c
+1837	440	1555000	1837	6	48	225	c
+1838	557	1557000	1838	6	51	226	c
+1840	386	1565000	1840	6	46	228	c
+1841	449	1569000	1841	6	49	229	c
+1842	644	1572000	1842	6	55	230	c
+1843	681	1573000	1843	6	57	231	c
+1844	371	1574000	1844	6	45	232	c
+1845	538	1577000	1845	6	51	233	c
+1847	301	1593000	1847	6	43	235	c
+1848	356	1594000	1848	6	45	236	c
+1849	425	1601000	1849	6	47	237	c
+1850	584	1611000	1850	6	53	238	c
+1851	340	1638000	1851	6	44	239	c
+1852	428	1649000	1852	6	48	240	c
+1853	547	1675000	1853	6	51	241	c
+1854	325	1714000	1854	6	44	242	c
+1856	328	1767000	1856	6	44	244	c
+1857	339	1771000	1857	6	44	245	c
+1858	407	1774000	1858	6	47	246	c
+1859	635	1778000	1859	6	55	248	c
+1860	431	1778000	1860	6	48	247	c
+1861	652	1794000	1861	6	55	249	c
+1863	346	2019000	1863	6	44	251	c
+3000	194	1188000	2500	7	63	1	c
+3001	260	1200000	1003	7	26	2	c
+3002	69	1202000	1004	7	15	3	c
+3003	264	1223000	1005	7	26	4	c
+16505	\N	1148500	6318	280	378	4	c
+2097	460	1728000	5313	3	14	96	c
+2098	452	1758000	5322	3	14	97	c
+3004	152	1241000	2504	7	62	5	c
+3006	113	1245000	1010	7	17	7	c
+3007	132	1253000	2507	7	61	8	c
+3008	151	1257000	2508	7	62	9	c
+3009	164	1262000	2509	7	62	10	c
+3010	180	1265000	2510	7	62	11	c
+3012	94	1274000	2512	7	17	13	c
+3013	271	1276000	1013	7	26	14	c
+3014	287	1276000	1012	7	26	15	c
+3015	118	1279000	2515	7	61	16	c
+3017	159	1292000	2517	7	62	19	c
+3018	107	1292000	1026	7	17	18	c
+3019	165	1303000	2519	7	62	20	c
+3020	226	1307000	1034	7	23	21	c
+3021	101	1308000	1030	7	17	22	c
+3023	110	1318000	1025	7	17	24	c
+3025	238	1327000	1043	7	23	26	c
+3026	204	1332000	2526	7	64	27	c
+3027	23	1340000	1027	7	13	28	c
+3028	67	1341000	1047	7	15	29	c
+3029	12	1343000	1071	7	13	30	c
+3030	284	1348000	1032	7	26	31	c
+3031	106	1352000	1036	7	17	32	c
+3032	90	1355000	1037	7	17	33	c
+3033	246	1358000	1024	7	25	34	c
+3034	144	1360000	2534	7	61	35	c
+3035	207	1362000	2535	7	64	36	c
+3036	192	1365000	2536	7	63	37	c
+3037	141	1369000	2537	7	61	38	c
+3039	138	1372000	2539	7	61	40	c
+3040	24	1374000	1035	7	13	41	c
+3041	213	1376000	1048	7	23	42	c
+3042	133	1387000	2542	7	61	43	c
+3043	208	1392000	2543	7	64	44	c
+3044	2	1392000	2544	7	59	45	c
+3045	39	1399000	1061	7	14	46	c
+3046	52	1400000	1098	7	15	47	c
+3047	206	1409000	2547	7	64	48	c
+3048	243	1412000	1076	7	25	49	c
+3049	34	1412000	1056	7	13	50	c
+3050	42	1420000	1058	7	14	51	c
+3051	195	1422000	2551	7	64	52	c
+3052	14	1426000	1086	7	13	53	c
+3054	8	1431000	2554	7	59	55	c
+3055	74	1441000	2555	7	60	56	c
+3056	27	1444000	1066	7	13	57	c
+3057	230	1450000	1085	7	23	58	c
+3058	189	1451000	2558	7	63	59	c
+3059	225	1456000	1067	7	23	60	c
+3060	251	1457000	1087	7	25	61	c
+3061	41	1458000	1091	7	14	62	c
+3062	72	1458000	1104	7	15	63	c
+3063	84	1460000	2563	7	60	64	c
+3064	191	1462000	2564	7	63	65	c
+3065	40	1471000	1074	7	14	66	c
+3066	214	1478000	1094	7	23	67	c
+3067	205	1484000	2567	7	64	68	c
+3069	71	1498000	1090	7	15	70	c
+3070	232	1510000	1127	7	23	71	c
+3071	48	1516000	1102	7	14	72	c
+3072	80	1531000	2572	7	60	73	c
+3073	43	1570000	1112	7	14	74	c
+3074	250	1575000	1111	7	25	75	c
+3075	46	1577000	1103	7	14	76	c
+3076	244	1593000	2576	7	25	77	c
+3077	245	1607000	1109	7	25	78	c
+3078	76	1611000	2578	7	60	79	c
+3079	7	1614000	2579	7	59	80	c
+3081	77	1659000	2581	7	60	82	c
+3082	248	1682000	2582	7	25	83	c
+3083	83	1684000	2583	7	60	84	c
+3085	30	2010000	1195	7	13	86	c
+3086	1	2128000	2586	7	59	87	c
+3011	263	1272000	5282	7	26	12	c
+3016	267	1289000	5283	7	26	17	c
+3024	57	1322000	5331	7	15	25	c
+3088	89	1344000	1033	8	17	1	c
+3089	87	1351000	1118	8	17	2	c
+3090	280	1354000	1119	8	26	3	c
+3091	161	1391000	2591	8	62	4	c
+3092	278	1403000	1168	8	26	5	c
+3093	127	1406000	2593	8	61	6	c
+3094	163	1417000	2594	8	62	7	c
+3095	19	1419000	1083	8	13	8	c
+3096	25	1424000	1121	8	13	9	c
+3098	131	1432000	2598	8	61	11	c
+3099	136	1433000	2599	8	61	12	c
+3100	109	1437000	1122	8	17	13	c
+3101	279	1450000	1123	8	26	14	c
+3102	273	1459000	1128	8	26	15	c
+3103	178	1461000	2603	8	62	16	c
+3104	234	1464000	1145	8	23	17	c
+3105	187	1465000	2605	8	62	18	c
+3106	168	1472000	2606	8	62	19	c
+3107	32	1473000	1126	8	13	20	c
+3108	282	1474000	1140	8	26	21	c
+3109	182	1475000	2609	8	62	22	c
+3110	15	1475000	2610	8	13	23	c
+3111	10	1476000	1135	8	13	24	c
+3113	150	1479000	2613	8	62	26	c
+3114	120	1482000	2614	8	61	27	c
+3115	143	1483000	2615	8	61	28	c
+3116	129	1484000	2616	8	61	29	c
+3117	177	1486000	2617	8	62	30	c
+3118	181	1487000	2618	8	62	31	c
+3119	176	1489000	2619	8	62	32	c
+3120	237	1491000	2620	8	23	33	c
+3121	125	1492000	2621	8	61	34	c
+3122	183	1492000	2622	8	62	35	c
+3125	88	1496000	1136	8	17	38	c
+3126	231	1500000	1095	8	23	40	c
+3123	175	1493000	5337	8	62	36	c
+3127	147	1500000	2627	8	62	39	c
+3129	53	1505000	2629	8	15	42	c
+3130	149	1507000	2630	8	62	43	c
+3131	221	1509000	1153	8	23	44	c
+3132	218	1511000	1133	8	23	45	c
+3134	62	1522000	1141	8	15	47	c
+3135	281	1522000	1151	8	26	48	c
+3136	286	1524000	1148	8	26	49	c
+3137	142	1526000	2637	8	61	50	c
+3138	211	1530000	1160	8	23	51	c
+3139	49	1532000	1144	8	15	52	c
+3141	265	1539000	2641	8	26	54	c
+16506	\N	1158800	3136	280	491	5	c
+3142	86	1540000	1163	8	17	55	c
+3143	22	1541000	2643	8	13	56	c
+3144	137	1542000	2644	8	61	57	c
+3146	98	1543000	1157	8	17	59	c
+3147	210	1544000	1159	8	23	60	c
+3148	283	1547000	1162	8	26	61	c
+3149	104	1547000	1147	8	17	62	c
+3151	160	1553000	2651	8	62	64	c
+3152	91	1554000	2652	8	17	65	c
+3153	93	1555000	2653	8	17	66	c
+3154	166	1562000	2654	8	62	67	c
+3155	123	1564000	2655	8	61	68	c
+3156	268	1566000	1185	8	26	69	c
+3157	17	1567000	2657	8	13	70	c
+3158	227	1572000	1194	8	23	71	c
+3159	50	1573000	1172	8	15	72	c
+3160	61	1574000	1181	8	15	73	c
+3162	155	1584000	2662	8	62	75	c
+3163	64	1594000	1177	8	15	76	c
+3164	153	1596000	2664	8	62	77	c
+3165	212	1598000	1156	8	23	78	c
+3166	102	1598000	1175	8	17	79	c
+3167	47	1606000	1188	8	14	80	c
+3168	261	1607000	1173	8	26	81	c
+3169	60	1609000	1196	8	15	82	c
+3170	130	1610000	2670	8	61	83	c
+3171	198	1610000	2671	8	64	84	c
+3172	38	1610000	1198	8	14	85	c
+3173	154	1614000	2673	8	62	86	c
+3174	157	1619000	2674	8	62	87	c
+3175	253	1620000	1114	8	25	88	c
+3177	135	1626000	2677	8	61	90	c
+3178	201	1627000	2678	8	64	91	c
+3179	196	1639000	2679	8	64	92	c
+3180	269	1647000	1204	8	26	93	c
+3181	252	1648000	1211	8	25	94	c
+3182	96	1649000	2682	8	17	95	c
+3183	128	1650000	2683	8	61	96	c
+3184	216	1651000	1180	8	23	97	c
+3185	202	1658000	2685	8	64	98	c
+3186	95	1661000	1202	8	17	99	c
+3187	115	1663000	2687	8	17	100	c
+3188	217	1676000	2688	8	23	101	c
+3189	122	1678000	2689	8	61	102	c
+3190	18	1681000	2690	8	13	103	c
+3192	55	1687000	1208	8	15	105	c
+3193	100	1693000	1201	8	17	106	c
+3194	146	1695000	2694	8	61	107	c
+3195	63	1697000	1205	8	15	108	c
+3196	126	1698000	2696	8	61	109	c
+3197	272	1713000	2697	8	26	110	c
+3198	56	1722000	1207	8	15	111	c
+3199	236	1729000	2699	8	23	112	c
+3202	37	1749000	1217	8	14	115	c
+3203	97	1761000	2703	8	17	116	c
+3204	240	1766000	2704	8	23	117	c
+3205	222	1774000	2705	8	23	118	c
+3206	258	1774000	1212	8	25	119	c
+3207	223	1789000	2707	8	23	120	c
+3210	179	1795000	2710	8	62	123	c
+3211	162	1795000	2711	8	62	124	c
+3212	228	1803000	2712	8	23	125	c
+3213	81	1806000	2713	8	60	126	c
+3214	35	1810000	2714	8	14	127	c
+3215	103	1835000	2715	8	17	128	c
+3216	174	1839000	2716	8	62	129	c
+3217	170	1848000	2717	8	62	130	c
+3218	119	1857000	2718	8	61	131	c
+3219	139	1869000	2719	8	61	132	c
+3220	108	1883000	2720	8	17	133	c
+3221	169	1902000	2721	8	62	134	c
+3222	266	1904000	2722	8	26	135	c
+3224	21	1905000	2724	8	13	137	c
+3226	215	1922000	2726	8	23	139	c
+3227	257	1968000	2727	8	25	140	c
+3228	185	1975000	2728	8	62	141	c
+3229	229	2017000	2729	8	23	142	c
+3230	114	2048000	2730	8	17	143	c
+3231	233	2120000	2731	8	23	144	c
+3232	224	2158000	2732	8	23	145	c
+3233	92	2554000	2733	8	17	146	c
+3200	242	1738000	5235	8	23	113	c
+3133	219	1511000	5269	8	23	46	c
+3201	36	1747000	5322	8	14	114	c
+3150	54	1552000	5332	8	15	63	c
+3501	246	981000	1505	9	49	2	c
+3502	237	985000	1510	9	49	3	c
+3504	323	995000	1504	9	58	5	c
+3505	303	1000000	2805	9	123	6	c
+3506	226	1000000	1508	9	49	7	c
+3507	180	1001000	2807	9	121	8	c
+3508	383	1005000	2808	9	125	9	c
+3509	238	1020000	1512	9	49	10	c
+3510	276	1020000	1509	9	53	11	c
+3511	242	1023000	1516	9	49	12	c
+3512	188	1028000	2812	9	121	13	c
+3513	255	1034000	1519	9	51	14	c
+3514	408	1039000	2814	9	124	15	c
+3515	341	1039000	1518	9	57	16	c
+3516	249	1043000	1520	9	49	17	c
+3517	126	1046000	2817	9	120	18	c
+3519	293	1049000	1515	9	53	20	c
+3520	168	1051000	1517	9	47	21	c
+3521	239	1056000	1522	9	49	22	c
+3522	120	1059000	1524	9	45	23	c
+3523	349	1063000	1550	9	57	24	c
+3524	283	1067000	1525	9	53	25	c
+3525	170	1070000	1527	9	47	26	c
+3526	374	1075000	2826	9	125	27	c
+3527	348	1076000	1528	9	57	28	c
+3528	182	1077000	2828	9	121	29	c
+3529	215	1078000	2829	9	122	30	c
+3530	160	1085000	1526	9	47	31	c
+3531	186	1087000	2831	9	121	32	c
+3532	337	1088000	1541	9	57	33	c
+3534	332	1092000	1567	9	57	35	c
+3536	289	1097000	1535	9	53	37	c
+3537	351	1100000	2837	9	126	38	c
+3538	331	1100000	1544	9	58	39	c
+3539	269	1101000	1536	9	51	40	c
+3540	164	1103000	1560	9	47	41	c
+3541	311	1104000	2841	9	127	42	c
+3542	124	1104000	1537	9	45	43	c
+3543	347	1104000	1546	9	57	44	c
+3544	259	1106000	1545	9	51	45	c
+3546	339	1108000	1559	9	57	47	c
+3548	363	1109000	2848	9	126	49	c
+3549	140	1110000	2849	9	120	50	c
+3551	177	1111000	1555	9	47	52	c
+3552	133	1113000	2852	9	120	53	c
+3553	221	1113000	2853	9	122	54	c
+3554	313	1114000	2854	9	127	55	c
+3555	298	1114000	2855	9	123	56	c
+3556	179	1117000	2856	9	121	57	c
+3557	224	1117000	2857	9	122	58	c
+3558	130	1119000	2858	9	120	59	c
+3559	261	1124000	1563	9	51	60	c
+3560	301	1125000	2860	9	123	61	c
+3561	112	1127000	1562	9	45	62	c
+3562	193	1127000	2862	9	121	63	c
+3563	299	1129000	2863	9	123	64	c
+3564	389	1129000	2864	9	125	65	c
+3566	116	1134000	1585	9	45	67	c
+3567	325	1135000	1575	9	58	68	c
+3568	127	1136000	2868	9	120	69	c
+3569	305	1140000	2869	9	123	70	c
+3570	115	1141000	1576	9	45	71	c
+3571	142	1142000	1579	9	46	72	c
+3572	264	1142000	1577	9	51	73	c
+3574	315	1144000	2874	9	127	75	c
+3575	189	1144000	2875	9	121	76	c
+3576	267	1144000	1590	9	51	77	c
+3577	321	1145000	1580	9	58	78	c
+3578	218	1145000	2878	9	122	79	c
+3579	143	1146000	1569	9	46	80	c
+3580	138	1150000	2880	9	120	81	c
+3582	310	1152000	2882	9	127	83	c
+3583	316	1153000	2883	9	127	84	c
+3584	222	1154000	2884	9	122	85	c
+3585	391	1156000	2885	9	125	86	c
+3586	322	1156000	1571	9	58	87	c
+3587	354	1158000	2887	9	126	88	c
+3588	300	1159000	2888	9	123	89	c
+3589	326	1161000	2889	9	58	90	c
+3590	125	1169000	2890	9	120	91	c
+3591	390	1170000	2891	9	125	92	c
+3592	148	1171000	1589	9	46	93	c
+3593	208	1174000	2893	9	122	94	c
+3594	304	1200000	2894	9	123	95	c
+3595	106	1211000	1594	9	45	96	c
+3597	357	1218000	2897	9	126	98	c
+3599	364	1224000	2899	9	126	100	c
+3600	404	1226000	2900	9	124	101	c
+3602	147	1237000	1596	9	46	103	c
+3603	146	1240000	1593	9	46	104	c
+3604	393	1247000	2904	9	124	105	c
+3605	402	1261000	2905	9	124	106	c
+3606	403	1262000	2906	9	124	107	c
+3608	400	1289000	2908	9	124	109	c
+3609	358	1313000	2909	9	126	110	c
+3601	327	1231000	5188	9	58	102	c
+3535	319	1094000	5230	9	127	36	c
+3573	111	1143000	5306	9	45	74	c
+3607	368	1276000	5288	9	126	108	c
+3611	241	1073000	1614	10	49	1	c
+3612	228	1078000	1619	10	49	2	c
+3613	232	1084000	1617	10	49	3	c
+3614	248	1090000	1616	10	49	4	c
+3615	233	1098000	1615	10	49	5	c
+3616	236	1100000	1613	10	49	6	c
+3617	172	1107000	1620	10	47	7	c
+3618	173	1120000	1622	10	47	8	c
+3619	171	1126000	1649	10	47	9	c
+3620	333	1129000	1639	10	57	10	c
+3621	158	1131000	1623	10	47	11	c
+3622	291	1131000	1618	10	53	12	c
+3623	157	1135000	1624	10	47	13	c
+3624	161	1141000	1625	10	47	14	c
+3627	387	1145000	2927	10	125	17	c
+3628	251	1145000	1636	10	51	18	c
+3630	245	1150000	1634	10	49	20	c
+3631	247	1154000	1633	10	49	21	c
+3633	285	1156000	1626	10	53	23	c
+3634	292	1156000	1656	10	53	24	c
+3635	343	1159000	1645	10	57	25	c
+3636	306	1161000	2936	10	123	26	c
+3637	229	1162000	1641	10	49	27	c
+3638	156	1164000	1657	10	47	28	c
+3639	272	1168000	1635	10	51	29	c
+3640	260	1171000	1647	10	51	30	c
+3641	207	1173000	2941	10	122	31	c
+3642	382	1174000	2942	10	125	32	c
+3644	176	1178000	1680	10	47	34	c
+3645	169	1179000	1697	10	47	35	c
+3647	167	1180000	1660	10	47	37	c
+3648	376	1180000	2948	10	125	38	c
+3649	344	1181000	1648	10	57	39	c
+3650	379	1182000	2950	10	125	40	c
+3651	250	1182000	1663	10	51	41	c
+3652	199	1183000	2952	10	121	42	c
+3653	273	1184000	1675	10	51	43	c
+3654	202	1184000	2954	10	122	44	c
+3655	200	1185000	2955	10	121	45	c
+3656	265	1188000	1705	10	51	46	c
+3657	216	1190000	2957	10	122	47	c
+3658	335	1192000	1668	10	57	48	c
+3660	240	1193000	1669	10	49	50	c
+3661	277	1194000	1664	10	53	51	c
+3662	262	1194000	1659	10	51	52	c
+3663	198	1195000	2963	10	121	53	c
+3664	235	1195000	1703	10	49	54	c
+3665	336	1198000	1676	10	57	55	c
+3632	284	1154000	5202	10	53	22	c
+3625	287	1142000	5216	10	53	15	c
+3646	122	1180000	5227	10	45	36	c
+3666	214	1202000	2966	10	122	56	c
+3667	324	1202000	1682	10	58	57	c
+3668	309	1204000	2968	10	123	58	c
+3669	135	1207000	2969	10	120	59	c
+3670	270	1212000	1661	10	51	60	c
+3672	201	1217000	2972	10	121	62	c
+3673	253	1219000	1681	10	51	63	c
+3674	392	1220000	2974	10	125	64	c
+3675	205	1222000	2975	10	122	65	c
+3676	192	1222000	2976	10	121	66	c
+3677	155	1228000	1695	10	47	67	c
+3678	165	1231000	1685	10	47	68	c
+3679	225	1233000	2979	10	122	69	c
+3680	217	1233000	2980	10	122	70	c
+3681	209	1236000	2981	10	122	71	c
+3682	288	1238000	2982	10	53	72	c
+3683	395	1243000	2983	10	124	73	c
+3684	263	1244000	1709	10	51	74	c
+16507	\N	1176200	6309	280	443	6	c
+3754	0	1073100	3053	11	128	1	c
+3755	0	1104000	3053	12	128	64	c
+3756	0	1111000	3053	13	195	45	c
+3757	0	1120100	3054	11	128	12	c
+3758	0	1120500	3055	11	128	13	c
+3759	0	1198000	3055	14	128	72	c
+3760	0	1132000	3056	11	128	19	c
+3761	0	1169000	3056	14	128	43	c
+3762	0	1140000	3056	15	195	20	c
+3763	0	1133200	3057	11	128	20	c
+3764	0	1171000	3057	14	128	46	c
+3765	0	1284000	3057	15	195	86	c
+3766	0	1133400	3058	11	128	21	c
+3767	0	1157000	3058	14	128	35	c
+3768	0	1158000	3058	15	195	26	c
+3769	0	1145500	3059	11	128	29	c
+3770	0	1156400	3060	11	128	35	c
+3771	0	1207000	3060	14	128	75	c
+3772	0	1180600	3061	11	128	47	c
+3773	0	1241000	3061	14	128	99	c
+3774	0	1372000	3061	15	195	116	c
+3775	0	1216200	1717	11	128	71	c
+3776	0	1234200	3062	11	128	80	c
+3777	0	1233000	3062	14	128	89	c
+3778	0	1209000	3062	15	195	54	c
+3780	0	909800	1506	16	128	1	c
+3781	0	936000	1506	12	128	2	c
+3782	0	1023200	3064	16	128	17	c
+3783	0	1050000	3064	13	195	17	c
+3784	0	1037700	3065	16	128	27	c
+3785	0	1107000	3065	13	195	40	c
+3786	0	1051400	3066	16	128	34	c
+3787	0	1136000	3066	12	128	82	c
+3788	0	1088000	3066	13	195	31	c
+3789	0	1068000	3067	16	128	42	c
+3790	0	1119000	3067	12	128	75	c
+3791	0	1073900	1566	16	128	49	c
+3792	0	1078000	1566	12	128	40	c
+3793	0	1090000	3068	16	128	59	c
+3794	0	1097000	3068	12	128	61	c
+3795	0	1115000	3068	13	195	49	c
+3797	0	1077100	3070	11	129	2	c
+3798	0	1184000	3070	17	129	3	c
+3799	0	1103000	3070	18	203	23	c
+3800	0	1093000	1659	11	129	5	c
+3801	0	1218000	1659	17	129	13	c
+3779	0	1268200	5220	11	128	94	c
+3802	0	1128000	1659	19	203	2	c
+3803	0	1113200	1563	11	129	10	c
+3804	0	1207000	1563	17	129	8	c
+3805	0	1116800	3071	11	129	11	c
+3806	0	1208000	3071	17	129	9	c
+3807	0	1134000	3071	19	203	3	c
+3808	0	1121100	3072	11	129	14	c
+3809	0	1206000	3072	17	129	7	c
+3810	0	1207000	3072	19	203	26	c
+3811	0	1126100	1673	11	129	17	c
+3812	0	1190000	1673	17	129	4	c
+3813	0	1171000	1673	19	203	9	c
+3814	0	1129000	3073	11	129	18	c
+3815	0	1160000	3073	17	129	1	c
+3816	0	1073000	3073	18	203	10	c
+3817	0	1134400	3074	11	129	22	c
+3818	0	1134700	3075	11	129	23	c
+3819	0	1143800	3076	11	129	26	c
+3820	0	1145100	3077	11	129	28	c
+3821	0	1164000	3077	19	203	8	c
+3685	101	1247000	1686	10	45	75	c
+3686	134	1248000	2986	10	120	76	c
+3689	185	1256000	2989	10	121	79	c
+3690	234	1257000	1715	10	49	80	c
+3691	196	1257000	2991	10	121	81	c
+3692	118	1259000	1723	10	45	82	c
+3693	268	1260000	1690	10	51	83	c
+3694	388	1270000	2994	10	125	84	c
+3695	113	1273000	1724	10	45	85	c
+3696	203	1274000	2996	10	122	86	c
+3697	328	1276000	1774	10	58	87	c
+3698	290	1278000	2998	10	53	88	c
+3700	294	1287000	1742	10	53	90	c
+3701	184	1287000	3001	10	121	91	c
+3702	107	1288000	1760	10	45	92	c
+3703	220	1291000	3003	10	122	93	c
+3705	394	1294000	3005	10	124	95	c
+3706	398	1299000	3006	10	124	96	c
+3707	178	1301000	3007	10	121	97	c
+3708	132	1303000	3008	10	120	98	c
+3709	353	1303000	3009	10	126	99	c
+3710	129	1303000	3010	10	120	100	c
+3711	373	1304000	3011	10	125	101	c
+3712	302	1305000	3012	10	123	102	c
+3713	346	1311000	1750	10	57	103	c
+3714	384	1312000	3014	10	125	104	c
+3716	297	1315000	3016	10	123	106	c
+3718	411	1316000	3018	10	124	108	c
+3719	136	1316000	3019	10	120	109	c
+3720	210	1317000	3020	10	122	110	c
+3722	330	1321000	1768	10	58	112	c
+3723	338	1323000	1751	10	57	113	c
+3724	149	1330000	1790	10	46	114	c
+3725	340	1332000	1794	10	57	115	c
+3727	137	1333000	3027	10	120	117	c
+3728	329	1340000	1779	10	58	118	c
+3729	153	1354000	1811	10	46	119	c
+3730	103	1354000	1777	10	45	120	c
+3731	191	1367000	3031	10	121	121	c
+3732	401	1369000	3032	10	124	122	c
+3733	377	1369000	3033	10	125	123	c
+3734	350	1381000	1788	10	57	124	c
+3735	308	1384000	3035	10	123	125	c
+3736	342	1392000	1813	10	57	126	c
+3738	359	1403000	3038	10	126	128	c
+3739	412	1425000	3039	10	124	129	c
+3740	405	1427000	3040	10	124	130	c
+3741	362	1443000	3041	10	126	131	c
+3742	123	1446000	1828	10	45	132	c
+3743	410	1452000	3043	10	124	133	c
+3744	407	1459000	3044	10	124	134	c
+3745	152	1462000	1833	10	46	135	c
+3746	150	1499000	1840	10	46	136	c
+3747	356	1500000	3047	10	126	137	c
+3748	320	1502000	1836	10	58	138	c
+3749	355	1502000	3049	10	126	139	c
+3750	141	1516000	3050	10	120	140	c
+3751	367	1524000	3051	10	126	141	c
+3753	345	1542000	1843	10	57	143	c
+3715	361	1313000	5195	10	126	105	c
+3726	366	1333000	5289	10	126	116	c
+3717	145	1316000	5318	10	46	107	c
+3822	0	1150800	3078	11	129	30	c
+3823	0	1158700	3079	11	129	37	c
+3824	0	1302000	3079	19	203	71	c
+3825	0	1188200	3080	11	129	53	c
+3826	0	1192000	1672	11	129	54	c
+3827	0	1198700	3081	11	129	59	c
+3828	0	1234000	3081	19	203	38	c
+3829	0	1199600	1776	11	129	62	c
+3830	0	1200100	3082	11	129	63	c
+3831	0	1221600	3083	11	129	75	c
+3832	0	1244300	1690	11	129	83	c
+3833	0	1295400	1766	11	129	115	c
+3834	0	1318400	3084	11	129	132	c
+3835	0	1022600	3085	16	129	16	c
+3836	0	1094000	3085	20	129	19	c
+3837	0	1085000	3085	18	203	15	c
+3838	0	1049400	3086	16	129	32	c
+3839	0	1162000	3086	20	129	41	c
+3840	0	1103000	3086	18	203	21	c
+3841	0	1058300	3087	16	129	38	c
+3842	0	1146000	3087	20	129	34	c
+3843	0	1078000	3087	18	203	12	c
+3844	0	1072900	1681	16	129	47	c
+3845	0	1156000	1681	20	129	39	c
+3846	0	1131000	1681	18	203	35	c
+3847	0	1073000	1663	16	129	48	c
+3848	0	1179000	1663	20	129	52	c
+3849	0	1074200	1636	16	129	50	c
+3850	0	1169000	1636	20	129	46	c
+3851	0	1089100	1749	16	129	58	c
+3852	0	1165000	1749	20	129	42	c
+3853	0	1335500	3088	21	130	7	c
+3854	0	1377000	3088	22	130	67	c
+3855	0	1355400	2622	21	130	14	c
+3856	0	1399000	2622	23	130	18	c
+3857	0	1534000	2622	24	202	68	c
+3858	0	1393100	3089	21	130	19	c
+3859	0	1485000	3089	23	130	49	c
+3860	0	1558000	3089	25	202	91	c
+3861	0	1395800	3090	21	130	20	c
+3862	0	1455000	3090	23	130	38	c
+3863	0	1399900	3091	21	130	21	c
+3864	0	1473000	3091	23	130	43	c
+3865	0	1517000	3091	24	202	57	c
+3866	0	1400700	2603	21	130	22	c
+3867	0	1445000	2603	23	130	32	c
+3868	0	1403600	3092	21	130	23	c
+3869	0	1607000	3092	23	130	85	c
+3870	0	1409400	3093	21	130	25	c
+3871	0	1507000	3093	23	130	55	c
+3872	0	1450800	3094	21	130	39	c
+3873	0	1483000	3094	23	130	48	c
+3874	0	1458900	3095	21	130	44	c
+3875	0	1555000	3095	23	130	74	c
+3876	0	1578000	3095	24	202	83	c
+3877	0	1465400	2606	21	130	45	c
+3878	0	1593000	2606	23	130	84	c
+3879	0	1480800	2654	21	130	48	c
+3880	0	1546000	2654	23	130	69	c
+3882	0	1493200	3097	21	130	55	c
+3883	0	1500800	2630	21	130	57	c
+3884	0	1520100	3098	21	130	62	c
+3885	0	1565700	3099	21	130	69	c
+3886	0	1592700	3100	21	130	73	c
+3887	0	1687300	3101	21	130	87	c
+3888	0	1906400	2728	21	130	102	c
+3889	0	1202300	2504	26	130	8	c
+3890	0	1223000	2504	22	130	15	c
+3891	0	1236300	3102	26	130	13	c
+3892	0	1266000	3102	22	130	27	c
+3893	0	1340000	3102	25	202	29	c
+3894	0	1274900	2517	26	130	26	c
+3895	0	1378000	2517	22	130	68	c
+3896	0	1284100	2617	26	130	28	c
+3897	0	1360000	2617	22	130	59	c
+3898	0	1441000	2617	25	202	74	c
+3899	0	1287600	3103	26	130	29	c
+3900	0	1370000	3103	22	130	64	c
+3901	0	1340600	2594	26	130	48	c
+3902	0	1619000	2594	23	130	88	c
+3903	0	1499000	2594	24	202	44	c
+3904	0	1344100	3104	26	130	49	c
+3905	0	1453000	3104	22	130	81	c
+3906	0	1448000	3104	24	202	23	c
+3907	0	1080200	3105	11	131	3	c
+3908	0	1172000	3105	20	131	48	c
+3909	0	1144900	1741	11	131	27	c
+3910	0	1234000	1741	17	131	15	c
+3913	0	1203300	3106	11	131	65	c
+3914	0	1199000	3106	18	331	63	c
+3915	0	1214300	3107	11	131	69	c
+3916	0	1303000	3107	17	131	30	c
+3917	0	1177000	3107	18	331	54	c
+3918	0	1256700	1804	11	131	88	c
+3919	0	1351000	1804	17	131	43	c
+3920	0	1224000	1804	19	331	34	c
+3921	0	1257700	3108	11	131	89	c
+3922	0	1330000	3108	17	131	35	c
+3923	0	1271100	3109	11	131	96	c
+3924	0	1277800	3110	11	131	100	c
+3925	0	1290600	3111	11	131	114	c
+3926	0	1435000	3111	17	131	67	c
+3927	0	1278000	3111	19	331	59	c
+3930	0	1310200	3113	11	131	124	c
+3931	0	1381000	3113	19	331	100	c
+3932	0	1315100	3114	11	131	129	c
+3933	0	1322000	3115	11	131	133	c
+3934	0	1330400	3116	11	131	137	c
+3935	0	1337600	3117	11	131	142	c
+3936	0	1387900	3118	11	131	152	c
+3937	0	1370000	3118	19	331	93	c
+3928	0	1309500	5334	11	131	122	c
+3929	0	1466000	5334	17	131	71	c
+3881	0	1492300	5337	21	130	54	c
+3938	0	1624400	3119	11	131	174	c
+3939	0	945500	1520	16	131	2	c
+3940	0	1012000	1520	20	131	1	c
+3941	0	1023000	1520	18	331	3	c
+3942	0	949800	1508	16	131	3	c
+3943	0	1051000	1508	20	131	7	c
+3944	0	1024900	1613	16	131	19	c
+3945	0	1088000	1613	20	131	16	c
+3946	0	1129000	1613	18	331	33	c
+3947	0	1024900	1715	16	131	20	c
+3948	0	1107000	1715	20	131	21	c
+3949	0	1084000	1715	18	331	14	c
+3950	0	1026100	1669	16	131	22	c
+3951	0	1109000	1669	20	131	22	c
+3952	0	1195000	1669	18	331	58	c
+3953	0	1121700	3120	16	131	68	c
+3954	0	1192000	3120	20	131	58	c
+3955	0	1132500	3121	16	131	74	c
+3957	0	1346900	3123	21	132	10	c
+3958	0	1500000	3123	27	132	13	c
+3959	0	1338000	3123	28	332	18	c
+3960	0	1437500	3124	21	132	29	c
+3961	0	1581000	3124	27	132	23	c
+3962	0	1437700	3125	21	132	30	c
+3963	0	1492000	3125	27	132	11	c
+3964	0	1443300	3126	21	132	36	c
+3965	0	1448600	3127	21	132	37	c
+3966	0	1571000	3127	27	132	21	c
+3967	0	1452300	3128	21	132	40	c
+3968	0	1578000	3128	27	132	22	c
+3969	0	1479200	3129	21	132	47	c
+3970	0	1584000	3129	27	132	26	c
+3971	0	1483900	2687	21	132	50	c
+3972	0	1488300	2720	21	132	53	c
+3973	0	1497800	3130	21	132	56	c
+3974	0	1546500	3131	21	132	65	c
+3975	0	1600700	2682	21	132	74	c
+3976	0	1697500	3132	21	132	90	c
+3977	0	1866900	3133	21	132	100	c
+3978	0	1921200	3134	21	132	103	c
+3981	0	1190100	1026	26	132	6	c
+3982	0	1276000	1026	30	132	3	c
+3983	0	1206700	3136	26	132	9	c
+3984	0	1292000	3136	30	132	7	c
+3985	0	1211000	3136	28	332	1	c
+3986	0	1221000	1025	26	132	10	c
+3987	0	1321000	1025	30	132	13	c
+3988	0	1246400	3137	26	132	16	c
+3989	0	1345000	3137	30	132	20	c
+3990	0	1454000	3137	28	332	54	c
+3991	0	1266300	3138	26	132	22	c
+3992	0	1361000	3138	30	132	22	c
+3993	0	1302400	3139	26	132	33	c
+3994	0	1418000	3139	30	132	42	c
+3995	0	1691000	3139	29	332	49	c
+3996	0	1304300	1118	26	132	34	c
+3997	0	1387000	1118	30	132	29	c
+3998	0	1559000	3140	27	132	18	c
+4002	0	1169300	3141	11	133	45	c
+4003	0	1183000	3141	19	212	15	c
+4004	0	1169400	3142	11	133	46	c
+4005	0	1249000	3142	17	133	20	c
+4006	0	1178000	3142	19	212	13	c
+4010	0	1214600	3144	11	133	70	c
+4011	0	1160000	3144	19	212	6	c
+4012	0	1225900	3145	11	133	78	c
+4013	0	1314000	3145	17	133	33	c
+4014	0	1247000	3145	19	212	45	c
+4015	0	1311300	3146	11	133	127	c
+4016	0	1311700	2998	11	133	128	c
+4017	0	1402700	3147	11	133	154	c
+12981	\N	1304000	1025	209	132	3	c
+12982	\N	1312000	1118	209	132	4	c
+4020	0	974200	1513	16	133	7	c
+4021	0	1017000	1513	20	133	2	c
+4022	0	988600	3148	16	133	10	c
+4023	0	1024000	3148	20	133	3	c
+4024	0	994000	3148	18	212	1	c
+4025	0	1011000	1643	16	133	13	c
+4026	0	1077000	1643	20	133	14	c
+4027	0	1124000	1643	18	212	31	c
+4028	0	1033800	1535	16	133	24	c
+4029	0	1123000	1535	20	133	24	c
+4030	0	1048300	1618	16	133	31	c
+4031	0	1125000	1618	20	133	25	c
+4032	0	1111000	1618	18	212	26	c
+4039	0	1095400	1625	11	134	6	c
+4040	0	1204000	1625	20	134	64	c
+4041	0	1103000	1625	18	210	22	c
+4044	0	1122400	1660	11	134	15	c
+4045	0	1142200	3154	11	134	25	c
+4046	0	1196000	3154	17	134	6	c
+4047	0	1192000	3154	18	210	57	c
+4048	0	1154600	3155	11	134	32	c
+4049	0	1246000	3155	17	134	16	c
+4050	0	1156100	3156	11	134	33	c
+4051	0	1146000	3156	18	210	42	c
+4052	0	1159000	3157	11	134	38	c
+4053	0	1249000	3157	17	134	18	c
+4054	0	1264000	3157	19	210	52	c
+4055	0	1164200	3158	11	134	40	c
+4056	0	1257000	3158	17	134	22	c
+4057	0	1243000	3158	19	210	42	c
+4058	0	1165900	3159	11	134	41	c
+4059	0	1206300	3160	11	134	67	c
+4060	0	1279000	3161	11	134	102	c
+4061	0	1348000	3161	17	134	40	c
+4062	0	1248000	3161	19	210	47	c
+4063	0	963900	1517	16	134	4	c
+4064	0	1054000	1517	20	134	8	c
+4065	0	1007000	1517	18	210	2	c
+4066	0	1017700	1622	16	134	14	c
+4067	0	1087000	1622	20	134	15	c
+4068	0	1047100	1680	16	134	30	c
+4069	0	1128000	1680	20	134	26	c
+10700	\N	1176200	3398	148	224	1	c
+10701	\N	1182000	3136	148	332	2	c
+3956	0	1254000	5190	17	131	21	c
+4001	0	1156200	5202	11	133	34	c
+3999	0	1087600	5213	11	133	4	c
+4000	0	1268000	5213	18	212	94	c
+3979	0	1933100	5215	21	132	104	c
+3980	0	2008000	5215	29	332	73	c
+4033	0	1078900	5216	16	133	53	c
+4038	0	1145000	5216	20	133	32	c
+4008	0	1199100	5228	11	133	60	c
+4009	0	1231000	5228	19	212	36	c
+4035	0	1248000	5228	17	133	17	c
+4036	0	1347000	5262	17	133	39	c
+4007	0	1183300	5262	11	133	49	c
+4070	0	1055900	5333	16	134	37	c
+4071	0	1128000	5333	18	210	32	c
+10702	\N	1231800	4945	148	332	3	c
+4075	0	1074500	3164	16	134	51	c
+4076	0	1155000	3164	20	134	38	c
+4077	0	1168000	1624	17	134	2	c
+4079	0	1340300	3166	21	135	9	c
+4080	0	1449000	3166	30	135	56	c
+4081	0	1458000	3166	28	211	56	c
+4082	0	1355300	1172	21	135	13	c
+4083	0	1485000	1172	27	135	8	c
+4084	0	1596000	1172	28	211	107	c
+4085	0	1385500	3167	21	135	16	c
+4086	0	1559000	3167	27	135	20	c
+4087	0	1420700	3168	21	135	28	c
+4088	0	1559000	3168	27	135	19	c
+4089	0	1439300	3169	21	135	32	c
+4090	0	1609000	3169	27	135	32	c
+4091	0	1457400	3170	21	135	42	c
+4092	0	1595000	3170	27	135	29	c
+4093	0	1482400	1104	21	135	49	c
+4094	0	1581000	1104	27	135	24	c
+4095	0	1533000	1104	28	211	82	c
+4096	0	1553500	3171	21	135	66	c
+4097	0	1691000	3171	29	211	48	c
+4098	0	1633100	3172	21	135	78	c
+4099	0	1659100	3173	21	135	83	c
+4100	0	1175900	3174	26	135	4	c
+4101	0	1295000	3174	30	135	9	c
+4103	0	1312900	3175	26	135	40	c
+4104	0	1428000	3175	30	135	50	c
+4105	0	1323200	2629	26	135	42	c
+4106	0	1480000	2629	28	211	61	c
+4107	0	1333400	3176	26	135	46	c
+4108	0	1413000	3176	30	135	38	c
+4110	0	1376400	3177	26	135	57	c
+4111	0	1472000	3177	30	135	63	c
+4114	0	1103500	1654	11	136	8	c
+4115	0	1123600	1586	11	136	16	c
+4116	0	1149000	1586	14	136	29	c
+4117	0	1182000	1586	15	189	36	c
+4122	0	1157200	1693	11	136	36	c
+4123	0	1169000	1693	14	136	44	c
+4124	0	1262000	1693	15	189	77	c
+4125	0	1161000	3181	11	136	39	c
+4126	0	1189000	3181	14	136	59	c
+4133	0	1188200	3185	11	136	52	c
+4134	0	1184000	3185	14	136	54	c
+4135	0	1250000	3185	15	189	74	c
+4138	0	1201100	1719	11	136	64	c
+4139	0	1193000	1719	14	136	67	c
+4140	0	1217900	3187	11	136	72	c
+4141	0	1219800	3188	11	136	73	c
+4142	0	1280000	3188	14	136	112	c
+4143	0	1222700	1771	11	136	76	c
+4144	0	1259200	1816	11	136	90	c
+4145	0	1265200	3189	11	136	93	c
+4146	0	1290500	1775	11	136	113	c
+4147	0	1307100	3190	11	136	121	c
+4148	0	1311100	3191	11	136	126	c
+4151	0	1037600	3193	16	136	25	c
+4152	0	1057000	3193	12	136	29	c
+4153	0	1039600	3194	16	136	28	c
+4154	0	1073000	3194	12	136	36	c
+4155	0	1081500	3195	16	136	54	c
+4156	0	1132000	3195	12	136	80	c
+4157	0	1158000	3195	13	189	69	c
+4158	0	1083300	1547	16	136	55	c
+4159	0	1071000	1547	12	136	35	c
+4160	0	1099200	1565	16	136	62	c
+4161	0	1106000	1565	12	136	67	c
+4162	0	1121300	1670	16	136	67	c
+4163	0	1138000	1670	12	136	85	c
+4164	0	1097000	1670	13	189	36	c
+4168	0	1322700	3199	21	137	5	c
+4169	0	1385000	3199	22	137	69	c
+4170	0	1372000	3200	21	137	15	c
+4171	0	1436000	3200	23	137	29	c
+4172	0	1389500	3201	21	137	17	c
+4173	0	1448000	3201	23	137	33	c
+4174	0	1438900	3202	21	137	31	c
+4175	0	1545000	3202	23	137	68	c
+4176	0	1440900	3203	21	137	34	c
+4177	0	1541000	3203	23	137	66	c
+4178	0	1434000	3203	24	190	20	c
+4179	0	1561100	3204	21	137	68	c
+4181	0	1605000	3206	21	137	75	c
+4182	0	1682200	2719	21	137	86	c
+4183	0	1836000	2719	23	137	107	c
+4184	0	1768700	2670	21	137	94	c
+4185	0	1813900	3207	21	137	97	c
+4186	0	1927000	3207	23	137	108	c
+4187	0	1856600	3208	21	137	99	c
+4188	0	1117700	2505	26	137	2	c
+4189	0	1150000	2505	22	137	3	c
+4190	0	1180200	2534	26	137	5	c
+4191	0	1238000	2534	22	137	21	c
+4192	0	1250000	2534	25	190	12	c
+4193	0	1251300	3209	26	137	19	c
+4194	0	1405000	3209	22	137	71	c
+4195	0	1281000	3209	25	190	17	c
+4196	0	1289400	3210	26	137	30	c
+4197	0	1246000	3210	22	137	22	c
+4198	0	1274000	3210	25	190	15	c
+4199	0	1296300	2537	26	137	32	c
+4200	0	1318000	2537	22	137	39	c
+4201	0	1310400	2515	26	137	38	c
+4202	0	1391000	2515	25	190	49	c
+4203	0	1326200	3211	26	137	44	c
+4204	0	1403000	3211	22	137	70	c
+4205	0	1397000	3211	25	190	54	c
+4206	0	1555000	3212	23	137	75	c
+4207	0	1395000	3212	25	190	52	c
+4209	0	1107900	3214	11	138	9	c
+4131	0	1185400	5153	11	136	51	c
+4132	0	1185000	5153	13	189	74	c
+4136	0	1192300	5170	11	136	55	c
+4137	0	1195000	5170	15	189	46	c
+4167	0	1235000	5170	14	136	91	c
+4078	0	1167000	5174	20	134	43	c
+4149	0	1031100	5178	16	136	23	c
+4150	0	1059000	5178	12	136	30	c
+12983	\N	1315000	1026	209	132	5	c
+12984	\N	1317000	3138	209	132	6	c
+4118	0	1137700	5226	11	136	24	c
+4119	0	1160000	5226	14	136	38	c
+4112	0	1332000	5331	30	135	16	c
+4102	0	1249600	5331	26	135	18	c
+4113	0	1479000	5332	30	135	67	c
+4109	0	1350100	5332	26	135	51	c
+4120	0	1152300	5335	11	136	31	c
+4121	0	1176000	5335	14	136	48	c
+4127	0	1167200	5336	11	136	42	c
+4128	0	1190000	5336	14	136	63	c
+4210	0	1193900	3215	11	138	56	c
+4211	0	1230400	3216	11	138	79	c
+4212	0	1271700	3217	11	138	97	c
+4213	0	1289700	3218	11	138	111	c
+4214	0	1290300	1757	11	138	112	c
+4216	0	1310600	3220	11	138	125	c
+4217	0	1406000	1829	11	138	155	c
+4218	0	1469900	3221	11	138	162	c
+4219	0	1501300	3222	11	138	164	c
+4220	0	1021500	1531	16	138	15	c
+4221	0	1025900	1543	16	138	21	c
+4222	0	1084700	3223	16	138	56	c
+4223	0	1094400	3224	16	138	60	c
+4224	0	1115800	1610	16	138	66	c
+4225	0	1138700	3225	16	138	77	c
+4226	0	1161000	3226	16	138	86	c
+4227	0	1168600	3227	11	139	44	c
+4230	0	1331700	1608	11	139	138	c
+4231	0	1342100	1803	11	139	144	c
+4232	0	1363000	3229	11	139	148	c
+4233	0	1447000	3229	32	139	72	c
+4234	0	1379000	3229	33	272	121	c
+4235	0	1462000	3230	11	139	161	c
+4236	0	1535900	3231	11	139	167	c
+4237	0	1456000	3231	32	139	75	c
+4238	0	1597000	3232	11	139	173	c
+4239	0	1804700	3233	11	139	176	c
+4240	0	1800000	3233	32	139	96	c
+4241	0	1759000	3233	34	272	84	c
+4242	0	1087200	1561	16	139	57	c
+4243	0	1139000	1561	31	139	35	c
+4246	0	1153800	3235	16	139	82	c
+4247	0	1194000	3235	31	139	52	c
+4249	0	1244800	3237	16	139	103	c
+4250	0	1298000	3237	31	139	97	c
+4251	0	1322000	3237	33	272	98	c
+4253	0	1290000	3239	32	139	23	c
+4256	0	1391000	2572	26	140	63	c
+4257	0	1392100	3242	26	140	64	c
+4258	0	1414000	3242	35	140	50	c
+4259	0	1433300	3243	26	140	73	c
+4260	0	1532000	3243	35	140	89	c
+4261	0	1514900	3244	26	140	81	c
+4262	0	1546000	3244	35	140	97	c
+4263	0	1553100	3245	26	140	83	c
+4264	0	1580000	3245	35	140	106	c
+4265	0	1477000	3246	35	140	70	c
+4267	0	2304000	3248	35	140	130	c
+4268	0	1181800	3249	11	141	48	c
+4269	0	1214000	3249	31	141	64	c
+4270	0	1156000	3249	33	266	28	c
+4271	0	1196100	1815	11	141	57	c
+4272	0	1232000	1815	32	141	13	c
+4273	0	1208000	1815	33	266	55	c
+4274	0	1235900	1701	11	141	81	c
+4275	0	1280000	1701	32	141	20	c
+4276	0	1273000	1701	34	266	12	c
+4277	0	1279200	3250	11	141	103	c
+4278	0	1325000	3250	32	141	35	c
+4279	0	1395000	3250	34	266	34	c
+4280	0	1280500	1687	11	141	104	c
+4281	0	1251000	1687	32	141	14	c
+4282	0	1777800	3251	11	141	175	c
+4283	0	1926000	3251	32	141	98	c
+4284	0	1011000	3252	16	141	12	c
+4285	0	1035000	3252	31	141	4	c
+4286	0	1057000	3252	33	266	3	c
+4290	0	1052800	3254	16	141	35	c
+4291	0	1074000	3254	31	141	13	c
+4292	0	1139300	1708	16	141	79	c
+4293	0	1211000	1708	31	141	63	c
+4294	0	1214000	1708	34	266	1	c
+4295	0	1171800	3255	16	141	89	c
+4296	0	1187000	3255	31	141	51	c
+4297	0	1165000	3255	33	266	32	c
+4302	0	1311900	2558	26	142	39	c
+4303	0	1364000	2558	35	142	31	c
+4304	0	1319700	3259	26	142	41	c
+4305	0	1413000	3259	35	142	48	c
+4306	0	1427300	3260	26	142	72	c
+4307	0	1476000	3260	35	142	69	c
+4308	0	1445200	3261	26	142	76	c
+4309	0	1490000	3261	35	142	75	c
+4310	0	1526000	3261	36	267	7	c
+4311	0	1606300	2584	26	142	84	c
+4312	0	1733000	2584	35	142	118	c
+4313	0	1660000	2584	36	267	21	c
+4315	0	1655600	3263	26	142	86	c
+4316	0	1823000	3263	35	142	124	c
+4319	0	1183900	1851	11	143	50	c
+4320	0	1280600	1805	11	143	105	c
+4321	0	1267000	1805	31	143	82	c
+4322	0	1297000	1805	33	274	90	c
+4323	0	1289600	3265	11	143	110	c
+4324	0	1337000	3265	32	143	41	c
+4325	0	1329000	3265	34	274	20	c
+4326	0	1318100	3266	11	143	131	c
+4328	0	1336100	1801	11	143	141	c
+4329	0	1390100	1762	11	143	153	c
+4330	0	1385000	1762	32	143	58	c
+4331	0	1429500	3268	11	143	157	c
+4332	0	1414000	3268	32	143	63	c
+4333	0	1430900	3269	11	143	158	c
+4334	0	1511000	3269	32	143	81	c
+4335	0	1614000	3269	34	274	77	c
+4336	0	984800	1523	16	143	9	c
+4337	0	1008000	1523	31	143	1	c
+4340	0	1105200	3271	16	143	63	c
+4341	0	1138000	3271	31	143	33	c
+4342	0	1135000	3272	16	143	75	c
+4343	0	1226000	3272	31	143	72	c
+4344	0	1143900	3273	16	143	80	c
+4252	0	1291100	5185	16	139	106	c
+4255	0	1343000	5185	31	139	105	c
+4266	0	1809000	5194	35	140	123	c
+4287	0	1042500	5198	16	141	29	c
+4244	0	1123400	5203	16	139	69	c
+4245	0	1150000	5203	31	139	40	c
+4327	0	1324200	5214	11	143	134	c
+4248	0	1243000	5222	16	139	102	c
+4254	0	1287000	5222	31	139	91	c
+4345	0	1157300	5224	16	143	83	c
+4338	0	1059400	5225	16	143	39	c
+4339	0	1125000	5225	31	143	28	c
+4228	0	1329300	5233	11	139	136	c
+4229	0	1443000	5233	31	139	117	c
+4317	0	1740000	5259	35	142	119	c
+4318	0	1576000	5259	36	267	11	c
+4215	0	1301000	5277	11	138	118	c
+4298	0	1200900	5261	16	141	92	c
+4301	0	1220000	5261	31	141	66	c
+4351	0	1485000	3278	21	144	51	c
+4352	0	1544000	3278	35	144	96	c
+4355	0	1619800	3280	21	144	76	c
+4356	0	1625000	3280	37	144	22	c
+4357	0	1516000	3280	38	275	85	c
+4358	0	1977400	3281	21	144	106	c
+4359	0	2058000	3281	37	144	51	c
+4364	0	1268200	3284	26	144	23	c
+4365	0	1324000	3284	35	144	17	c
+4366	0	1569000	3284	38	275	104	c
+4367	0	1355800	2544	26	144	53	c
+4368	0	1392700	3285	26	144	65	c
+4369	0	1521000	3285	35	144	84	c
+4370	0	1646000	3285	38	275	120	c
+4371	0	1409400	3286	26	144	67	c
+4372	0	1525000	3286	35	144	85	c
+4373	0	1407000	3286	38	275	53	c
+4377	0	1272900	3290	11	145	98	c
+4378	0	1358000	3290	17	145	48	c
+4379	0	1273200	3291	11	145	99	c
+4380	0	1343000	3291	17	145	38	c
+4381	0	1278800	1792	11	145	101	c
+4382	0	1381000	1792	17	145	54	c
+4383	0	1310000	1792	18	335	102	c
+4384	0	1282600	3292	11	145	107	c
+4385	0	1397000	3292	17	145	60	c
+4386	0	1362000	3292	19	335	91	c
+4388	0	1309500	3294	11	145	123	c
+4389	0	1445000	3294	17	145	68	c
+4390	0	1335500	1835	11	145	140	c
+4392	0	1375300	3296	11	145	150	c
+4393	0	1381600	3297	11	145	151	c
+12985	\N	1362000	3284	209	144	7	c
+12986	\N	1379000	3137	209	132	8	c
+12987	\N	1407000	3139	209	132	9	c
+4398	0	1096600	3299	16	145	61	c
+4399	0	1196000	3299	20	145	60	c
+4400	0	1166400	3300	16	145	87	c
+4401	0	1256000	3300	20	145	79	c
+4402	0	1212000	3301	16	145	94	c
+4403	0	1304000	3301	20	145	91	c
+4404	0	1221900	3302	16	145	95	c
+4405	0	1323000	3302	20	145	94	c
+4406	0	1233300	1724	16	145	99	c
+4407	0	1328000	1724	17	145	34	c
+4408	0	1284000	1724	19	335	63	c
+16508	\N	1178300	4945	280	491	7	c
+4417	0	1443300	3306	21	146	35	c
+4418	0	1619000	3306	27	146	34	c
+4423	0	1467100	2643	21	146	46	c
+4424	0	1227000	3309	26	146	11	c
+4425	0	1316000	3309	30	146	11	c
+4426	0	1248300	3310	26	146	17	c
+4427	0	1400000	3310	30	146	35	c
+4428	0	1449000	3310	28	336	52	c
+4429	0	1264500	3311	26	146	21	c
+4430	0	1366000	3311	30	146	25	c
+4431	0	1374000	3311	28	336	32	c
+4434	0	1369000	1071	26	146	55	c
+4435	0	1493000	1071	30	146	71	c
+4436	0	1440400	3313	26	146	74	c
+4437	0	1581000	3313	30	146	90	c
+4445	0	1237000	1859	11	147	82	c
+4446	0	1263000	1859	14	147	109	c
+4447	0	1246600	3319	11	147	84	c
+4448	0	1312000	3319	14	147	124	c
+4454	0	1356300	3323	11	147	146	c
+4455	0	1384000	3323	14	147	143	c
+4456	0	1447000	3323	19	197	116	c
+4459	0	1072100	3326	16	147	46	c
+4460	0	1077000	3326	12	147	38	c
+4461	0	1108000	3326	18	197	24	c
+4468	0	1222400	3331	16	147	96	c
+4469	0	1186000	3331	14	147	55	c
+4470	0	1246000	3331	19	197	44	c
+4360	0	1115800	5156	26	144	1	c
+4361	0	1217000	5156	35	144	1	c
+4458	0	1064300	5176	16	147	40	c
+4462	0	1108400	5183	16	147	64	c
+4463	0	1128000	5183	12	147	79	c
+16509	\N	1192600	6307	280	445	8	c
+16510	\N	1197300	4225	280	383	9	c
+4346	0	1205600	5197	16	143	93	c
+4350	0	1258000	5197	31	143	80	c
+4422	0	1453700	5199	21	146	41	c
+4440	0	1587000	5199	27	146	28	c
+4441	0	1675000	5199	29	336	46	c
+4438	0	1463000	5200	26	146	79	c
+4439	0	1536000	5200	28	336	86	c
+4442	0	1643000	5200	27	146	39	c
+4347	0	1295000	5214	32	143	25	c
+4348	0	1210000	5224	31	143	61	c
+4349	0	1233000	5224	33	274	67	c
+4444	0	1205800	5267	11	147	66	c
+4471	0	1327000	5266	14	147	128	c
+4452	0	1289000	5266	11	147	109	c
+4474	0	1447000	5268	14	147	149	c
+4457	0	1435800	5268	11	147	159	c
+4472	0	1356000	5271	14	147	134	c
+4473	0	1401000	5271	19	197	104	c
+4478	0	1143000	5274	12	147	87	c
+4479	0	1287000	5274	19	197	65	c
+4465	0	1129700	5274	16	147	72	c
+4480	0	1259000	5275	12	147	103	c
+4481	0	1244000	5275	19	197	43	c
+4476	0	1118000	5276	12	147	73	c
+4477	0	1198000	5276	18	197	61	c
+4466	0	1146300	5276	16	147	81	c
+4353	0	1507000	5301	21	144	58	c
+4354	0	1535000	5301	35	144	90	c
+4412	0	1387000	5302	20	145	108	c
+4413	0	1204000	5302	18	335	68	c
+4376	0	1197000	5302	11	145	58	c
+4432	0	1326100	5303	26	146	43	c
+4433	0	1383000	5303	28	336	35	c
+4443	0	1435000	5303	30	146	53	c
+4391	0	1355000	5307	11	145	145	c
+4409	0	1358000	5305	17	145	47	c
+4410	0	1305000	5305	19	335	73	c
+4397	0	1075600	5306	16	145	52	c
+4411	0	1157000	5306	20	145	40	c
+4486	0	1559600	3339	21	148	67	c
+4487	0	1685000	3339	27	148	49	c
+4488	0	1632000	3340	21	148	77	c
+4489	0	1750000	3340	27	148	53	c
+4490	0	1643800	1043	21	148	79	c
+4491	0	1683000	1043	27	148	48	c
+4492	0	1572000	1043	28	198	100	c
+4494	0	1651900	3342	21	148	81	c
+4495	0	1797000	3342	27	148	57	c
+4496	0	1668500	3343	21	148	85	c
+4497	0	1688300	2708	21	148	88	c
+4498	0	1826000	2708	27	148	59	c
+4499	0	1752200	3344	21	148	93	c
+4500	0	1773600	3345	21	148	95	c
+4501	0	1856000	3345	27	148	62	c
+4502	0	1816700	3346	21	148	98	c
+4503	0	1865000	3346	29	198	65	c
+4506	0	1254600	1155	26	148	20	c
+4507	0	1380000	1155	30	148	28	c
+4508	0	1413600	3349	26	148	68	c
+4509	0	1522000	3349	30	148	79	c
+4510	0	1415100	1160	26	148	69	c
+4511	0	1463000	1160	28	198	58	c
+4514	0	1442600	1159	26	148	75	c
+4515	0	1588000	1159	30	148	92	c
+4516	0	1459200	3350	26	148	78	c
+4517	0	1537000	3350	30	148	82	c
+4519	0	1211000	1779	11	149	68	c
+4520	0	1224200	1768	11	149	77	c
+4521	0	1387000	1768	17	149	57	c
+4524	0	1282000	3353	11	149	106	c
+4525	0	1420000	3353	17	149	63	c
+4526	0	1323000	3353	18	225	105	c
+4527	0	1298300	3354	11	149	116	c
+4528	0	1426000	3354	17	149	65	c
+4529	0	1299200	1836	11	149	117	c
+4530	0	1421000	1836	17	149	64	c
+4531	0	1354000	1836	19	225	87	c
+4532	0	1305300	3355	11	149	120	c
+4533	0	1428000	3355	17	149	66	c
+4534	0	1332000	3355	18	225	108	c
+4536	0	964700	3357	16	149	5	c
+4414	0	1411700	5805	21	146	26	c
+4415	0	1531000	5805	30	146	81	c
+4419	0	1450000	5806	21	146	38	c
+4420	0	1601000	5806	27	146	30	c
+4421	0	1602000	5806	29	336	32	c
+4537	0	1042000	3357	20	149	5	c
+4538	0	1023700	3358	16	149	18	c
+4539	0	1091000	3358	20	149	18	c
+4540	0	1055700	1580	16	149	36	c
+4541	0	1129000	1580	20	149	27	c
+4542	0	1127400	3359	16	149	70	c
+4543	0	1199000	3359	20	149	62	c
+4544	0	1129200	3360	16	149	71	c
+4545	0	1239000	3360	20	149	71	c
+4546	0	1188500	3361	16	149	90	c
+4547	0	1264000	3361	20	149	83	c
+4548	0	1287000	3361	18	225	100	c
+4550	0	1350000	3363	17	149	42	c
+4551	0	1247000	2889	20	149	73	c
+4552	0	1295700	3364	21	150	1	c
+4553	0	1402000	3364	27	150	1	c
+4555	0	1317600	3366	21	150	3	c
+4556	0	1410000	3366	27	150	2	c
+4557	0	1559000	3366	28	226	96	c
+4558	0	1322000	3367	21	150	4	c
+4559	0	1429000	3367	27	150	4	c
+4560	0	1326000	3368	21	150	6	c
+4561	0	1432000	3368	27	150	5	c
+4562	0	1623000	3368	29	226	38	c
+4563	0	1336600	3369	21	150	8	c
+4564	0	1506000	3369	27	150	14	c
+4565	0	1348800	3370	21	150	11	c
+4566	0	1493000	3370	27	150	12	c
+4567	0	1487000	3370	29	226	12	c
+4568	0	1350200	1151	21	150	12	c
+4569	0	1482000	1151	28	226	62	c
+4570	0	1416200	3371	21	150	27	c
+4571	0	1458200	3372	21	150	43	c
+4572	0	1530000	3372	29	226	15	c
+4573	0	1488200	3373	21	150	52	c
+4574	0	1508500	3374	21	150	59	c
+4575	0	1698500	1173	21	150	91	c
+4576	0	1693000	1173	29	226	50	c
+4577	0	1192900	1012	26	150	7	c
+4578	0	1287000	1012	30	150	5	c
+4579	0	1383000	1012	28	226	34	c
+4580	0	1269900	1119	26	150	24	c
+4581	0	1356000	1119	30	150	21	c
+4582	0	1280700	3375	26	150	27	c
+4583	0	1419000	3375	30	150	43	c
+4585	0	1309100	1013	26	150	36	c
+4586	0	1364000	1013	30	150	24	c
+4587	0	1371000	1013	28	226	30	c
+4590	0	1290000	3377	30	150	6	c
+4595	0	1254400	3381	11	151	87	c
+4596	0	1333000	3381	17	151	36	c
+4597	0	1269200	3382	11	151	95	c
+4598	0	1357000	3382	17	151	46	c
+4599	0	1303300	1788	11	151	119	c
+4600	0	1356000	1788	17	151	45	c
+4601	0	1351000	1788	19	223	86	c
+4604	0	1340700	3384	11	151	143	c
+4605	0	1370800	3385	11	151	149	c
+4606	0	1412800	3386	11	151	156	c
+4607	0	1485000	3386	17	151	75	c
+4608	0	1520300	3387	11	151	165	c
+4609	0	1362000	3387	19	223	90	c
+4610	0	1533200	3388	11	151	166	c
+4611	0	1520000	3388	17	151	77	c
+4612	0	1388000	3388	19	223	101	c
+4613	0	1544200	3052	11	151	170	c
+4614	0	1596000	3052	19	223	130	c
+4535	0	1359100	5168	11	149	147	c
+4617	0	1068900	5175	16	151	44	c
+4615	0	1068600	5181	16	151	43	c
+4549	0	1231200	5188	16	149	98	c
+4482	0	1526400	5235	21	148	63	c
+4483	0	1647000	5235	30	148	103	c
+4505	0	1236600	5265	26	148	14	c
+4518	0	1318000	5265	30	148	12	c
+4512	0	1425600	5269	26	148	71	c
+4513	0	1603000	5269	30	148	96	c
+4504	0	1890500	5270	21	148	101	c
+4484	0	1529900	5272	21	148	64	c
+4485	0	1658000	5272	27	148	44	c
+4493	0	1649200	5273	21	148	80	c
+4593	0	1221400	5279	11	151	74	c
+4594	0	1325000	5279	20	151	95	c
+4554	0	1314000	5280	21	150	2	c
+4522	0	1260700	5281	11	149	91	c
+4523	0	1375000	5281	17	149	51	c
+4588	0	1309600	5282	26	150	37	c
+4591	0	1409000	5282	30	150	37	c
+4584	0	1292500	5283	26	150	31	c
+4592	0	1457000	5283	30	150	59	c
+4619	0	1070900	1645	16	151	45	c
+4620	0	1170000	1645	20	151	47	c
+4621	0	1111200	3391	16	151	65	c
+4622	0	1192000	3391	20	151	59	c
+4624	0	1170500	1639	16	151	88	c
+4625	0	1430200	3393	16	151	110	c
+4626	0	1251000	3393	20	151	76	c
+4627	0	1458000	3394	17	151	69	c
+4629	0	1955300	3396	21	152	105	c
+4630	0	1996600	3397	21	152	107	c
+4631	0	1166600	3398	26	152	3	c
+4632	0	1246000	3398	30	152	2	c
+4633	0	1236000	3398	28	224	2	c
+4634	0	1359000	1109	26	152	54	c
+4635	0	1460000	1109	30	152	61	c
+4636	0	1386600	3399	26	152	59	c
+4637	0	1522000	3399	30	152	80	c
+4638	0	1518000	3399	28	224	76	c
+4639	0	1423500	3400	26	152	70	c
+4640	0	1540000	3400	30	152	84	c
+4641	0	1455200	3401	26	152	77	c
+4642	0	1589000	3401	30	152	94	c
+4643	0	1721100	1212	26	152	87	c
+4644	0	1727800	3402	26	152	88	c
+4645	0	1253400	3403	11	153	86	c
+4646	0	1316000	3403	32	153	32	c
+4649	0	1327600	3405	11	153	135	c
+4650	0	1360000	3405	31	153	108	c
+4654	0	1037700	1674	16	153	26	c
+4655	0	1060000	1674	31	153	10	c
+4657	0	1158000	3409	16	153	84	c
+4658	0	1203000	3409	31	153	57	c
+4659	0	1187000	3409	33	352	39	c
+4663	0	1317700	1772	16	153	107	c
+4664	0	1339000	1772	31	153	103	c
+4666	0	1661000	3412	32	153	88	c
+4667	0	1535000	3412	34	352	66	c
+4672	0	1392800	3416	21	154	18	c
+4673	0	1466000	3416	37	154	2	c
+4674	0	1316000	3416	38	353	16	c
+4675	0	1440400	3417	21	154	33	c
+4676	0	1491000	3417	37	154	4	c
+4677	0	1435000	3417	36	353	2	c
+4678	0	1584000	3418	21	154	72	c
+4679	0	1695000	3418	37	154	33	c
+4680	0	1697200	3419	21	154	89	c
+4681	0	1713000	3419	37	154	36	c
+4682	0	1734200	3420	21	154	92	c
+4683	0	1644000	3420	37	154	23	c
+4684	0	1272000	2597	26	154	25	c
+4685	0	1333000	2597	35	154	19	c
+4686	0	1305600	3421	26	154	35	c
+4687	0	1342000	3421	35	154	21	c
+4688	0	1411000	3421	38	353	55	c
+4689	0	1389500	3422	26	154	60	c
+4690	0	1488000	3422	35	154	73	c
+4691	0	1498000	3422	36	353	6	c
+4692	0	1390500	3423	26	154	61	c
+4693	0	1455000	3423	35	154	63	c
+4699	0	1534000	2612	37	154	8	c
+4700	0	2019000	3427	37	154	50	c
+4701	0	1406000	3427	38	353	50	c
+4702	0	1390000	3428	35	154	38	c
+4703	0	1290000	3428	38	353	9	c
+4712	0	1226100	3437	16	155	97	c
+4713	0	1283000	3437	20	155	87	c
+4714	0	1304000	3437	19	337	72	c
+4741	0	1228300	1074	26	156	12	c
+4742	0	1341000	1074	30	156	19	c
+4743	0	1332500	3456	26	156	45	c
+4744	0	1470000	3456	30	156	62	c
+4749	0	1382100	1061	26	156	58	c
+4750	0	1417000	1061	30	156	41	c
+4647	0	1264600	5169	11	153	92	c
+4648	0	1326000	5169	32	153	38	c
+4618	0	1133000	5175	20	151	29	c
+4697	0	1489900	5193	26	154	80	c
+4698	0	1414000	5193	35	154	49	c
+4694	0	1390500	5207	26	154	62	c
+4695	0	1425000	5207	37	154	1	c
+4746	0	1347300	5320	26	156	50	c
+4652	0	975400	5263	16	153	8	c
+4653	0	1024000	5263	33	352	1	c
+4656	0	1130400	5264	16	153	73	c
+4669	0	1173000	5264	31	153	48	c
+4670	0	1261000	5264	33	352	78	c
+4628	0	1190000	5278	20	151	56	c
+4623	0	1135000	5278	16	151	76	c
+4725	0	1059000	5308	20	155	9	c
+4726	0	1061000	5308	18	337	4	c
+4748	0	1371200	5309	26	156	56	c
+4734	0	1396000	5310	20	155	110	c
+4717	0	1322200	5310	16	155	108	c
+4738	0	1653700	5311	21	156	82	c
+4752	0	1650000	5312	27	156	40	c
+4753	0	1399000	5312	28	338	36	c
+4736	0	1511600	5312	21	156	60	c
+4722	0	1701000	5314	17	155	83	c
+4707	0	1541000	5314	11	155	169	c
+4727	0	1261000	5321	20	155	81	c
+4728	0	1317000	5321	18	337	104	c
+4751	0	1487000	5316	27	156	9	c
+4735	0	1406100	5316	21	156	24	c
+4720	0	1613000	5317	17	155	81	c
+4721	0	1448000	5317	19	337	117	c
+4729	0	1346000	5318	20	155	102	c
+4715	0	1238500	5318	16	155	101	c
+4724	0	1757000	5327	17	155	85	c
+4708	0	1546200	5327	11	155	171	c
+4740	0	1788900	5328	21	156	96	c
+4711	0	1138900	5321	16	155	78	c
+4739	0	1666700	5322	21	156	84	c
+4730	0	1381000	5323	20	155	106	c
+4731	0	1250000	5323	18	337	86	c
+4716	0	1287400	5323	16	155	105	c
+4662	0	1284200	5618	16	153	104	c
+4737	0	1517200	5325	21	156	61	c
+12988	\N	1432000	3123	209	132	10	c
+12989	\N	1451000	2544	209	144	11	c
+4747	0	1352400	5329	26	156	52	c
+4719	0	1483000	5330	17	155	74	c
+4705	0	1443100	5330	11	155	160	c
+4704	0	1449000	5350	35	154	60	c
+4696	0	1396200	5350	26	154	66	c
+4766	0	1045000	3471	14	157	1	c
+4767	0	1055000	3472	14	157	2	c
+4768	0	1076000	3473	14	157	3	c
+4769	0	1052000	3473	13	159	19	c
+4770	0	1115000	3474	14	157	12	c
+4771	0	1119000	3475	14	157	13	c
+4772	0	1161000	3475	15	159	29	c
+4773	0	1125000	3476	14	157	17	c
+4774	0	1106000	3476	15	159	8	c
+4775	0	1126000	3477	14	157	19	c
+4776	0	1098000	3477	15	159	6	c
+4777	0	1128000	3478	14	157	20	c
+4778	0	1070000	3478	15	159	3	c
+4779	0	1136000	3479	14	157	22	c
+4780	0	1139000	3480	14	157	24	c
+4781	0	1151000	3481	14	157	31	c
+4782	0	1209000	3482	14	157	76	c
+4783	0	1119000	3482	15	159	9	c
+4784	0	927000	3483	12	157	1	c
+4785	0	935000	3483	13	159	1	c
+4786	0	955000	3484	12	157	3	c
+4787	0	972000	3485	12	157	5	c
+4788	0	990000	3486	12	157	9	c
+4789	0	996000	3486	13	159	4	c
+4790	0	992000	3487	12	157	10	c
+4791	0	993000	3487	13	159	3	c
+4792	0	1052000	3488	12	157	24	c
+4793	0	1083000	3488	13	159	28	c
+4794	0	1053000	3489	12	157	26	c
+4795	0	1064000	3489	15	159	2	c
+4796	0	1302000	3490	23	158	1	c
+4797	0	1344000	3491	23	158	5	c
+4798	0	1354000	3492	23	158	6	c
+4799	0	1281000	3492	25	160	16	c
+4800	0	1359000	3493	23	158	7	c
+4801	0	1371000	3494	23	158	9	c
+4802	0	1386000	3495	23	158	15	c
+4803	0	1399000	3496	23	158	17	c
+4804	0	1418000	3496	24	160	15	c
+4805	0	1412000	3497	23	158	23	c
+4807	0	1474000	3499	23	158	45	c
+4808	0	1399000	3499	24	160	11	c
+4809	0	1490000	3500	23	158	51	c
+4810	0	1430000	3500	24	160	18	c
+4811	0	1179000	3501	22	158	5	c
+4812	0	1193000	3502	22	158	7	c
+4813	0	1202000	3502	25	160	6	c
+4814	0	1201000	3503	22	158	9	c
+4815	0	1176000	3503	25	160	3	c
+4816	0	1219000	3504	22	158	14	c
+4817	0	1398000	3504	25	160	58	c
+4818	0	1256000	3505	22	158	24	c
+4819	0	1290000	3505	25	160	21	c
+4820	0	1264000	3506	22	158	26	c
+4732	0	1386000	5629	20	155	107	c
+12990	\N	1550000	2572	209	140	12	c
+4821	0	1319000	3506	25	160	26	c
+4822	0	1321000	3507	22	158	41	c
+4823	0	1122000	3508	15	159	10	c
+4824	0	1122000	3509	15	159	11	c
+4825	0	1125000	3510	15	159	13	c
+4826	0	1139000	3511	15	159	19	c
+4827	0	1154000	3512	15	159	25	c
+4828	0	1159000	3513	15	159	28	c
+4829	0	990000	3514	13	159	2	c
+4830	0	1032000	3515	13	159	14	c
+4831	0	1334000	3516	24	160	1	c
+4832	0	1345000	3517	24	160	2	c
+4833	0	1348000	3518	24	160	3	c
+4834	0	1351000	3519	24	160	5	c
+4835	0	1479000	3520	24	160	36	c
+4836	0	1495000	3521	24	160	42	c
+4837	0	1504000	3522	24	160	50	c
+4839	0	1317000	3524	25	160	25	c
+4840	0	1087000	3525	14	161	4	c
+4841	0	1099000	3525	15	163	7	c
+4842	0	1098000	3526	14	161	6	c
+4843	0	1054000	3526	15	163	1	c
+4844	0	1100000	3527	14	161	7	c
+4845	0	1194000	3527	15	163	45	c
+4846	0	1109000	3528	14	161	10	c
+4847	0	1119000	3529	14	161	14	c
+4848	0	1077000	3529	13	163	25	c
+4849	0	1156000	3530	14	161	34	c
+4850	0	1170000	3530	15	163	32	c
+4851	0	1157000	3531	14	161	36	c
+4852	0	1158000	3532	14	161	37	c
+4853	0	1162000	3533	14	161	41	c
+4854	0	1178000	3534	14	161	49	c
+4855	0	1180000	3535	14	161	51	c
+4856	0	1128000	3535	15	163	15	c
+4857	0	1194000	3536	14	161	68	c
+4858	0	1185000	3536	15	163	41	c
+4859	0	957000	3537	12	161	4	c
+4860	0	1054000	3538	12	161	27	c
+4861	0	1066000	3538	13	163	23	c
+4862	0	1060000	3539	12	161	32	c
+4863	0	1084000	3539	13	163	29	c
+4864	0	1076000	3540	12	161	37	c
+4865	0	1091000	3541	12	161	54	c
+4866	0	1110000	3542	12	161	69	c
+4867	0	1117000	3543	12	161	72	c
+4868	0	1338000	3544	23	162	2	c
+4869	0	1342000	3545	23	162	3	c
+4870	0	1346000	3545	25	164	30	c
+4871	0	1372000	3546	23	162	10	c
+4872	0	1380000	3547	23	162	13	c
+4873	0	1406000	3548	23	162	20	c
+4874	0	1463000	3548	24	164	31	c
+4875	0	1415000	3549	23	162	25	c
+4876	0	1432000	3549	24	164	19	c
+4877	0	1452000	3550	23	162	35	c
+4878	0	1481000	3551	23	162	47	c
+4879	0	1438000	3551	24	164	21	c
+4880	0	1489000	3552	23	162	50	c
+4881	0	1425000	3552	25	164	69	c
+4882	0	1539000	3553	23	162	64	c
+4883	0	1175000	3554	22	162	4	c
+4884	0	1229000	3555	22	162	17	c
+4885	0	1233000	3556	22	162	18	c
+4886	0	1280000	3557	22	162	31	c
+4887	0	1239000	3557	25	164	9	c
+4888	0	1284000	3558	22	162	32	c
+4889	0	1344000	3559	22	162	50	c
+4761	0	1417000	5309	30	156	40	c
+4756	0	1817000	5311	27	156	58	c
+4758	0	1845000	5313	27	156	61	c
+4762	0	1426000	5320	30	156	48	c
+4757	0	1836000	5322	27	156	60	c
+4754	0	1657000	5325	27	156	42	c
+4755	0	1485000	5325	29	338	11	c
+4759	0	2003000	5328	27	156	63	c
+4764	0	1497000	5329	30	156	73	c
+4765	0	1373000	5329	28	338	31	c
+4890	0	1084000	3560	15	163	4	c
+4891	0	1093000	3561	15	163	5	c
+4892	0	1126000	3562	15	163	14	c
+4893	0	1130000	3563	15	163	16	c
+4894	0	1136000	3564	15	163	18	c
+4895	0	1149000	3565	15	163	23	c
+4896	0	1010000	3566	13	163	10	c
+4897	0	1017000	3567	13	163	11	c
+4898	0	1059000	3568	13	163	22	c
+4899	0	1499000	3569	24	164	45	c
+4900	0	1505000	3570	24	164	51	c
+4901	0	1513000	3571	24	164	54	c
+4902	0	1565000	3572	24	164	78	c
+4903	0	1286000	3573	25	164	19	c
+4904	0	1303000	3574	25	164	23	c
+4905	0	1394000	3575	25	164	51	c
+4906	0	1398000	3576	25	164	56	c
+4907	0	1090000	3577	14	165	5	c
+4908	0	1109000	3578	14	165	9	c
+4909	0	1158000	3578	13	167	68	c
+4910	0	1190000	3579	14	165	62	c
+4911	0	1158000	3579	15	167	27	c
+4912	0	1192000	3580	14	165	65	c
+4913	0	1192000	3580	15	167	43	c
+4914	0	1192000	3581	14	165	66	c
+4915	0	1199000	3582	14	165	73	c
+4916	0	1237000	3583	14	165	93	c
+4917	0	1387000	3584	14	165	144	c
+4918	0	1022000	3585	12	165	13	c
+4919	0	1023000	3585	13	167	12	c
+4920	0	1049000	3586	12	165	22	c
+4921	0	1067000	3587	12	165	34	c
+4922	0	1079000	3588	12	165	41	c
+4923	0	1089000	3589	12	165	50	c
+4924	0	1090000	3590	12	165	52	c
+4925	0	1102000	3591	12	165	63	c
+4926	0	1107000	3591	13	167	41	c
+4927	0	1366000	3592	23	166	8	c
+4928	0	1374000	3593	23	166	11	c
+4929	0	1393000	3593	25	168	50	c
+4930	0	1377000	3594	23	166	12	c
+4931	0	1435000	3595	23	166	28	c
+4932	0	1457000	3596	23	166	39	c
+4933	0	1471000	3597	23	166	42	c
+4934	0	1489000	3597	24	168	39	c
+4935	0	1524000	3598	23	166	57	c
+4936	0	1534000	3599	23	166	63	c
+4937	0	1557000	3600	23	166	76	c
+4938	0	1499000	3600	24	168	46	c
+4939	0	1562000	3601	23	166	78	c
+4940	0	1627000	3602	23	166	92	c
+4941	0	1694000	3603	23	166	99	c
+4942	0	1204000	3604	22	166	11	c
+4943	0	1147000	3604	25	168	2	c
+4944	0	1215000	3605	22	166	12	c
+4945	0	1199000	3605	25	168	5	c
+4947	0	1228000	3607	22	166	16	c
+4948	0	1254000	3608	22	166	23	c
+4949	0	1261000	3608	25	168	14	c
+4950	0	1269000	3609	22	166	29	c
+4951	0	1416000	3610	22	166	75	c
+4952	0	1286000	3610	25	168	18	c
+4953	0	1180000	3611	15	167	35	c
+4954	0	1200000	3612	15	167	49	c
+4955	0	1232000	3613	15	167	61	c
+4956	0	1242000	3614	15	167	68	c
+4957	0	1288000	3615	15	167	89	c
+4958	0	1350000	3616	15	167	109	c
+4959	0	1355000	3617	15	167	110	c
+4960	0	1372000	3618	15	167	117	c
+4961	0	1372000	3619	15	167	118	c
+4962	0	1439000	3620	15	167	122	c
+4963	0	1007000	3621	13	167	6	c
+4964	0	1009000	3622	13	167	9	c
+4965	0	1099000	3623	13	167	38	c
+4966	0	1117000	3624	13	167	51	c
+4967	0	1348000	3625	24	168	4	c
+4968	0	1363000	3626	24	168	6	c
+4969	0	1388000	3627	24	168	7	c
+4970	0	1391000	3628	24	168	9	c
+4971	0	1392000	3629	24	168	10	c
+4972	0	1404000	3630	24	168	13	c
+4973	0	1426000	3631	24	168	17	c
+4974	0	1461000	3632	24	168	27	c
+4975	0	1500000	3633	24	168	47	c
+4976	0	1588000	3634	24	168	85	c
+4978	0	1324000	3636	25	168	28	c
+4979	0	1105000	3637	14	169	8	c
+4980	0	1130000	3638	14	169	21	c
+4981	0	1147000	3639	14	169	28	c
+4982	0	1161000	3640	14	169	39	c
+4983	0	1167000	3641	14	169	42	c
+4984	0	1197000	3642	14	169	69	c
+4985	0	1182000	3642	15	171	37	c
+4986	0	1198000	3643	14	169	71	c
+4987	0	1211000	3643	15	171	56	c
+4988	0	1238000	3644	14	169	94	c
+4989	0	1267000	3644	15	171	79	c
+4991	0	1328000	3646	14	169	129	c
+4992	0	1339000	3646	15	171	107	c
+4993	0	1032000	3647	12	169	18	c
+4994	0	1031000	3647	13	171	13	c
+4995	0	1054000	3648	12	169	28	c
+4996	0	1053000	3648	13	171	21	c
+4997	0	1077000	3649	12	169	39	c
+4998	0	1098000	3649	13	171	37	c
+4999	0	1083000	3650	12	169	44	c
+5000	0	1097000	3651	12	169	62	c
+5001	0	1120000	3651	13	171	56	c
+5003	0	1196000	3653	12	169	99	c
+5004	0	1164000	3653	13	171	72	c
+5005	0	1411000	3654	23	170	21	c
+5006	0	1431000	3655	23	170	27	c
+5007	0	1448000	3656	23	170	34	c
+5008	0	1470000	3657	23	170	41	c
+5009	0	1474000	3658	23	170	46	c
+5010	0	1493000	3658	24	172	41	c
+5011	0	1554000	3659	23	170	73	c
+5012	0	1627000	3660	23	170	91	c
+5013	0	1664000	3661	23	170	96	c
+5014	0	1673000	3662	23	170	97	c
+5015	0	1696000	3662	24	172	103	c
+5016	0	1738000	3663	23	170	103	c
+5017	0	1294000	3664	22	170	33	c
+5018	0	1308000	3665	22	170	36	c
+5019	0	1360000	3665	25	172	38	c
+5020	0	1338000	3666	22	170	46	c
+5021	0	1356000	3667	22	170	56	c
+5022	0	1359000	3668	22	170	58	c
+5023	0	1411000	3669	22	170	73	c
+5024	0	1460000	3670	22	170	83	c
+5025	0	1498000	3670	24	172	43	c
+4990	0	1259000	5180	14	169	104	c
+4977	0	1248000	5295	25	168	11	c
+5026	0	1183000	3671	15	171	39	c
+5027	0	1207000	3672	15	171	53	c
+5028	0	1218000	3673	15	171	57	c
+5029	0	1249000	3674	15	171	73	c
+5030	0	1280000	3675	15	171	83	c
+5031	0	1314000	3676	15	171	98	c
+5033	0	1445000	3678	15	171	123	c
+5035	0	1108000	3680	13	171	43	c
+5036	0	1658000	3681	24	172	98	c
+5037	0	1672000	3682	24	172	100	c
+5038	0	1240000	3683	25	172	10	c
+5039	0	1368000	3684	25	172	40	c
+5040	0	1368000	3685	25	172	41	c
+5041	0	1399000	3686	25	172	60	c
+5042	0	1432000	3687	25	172	70	c
+5043	0	1472000	3688	25	172	83	c
+5044	0	1114000	3689	14	173	11	c
+5045	0	1125000	3690	14	173	18	c
+5046	0	1033000	3690	13	175	15	c
+5047	0	1141000	3691	14	173	26	c
+5048	0	1169000	3692	14	173	45	c
+5049	0	1188000	3693	14	173	57	c
+5050	0	1283000	3693	15	175	85	c
+5051	0	1197000	3694	14	173	70	c
+5052	0	1143000	3694	13	175	62	c
+5053	0	1221000	3695	14	173	83	c
+5054	0	1237000	3695	13	175	86	c
+5055	0	1222000	3696	14	173	84	c
+5056	0	1242000	3697	14	173	100	c
+5057	0	1286000	3698	14	173	115	c
+5058	0	1291000	3699	14	173	118	c
+5060	0	1001000	3701	12	173	11	c
+5061	0	1027000	3702	12	173	16	c
+5062	0	1037000	3703	12	173	20	c
+5063	0	1059000	3704	12	173	31	c
+5064	0	1085000	3705	12	173	46	c
+5065	0	1099000	3705	13	175	39	c
+5066	0	1140000	3706	12	173	86	c
+5067	0	1174000	3707	12	173	93	c
+5068	0	1525000	3708	23	174	58	c
+5069	0	1526000	3709	23	174	59	c
+5070	0	1533000	3710	23	174	62	c
+5071	0	1552000	3711	23	174	71	c
+5072	0	1571000	3712	23	174	81	c
+5073	0	1537000	3712	24	176	71	c
+5074	0	1262000	3713	22	174	25	c
+5075	0	1351000	3714	22	174	54	c
+5077	0	1375000	3716	22	174	66	c
+5078	0	1397000	3716	25	176	55	c
+5079	0	1432000	3717	22	174	77	c
+5080	0	1433000	3718	22	174	78	c
+5082	0	1319000	3720	15	175	101	c
+5083	0	1320000	3721	15	175	102	c
+5085	0	1469000	3723	15	175	125	c
+5086	0	1138000	3724	13	175	59	c
+5087	0	1139000	3725	13	175	61	c
+5088	0	1296000	3726	13	175	88	c
+5089	0	1463000	3727	24	176	30	c
+5090	0	1528000	3728	24	176	64	c
+5091	0	1617000	3729	24	176	93	c
+5092	0	1809000	3730	24	176	109	c
+5093	0	1833000	3731	24	176	111	c
+5095	0	1409000	3733	25	176	63	c
+5097	0	1483000	3735	25	176	84	c
+5098	0	1492000	3736	25	176	86	c
+5099	0	1549000	3737	25	176	89	c
+5100	0	1123000	3738	14	177	15	c
+5101	0	1124000	3739	14	177	16	c
+5102	0	1144000	3740	14	177	27	c
+5103	0	1154000	3741	14	177	33	c
+5104	0	1156000	3741	13	179	66	c
+5105	0	1173000	3742	14	177	47	c
+5106	0	1193000	3742	15	179	44	c
+5107	0	1211000	3743	14	177	78	c
+5108	0	1225000	3744	14	177	86	c
+5109	0	1236000	3744	15	179	65	c
+5110	0	1259000	3745	14	177	105	c
+5111	0	1306000	3745	15	179	97	c
+5112	0	1260000	3746	14	177	106	c
+5113	0	1232000	3746	15	179	62	c
+5114	0	1280000	3747	14	177	113	c
+5115	0	1363000	3748	14	177	136	c
+5116	0	1370000	3749	14	177	139	c
+5117	0	1245000	3749	15	179	72	c
+5118	0	978000	3750	12	177	7	c
+5119	0	1024000	3751	12	177	14	c
+5120	0	1031000	3752	12	177	17	c
+5121	0	1007000	3752	13	179	7	c
+5122	0	1042000	3753	12	177	21	c
+5123	0	1039000	3753	13	179	16	c
+5124	0	1052000	3754	12	177	25	c
+5125	0	1066000	3754	13	179	24	c
+5126	0	1092000	3755	12	177	56	c
+5127	0	1222000	3755	13	179	83	c
+5128	0	1123000	3756	12	177	78	c
+5129	0	1188000	3756	13	179	77	c
+5130	0	1621000	3757	23	178	90	c
+5131	0	1704000	3758	23	178	100	c
+5132	0	1724000	3759	23	178	101	c
+5133	0	1603000	3759	24	180	88	c
+5134	0	1731000	3760	23	178	102	c
+5135	0	1617000	3760	24	180	94	c
+5136	0	1756000	3761	23	178	104	c
+5137	0	1349000	3762	22	178	52	c
+5138	0	1450000	3763	22	178	80	c
+5139	0	1398000	3763	25	180	57	c
+5140	0	1497000	3764	22	178	86	c
+5141	0	1521000	3765	22	178	90	c
+5142	0	1534000	3765	24	180	67	c
+5143	0	1643000	3766	22	178	92	c
+5144	0	1535000	3766	25	180	88	c
+5145	0	1124000	3767	15	179	12	c
+5146	0	1141000	3768	15	179	21	c
+5147	0	1146000	3769	15	179	22	c
+5148	0	1196000	3770	15	179	47	c
+5149	0	1199000	3771	15	179	48	c
+5150	0	1242000	3772	15	179	69	c
+5151	0	1316000	3773	15	179	99	c
+5152	0	1001000	3774	13	179	5	c
+5153	0	1559000	3775	24	180	74	c
+5154	0	1674000	3776	24	180	101	c
+5155	0	1707000	3777	24	180	105	c
+5156	0	1352000	3778	25	180	34	c
+5157	0	1408000	3779	25	180	61	c
+5158	0	1442000	3780	25	180	75	c
+5159	0	1553000	3781	25	180	90	c
+5160	0	1632000	3782	25	180	94	c
+5161	0	1137000	3783	14	181	23	c
+5032	0	1365000	5180	15	171	114	c
+5059	0	1315000	5292	14	173	126	c
+5081	0	1501000	5293	22	174	88	c
+5076	0	1352000	5294	22	174	55	c
+5094	0	1380000	5294	25	176	45	c
+5162	0	1194000	3783	13	183	78	c
+5163	0	1153000	3784	14	181	32	c
+5164	0	1179000	3785	14	181	50	c
+5165	0	1217000	3786	14	181	80	c
+5166	0	1233000	3787	14	181	88	c
+5167	0	1237000	3788	14	181	92	c
+5168	0	1301000	3788	15	183	95	c
+5169	0	1245000	3789	14	181	101	c
+5170	0	1261000	3790	14	181	107	c
+5171	0	1309000	3791	14	181	122	c
+5172	0	1321000	3792	14	181	127	c
+5173	0	1337000	3793	14	181	132	c
+5174	0	1349000	3793	15	183	108	c
+5175	0	1375000	3794	14	181	141	c
+5176	0	1260000	3794	15	183	76	c
+5177	0	1025000	3795	12	181	15	c
+5178	0	1085000	3796	12	181	47	c
+5179	0	1118000	3796	13	183	54	c
+5180	0	1094000	3797	12	181	58	c
+5181	0	1116000	3797	13	183	50	c
+5182	0	1096000	3798	12	181	59	c
+5183	0	1136000	3799	12	181	83	c
+5184	0	1149000	3799	13	183	63	c
+5185	0	1147000	3800	12	181	88	c
+5186	0	1202000	3800	15	183	51	c
+5187	0	1164000	3801	12	181	91	c
+5188	0	1186000	3801	13	183	76	c
+5189	0	1384000	3802	23	182	14	c
+5190	0	1500000	3802	24	184	48	c
+5191	0	1395000	3803	23	182	16	c
+5192	0	1469000	3803	25	184	81	c
+5193	0	1453000	3804	23	182	36	c
+5194	0	1497000	3805	23	182	52	c
+5195	0	1513000	3806	23	182	56	c
+5196	0	1634000	3807	23	182	94	c
+5197	0	1464000	3807	25	184	80	c
+5198	0	1765000	3808	23	182	105	c
+5199	0	1102000	3809	22	182	1	c
+5200	0	1390000	3809	25	184	48	c
+5201	0	1274000	3810	22	182	30	c
+5202	0	1349000	3810	25	184	32	c
+5203	0	1324000	3811	22	182	42	c
+5204	0	1288000	3811	25	184	20	c
+5205	0	1357000	3812	22	182	57	c
+5206	0	1364000	3813	22	182	61	c
+5207	0	1365000	3814	22	182	62	c
+5208	0	1422000	3815	22	182	76	c
+5209	0	1624000	3815	25	184	93	c
+5210	0	1164000	3816	15	183	31	c
+5211	0	1271000	3817	15	183	80	c
+5212	0	1273000	3818	15	183	81	c
+5213	0	1294000	3819	15	183	92	c
+5214	0	1318000	3820	15	183	100	c
+5215	0	1332000	3821	15	183	105	c
+5216	0	1338000	3822	15	183	106	c
+5217	0	1366000	3823	15	183	115	c
+5218	0	1096000	3824	13	183	34	c
+5219	0	1111000	3825	13	183	46	c
+5220	0	1526000	3826	24	184	61	c
+5221	0	1561000	3827	24	184	75	c
+5222	0	1605000	3828	24	184	89	c
+5223	0	1606000	3829	24	184	90	c
+5224	0	1611000	3830	24	184	92	c
+5225	0	1683000	3831	24	184	102	c
+5226	0	1323000	3832	25	184	27	c
+5227	0	1139000	3833	14	185	25	c
+5228	0	1183000	3834	14	185	53	c
+5229	0	1175000	3834	15	187	33	c
+5230	0	1202000	3835	14	185	74	c
+5231	0	1192000	3835	15	187	42	c
+5232	0	1210000	3836	14	185	77	c
+5233	0	1218000	3837	14	185	81	c
+5234	0	1244000	3837	15	187	71	c
+5235	0	1229000	3838	14	185	87	c
+5236	0	1233000	3838	15	187	63	c
+5237	0	1241000	3839	14	185	97	c
+5238	0	1241000	3840	14	185	98	c
+5239	0	1277000	3840	15	187	82	c
+5240	0	1278000	3841	14	185	111	c
+5241	0	1284000	3842	14	185	114	c
+5242	0	1370000	3843	14	185	140	c
+5243	0	1239000	3843	15	187	66	c
+5244	0	1398000	3844	14	185	146	c
+5245	0	975000	3845	12	185	6	c
+5246	0	1016000	3846	12	185	12	c
+5247	0	1089000	3846	13	187	32	c
+5248	0	1034000	3847	12	185	19	c
+5249	0	1052000	3847	13	187	20	c
+5250	0	1079000	3848	12	185	42	c
+5251	0	1084000	3849	12	185	45	c
+5252	0	1113000	3849	13	187	47	c
+5253	0	1089000	3850	12	185	51	c
+5254	0	1136000	3850	13	187	58	c
+5255	0	1137000	3851	12	185	84	c
+5256	0	1473000	3852	23	186	44	c
+5257	0	1502000	3853	23	186	54	c
+5258	0	1484000	3853	25	188	85	c
+5259	0	1550000	3854	23	186	70	c
+5260	0	1508000	3854	24	188	53	c
+5261	0	1586000	3855	23	186	83	c
+5262	0	1468000	3855	24	188	32	c
+5263	0	1612000	3856	23	186	86	c
+5264	0	1307000	3857	22	186	35	c
+5265	0	1330000	3858	22	186	44	c
+5266	0	1350000	3859	22	186	53	c
+5267	0	1443000	3859	25	188	76	c
+5268	0	1368000	3860	22	186	63	c
+5269	0	1453000	3861	22	186	82	c
+5270	0	1424000	3861	25	188	67	c
+5271	0	1500000	3862	22	186	87	c
+5272	0	1514000	3863	22	186	89	c
+5273	0	1563000	3863	24	188	76	c
+5274	0	1133000	3864	15	187	17	c
+5275	0	1154000	3865	15	187	24	c
+5276	0	1162000	3866	15	187	30	c
+5277	0	1177000	3867	15	187	34	c
+5278	0	1220000	3868	15	187	58	c
+5279	0	1096000	3869	13	187	35	c
+5280	0	1109000	3870	13	187	44	c
+5281	0	1134000	3871	13	187	57	c
+5282	0	1455000	3872	24	188	25	c
+5283	0	1533000	3873	24	188	66	c
+5284	0	1555000	3874	24	188	72	c
+5285	0	1558000	3875	24	188	73	c
+5286	0	1610000	3876	24	188	91	c
+5287	0	1634000	3877	24	188	95	c
+5288	0	1767000	3878	24	188	106	c
+5289	0	1807000	3879	24	188	108	c
+5290	0	1257000	3880	25	188	13	c
+5291	0	1387000	3881	25	188	47	c
+5292	0	1440000	3882	25	188	73	c
+5294	0	1184000	3884	15	189	40	c
+5296	0	1224000	3886	15	189	59	c
+5293	0	1183000	5335	15	189	38	c
+5297	0	1240000	5336	15	189	67	c
+5298	0	1285000	3888	15	189	87	c
+5299	0	1285000	3889	15	189	88	c
+5301	0	1153000	3891	13	189	65	c
+5302	0	1161000	3892	13	189	70	c
+5303	0	1273000	3893	13	189	87	c
+5304	0	1389000	3894	24	190	8	c
+5305	0	1404000	3895	24	190	12	c
+5306	0	1452000	3896	24	190	24	c
+5307	0	1461000	3897	24	190	28	c
+5308	0	1485000	3898	24	190	37	c
+5309	0	1492000	3899	24	190	40	c
+5310	0	1522000	3900	24	190	60	c
+5312	0	1598000	3902	24	190	87	c
+5313	0	1636000	3903	24	190	96	c
+5314	0	1366000	3904	25	190	39	c
+5315	0	1149000	3905	14	191	30	c
+5316	0	1088000	3905	13	193	30	c
+5317	0	1186000	3906	14	191	56	c
+5318	0	1189000	3907	14	191	58	c
+5319	0	1192000	3908	14	191	64	c
+5320	0	1220000	3909	14	191	82	c
+5321	0	1239000	3910	14	191	96	c
+5322	0	1250000	3911	14	191	102	c
+5323	0	1195000	3911	13	193	80	c
+5324	0	1383000	3912	14	191	142	c
+5325	0	1114000	3912	13	193	48	c
+5326	0	1086000	3913	12	191	48	c
+5327	0	1086000	3914	12	191	49	c
+5328	0	1118000	3914	13	193	52	c
+5329	0	1096000	3915	12	191	60	c
+5330	0	1149000	3915	13	193	64	c
+5331	0	1119000	3916	12	191	74	c
+5332	0	1082000	3916	13	193	27	c
+5333	0	1121000	3917	12	191	77	c
+5334	0	1118000	3917	13	193	53	c
+5335	0	1133000	3918	12	191	81	c
+5336	0	1161000	3919	12	191	90	c
+5337	0	1343000	3920	23	192	4	c
+5338	0	1401000	3921	23	192	19	c
+5339	0	1444000	3921	25	194	77	c
+5340	0	1414000	3922	23	192	24	c
+5341	0	1423000	3923	23	192	26	c
+5342	0	1470000	3923	24	194	35	c
+5343	0	1455000	3924	23	192	37	c
+5344	0	1529000	3925	23	192	60	c
+5345	0	1526000	3925	24	194	62	c
+5346	0	1532000	3926	23	192	61	c
+5347	0	1540000	3927	23	192	65	c
+5348	0	1542000	3928	23	192	67	c
+5349	0	1553000	3929	23	192	72	c
+5350	0	1560000	3930	23	192	77	c
+5351	0	1526000	3930	24	194	63	c
+5352	0	1562000	3931	23	192	79	c
+5353	0	1187000	3932	22	192	6	c
+5354	0	1184000	3932	25	194	4	c
+5355	0	1203000	3933	22	192	10	c
+5356	0	1236000	3933	25	194	8	c
+5357	0	1238000	3934	22	192	20	c
+5358	0	1358000	3934	25	194	37	c
+5359	0	1299000	3935	22	192	34	c
+5360	0	1311000	3936	22	192	37	c
+5361	0	1370000	3936	25	194	42	c
+5362	0	1341000	3937	22	192	47	c
+5363	0	1301000	3937	25	194	22	c
+5364	0	1374000	3938	22	192	65	c
+5365	0	1282000	3939	15	193	84	c
+5366	0	1358000	3940	15	193	111	c
+5367	0	1424000	3941	15	193	121	c
+5368	0	1470000	3942	15	193	126	c
+5369	0	1619000	3943	15	193	129	c
+5370	0	1413000	3944	24	194	14	c
+5371	0	1578000	3945	24	194	82	c
+5372	0	1455000	3946	25	194	79	c
+5373	0	1227000	3947	15	195	60	c
+5374	0	1235000	3948	15	195	64	c
+5375	0	1251000	3949	15	195	75	c
+5376	0	1263000	3950	15	195	78	c
+5377	0	1288000	3951	15	195	90	c
+5378	0	1322000	3952	15	195	103	c
+5379	0	1325000	3953	15	195	104	c
+5380	0	1092000	3954	13	195	33	c
+5381	0	1157000	3955	13	195	67	c
+5382	0	1161000	3956	14	196	40	c
+5383	0	1215000	3957	14	196	79	c
+5384	0	1290000	3957	15	330	91	c
+5385	0	1224000	3958	14	196	85	c
+5386	0	1235000	3959	14	196	90	c
+5387	0	1239000	3960	14	196	95	c
+5388	0	1262000	3961	14	196	108	c
+5389	0	1313000	3962	14	196	125	c
+5390	0	1360000	3962	15	330	112	c
+5391	0	1332000	3963	14	196	130	c
+5392	0	1363000	3963	15	330	113	c
+5393	0	1334000	3964	14	196	131	c
+5394	0	1349000	3965	14	196	133	c
+5395	0	1357000	3966	14	196	135	c
+5396	0	1368000	3967	14	196	137	c
+5397	0	1299000	3967	15	330	94	c
+5398	0	1091000	3968	12	196	55	c
+5399	0	1300000	3968	13	330	89	c
+5400	0	1105000	3969	12	196	65	c
+5401	0	1138000	3969	13	330	60	c
+5402	0	1105000	3970	12	196	66	c
+5403	0	1209000	3970	13	330	82	c
+5404	0	1115000	3971	12	196	71	c
+5405	0	1172000	3971	13	330	73	c
+5406	0	1119000	3972	12	196	76	c
+5407	0	1195000	3972	13	330	79	c
+5408	0	1176000	3973	12	196	94	c
+5409	0	1227000	3974	12	196	101	c
+5410	0	1209000	3974	15	330	55	c
+5412	0	1332000	1823	19	197	78	c
+5413	0	1416000	3976	19	197	112	c
+5414	0	1496000	3977	19	197	124	c
+5415	0	1626000	3978	19	197	131	c
+5416	0	1731000	3979	19	197	138	c
+5418	0	1135000	3981	18	197	36	c
+5419	0	1202000	3982	18	197	65	c
+5421	0	1552000	3984	29	198	19	c
+5422	0	1573000	3985	29	198	23	c
+5423	0	1608000	3986	29	198	34	c
+5426	0	1744000	3989	29	198	56	c
+5428	0	1887000	3991	29	198	68	c
+5429	0	1930000	3992	29	198	70	c
+5431	0	1509000	3994	28	198	71	c
+5432	0	1517000	3995	28	198	74	c
+5433	0	1519000	3996	28	198	77	c
+5300	0	1119000	5178	13	189	55	c
+5420	0	1202000	5267	18	197	66	c
+5430	0	1431000	5269	28	198	45	c
+5425	0	1727000	5270	29	198	54	c
+5424	0	1608000	5272	29	198	35	c
+5427	0	1764000	5273	29	198	58	c
+5434	0	1536000	3997	28	198	87	c
+5435	0	1190000	3998	14	199	61	c
+5436	0	1259000	3999	14	199	103	c
+5437	0	1205000	3999	13	200	81	c
+5438	0	1268000	4000	14	199	110	c
+5439	0	1289000	4001	14	199	117	c
+5440	0	1301000	4002	14	199	119	c
+5441	0	1237000	4002	13	200	85	c
+5442	0	1456000	4003	14	199	150	c
+5443	0	1566000	4004	14	199	151	c
+5444	0	1703000	4005	14	199	152	c
+5445	0	987000	4006	12	199	8	c
+5446	0	1050000	4007	12	199	23	c
+5447	0	1082000	4007	13	200	26	c
+5448	0	1081000	4008	12	199	43	c
+5449	0	1108000	4008	13	200	42	c
+5450	0	1168000	4009	12	199	92	c
+5451	0	1178000	4010	12	199	95	c
+5452	0	1186000	4011	12	199	98	c
+5453	0	1186000	4011	13	200	75	c
+5454	0	1218000	4012	12	199	100	c
+5455	0	1226000	4012	13	200	84	c
+5456	0	1385000	4013	15	200	119	c
+5457	0	1321000	4014	13	200	90	c
+5458	0	1303000	4015	14	201	120	c
+5459	0	1308000	4016	14	201	121	c
+5460	0	1370000	4017	14	201	138	c
+5461	0	1398000	4018	14	201	145	c
+5462	0	1432000	4019	14	201	147	c
+5463	0	1444000	4020	14	201	148	c
+5464	0	1090000	4021	12	201	53	c
+5465	0	1093000	4022	12	201	57	c
+5466	0	1109000	4023	12	201	68	c
+5467	0	1111000	4024	12	201	70	c
+5468	0	1178000	4025	12	201	96	c
+5469	0	1179000	4026	12	201	97	c
+5470	0	1247000	4027	12	201	102	c
+5471	0	1441000	4028	24	202	22	c
+5472	0	1500000	4029	24	202	49	c
+5473	0	1520000	4030	24	202	59	c
+5474	0	1533000	4031	24	202	65	c
+5475	0	1535000	4032	24	202	69	c
+5476	0	1535000	4033	24	202	70	c
+5477	0	1572000	4034	24	202	79	c
+5478	0	1374000	4035	25	202	43	c
+5479	0	1376000	4036	25	202	44	c
+5480	0	1382000	4037	25	202	46	c
+5481	0	1425000	4038	25	202	68	c
+5482	0	1211000	4039	19	203	27	c
+5483	0	1213000	4040	19	203	29	c
+5484	0	1215000	4041	19	203	31	c
+5485	0	1235000	4042	19	203	39	c
+5486	0	1269000	4043	19	203	54	c
+5487	0	1109000	4044	18	203	25	c
+5488	0	1411000	4045	23	204	22	c
+5489	0	1460000	4045	24	205	26	c
+5490	0	1467000	4045	39	205	32	c
+5491	0	1436000	4046	23	204	30	c
+5492	0	1436000	4047	23	204	31	c
+5493	0	1469000	4047	39	205	34	c
+5494	0	1621000	4048	23	204	89	c
+5495	0	1590000	4048	24	205	86	c
+5496	0	1650000	4048	39	205	75	c
+5497	0	1632000	4049	23	204	93	c
+5498	0	1517000	4049	24	205	56	c
+5499	0	1573000	4049	39	205	60	c
+5500	0	1687000	4050	23	204	98	c
+5501	0	1855000	4050	24	205	112	c
+5502	0	1888000	4050	39	205	104	c
+5503	0	1802000	4051	23	204	106	c
+5504	0	1864000	4051	39	205	101	c
+5505	0	1132000	102	22	204	2	c
+5506	0	1126000	102	25	205	1	c
+5507	0	1116000	102	39	205	1	c
+5508	0	1314000	4052	22	204	38	c
+5509	0	1319000	4053	22	204	40	c
+5510	0	1310000	4053	25	205	24	c
+5511	0	1302000	4053	39	205	8	c
+5512	0	1343000	4054	22	204	48	c
+5513	0	1411000	4054	25	205	64	c
+5514	0	1379000	4054	39	205	17	c
+5515	0	1364000	116	22	204	60	c
+5516	0	1396000	116	25	205	53	c
+5517	0	1416000	116	39	205	22	c
+5518	0	1435000	4055	22	204	79	c
+5519	0	1483000	112	22	204	85	c
+5520	0	1454000	112	25	205	78	c
+5521	0	1456000	112	39	205	30	c
+5522	0	1425000	4056	24	205	16	c
+5523	0	1515000	4056	39	205	45	c
+5524	0	1462000	4057	24	205	29	c
+5525	0	1488000	4057	39	205	38	c
+5526	0	1468000	4058	24	205	33	c
+5527	0	1469000	4058	39	205	33	c
+5528	0	1468000	4059	24	205	34	c
+5529	0	1511000	4059	39	205	43	c
+5530	0	1507000	4060	24	205	52	c
+5531	0	1453000	4060	39	205	29	c
+5532	0	1515000	110	24	205	55	c
+5533	0	1508000	110	39	205	42	c
+5534	0	1655000	4061	24	205	97	c
+5535	0	1597000	4061	39	205	66	c
+5536	0	1399000	4062	25	205	59	c
+5537	0	1366000	4062	39	205	15	c
+5538	0	1408000	4063	25	205	62	c
+5539	0	1391000	4063	39	205	18	c
+5540	0	1719000	4064	39	205	89	c
+5541	0	1725000	4065	39	205	90	c
+5542	0	1991000	4066	39	205	110	c
+5543	0	1500000	4067	23	206	53	c
+5544	0	1576000	4067	24	207	81	c
+5545	0	1568000	4068	23	206	80	c
+5546	0	1470000	4068	25	207	82	c
+5547	0	1571000	4069	23	206	82	c
+5548	0	1487000	4069	24	207	38	c
+5549	0	1654000	4070	23	206	95	c
+5550	0	1701000	4070	24	207	104	c
+5551	0	1196000	4071	22	206	8	c
+5552	0	1210000	4071	25	207	7	c
+5553	0	1234000	4072	22	206	19	c
+5554	0	1328000	4073	22	206	43	c
+5555	0	1355000	4073	25	207	35	c
+5556	0	1333000	4074	22	206	45	c
+5557	0	1346000	4075	22	206	51	c
+5558	0	1415000	4076	22	206	74	c
+5559	0	1565000	4077	24	207	77	c
+5560	0	1585000	4078	24	207	84	c
+5561	0	1348000	4079	25	207	31	c
+5562	0	1421000	4080	25	207	66	c
+5563	0	1499000	4081	25	207	87	c
+5564	0	1268000	4082	22	208	28	c
+5565	0	1343000	4083	22	208	49	c
+5566	0	1406000	4084	22	208	72	c
+5567	0	1351000	4084	25	209	33	c
+5568	0	1475000	4085	22	208	84	c
+5569	0	1603000	4085	25	209	92	c
+5571	0	1698000	4087	22	208	93	c
+5572	0	1721000	4088	22	208	94	c
+5574	0	1796000	4090	24	209	107	c
+5575	0	1355000	4091	25	209	36	c
+5576	0	1437000	4092	25	209	71	c
+5577	0	1439000	4093	25	209	72	c
+5578	0	1639000	4094	25	209	95	c
+5579	0	1668000	4095	25	209	96	c
+5580	0	1217000	4096	19	210	33	c
+5581	0	1232000	4097	19	210	37	c
+5582	0	1241000	4098	19	210	41	c
+5583	0	1248000	4099	19	210	46	c
+5584	0	1280000	4100	19	210	61	c
+5585	0	1287000	4101	19	210	64	c
+5586	0	1327000	4102	19	210	76	c
+5587	0	1336000	1697	19	210	81	c
+5588	0	1377000	1739	19	210	98	c
+5589	0	1637000	4103	29	211	42	c
+5590	0	1789000	4104	29	211	61	c
+5591	0	1797000	4105	29	211	62	c
+5634	0	1312000	5846	30	214	10	c
+5593	0	1564000	4107	28	211	97	c
+5594	0	1686000	4108	28	211	113	c
+5595	0	1153000	4109	19	212	4	c
+5596	0	1172000	4110	19	212	10	c
+5597	0	1200000	4111	19	212	20	c
+5598	0	1202000	4112	19	212	23	c
+5599	0	1249000	4113	19	212	48	c
+5600	0	1312000	4114	19	212	75	c
+5601	0	1329000	4115	19	212	77	c
+5602	0	1102000	4116	18	212	20	c
+5603	0	1155000	4117	18	212	46	c
+5604	0	1280000	4118	18	212	96	c
+5605	0	1212000	4119	17	213	10	c
+5606	0	1201000	4119	19	215	22	c
+5607	0	1216000	4120	17	213	11	c
+5608	0	1217000	4121	17	213	12	c
+5609	0	1173000	4121	18	215	53	c
+5611	0	1260000	3001	17	213	23	c
+5612	0	1282000	2963	17	213	27	c
+5613	0	1072000	2831	20	213	12	c
+5614	0	1063000	2831	18	215	6	c
+5615	0	1075000	2828	20	213	13	c
+5616	0	1132000	2952	20	213	28	c
+5617	0	1136000	2856	20	213	30	c
+5618	0	1061000	2856	18	215	5	c
+5619	0	1143000	4123	20	213	31	c
+5620	0	1150000	4123	18	215	45	c
+5621	0	1169000	2862	20	213	45	c
+5622	0	1174000	4124	20	213	50	c
+5623	0	1160000	4124	19	215	5	c
+5624	0	1446000	1054	27	214	6	c
+5625	0	1573000	1054	29	216	22	c
+5626	0	1451000	4125	27	214	7	c
+5627	0	1447000	4125	28	216	51	c
+5628	0	1582000	4126	27	214	25	c
+5629	0	1617000	4127	27	214	33	c
+5630	0	1502000	4127	29	216	13	c
+5631	0	1631000	4128	27	214	37	c
+5632	0	1281000	1015	30	214	4	c
+5633	0	1369000	1015	28	216	27	c
+5635	0	1324000	4130	30	214	15	c
+5636	0	1365000	4130	28	216	24	c
+5637	0	1366000	4131	30	214	26	c
+5639	0	1443000	4133	30	214	54	c
+5640	0	1549000	4134	30	214	86	c
+5641	0	1298000	4134	28	216	11	c
+5642	0	1203000	4135	19	215	24	c
+5643	0	1214000	4136	19	215	30	c
+5644	0	1235000	4137	19	215	40	c
+5645	0	1253000	4138	19	215	49	c
+5646	0	1254000	4139	19	215	50	c
+5647	0	1275000	4140	19	215	57	c
+5648	0	1279000	4141	19	215	60	c
+5649	0	1281000	4142	19	215	62	c
+5650	0	1341000	4143	19	215	84	c
+5651	0	1449000	4144	19	215	118	c
+5652	0	1091000	4145	18	215	18	c
+5654	0	1168000	4147	18	215	50	c
+5655	0	1450000	1167	29	216	4	c
+5656	0	1485000	1120	29	216	10	c
+5657	0	1607000	4148	29	216	33	c
+5658	0	1608000	4149	29	216	36	c
+5659	0	1647000	4150	29	216	44	c
+5660	0	1298000	4151	28	216	10	c
+5662	0	1249000	4153	17	217	19	c
+5663	0	1216000	4153	19	219	32	c
+5664	0	1271000	2833	17	217	24	c
+5665	0	1274000	4154	17	217	25	c
+5666	0	1179000	4154	19	219	14	c
+5667	0	1275000	4155	17	217	26	c
+5669	0	1287000	4156	17	217	29	c
+5670	0	1073000	4156	18	219	11	c
+5671	0	1312000	2950	17	217	32	c
+5672	0	1178000	2950	18	219	55	c
+5674	0	1175000	4158	20	217	51	c
+5675	0	1144000	4158	18	219	40	c
+5676	0	1186000	4159	20	217	55	c
+5677	0	1165000	4159	18	219	48	c
+5678	0	1191000	4160	20	217	57	c
+5679	0	1162000	4160	19	219	7	c
+5681	0	1231000	2948	20	217	69	c
+5682	0	1176000	2948	19	219	12	c
+5684	0	1530000	1179	27	218	15	c
+5685	0	1584000	1179	28	220	104	c
+5686	0	1543000	1186	27	218	16	c
+5687	0	1579000	1186	29	220	24	c
+5688	0	1584000	4163	27	218	27	c
+5689	0	1715000	4163	29	220	52	c
+5690	0	1621000	4164	27	218	35	c
+5691	0	1628000	1150	27	218	36	c
+5692	0	1716000	1131	27	218	50	c
+5693	0	1831000	1131	29	220	64	c
+5694	0	1233000	1006	30	218	1	c
+5695	0	1422000	4165	30	218	44	c
+5696	0	1487000	4165	28	220	63	c
+5697	0	1426000	4166	30	218	47	c
+5698	0	1376000	4166	28	220	33	c
+5699	0	1454000	1080	30	218	57	c
+5700	0	1455000	4167	30	218	58	c
+5701	0	1494000	1184	30	218	72	c
+5702	0	1455000	1184	28	220	55	c
+5703	0	1515000	1149	30	218	77	c
+5704	0	1127000	4168	19	219	1	c
+5705	0	1173000	4169	19	219	11	c
+5673	0	1063000	5154	20	217	10	c
+5610	0	1219000	5165	17	213	14	c
+5668	0	1286000	5167	17	217	28	c
+5570	0	1638000	5172	22	208	91	c
+5573	0	1671000	5172	24	209	99	c
+5680	0	1203000	5285	20	217	63	c
+5683	0	1302000	5286	20	217	90	c
+5706	0	1184000	4170	19	219	16	c
+5707	0	1185000	4171	19	219	17	c
+5710	0	1226000	4174	19	219	35	c
+5711	0	1268000	4175	19	219	53	c
+5713	0	1131000	4176	18	219	34	c
+5715	0	1579000	4178	29	220	25	c
+5716	0	1587000	4179	29	220	26	c
+5717	0	1587000	4180	29	220	27	c
+5718	0	1647000	4181	29	220	43	c
+5719	0	1725000	4182	29	220	53	c
+5720	0	1769000	4183	29	220	59	c
+5721	0	1887000	4184	29	220	69	c
+5722	0	1507000	4185	28	220	65	c
+5723	0	1534000	4186	28	220	83	c
+5724	0	1574000	4187	28	220	101	c
+5725	0	1307000	4188	17	221	31	c
+5726	0	1270000	4188	19	333	55	c
+5727	0	1341000	4189	17	221	37	c
+5728	0	1392000	4189	19	333	102	c
+5729	0	1349000	4190	17	221	41	c
+5730	0	1341000	4190	18	333	111	c
+5731	0	1355000	4191	17	221	44	c
+5732	0	1333000	4191	18	333	109	c
+5733	0	1376000	4192	17	221	52	c
+5734	0	1299000	4192	19	333	70	c
+5735	0	1382000	4193	17	221	55	c
+5736	0	1613000	4193	18	333	131	c
+5738	0	1173000	4195	20	221	49	c
+5739	0	1183000	2957	20	221	54	c
+5740	0	1234000	2884	20	221	70	c
+5741	0	1247000	3003	20	221	74	c
+5742	0	1326000	4196	20	221	96	c
+5743	0	1215000	4196	18	333	71	c
+5744	0	1333000	4197	20	221	100	c
+5745	0	1406000	2996	20	221	112	c
+5746	0	1676000	4198	27	222	46	c
+5747	0	1678000	1106	27	222	47	c
+5748	0	1423000	4199	30	222	45	c
+5749	0	1423000	4200	30	222	46	c
+5750	0	1587000	4200	28	334	105	c
+5751	0	1473000	1105	30	222	64	c
+5752	0	1476000	4201	30	222	65	c
+5753	0	1477000	1108	30	222	66	c
+5754	0	1602000	4202	30	222	95	c
+5755	0	1532000	4202	28	334	81	c
+5756	0	1766000	1193	30	222	107	c
+5757	0	1197000	4203	19	223	19	c
+5758	0	1207000	4204	19	223	25	c
+5760	0	1297000	4206	19	223	69	c
+5762	0	1488000	4208	19	223	122	c
+5763	0	1064000	4209	18	223	7	c
+5766	0	1138000	4212	18	223	38	c
+5767	0	1182000	4213	18	223	56	c
+5768	0	1208000	1794	18	223	70	c
+5769	0	1232000	4214	18	223	76	c
+5770	0	1403000	4215	28	224	39	c
+5771	0	1568000	4216	28	224	99	c
+5772	0	1679000	4217	28	224	112	c
+5773	0	1309000	4218	19	225	74	c
+5774	0	1113000	4219	18	225	28	c
+5775	0	1203000	4220	18	225	67	c
+5778	0	1505000	4223	29	226	14	c
+5779	0	1592000	4224	29	226	29	c
+5780	0	1351000	4225	28	226	21	c
+5781	0	1415000	4226	28	226	41	c
+5782	0	1460000	4227	28	226	57	c
+5784	0	1379000	3010	17	227	53	c
+5785	0	1391000	4229	17	227	59	c
+5786	0	1540000	4230	17	227	78	c
+5787	0	1542000	4231	17	227	79	c
+5788	0	1545000	4232	17	227	80	c
+5789	0	1147000	2858	20	227	35	c
+5790	0	1242000	4233	20	227	72	c
+5791	0	1254000	4234	20	227	77	c
+5792	0	1287000	4234	18	229	98	c
+5793	0	1257000	4235	20	227	80	c
+5794	0	1358000	4235	18	229	116	c
+5795	0	1298000	3008	20	227	89	c
+5796	0	1320000	4236	20	227	93	c
+5797	0	1330000	4237	20	227	98	c
+5798	0	1419000	4237	18	229	126	c
+5799	0	1392000	4238	30	228	33	c
+5800	0	1430000	4239	30	228	51	c
+5801	0	1362000	4239	28	230	23	c
+5802	0	1513000	1082	30	228	76	c
+5803	0	1547000	4240	30	228	85	c
+5804	0	1548000	4240	28	230	91	c
+5805	0	1877000	4241	30	228	108	c
+5806	0	1117000	4242	18	229	29	c
+5807	0	1243000	4243	18	229	81	c
+5808	0	1248000	4244	18	229	84	c
+5810	0	1403000	1031	28	230	38	c
+5811	0	1387000	3016	17	231	56	c
+5812	0	1388000	4246	17	231	58	c
+5813	0	1660000	3021	17	231	82	c
+5814	0	1046000	2805	20	231	6	c
+5815	0	1168000	2936	20	231	44	c
+5816	0	1145000	2936	18	343	41	c
+5817	0	1181000	4247	20	231	53	c
+5818	0	1172000	4247	18	343	52	c
+5820	0	1265000	2863	20	231	84	c
+5822	0	1330000	4250	20	231	99	c
+5824	0	1520000	1139	30	232	78	c
+5825	0	1549000	1139	28	344	92	c
+5826	0	1408000	3018	17	233	62	c
+5827	0	1376000	3018	19	235	97	c
+5828	0	1461000	4252	17	233	70	c
+5829	0	1235000	4252	18	235	78	c
+5830	0	1473000	3044	17	233	72	c
+5831	0	1434000	3044	19	235	114	c
+5832	0	1479000	4253	17	233	73	c
+5833	0	1214000	2906	20	233	66	c
+5834	0	1223000	2908	20	233	67	c
+5835	0	1275000	2908	18	235	95	c
+5836	0	1223000	4254	20	233	68	c
+5837	0	1316000	3005	20	233	92	c
+5838	0	1219000	3005	18	235	72	c
+5839	0	1338000	3040	20	233	101	c
+5840	0	1237000	3040	18	235	80	c
+5841	0	1365000	4255	20	233	105	c
+5821	0	1329000	5160	20	231	97	c
+5761	0	1417000	5166	19	223	113	c
+5776	0	1364000	5168	18	225	118	c
+5765	0	1113000	5175	18	223	27	c
+5764	0	1090000	5181	18	223	17	c
+5819	0	1263000	5192	20	231	82	c
+5783	0	1370000	5212	17	227	49	c
+5737	0	1487000	5234	17	221	76	c
+5759	0	1276000	5279	19	223	58	c
+5777	0	1398000	5281	18	225	123	c
+5823	0	1338000	5284	30	232	17	c
+5714	0	1136000	5285	18	219	37	c
+5708	0	1200000	5286	19	219	21	c
+5842	0	1414000	4256	20	233	114	c
+5843	0	1717000	4257	27	234	51	c
+5844	0	1771000	4258	27	234	54	c
+5845	0	1771000	4259	27	234	55	c
+5846	0	1583000	4260	30	234	91	c
+5847	0	1509000	4260	28	236	70	c
+5848	0	1589000	4261	30	234	93	c
+5849	0	1606000	4262	30	234	97	c
+5850	0	1534000	4262	28	236	84	c
+5851	0	1619000	4263	30	234	98	c
+5852	0	1631000	4263	29	236	41	c
+5853	0	1621000	4264	30	234	99	c
+5854	0	1624000	4265	30	234	100	c
+5855	0	1555000	4265	28	236	95	c
+5856	0	1693000	1113	30	234	105	c
+5857	0	1508000	1113	28	236	68	c
+5858	0	1408000	4266	19	235	108	c
+5859	0	1516000	4267	19	235	126	c
+5860	0	1528000	4268	19	235	127	c
+5861	0	1314000	4269	18	235	103	c
+5862	0	1428000	4270	18	235	127	c
+5863	0	1589000	4271	29	236	28	c
+5864	0	1628000	4272	29	236	39	c
+5865	0	1629000	4273	29	236	40	c
+5866	0	1752000	4274	29	236	57	c
+5867	0	1515000	4275	28	236	72	c
+5868	0	1530000	4276	28	236	79	c
+5869	0	1627000	4277	28	236	110	c
+5870	0	1067000	2854	20	237	11	c
+5871	0	1153000	4278	20	237	36	c
+5872	0	1155000	4279	20	237	37	c
+5874	0	1255000	4281	20	237	78	c
+5875	0	1361000	4281	18	238	117	c
+5876	0	1268000	4282	20	237	85	c
+5877	0	1225000	4282	18	238	74	c
+5878	0	1295000	4283	20	237	88	c
+5879	0	1100000	4284	18	238	19	c
+5880	0	1171000	4285	18	238	51	c
+5881	0	1196000	4286	18	238	59	c
+5882	0	1324000	4287	18	238	106	c
+5883	0	1352000	4288	18	238	115	c
+5884	0	1089000	4289	20	239	17	c
+5885	0	1079000	4289	18	339	13	c
+5886	0	1206000	4290	20	239	65	c
+5887	0	1249000	4291	20	239	75	c
+5888	0	1269000	4292	20	239	86	c
+5889	0	1244000	4292	18	339	82	c
+5890	0	1360000	4293	20	239	104	c
+5891	0	1439000	4294	20	239	115	c
+5892	0	1364000	4295	30	240	23	c
+5893	0	1319000	4295	28	340	17	c
+5894	0	1376000	4296	30	240	27	c
+5895	0	1408000	4296	28	340	40	c
+5896	0	1637000	4297	30	240	102	c
+5898	0	1354000	4299	20	241	103	c
+5901	0	1414000	4301	20	241	113	c
+5902	0	1389000	4302	30	242	31	c
+5903	0	1340000	4302	28	244	19	c
+5904	0	1540000	4303	30	242	83	c
+5905	0	1576000	4304	30	242	89	c
+5906	0	1668000	4304	28	244	111	c
+5907	0	1678000	4305	30	242	104	c
+5908	0	1915000	1115	30	242	109	c
+5909	0	1941000	4306	30	242	110	c
+5910	0	1676000	4307	19	243	133	c
+5911	0	1732000	4308	19	243	139	c
+5912	0	1224000	4309	18	243	73	c
+5914	0	1387000	4311	18	243	121	c
+5916	0	1470000	4313	18	243	129	c
+5918	0	1669000	4315	18	243	132	c
+5919	0	1719000	4316	28	244	118	c
+5920	0	1744000	4317	28	244	121	c
+5921	0	1489000	63	27	245	10	c
+5922	0	1546000	66	27	245	17	c
+5923	0	1608000	4318	27	245	31	c
+5924	0	1635000	4319	27	245	38	c
+5925	0	1736000	4319	39	329	93	c
+5926	0	1657000	4320	27	245	43	c
+5927	0	1676000	4321	27	245	45	c
+5928	0	1521000	4321	39	329	47	c
+5929	0	1690000	4321	28	329	114	c
+5930	0	1742000	4322	27	245	52	c
+5931	0	1340000	120	30	245	18	c
+5932	0	1399000	120	39	329	20	c
+5933	0	1400000	120	28	329	37	c
+5934	0	1417000	4323	30	245	39	c
+5935	0	1552000	4323	28	329	93	c
+5936	0	1427000	4324	30	245	49	c
+5937	0	1435000	4325	30	245	52	c
+5938	0	1458000	4326	30	245	60	c
+5939	0	1444000	4326	39	329	25	c
+5940	0	1507000	4326	28	329	66	c
+5941	0	1482000	4327	30	245	68	c
+5942	0	1499000	4327	39	329	40	c
+5943	0	1654000	4328	27	246	41	c
+5944	0	1796000	4329	27	246	56	c
+5945	0	1322000	4330	30	246	14	c
+5946	0	1366000	4330	28	247	25	c
+5947	0	1396000	1065	30	246	34	c
+5950	0	1492000	4332	30	246	70	c
+5953	0	1625000	4334	30	246	101	c
+5954	0	1342000	1020	28	247	20	c
+5955	0	1524000	4335	28	247	78	c
+5956	0	1554000	4336	28	247	94	c
+5957	0	1292000	4337	30	248	8	c
+5958	0	1257000	4337	28	249	7	c
+5959	0	1253000	4337	39	249	4	c
+5960	0	1445000	4338	30	248	55	c
+5961	0	1470000	4338	28	249	60	c
+5962	0	1475000	4338	39	249	35	c
+5963	0	1486000	28	30	248	69	c
+5964	0	1531000	28	28	249	80	c
+5965	0	1497000	28	39	249	39	c
+5966	0	1510000	4339	30	248	75	c
+5967	0	1537000	4339	39	249	52	c
+5968	0	1550000	4340	30	248	87	c
+5969	0	1542000	4340	28	249	90	c
+5970	0	1530000	4340	39	249	49	c
+5971	0	1566000	4341	30	248	88	c
+5972	0	1566000	4341	28	249	98	c
+5973	0	1537000	4341	39	249	51	c
+5974	0	1535000	30	28	249	85	c
+5975	0	1553000	30	39	249	54	c
+5976	0	1538000	4342	28	249	89	c
+5977	0	1501000	4342	39	249	41	c
+5917	0	1577000	5195	18	243	130	c
+5951	0	1508000	5204	30	246	74	c
+5873	0	1197000	5230	20	237	61	c
+5913	0	1373000	5289	18	243	119	c
+5915	0	1408000	5288	18	243	124	c
+5899	0	1395000	5288	20	241	109	c
+5900	0	1406000	5289	20	241	111	c
+5897	0	1710000	5340	30	240	106	c
+5978	0	1437000	4343	39	249	24	c
+5979	0	1622000	4344	39	249	69	c
+5980	0	1679000	4345	39	249	80	c
+5981	0	1707000	4346	39	249	87	c
+5982	0	1733000	4347	39	249	92	c
+5983	0	1785000	4348	39	249	96	c
+5984	0	1872000	4349	39	249	102	c
+5985	0	1906000	4350	39	249	105	c
+5986	0	1914000	4351	39	249	107	c
+5987	0	1991000	4352	39	249	109	c
+5988	0	1176000	4353	32	250	1	c
+5990	0	1188000	4355	32	250	3	c
+5994	0	1263000	4359	32	250	17	c
+5995	0	1281000	4360	32	250	21	c
+5996	0	1284000	4361	32	250	22	c
+5997	0	1295000	4362	32	250	26	c
+5999	0	1376000	4364	32	250	53	c
+6003	0	1129000	4368	31	250	30	c
+6006	0	1210000	4371	31	250	62	c
+6013	0	1953000	4378	37	251	48	c
+6014	0	2191000	4379	37	251	52	c
+6018	0	1478000	4383	35	251	71	c
+6024	0	1259000	4388	34	252	7	c
+6025	0	1286000	4388	40	252	36	c
+6026	0	1260000	4389	34	252	8	c
+6027	0	1303000	4389	40	252	39	c
+6028	0	1367000	4390	34	252	29	c
+6029	0	1399000	4390	40	252	56	c
+6030	0	1427000	4391	34	252	43	c
+6031	0	1487000	4391	40	252	67	c
+6032	0	1458000	4392	34	252	50	c
+6033	0	1399000	4392	40	252	55	c
+6034	0	1473000	325	34	252	51	c
+6035	0	1507000	325	40	252	69	c
+6036	0	1480000	4393	34	252	52	c
+6037	0	1659000	4393	40	252	80	c
+6038	0	1539000	4394	34	252	68	c
+6039	0	1697000	4394	40	252	84	c
+6048	0	1243000	4398	33	252	72	c
+6049	0	1217000	4398	40	252	22	c
+6054	0	1617000	4400	40	252	77	c
+6055	0	1906000	4401	40	252	88	c
+6074	0	1728000	4411	38	253	126	c
+6075	0	1662000	4411	39	253	76	c
+6079	0	1190000	4415	32	254	4	c
+6080	0	1147000	4415	40	319	9	c
+6081	0	1155000	4415	33	319	26	c
+6082	0	1202000	4416	32	254	6	c
+6083	0	1224000	4417	32	254	10	c
+6084	0	1265000	327	32	254	18	c
+6085	0	1299000	4418	32	254	28	c
+6086	0	1348000	4419	32	254	45	c
+6087	0	1395000	4419	40	319	54	c
+6088	0	1359000	4419	34	319	28	c
+6089	0	1383000	4420	32	254	57	c
+6090	0	1320000	4420	40	319	41	c
+6091	0	1326000	4420	34	319	19	c
+6092	0	1392000	4421	32	254	59	c
+6093	0	1479000	4421	40	319	66	c
+6094	0	1577000	4421	34	319	74	c
+6095	0	1405000	4422	32	254	61	c
+6096	0	1451000	319	32	254	73	c
+6098	0	1077000	4424	31	254	14	c
+6099	0	1117000	4424	40	319	4	c
+6100	0	1146000	4424	33	319	24	c
+6101	0	1123000	4425	31	254	26	c
+6102	0	1149000	4426	31	254	39	c
+6103	0	1110000	4426	40	319	3	c
+6104	0	1139000	4426	33	319	21	c
+6105	0	1150000	263	31	254	41	c
+6106	0	1157000	4427	31	254	42	c
+6107	0	1139000	4427	40	319	7	c
+6108	0	1157000	4427	33	319	29	c
+6109	0	1198000	4428	31	254	54	c
+6110	0	1209000	4429	31	254	60	c
+6111	0	1669000	99	37	255	27	c
+6112	0	1742000	4430	37	255	39	c
+6113	0	1705000	4430	39	320	86	c
+6052	0	1286000	5147	33	252	88	c
+6053	0	1289000	5147	40	252	37	c
+5992	0	1230000	5147	32	250	11	c
+6009	0	1602000	5149	37	251	19	c
+6077	0	1794000	5149	39	253	97	c
+6065	0	1301000	5155	38	253	10	c
+6066	0	1286000	5155	39	253	6	c
+6016	0	1355000	5155	35	251	26	c
+6017	0	1440000	5157	35	251	56	c
+6010	0	1662000	5158	37	251	25	c
+6056	0	1608000	5158	36	253	14	c
+6057	0	1676000	5158	39	253	79	c
+6012	0	1698000	5162	37	251	34	c
+6060	0	1738000	5162	36	253	30	c
+5998	0	1356000	5173	32	250	46	c
+6021	0	1594000	5177	35	251	107	c
+6015	0	1294000	5182	35	251	10	c
+6063	0	1265000	5182	38	253	7	c
+6064	0	1248000	5182	39	253	3	c
+5989	0	1178000	5184	32	250	2	c
+6044	0	1196000	5184	33	252	45	c
+6045	0	1222000	5184	40	252	23	c
+6002	0	1123000	5186	31	250	27	c
+6050	0	1255000	5186	33	252	75	c
+6051	0	1225000	5186	40	252	25	c
+6001	0	1079000	5187	31	250	16	c
+6000	0	1046000	5201	31	250	6	c
+6007	0	1586000	5206	37	251	16	c
+6072	0	1587000	5206	38	253	110	c
+6042	0	1186000	5208	33	252	38	c
+6043	0	1183000	5208	40	252	15	c
+6005	0	1148000	5208	31	250	38	c
+6004	0	1138000	5211	31	250	34	c
+6040	0	1088000	5211	33	252	8	c
+6041	0	1096000	5211	40	252	1	c
+5991	0	1191000	5218	32	250	5	c
+6022	0	1238000	5218	34	252	4	c
+6023	0	1251000	5218	40	252	30	c
+6071	0	1561000	5219	38	253	96	c
+6076	0	1536000	5219	39	253	50	c
+6011	0	1670000	5219	37	251	28	c
+6019	0	1509000	5221	35	251	82	c
+6067	0	1329000	5221	38	253	23	c
+5993	0	1231000	5223	32	250	12	c
+6046	0	1234000	5223	33	252	69	c
+6047	0	1269000	5223	40	252	33	c
+6097	0	1482000	5298	32	254	77	c
+6062	0	1813000	5300	36	253	34	c
+6078	0	1907000	5300	39	253	106	c
+6114	0	1773000	4431	37	255	42	c
+6115	0	1385000	4432	35	255	36	c
+6116	0	1458000	4432	39	320	31	c
+6117	0	1476000	4432	38	320	68	c
+6118	0	1496000	4433	35	255	78	c
+6119	0	1561000	4434	35	255	102	c
+6120	0	1446000	4434	39	320	26	c
+6121	0	1505000	4434	38	320	78	c
+6122	0	1578000	4435	35	255	105	c
+6123	0	1676000	4435	39	320	78	c
+6124	0	1638000	4436	35	255	113	c
+6125	0	1202000	4437	32	256	7	c
+6129	0	1296000	4440	32	256	27	c
+6130	0	1306000	4441	32	256	29	c
+6131	0	1373000	4442	32	256	52	c
+6132	0	1439000	4443	32	256	71	c
+6134	0	1048000	4445	31	256	7	c
+6135	0	1085000	4446	31	256	18	c
+6136	0	1112000	4446	33	257	13	c
+6137	0	1102000	4446	40	257	2	c
+6139	0	1194000	4448	31	256	53	c
+6140	0	1244000	4449	31	256	77	c
+6145	0	1328000	4452	33	257	101	c
+6146	0	1238000	4452	40	257	28	c
+6150	0	1480000	4455	33	257	132	c
+6151	0	1557000	4455	40	257	71	c
+6152	0	1390000	4456	40	257	51	c
+6154	0	1679000	4458	40	257	83	c
+6155	0	1732000	4459	40	257	86	c
+6156	0	2340000	4460	40	257	90	c
+6157	0	1219000	4461	32	258	8	c
+6158	0	1240000	4461	34	260	5	c
+6159	0	1278000	4462	32	258	19	c
+6160	0	1270000	4462	34	260	11	c
+6161	0	1371000	4463	32	258	50	c
+6162	0	1382000	4464	32	258	56	c
+6163	0	1446000	4464	34	260	48	c
+6164	0	1426000	4465	32	258	67	c
+6165	0	1532000	4466	32	258	82	c
+6166	0	1586000	4466	34	260	75	c
+6167	0	1541000	4467	32	258	83	c
+6168	0	1423000	4467	34	260	42	c
+6169	0	1756000	4468	32	258	95	c
+6170	0	1837000	4469	32	258	97	c
+6171	0	1121000	4470	31	258	24	c
+6173	0	1175000	4472	31	258	49	c
+6174	0	1145000	4472	33	260	23	c
+6175	0	1181000	4473	31	258	50	c
+6176	0	1197000	4473	33	260	46	c
+6177	0	1203000	4474	31	258	56	c
+6178	0	1205000	4475	31	258	58	c
+6179	0	1218000	4475	33	260	58	c
+6180	0	1242000	4476	31	258	76	c
+6181	0	1213000	4476	33	260	56	c
+6182	0	1559000	4477	37	259	12	c
+6183	0	1561000	4478	37	259	13	c
+6184	0	1499000	4478	38	261	76	c
+6185	0	1919000	4479	37	259	47	c
+6186	0	1998000	4480	37	259	49	c
+6187	0	1816000	4480	38	261	130	c
+6188	0	1338000	4481	35	259	20	c
+6189	0	1349000	4482	35	259	23	c
+6190	0	1435000	4482	38	261	60	c
+6191	0	1403000	4483	35	259	43	c
+6192	0	1421000	4484	35	259	52	c
+6193	0	1528000	4484	38	261	90	c
+6194	0	1515000	4485	35	259	83	c
+6195	0	1560000	4486	35	259	101	c
+6196	0	1578000	4487	35	259	104	c
+6197	0	1310000	4488	34	260	15	c
+6198	0	1339000	4489	34	260	25	c
+6199	0	1379000	4490	34	260	30	c
+6200	0	1409000	4491	34	260	35	c
+6201	0	1499000	4492	34	260	57	c
+6202	0	1588000	4493	34	260	76	c
+6203	0	1061000	4494	33	260	5	c
+6204	0	1065000	4495	33	260	6	c
+6206	0	1561000	4497	38	261	97	c
+6207	0	1707000	4498	38	261	125	c
+6208	0	1222000	4499	32	262	9	c
+6209	0	1315000	4500	32	262	31	c
+6210	0	1321000	4500	33	264	96	c
+6211	0	1510000	4501	32	262	80	c
+6212	0	1094000	4502	31	262	19	c
+6213	0	1173000	4502	33	264	35	c
+6214	0	1097000	4503	31	262	20	c
+6215	0	1139000	4503	33	264	20	c
+6216	0	1109000	4504	31	262	21	c
+6217	0	1143000	4505	31	262	36	c
+6218	0	1159000	4506	31	262	43	c
+6219	0	1223000	4507	31	262	68	c
+6220	0	1177000	4507	33	264	37	c
+6221	0	1228000	4508	31	262	73	c
+6222	0	1283000	4508	33	264	86	c
+6223	0	1269000	4509	35	263	7	c
+6224	0	1330000	4509	38	265	24	c
+6225	0	1293000	4510	35	263	9	c
+6226	0	1399000	4511	35	263	41	c
+6227	0	1381000	4511	38	265	38	c
+6228	0	1409000	4512	35	263	47	c
+6229	0	1682000	4513	35	263	115	c
+6230	0	1489000	4514	34	264	56	c
+6231	0	1122000	4515	33	264	16	c
+6232	0	1429000	4516	33	264	128	c
+6233	0	1325000	4517	38	265	21	c
+6234	0	1538000	4518	38	265	92	c
+6235	0	1562000	4519	38	265	100	c
+6236	0	1224000	4520	34	266	3	c
+6237	0	1265000	4521	34	266	9	c
+6238	0	1134000	4522	33	266	17	c
+6239	0	1602000	4523	36	267	12	c
+6240	0	1650000	4524	36	267	19	c
+6241	0	1713000	4525	36	267	27	c
+6242	0	1831000	4526	36	267	35	c
+6243	0	1343000	4527	38	267	26	c
+6244	0	1391000	4528	38	267	45	c
+6246	0	1498000	4530	38	267	75	c
+6247	0	1513000	4531	38	267	83	c
+6248	0	1554000	4532	38	267	94	c
+6249	0	1562000	4533	38	267	98	c
+6127	0	1294000	5148	32	256	24	c
+6128	0	1291000	5148	40	257	38	c
+6141	0	1293000	5161	31	256	94	c
+6149	0	1382000	5209	33	257	123	c
+6153	0	1390000	5209	40	257	52	c
+6126	0	1257000	5290	32	256	16	c
+6147	0	1352000	5290	33	257	110	c
+6148	0	1326000	5290	40	257	44	c
+6133	0	1034000	5291	31	256	3	c
+6172	0	1134000	5343	31	258	32	c
+6205	0	1229000	5343	33	260	65	c
+6250	0	1255000	4534	32	268	15	c
+6251	0	1308000	4535	32	268	30	c
+6252	0	1321000	4535	33	270	97	c
+6253	0	1364000	4536	32	268	48	c
+6254	0	1418000	4537	32	268	64	c
+6255	0	1423000	4538	32	268	66	c
+6256	0	1488000	4538	34	270	55	c
+6257	0	1435000	4539	32	268	70	c
+6258	0	1491000	4540	32	268	78	c
+6259	0	1578000	4541	32	268	86	c
+6260	0	1376000	4541	33	270	120	c
+6261	0	1055000	4542	31	268	9	c
+6262	0	1122000	4542	33	270	15	c
+6263	0	1064000	4543	31	268	12	c
+6264	0	1205000	4543	33	270	52	c
+6265	0	1123000	4544	31	268	25	c
+6266	0	1478000	4544	33	270	131	c
+6267	0	1126000	4545	31	268	29	c
+6268	0	1088000	4545	33	270	9	c
+6269	0	1145000	4546	31	268	37	c
+6270	0	1208000	4547	31	268	59	c
+6271	0	1239000	4548	31	268	75	c
+6272	0	1544000	4549	37	269	10	c
+6273	0	1895000	4549	36	271	38	c
+6274	0	1566000	4550	37	269	14	c
+6275	0	1656000	4550	36	271	20	c
+6276	0	1277000	4551	35	269	8	c
+6277	0	1263000	4551	38	271	5	c
+6278	0	1385000	4552	35	269	37	c
+6279	0	1489000	4552	38	271	72	c
+6280	0	1407000	4553	35	269	45	c
+6281	0	1438000	4554	35	269	54	c
+6282	0	1472000	4555	35	269	67	c
+6283	0	1372000	4555	38	271	35	c
+6284	0	1475000	4556	35	269	68	c
+6285	0	1607000	4556	36	271	13	c
+6286	0	1497000	4557	35	269	79	c
+6287	0	1512000	4557	38	271	82	c
+6288	0	1410000	4558	34	270	36	c
+6289	0	1416000	4559	34	270	38	c
+6290	0	1500000	4560	34	270	58	c
+6291	0	1504000	4561	34	270	63	c
+6292	0	1559000	4562	34	270	73	c
+6293	0	1734000	4563	34	270	83	c
+6294	0	1418000	4564	33	270	126	c
+6295	0	1710000	4565	36	271	26	c
+6296	0	1750000	4566	36	271	31	c
+6297	0	1870000	4567	36	271	36	c
+6298	0	1880000	4568	36	271	37	c
+6299	0	1337000	4569	38	271	25	c
+6300	0	1478000	4570	38	271	69	c
+6301	0	1517000	4571	38	271	86	c
+6302	0	1283000	4572	34	272	13	c
+6304	0	1061000	4574	33	272	4	c
+6306	0	1175000	4576	33	272	36	c
+6308	0	1324000	4578	33	272	99	c
+6309	0	1430000	4579	38	273	58	c
+6311	0	1320000	4581	34	274	17	c
+6312	0	1352000	4582	34	274	27	c
+6313	0	1515000	4583	34	274	65	c
+6314	0	1681000	4584	34	274	81	c
+6315	0	1111000	4585	33	274	12	c
+6316	0	1155000	4586	33	274	27	c
+6318	0	1219000	4588	33	274	61	c
+6319	0	1306000	4589	33	274	93	c
+6322	0	1326000	4592	32	276	36	c
+6323	0	1337000	4593	32	276	40	c
+6324	0	1370000	4593	33	278	118	c
+6325	0	1347000	4594	32	276	43	c
+6326	0	1358000	4595	32	276	47	c
+6327	0	1377000	4596	32	276	54	c
+6328	0	1502000	4596	33	278	133	c
+6329	0	1379000	4597	32	276	55	c
+6330	0	1405000	4598	32	276	60	c
+6332	0	1475000	4600	32	276	76	c
+6333	0	1550000	4601	32	276	84	c
+6334	0	1078000	4602	31	276	15	c
+6335	0	1221000	4603	31	276	67	c
+6337	0	1271000	4605	31	276	84	c
+6338	0	1353000	4605	33	278	114	c
+6339	0	1280000	4606	31	276	87	c
+6340	0	1315000	4607	31	276	100	c
+6341	0	1368000	4608	31	276	111	c
+6342	0	1309000	4609	35	277	15	c
+6343	0	1407000	4609	38	279	51	c
+6344	0	1365000	4610	35	277	32	c
+6345	0	1370000	4610	38	279	34	c
+6346	0	1469000	4611	35	277	66	c
+6347	0	1531000	4612	35	277	88	c
+6348	0	2052000	4613	35	277	125	c
+6349	0	2192000	4614	35	277	129	c
+6350	0	1383000	4615	34	278	32	c
+6352	0	1542000	4617	34	278	69	c
+6353	0	1842000	4618	34	278	86	c
+6354	0	1299000	4619	33	278	92	c
+6357	0	1533000	4622	33	278	135	c
+6358	0	1309000	4623	38	279	12	c
+6359	0	1596000	4624	38	279	113	c
+6360	0	1321000	4625	32	280	34	c
+6361	0	1326000	4626	32	280	37	c
+6362	0	1334000	4627	32	280	39	c
+6364	0	1369000	4629	32	280	49	c
+6365	0	1333000	4629	34	350	22	c
+6366	0	1692000	4630	32	280	91	c
+6367	0	1118000	4631	31	280	23	c
+6368	0	1115000	4631	33	350	14	c
+6369	0	1217000	4632	31	280	65	c
+6370	0	1276000	4633	31	280	86	c
+6371	0	1283000	4634	31	280	89	c
+6372	0	1284000	4635	31	280	90	c
+6373	0	1289000	4636	31	280	93	c
+6374	0	1296000	4637	31	280	95	c
+6375	0	1245000	4638	35	281	4	c
+6376	0	1308000	4638	38	351	11	c
+6377	0	1503000	4639	35	281	80	c
+6378	0	1543000	4640	35	281	94	c
+6379	0	1608000	4640	38	351	115	c
+6380	0	1742000	4641	35	281	120	c
+6381	0	1745000	4642	35	281	121	c
+6382	0	2061000	4643	35	281	126	c
+6383	0	2062000	4644	35	281	127	c
+6384	0	1348000	4645	32	282	44	c
+6385	0	1298000	4645	33	348	91	c
+6336	0	1248000	5163	31	276	78	c
+6307	0	1219000	5185	33	272	60	c
+6310	0	1580000	5194	38	273	106	c
+6305	0	1160000	5203	33	272	30	c
+6317	0	1201000	5225	33	274	49	c
+6303	0	1555000	5233	34	272	72	c
+6351	0	1480000	5338	34	278	53	c
+6356	0	1352000	5339	33	278	113	c
+6321	0	1320000	5339	32	276	33	c
+6363	0	1339000	5349	32	280	42	c
+6386	0	1432000	4646	32	282	68	c
+6387	0	1456000	4647	32	282	74	c
+6388	0	1508000	4648	32	282	79	c
+6389	0	1414000	4648	34	348	37	c
+6390	0	1552000	4649	32	282	85	c
+6391	0	1170000	4650	31	282	47	c
+6392	0	1248000	4651	31	282	79	c
+6393	0	1202000	4651	33	348	50	c
+6394	0	1269000	4652	31	282	83	c
+6395	0	1359000	4652	33	348	116	c
+6396	0	1298000	4653	31	282	96	c
+6397	0	1302000	4654	31	282	98	c
+6398	0	1236000	4654	33	348	70	c
+6400	0	1364000	4656	31	282	110	c
+6401	0	1610000	4657	37	283	20	c
+6402	0	1706000	4658	37	283	35	c
+6403	0	1295000	4659	35	283	11	c
+6404	0	1407000	4659	38	349	52	c
+6405	0	1300000	4660	35	283	13	c
+6406	0	1361000	4661	35	283	28	c
+6407	0	1436000	4662	35	283	53	c
+6408	0	1440000	4663	35	283	55	c
+6409	0	1464000	4664	35	283	65	c
+6410	0	1447000	4664	38	349	64	c
+6411	0	1491000	4665	35	283	76	c
+6412	0	1373000	4666	32	284	51	c
+6413	0	1670000	4667	32	284	89	c
+6414	0	1685000	4668	32	284	90	c
+6415	0	1223000	4669	31	284	69	c
+6416	0	1317000	4670	31	284	101	c
+6417	0	1361000	4671	31	284	109	c
+6418	0	1374000	4672	31	284	112	c
+6419	0	1445000	4673	31	284	118	c
+6421	0	1727000	4675	31	284	128	c
+6422	0	1443000	4676	35	285	58	c
+6423	0	1558000	4677	35	285	99	c
+6424	0	2123000	4678	35	285	128	c
+6425	0	2375000	4679	35	285	131	c
+6426	0	2537000	4679	38	355	136	c
+6427	0	1413000	4680	32	286	62	c
+6428	0	1501000	4680	34	288	59	c
+6429	0	1433000	4681	32	286	69	c
+6430	0	1432000	4681	34	288	44	c
+6431	0	1743000	4682	32	286	92	c
+6432	0	1746000	4683	32	286	93	c
+6433	0	1623000	4683	34	288	78	c
+6434	0	1748000	4684	32	286	94	c
+6435	0	1795000	4684	34	288	85	c
+6436	0	1053000	4685	31	286	8	c
+6437	0	1129000	4686	31	286	31	c
+6438	0	1164000	4686	33	288	31	c
+6439	0	1224000	4687	31	286	70	c
+6440	0	1280000	4687	33	288	84	c
+6441	0	1226000	4688	31	286	71	c
+6442	0	1383000	4689	31	286	113	c
+6443	0	1520000	4690	31	286	123	c
+6444	0	1281000	4690	33	288	85	c
+6445	0	1527000	4691	31	286	124	c
+6446	0	1677000	4692	37	287	29	c
+6447	0	1630000	4692	36	289	16	c
+6448	0	1866000	4693	37	287	46	c
+6449	0	1736000	4693	36	289	28	c
+6450	0	1221000	4694	35	287	2	c
+6451	0	1263000	4694	38	289	6	c
+6452	0	1409000	4695	35	287	46	c
+6453	0	1415000	4695	38	289	56	c
+6454	0	1487000	4696	35	287	72	c
+6455	0	1654000	4696	38	289	122	c
+6456	0	1543000	4697	35	287	95	c
+6457	0	1559000	4697	38	289	95	c
+6458	0	1618000	4698	35	287	110	c
+6459	0	1565000	4698	38	289	101	c
+6460	0	1635000	4699	35	287	112	c
+6462	0	1452000	4701	34	288	49	c
+6463	0	1484000	4702	34	288	54	c
+6464	0	1553000	4703	34	288	71	c
+6465	0	1207000	4704	33	288	53	c
+6466	0	1286000	4705	33	288	87	c
+6467	0	1352000	4706	33	288	112	c
+6468	0	1399000	4707	33	288	124	c
+6469	0	1497000	4708	38	289	74	c
+6471	0	1042000	4710	31	290	5	c
+6472	0	1261000	4711	31	290	81	c
+6473	0	1358000	4711	33	292	115	c
+6474	0	1287000	4712	31	290	92	c
+6475	0	1191000	4712	33	292	40	c
+6476	0	1343000	4713	31	290	106	c
+6477	0	1340000	4713	33	292	106	c
+6478	0	1363000	4714	35	291	29	c
+6479	0	1380000	4714	38	293	37	c
+6480	0	1145000	4715	33	292	22	c
+6481	0	1294000	4716	33	292	89	c
+6482	0	1951000	4717	33	292	138	c
+6483	0	2064000	4718	33	292	139	c
+6484	0	1431000	4719	38	293	59	c
+6485	0	1695000	4720	38	293	124	c
+6486	0	1062000	4721	31	294	11	c
+6487	0	1273000	4722	31	294	85	c
+6488	0	1396000	4723	31	294	114	c
+6489	0	1437000	4724	31	294	116	c
+6490	0	1382000	4724	33	296	122	c
+6491	0	1536000	4725	31	294	125	c
+6492	0	1528000	4725	33	296	134	c
+6493	0	1676000	4726	31	294	126	c
+6494	0	1690000	4727	31	294	127	c
+6495	0	1238000	4728	35	295	3	c
+6496	0	1364000	4729	35	295	30	c
+6497	0	1456000	4730	35	295	64	c
+6498	0	1558000	4731	35	295	100	c
+6499	0	1622000	4731	38	297	117	c
+6500	0	1616000	4732	35	295	109	c
+6501	0	1658000	4733	35	295	114	c
+6502	0	1710000	4734	35	295	117	c
+6503	0	1314000	4735	33	296	95	c
+6504	0	1346000	4736	33	296	108	c
+6505	0	1422000	4737	33	296	127	c
+6506	0	1236000	4738	38	297	3	c
+6507	0	1321000	4739	38	297	19	c
+6508	0	1387000	4740	38	297	43	c
+6509	0	1443000	4741	38	297	62	c
+6510	0	1503000	4742	38	297	77	c
+6511	0	1596000	4743	38	297	112	c
+6512	0	1116000	4744	31	298	22	c
+6513	0	1165000	4745	31	298	45	c
+6514	0	1197000	4745	33	300	47	c
+6515	0	1306000	4746	31	298	99	c
+6516	0	1329000	4746	33	300	102	c
+6517	0	1398000	4747	31	298	115	c
+6518	0	1506000	4748	31	298	121	c
+6519	0	1506000	4749	31	298	122	c
+6520	0	1343000	4750	35	299	22	c
+6521	0	1357000	4750	38	301	32	c
+6470	0	1788000	5341	38	289	129	c
+6399	0	1342000	5342	31	282	104	c
+6522	0	1380000	4751	35	299	35	c
+6523	0	1403000	4751	38	301	48	c
+6524	0	1405000	4752	35	299	44	c
+6525	0	1574000	4753	35	299	103	c
+6526	0	1628000	4754	35	299	111	c
+6527	0	1169000	4755	33	300	33	c
+6528	0	1334000	4756	33	300	104	c
+6529	0	1163000	4757	31	302	44	c
+6530	0	1357000	4758	31	302	107	c
+6531	0	1332000	4759	35	303	18	c
+6532	0	1526000	4760	35	303	86	c
+6533	0	1256000	4761	33	304	76	c
+6534	0	1374000	4762	33	304	119	c
+6535	0	1353000	4763	38	305	30	c
+6536	0	1472000	4764	38	305	67	c
+6537	0	1647000	4765	38	305	121	c
+6538	0	1201000	239	31	306	55	c
+6539	0	1334000	267	31	306	102	c
+6540	0	1485000	4766	31	306	120	c
+6541	0	1582000	4766	40	308	73	c
+6542	0	1546000	82	37	307	11	c
+6543	0	1670000	82	36	309	23	c
+6544	0	1641000	82	39	309	73	c
+6545	0	1715000	4767	37	307	37	c
+6546	0	1736000	4767	36	309	29	c
+6547	0	1751000	4767	39	309	94	c
+6548	0	1747000	4768	37	307	40	c
+6549	0	1262000	4769	35	307	6	c
+6550	0	1310000	4769	38	309	13	c
+6551	0	1304000	4769	39	309	9	c
+6552	0	1305000	4770	35	307	14	c
+6553	0	1310000	4770	38	309	14	c
+6554	0	1342000	4770	39	309	11	c
+6555	0	1359000	4771	35	307	27	c
+6556	0	1328000	4771	38	309	22	c
+6557	0	1346000	4771	39	309	13	c
+6560	0	1398000	75	35	307	40	c
+6561	0	1442000	71	35	307	57	c
+6562	0	1384000	71	38	309	40	c
+6563	0	1366000	71	39	309	14	c
+6564	0	1447000	4773	35	307	59	c
+6565	0	1492000	4773	38	309	73	c
+6566	0	1452000	4773	39	309	28	c
+6567	0	1324000	4774	33	308	100	c
+6568	0	1304000	4774	40	308	40	c
+6569	0	1601000	4775	33	308	136	c
+6570	0	1497000	4775	40	308	68	c
+6571	0	1481000	4776	36	309	4	c
+6572	0	1486000	4776	39	309	37	c
+6573	0	1610000	4777	36	309	15	c
+6574	0	1543000	4777	39	309	53	c
+6575	0	1667000	4778	36	309	22	c
+6576	0	1642000	4778	39	309	74	c
+6578	0	1706000	4780	36	309	25	c
+6579	0	1701000	4780	39	309	84	c
+6580	0	1798000	4781	36	309	33	c
+6581	0	1827000	4781	39	309	99	c
+6582	0	1318000	4782	38	309	18	c
+6583	0	1345000	4782	39	309	12	c
+6584	0	1404000	4783	38	309	49	c
+6585	0	1418000	4783	39	309	23	c
+6587	0	1280000	4785	31	310	88	c
+6588	0	1268000	4786	33	311	82	c
+6589	0	1343000	4787	33	311	107	c
+6590	0	1648000	4788	33	311	137	c
+6591	0	1537000	4789	38	312	91	c
+6592	0	1882000	4790	38	312	133	c
+6593	0	1894000	4791	38	312	134	c
+6594	0	1483000	4792	37	313	3	c
+6595	0	1500000	4793	37	313	5	c
+6596	0	1512000	4794	37	313	6	c
+6597	0	1470000	4794	38	314	66	c
+6598	0	1624000	4795	37	313	21	c
+6599	0	1649000	4796	37	313	24	c
+6600	0	1680000	4797	37	313	31	c
+6601	0	1720000	4798	37	313	38	c
+6602	0	1262000	4799	35	313	5	c
+6603	0	1259000	4799	38	314	4	c
+6604	0	1315000	4800	35	313	16	c
+6605	0	1372000	4801	35	313	33	c
+6606	0	1401000	4802	35	313	42	c
+6607	0	1352000	4802	38	314	29	c
+6608	0	1418000	4803	35	313	51	c
+6610	0	1527000	4805	35	313	87	c
+6611	0	1479000	4805	38	314	70	c
+6612	0	1471000	4806	36	314	3	c
+6613	0	1568000	4807	36	314	10	c
+6615	0	1357000	4809	38	314	31	c
+6616	0	1617000	4810	38	314	116	c
+6617	0	1519000	4811	37	315	7	c
+6618	0	1543000	4812	37	315	9	c
+6619	0	1598000	4813	37	315	17	c
+6620	0	1667000	4814	37	315	26	c
+6621	0	1678000	4815	37	315	30	c
+6622	0	1682000	4816	37	315	32	c
+6623	0	1455000	4817	35	315	62	c
+6624	0	1518000	4817	38	316	87	c
+6625	0	1492000	4818	35	315	77	c
+6626	0	1504000	4819	35	315	81	c
+6627	0	1536000	4820	35	315	91	c
+6628	0	1604000	4821	35	315	108	c
+6629	0	1764000	4822	37	317	41	c
+6630	0	1830000	4823	37	317	43	c
+6631	0	1831000	4824	37	317	44	c
+6632	0	1847000	4825	37	317	45	c
+6633	0	1350000	4826	35	317	24	c
+6637	0	1542000	4830	35	317	93	c
+6640	0	1385000	4833	38	318	42	c
+6643	0	1551000	4836	38	318	93	c
+6647	0	1213000	4840	40	319	19	c
+6648	0	1253000	4840	33	319	74	c
+6649	0	1233000	4841	40	319	26	c
+6650	0	1234000	4841	33	319	68	c
+6651	0	1256000	4842	40	319	31	c
+6652	0	1263000	4842	33	319	80	c
+6653	0	1326000	4843	40	319	43	c
+6654	0	1332000	4843	34	319	21	c
+6655	0	1338000	4844	40	319	46	c
+6656	0	1324000	4844	34	319	18	c
+6657	0	1357000	4845	40	319	48	c
+6586	0	1688000	5296	39	309	82	c
+6577	0	1703000	5296	36	309	24	c
+6558	0	1397000	5297	35	307	39	c
+6642	0	1522000	5344	38	318	88	c
+6635	0	1377000	5344	35	317	34	c
+6646	0	1780000	5345	38	318	128	c
+6639	0	1698000	5345	35	317	116	c
+6641	0	1409000	5346	38	318	54	c
+6634	0	1351000	5346	35	317	25	c
+6645	0	1586000	5347	38	318	109	c
+6638	0	1548000	5347	35	317	98	c
+6644	0	1566000	5348	38	318	102	c
+6636	0	1490000	5348	35	317	74	c
+6658	0	1334000	4845	34	319	23	c
+6659	0	1579000	4846	40	319	72	c
+6660	0	1420000	4846	34	319	39	c
+6661	0	1607000	4847	40	319	74	c
+6662	0	1672000	4848	40	319	82	c
+6664	0	1478000	4850	39	320	36	c
+6665	0	1506000	4850	38	320	79	c
+6666	0	1554000	4851	39	320	55	c
+6667	0	1597000	4851	38	320	114	c
+6668	0	1574000	4852	39	320	62	c
+6669	0	1588000	4853	39	320	64	c
+6670	0	1588000	4854	39	320	65	c
+6671	0	1585000	4854	38	320	108	c
+6672	0	1618000	4855	39	320	68	c
+6673	0	1680000	4856	39	320	81	c
+6674	0	1663000	4856	38	320	123	c
+6675	0	1944000	4857	39	320	108	c
+6676	0	2466000	4858	39	320	116	c
+6678	0	1127000	4860	40	321	5	c
+6680	0	1162000	4862	40	321	12	c
+6682	0	1214000	4864	40	321	20	c
+6683	0	1376000	4865	40	321	49	c
+6684	0	1391000	251	40	321	53	c
+6685	0	1407000	4866	40	321	58	c
+6686	0	1425000	280	40	321	60	c
+6687	0	1474000	4867	40	321	65	c
+6688	0	1634000	4868	40	321	78	c
+6689	0	1640000	4869	40	321	79	c
+6690	0	1234000	4870	39	322	2	c
+6691	0	1565000	4871	39	322	59	c
+6692	0	1641000	4872	39	322	71	c
+6693	0	1697000	4873	39	322	83	c
+6694	0	1726000	4874	39	322	91	c
+6695	0	1876000	4875	39	322	103	c
+6696	0	2002000	4876	39	322	111	c
+6697	0	1137000	4877	40	323	6	c
+6698	0	1142000	4878	40	323	8	c
+6699	0	1180000	4879	40	323	13	c
+6700	0	1216000	4880	40	323	21	c
+6701	0	1236000	4881	40	323	27	c
+6702	0	1260000	4882	40	323	32	c
+6703	0	1284000	4883	40	323	35	c
+6704	0	1406000	4884	40	323	57	c
+6705	0	1433000	4885	40	323	61	c
+6706	0	1434000	4886	40	323	62	c
+6707	0	1447000	315	40	323	64	c
+6708	0	1616000	4887	40	323	76	c
+6709	0	1301000	4888	39	324	7	c
+6710	0	1369000	4889	39	324	16	c
+6711	0	1530000	4890	39	324	48	c
+6712	0	1628000	4891	39	324	70	c
+6713	0	1712000	4892	39	324	88	c
+6714	0	1148000	257	40	325	11	c
+6715	0	1210000	4893	40	325	18	c
+6716	0	1249000	4894	40	325	29	c
+6717	0	1278000	4895	40	325	34	c
+6718	0	1324000	274	40	325	42	c
+6719	0	1345000	4896	40	325	47	c
+6720	0	1377000	4897	40	325	50	c
+6721	0	1544000	4898	40	325	70	c
+6722	0	1574000	4899	39	326	61	c
+6723	0	1663000	4900	39	326	77	c
+6724	0	1800000	4901	39	326	98	c
+6725	0	1209000	4902	40	327	17	c
+6726	0	1224000	4903	40	327	24	c
+6727	0	1334000	4904	40	327	45	c
+6728	0	1421000	4905	40	327	59	c
+6729	0	1438000	4906	40	327	63	c
+6730	0	1608000	4907	40	327	75	c
+6731	0	1670000	4908	40	327	81	c
+6732	0	1701000	4909	40	327	85	c
+6733	0	1839000	4910	40	327	87	c
+6734	0	1980000	4911	40	327	89	c
+6735	0	1450000	4912	39	328	27	c
+6736	0	1515000	4913	39	328	44	c
+6737	0	1581000	50	39	328	63	c
+6738	0	1611000	4914	39	328	67	c
+6739	0	1852000	4915	39	328	100	c
+6740	0	2029000	4916	39	328	112	c
+6741	0	2181000	4917	39	328	113	c
+6742	0	2239000	4918	39	328	114	c
+6743	0	1282000	56	39	329	5	c
+6744	0	1299000	56	28	329	12	c
+6745	0	1321000	4919	39	329	10	c
+6746	0	1313000	4919	28	329	16	c
+6747	0	1557000	4920	39	329	56	c
+6748	0	1595000	4920	28	329	106	c
+6749	0	1563000	4921	39	329	57	c
+6750	0	1549000	4921	29	329	18	c
+6751	0	1565000	4922	39	329	58	c
+6752	0	1549000	4922	29	329	17	c
+6753	0	2308000	4923	39	329	115	c
+6754	0	1243000	4924	15	330	70	c
+6755	0	1298000	4925	15	330	93	c
+6756	0	1304000	4926	15	330	96	c
+6757	0	1404000	4927	15	330	120	c
+6758	0	1509000	4928	15	330	127	c
+6759	0	1510000	4929	15	330	128	c
+6760	0	1008000	4930	13	330	8	c
+6761	0	1162000	4931	13	330	71	c
+6762	0	1192000	4932	19	331	18	c
+6763	0	1273000	4933	19	331	56	c
+6764	0	1287000	4934	19	331	67	c
+6765	0	1333000	4935	19	331	79	c
+6766	0	1334000	4936	19	331	80	c
+6767	0	1339000	4937	19	331	83	c
+6769	0	1166000	4938	18	331	49	c
+6770	0	1471000	4939	29	332	7	c
+6771	0	1563000	4940	29	332	21	c
+6772	0	1601000	4941	29	332	31	c
+6773	0	1678000	4942	29	332	47	c
+6775	0	1772000	4944	29	332	60	c
+6776	0	1249000	4945	28	332	5	c
+6777	0	1303000	4946	28	332	13	c
+6778	0	1437000	4947	28	332	46	c
+6779	0	1296000	4948	19	333	68	c
+6781	0	1365000	4950	19	333	92	c
+6782	0	1685000	4951	19	333	134	c
+6783	0	1702000	4952	19	333	136	c
+6784	0	1197000	4953	18	333	60	c
+6785	0	1205000	4954	18	333	69	c
+6786	0	1283000	4955	18	333	97	c
+6787	0	1952000	4956	29	334	71	c
+6788	0	1487000	4957	28	334	64	c
+6789	0	1516000	4958	28	334	73	c
+6790	0	1695000	4959	28	334	116	c
+6791	0	1747000	4960	28	334	122	c
+6792	0	1755000	4961	28	334	123	c
+6793	0	1337000	4962	19	335	82	c
+6679	0	1147000	5205	40	321	10	c
+6780	0	1358000	5234	19	333	88	c
+6768	0	1445000	5334	19	331	115	c
+6794	0	1345000	4963	19	335	85	c
+6796	0	1404000	4965	19	335	106	c
+6797	0	1470000	4966	19	335	119	c
+6798	0	1494000	4967	19	335	123	c
+6799	0	1199000	4968	18	335	62	c
+6800	0	1226000	4969	18	335	75	c
+6802	0	1262000	4971	18	335	91	c
+6803	0	1668000	4972	29	336	45	c
+6804	0	1983000	4973	29	336	72	c
+6805	0	1242000	4974	28	336	3	c
+6806	0	1417000	4975	28	336	42	c
+6807	0	1373000	4976	19	337	95	c
+6808	0	1374000	4977	19	337	96	c
+6809	0	1482000	4978	19	337	121	c
+6810	0	1561000	4979	19	337	128	c
+6811	0	1561000	4980	19	337	129	c
+6812	0	1647000	4981	19	337	132	c
+6813	0	1698000	4982	19	337	135	c
+6814	0	1818000	4983	19	337	140	c
+6815	0	1234000	4984	18	337	77	c
+6817	0	1301000	4986	18	337	101	c
+6818	0	1431000	4987	29	338	1	c
+6819	0	1434000	4988	29	338	2	c
+6820	0	1463000	4989	29	338	6	c
+6821	0	1598000	4990	29	338	30	c
+6822	0	1706000	4991	29	338	51	c
+6823	0	1872000	4992	29	338	66	c
+6824	0	1283000	4993	28	338	8	c
+6825	0	1369000	4994	28	338	28	c
+6826	0	1427000	4995	28	338	44	c
+6827	0	1361000	4996	19	339	89	c
+6828	0	1395000	4997	19	339	103	c
+6829	0	1402000	4998	19	339	105	c
+6830	0	1147000	4999	18	339	43	c
+6831	0	1147000	5000	18	339	44	c
+6832	0	1235000	5001	18	339	79	c
+6833	0	1249000	5002	18	339	85	c
+6834	0	1338000	5003	18	339	110	c
+6835	0	1305000	5004	28	340	14	c
+6836	0	1581000	5005	28	340	103	c
+6838	0	1408000	5007	19	341	107	c
+6839	0	1408000	5008	19	341	109	c
+6840	0	1413000	5009	19	341	110	c
+6841	0	1414000	5010	19	341	111	c
+6842	0	1475000	5011	19	341	120	c
+6843	0	1263000	5012	18	341	92	c
+6844	0	1265000	5013	18	341	93	c
+6845	0	1326000	5014	18	341	107	c
+6846	0	1344000	5015	18	341	112	c
+6847	0	1348000	5016	18	341	114	c
+6848	0	1376000	5017	18	341	120	c
+6849	0	1433000	5018	18	341	128	c
+6850	0	1449000	5019	29	342	3	c
+6851	0	1452000	5020	29	342	5	c
+6852	0	1472000	5021	29	342	8	c
+6853	0	1475000	5022	29	342	9	c
+6854	0	1548000	5023	29	342	16	c
+6855	0	1560000	5024	29	342	20	c
+6856	0	1613000	5025	29	342	37	c
+6857	0	1824000	5026	29	342	63	c
+6858	0	1875000	5027	29	342	67	c
+6859	0	2118000	5028	29	342	74	c
+6860	0	1246000	5029	28	342	4	c
+6861	0	1249000	5030	28	342	6	c
+6862	0	1289000	5031	28	342	9	c
+6863	0	1313000	5032	28	342	15	c
+6864	0	1360000	5033	28	342	22	c
+6865	0	1368000	5034	28	342	26	c
+6866	0	1452000	5035	28	342	53	c
+6867	0	1509000	5036	19	343	125	c
+6868	0	1703000	5037	19	343	137	c
+6870	0	1262000	5039	18	343	90	c
+6871	0	1287000	5040	18	343	99	c
+6873	0	1392000	5042	18	343	122	c
+6874	0	1440000	5043	28	344	47	c
+6875	0	1442000	1068	28	344	48	c
+6876	0	1580000	5044	28	344	102	c
+6877	0	1612000	5045	28	344	109	c
+6878	0	1864000	5046	28	344	124	c
+6879	0	1370000	5047	28	345	29	c
+6880	0	1468000	5048	28	345	59	c
+6881	0	1508000	5049	28	345	67	c
+6882	0	1606000	5050	28	345	108	c
+6883	0	1692000	5051	28	345	115	c
+6884	0	1722000	5052	28	345	119	c
+6885	0	1734000	5053	28	345	120	c
+6886	0	1222000	5054	34	346	2	c
+6887	0	1258000	5055	34	346	6	c
+6888	0	1267000	5056	34	346	10	c
+6889	0	1298000	5057	34	346	14	c
+6890	0	1337000	5058	34	346	24	c
+6891	0	1349000	5059	34	346	26	c
+6892	0	1388000	5060	34	346	33	c
+6893	0	1433000	5061	34	346	45	c
+6894	0	1445000	5062	34	346	47	c
+6774	0	1735000	5518	29	332	55	c
+6895	0	1635000	5063	34	346	79	c
+6896	0	1151000	5064	33	346	25	c
+6897	0	1196000	5065	33	346	44	c
+6898	0	1199000	5066	33	346	48	c
+6899	0	1208000	5067	33	346	54	c
+6900	0	1216000	5068	33	346	57	c
+6901	0	1219000	5069	33	346	59	c
+6902	0	1225000	5070	33	346	63	c
+6903	0	1541000	5071	36	347	9	c
+6904	0	1315000	5072	38	347	15	c
+6905	0	1317000	5073	38	347	17	c
+6906	0	1383000	5074	38	347	39	c
+6907	0	1440000	5075	38	347	61	c
+6908	0	1444000	5076	38	347	63	c
+6909	0	1481000	5077	38	347	71	c
+6910	0	1584000	5078	38	347	107	c
+6911	0	1316000	5079	34	348	16	c
+6912	0	1381000	5080	34	348	31	c
+6913	0	1504000	5081	34	348	62	c
+6914	0	1537000	5082	34	348	67	c
+6915	0	1552000	5083	34	348	70	c
+6916	0	1637000	5084	34	348	80	c
+6917	0	1205000	5085	33	348	51	c
+6918	0	1231000	5086	33	348	66	c
+6920	0	1389000	5088	38	349	44	c
+6921	0	1523000	5089	38	349	89	c
+6922	0	1567000	5090	38	349	103	c
+6923	0	1640000	5091	38	349	119	c
+6924	0	1831000	5092	38	349	131	c
+6925	0	1502000	5093	34	350	60	c
+6926	0	1135000	5094	33	350	18	c
+6927	0	1224000	5095	33	350	62	c
+6929	0	1262000	5097	33	350	79	c
+6869	0	1199000	5192	18	343	64	c
+6837	0	1709000	5340	28	340	117	c
+6816	0	1253000	5314	18	337	88	c
+6919	0	1259000	5342	33	348	77	c
+6928	0	1246000	5349	33	350	73	c
+6930	0	1362000	5098	33	350	117	c
+6931	0	1576000	5099	38	351	105	c
+6932	0	1638000	5100	38	351	118	c
+6933	0	1860000	5101	38	351	132	c
+6934	0	1421000	5102	34	352	40	c
+6935	0	1422000	5103	34	352	41	c
+6936	0	1958000	5104	34	352	87	c
+6937	0	1309000	5105	33	352	94	c
+6939	0	1454000	5107	33	352	130	c
+6941	0	1483000	5109	36	353	5	c
+6942	0	1647000	5110	36	353	18	c
+6943	0	1754000	5111	36	353	32	c
+6944	0	1287000	5112	38	353	8	c
+6945	0	1385000	5113	38	353	41	c
+6947	0	1441000	5115	34	354	46	c
+6948	0	1503000	5116	34	354	61	c
+6949	0	1505000	5117	34	354	64	c
+6950	0	1136000	5118	33	354	19	c
+6951	0	1192000	5119	33	354	41	c
+6952	0	1264000	5120	33	354	81	c
+6953	0	1329000	5121	33	354	103	c
+6955	0	1406000	5123	33	354	125	c
+6956	0	1452000	5124	33	354	129	c
+6957	0	1229000	5125	38	355	2	c
+6958	0	1377000	5126	38	355	36	c
+6959	0	1511000	5127	38	355	81	c
+6960	0	1716000	5128	34	356	82	c
+6961	0	1046000	5129	33	356	2	c
+6962	0	1076000	5130	33	356	7	c
+6963	0	1108000	5131	33	356	11	c
+6964	0	1169000	5132	33	356	34	c
+6965	0	1269000	5133	33	356	83	c
+6966	0	1914000	5134	36	357	39	c
+6967	0	2003000	5135	36	357	40	c
+6968	0	1345000	5136	38	357	27	c
+6969	0	1365000	5137	38	357	33	c
+6972	0	1513000	5140	38	357	84	c
+6973	0	1595000	5141	38	357	111	c
+6974	0	1762000	5142	38	357	127	c
+4129	0	1168300	5143	11	136	43	c
+4130	0	1206000	5143	15	189	52	c
+4165	0	1182000	5143	14	136	52	c
+6142	0	1193000	5144	33	257	42	c
+6143	0	1180000	5144	40	257	14	c
+6138	0	1169000	5144	31	256	46	c
+6020	0	1538000	5145	35	251	92	c
+6069	0	1510000	5145	38	253	80	c
+6070	0	1518000	5145	39	253	46	c
+6144	0	1226000	5148	33	257	64	c
+4374	0	1522600	5150	26	144	82	c
+4375	0	1576000	5150	37	144	15	c
+4660	0	1158800	5151	16	153	85	c
+4661	0	1195000	5151	33	352	43	c
+4671	0	1231000	5151	31	153	74	c
+5638	0	1388000	5152	30	214	30	c
+5661	0	1444000	5152	28	216	50	c
+4166	0	1190000	5153	14	136	60	c
+5712	0	1072000	5154	18	219	9	c
+16511	\N	1201900	3210	280	445	10	c
+6320	0	1219000	5156	38	275	1	c
+4299	0	1234800	5159	16	141	100	c
+4300	0	1237000	5159	33	266	71	c
+6872	0	1346000	5160	18	343	113	c
+6061	0	1756000	5162	39	253	95	c
+6355	0	1350000	5163	33	278	109	c
+5002	0	1156000	5164	12	169	89	c
+5034	0	1051000	5164	13	171	18	c
+5653	0	1143000	5165	18	215	39	c
+4602	0	1332600	5166	11	151	139	c
+4603	0	1399000	5166	17	151	61	c
+5709	0	1211000	5167	19	219	28	c
+6938	0	1352000	5169	33	352	111	c
+5948	0	1403000	5171	30	246	36	c
+5949	0	1509000	5171	28	247	69	c
+6971	0	1454000	6371	38	357	65	c
+4042	0	1101000	5174	11	134	7	c
+4043	0	1162000	5174	18	210	47	c
+4475	0	1066000	5176	12	147	33	c
+5417	0	1086000	5176	18	197	16	c
+6609	0	1450000	5179	35	313	61	c
+6614	0	1323000	5179	38	314	20	c
+4616	0	1145000	5181	20	151	33	c
+4464	0	1121000	5183	18	197	30	c
+3911	0	1199500	5190	11	131	61	c
+3912	0	1263000	5190	19	331	51	c
+6946	0	1398000	5193	38	353	47	c
+6681	0	1204000	5196	40	321	16	c
+1063	586	1367000	5171	2	28	61	c
+236	230	1187000	5144	4	42	36	c
+215	215	1110000	5187	4	37	15	c
+1655	603	1216000	5151	6	54	42	c
+1706	572	1294000	5159	6	52	94	c
+6059	0	1702000	6865	39	253	85	c
+3545	371	1106000	5154	9	125	46	c
+3699	375	1287000	5167	10	125	89	c
+1846	610	1589000	6372	6	54	234	c
+4288	0	1079000	5198	31	141	17	c
+4289	0	1104000	5198	33	266	10	c
+4037	0	1374000	5202	17	133	50	c
+5952	0	1538000	5204	28	247	88	c
+6073	0	1641000	5206	39	253	72	c
+6940	0	1423000	5207	36	353	1	c
+5809	0	1410000	5212	18	229	125	c
+4034	0	1195000	5213	17	133	5	c
+3796	0	1310000	5220	14	128	123	c
+6068	0	1393000	5221	39	253	19	c
+5295	0	1201000	5226	15	189	50	c
+16512	\N	1208200	3209	280	445	11	c
+6420	0	1474000	5229	31	284	119	c
+6954	0	1335000	5229	33	354	105	c
+4806	0	1464000	5232	23	158	40	c
+4838	0	1520000	5232	24	160	58	c
+4314	0	1647100	5259	26	142	85	c
+4668	0	1010000	5263	31	153	2	c
+5411	0	1287000	5266	19	197	66	c
+4453	0	1317800	5271	11	147	130	c
+4467	0	1195700	5275	16	147	91	c
+4589	0	1424000	5280	27	150	3	c
+5084	0	1461000	5292	15	175	124	c
+5096	0	1418000	5293	25	176	65	c
+4946	0	1217000	5295	22	166	13	c
+6559	0	1530000	5297	36	309	8	c
+6677	0	1351000	5299	38	320	28	c
+6663	0	1407000	5299	39	320	21	c
+4387	0	1285000	5305	11	145	108	c
+6795	0	1380000	5307	19	335	99	c
+4710	0	1007800	5308	16	155	11	c
+4709	0	1568400	5317	11	155	172	c
+6461	0	1769000	5341	35	287	122	c
+4763	0	1518000	5320	28	338	75	c
+12991	\N	1561000	3285	209	144	13	c
+6331	0	1419000	5338	32	276	65	c
+6975	\N	1173000	5153	41	189	1	c
+6976	\N	1181000	3061	41	195	2	c
+6977	\N	1189000	3062	41	195	3	c
+6978	\N	1197000	5238	41	195	4	c
+6979	\N	1198000	5170	41	189	5	c
+6980	\N	1199000	5143	41	189	6	c
+6981	\N	1200000	3060	41	195	7	c
+6982	\N	1211000	5251	41	189	8	c
+6983	\N	1222000	5237	41	195	9	c
+6984	\N	1230000	1693	41	189	10	c
+6985	\N	1239000	3057	41	195	11	c
+6986	\N	1240000	3947	41	195	12	c
+6987	\N	1241000	3949	41	195	13	c
+6988	\N	1253000	3952	41	195	14	c
+6989	\N	1292000	5254	41	189	15	c
+6990	\N	1303000	3888	41	189	16	c
+6991	\N	1307000	3185	41	189	17	c
+6992	\N	1308000	3884	41	189	18	c
+6993	\N	1353000	3953	41	195	19	c
+6994	\N	1365000	3889	41	189	20	c
+6995	\N	1420000	3951	41	195	21	c
+6996	\N	1390000	5246	41	189	22	c
+6997	\N	1394000	5220	41	195	23	c
+6998	\N	1404000	5245	41	189	24	c
+6999	\N	1437000	5242	41	195	25	c
+7000	\N	1438000	5239	41	195	26	c
+7001	\N	1456000	5257	41	195	27	c
+7002	\N	1478000	5258	41	189	28	c
+7003	\N	1512000	5244	41	189	29	c
+7004	\N	1541000	5250	41	189	30	c
+7005	\N	1597000	5243	41	195	31	c
+7006	\N	1717000	5249	41	189	32	c
+7007	\N	1718000	5255	41	189	33	c
+7008	\N	1041000	5178	42	189	1	c
+7009	\N	1043000	3064	42	195	2	c
+7010	\N	1055000	3065	42	195	3	c
+7011	\N	1066000	3068	42	195	4	c
+7012	\N	1068000	3954	42	195	5	c
+7013	\N	1083000	3053	42	195	6	c
+7014	\N	1113000	3066	42	195	7	c
+7015	\N	1136000	3892	42	189	8	c
+7016	\N	1143000	3195	42	189	9	c
+7017	\N	1144000	1670	42	189	10	c
+7018	\N	1150000	3056	42	195	11	c
+7019	\N	1158000	3893	42	189	12	c
+7020	\N	1161000	3955	42	195	13	c
+7021	\N	1167000	3891	42	189	14	c
+7022	\N	1168000	5241	42	195	15	c
+7023	\N	1225000	1586	42	189	16	c
+7024	\N	945590	1520	43	331	1	c
+7025	\N	959380	3148	43	212	2	c
+7026	\N	989480	5263	43	352	3	c
+4706	0	1480000	5629	11	155	163	c
+7028	\N	996880	5308	43	337	5	c
+7029	\N	1006680	4209	43	223	6	c
+7030	\N	1007750	1517	43	210	7	c
+7031	\N	1008400	1543	43	359	8	c
+7032	\N	1010450	1715	43	331	9	c
+7033	\N	1015010	3087	43	203	10	c
+7034	\N	1015880	3252	43	266	11	c
+7035	\N	1018770	5178	43	189	12	c
+7036	\N	1024260	3064	43	195	13	c
+7037	\N	1026100	1531	43	359	14	c
+7038	\N	1026810	3065	43	195	15	c
+7039	\N	1030820	4116	43	212	16	c
+7040	\N	1032240	5198	43	266	17	c
+7041	\N	1035710	3224	43	359	18	c
+7042	\N	1036340	3085	43	203	19	c
+7043	\N	1036820	3954	43	195	20	c
+7044	\N	1037180	5352	43	210	21	c
+7045	\N	1039980	5181	43	223	22	c
+7046	\N	1040440	4044	43	203	23	c
+7047	\N	1042470	4585	43	274	24	c
+7048	\N	1043090	3073	43	203	25	c
+7049	\N	1043660	3086	43	203	26	c
+7050	\N	1044680	5176	43	197	27	c
+7051	\N	1048560	3070	43	203	28	c
+7052	\N	1049260	3326	43	197	29	c
+7053	\N	1051580	3066	43	195	30	c
+7054	\N	1055200	4219	43	225	31	c
+7055	\N	1058170	3214	43	359	32	c
+7056	\N	1061920	4574	43	272	33	c
+7057	\N	1062710	3106	43	331	34	c
+7058	\N	1063750	1613	43	331	35	c
+7059	\N	1067080	4212	43	223	36	c
+7060	\N	1068710	1625	43	210	37	c
+7061	\N	1069740	1670	43	189	38	c
+7062	\N	1072480	5175	43	223	39	c
+7063	\N	1073970	5333	43	210	40	c
+7064	\N	1076750	5183	43	197	41	c
+7065	\N	1077710	4938	43	331	42	c
+12992	\N	1562000	3286	209	144	14	c
+1603	338	1251000	5197	5	44	104	c
+1862	384	1849000	5327	6	46	250	c
+3080	4	1653000	5301	7	59	81	c
+3223	105	1905000	5215	8	17	136	c
+3209	45	1793000	5313	8	14	122	c
+3124	209	1494000	5350	8	64	37	c
+3629	286	1148000	5213	10	53	19	c
+7066	\N	1079150	5213	43	212	43	c
+7067	\N	1079900	1681	43	203	44	c
+7068	\N	1080450	3068	43	195	45	c
+7069	\N	1086370	4522	43	266	46	c
+7070	\N	1093300	5174	43	210	47	c
+7071	\N	1099480	3249	43	266	48	c
+7072	\N	1099680	3053	43	195	49	c
+7073	\N	1101710	4109	43	212	50	c
+7074	\N	1102470	3058	43	195	51	c
+7075	\N	1104900	3195	43	189	52	c
+7076	\N	1105600	5351	43	359	53	c
+7077	\N	1107660	3255	43	266	54	c
+7078	\N	1109110	1669	43	331	55	c
+7079	\N	1110400	4586	43	274	56	c
+7080	\N	1111260	4117	43	212	57	c
+7081	\N	1113200	5302	43	335	58	c
+7082	\N	1118630	4213	43	223	59	c
+7083	\N	1122610	3107	43	331	60	c
+7084	\N	1122770	5203	43	272	61	c
+7085	\N	1128970	4969	43	335	62	c
+7086	\N	1131340	1618	43	212	63	c
+7087	\N	1132910	1645	43	223	64	c
+7088	\N	1134100	3892	43	189	65	c
+7089	\N	1135900	3272	43	274	66	c
+7090	\N	1136500	5267	43	197	67	c
+7091	\N	1138260	4984	43	337	68	c
+7092	\N	1140170	5278	43	223	69	c
+7093	\N	1147000	5153	43	189	70	c
+7094	\N	1153910	1610	43	359	71	c
+7095	\N	1154830	4576	43	272	72	c
+7096	\N	1159860	3981	43	197	73	c
+7097	\N	1160880	3891	43	189	74	c
+7098	\N	1162070	3409	43	352	75	c
+7099	\N	1170620	3218	43	359	76	c
+7100	\N	1174950	5151	43	352	77	c
+7101	\N	1176210	4968	43	335	78	c
+7102	\N	1183870	5225	43	274	79	c
+7103	\N	1189440	3156	43	210	80	c
+7104	\N	1194100	5159	43	266	81	c
+7105	\N	1197270	5314	43	337	82	c
+7106	\N	1198670	1815	43	266	83	c
+7107	\N	1201530	5321	43	337	84	c
+7108	\N	1202090	4220	43	225	85	c
+7110	\N	1205460	5323	43	337	87	c
+7111	\N	1206280	4971	43	335	88	c
+7112	\N	1214510	1805	43	274	89	c
+7113	\N	1218950	5185	43	272	90	c
+7114	\N	1221130	4589	43	274	91	c
+7115	\N	1222170	1792	43	335	92	c
+7116	\N	1237190	5105	43	352	93	c
+7118	\N	1239490	3437	43	337	95	c
+7119	\N	1242980	5224	43	274	96	c
+7121	\N	1253760	1779	43	225	98	c
+7122	\N	1256900	3361	43	225	99	c
+7123	\N	1264170	3355	43	225	100	c
+7124	\N	1271940	3353	43	225	101	c
+7125	\N	1284330	5281	43	225	102	c
+7126	\N	1291370	5107	43	352	103	c
+7127	\N	1296620	4578	43	272	104	c
+7128	\N	1297840	3237	43	272	105	c
+7129	\N	1322050	3893	43	189	106	c
+7130	\N	1327350	5169	43	352	107	c
+7131	\N	1339050	5276	43	197	108	c
+7132	\N	1384790	3229	43	272	109	c
+7133	\N	1421490	5103	43	352	110	c
+7242	\N	1078270	4118	45	212	1	c
+7243	\N	1086270	3955	45	195	2	c
+7244	\N	1092450	1659	45	203	3	c
+7245	\N	1098750	4214	45	223	4	c
+7246	\N	1106080	3071	45	203	5	c
+7247	\N	1111900	3056	45	195	6	c
+7248	\N	1118990	1673	45	203	7	c
+7249	\N	1119220	4932	45	331	8	c
+7250	\N	1126310	3142	45	212	9	c
+7251	\N	1129570	3074	45	203	10	c
+7252	\N	1130150	3144	45	212	11	c
+7253	\N	1130800	1741	45	331	12	c
+7254	\N	1131010	3141	45	212	13	c
+7255	\N	1135320	3154	45	210	14	c
+7256	\N	1137530	3158	45	210	15	c
+7257	\N	1140290	4110	45	212	16	c
+7258	\N	1144400	4039	45	203	17	c
+7259	\N	1146220	1794	45	223	18	c
+7260	\N	1149620	4040	45	203	19	c
+7261	\N	1150310	5143	45	189	20	c
+7262	\N	1150670	5335	45	189	21	c
+7263	\N	1151310	1586	45	189	22	c
+7264	\N	1152810	3081	45	203	23	c
+7265	\N	1153560	4042	45	203	24	c
+7266	\N	1154510	3079	45	203	25	c
+7267	\N	1155380	5170	45	189	26	c
+7268	\N	1155920	3886	45	189	27	c
+7269	\N	1156430	3072	45	203	28	c
+7270	\N	1157530	4203	45	223	29	c
+7271	\N	1159180	5226	45	189	30	c
+7272	\N	1162310	1804	45	331	31	c
+7273	\N	1164210	4041	45	203	32	c
+7274	\N	1166970	3884	45	189	33	c
+7275	\N	1169650	4204	45	223	34	c
+7276	\N	1169890	3947	45	195	35	c
+7277	\N	1170650	3948	45	195	36	c
+7278	\N	1172310	3062	45	195	37	c
+7279	\N	1174760	3161	45	210	38	c
+7280	\N	1176900	1701	45	266	39	c
+7281	\N	1179240	4112	45	212	40	c
+7282	\N	1181360	5241	45	195	41	c
+7283	\N	1183080	5275	45	197	42	c
+7284	\N	1183140	5334	45	331	43	c
+7285	\N	1184300	3217	45	359	44	c
+7286	\N	1186930	4096	45	210	45	c
+7287	\N	1187210	4043	45	203	46	c
+7288	\N	1187440	3185	45	189	47	c
+7289	\N	1187760	4520	45	266	48	c
+7290	\N	1189050	3078	45	203	49	c
+7291	\N	1189200	1747	45	203	50	c
+7292	\N	1190120	4933	45	331	51	c
+7293	\N	1190820	3157	45	210	52	c
+7294	\N	1191720	4111	45	212	53	c
+7295	\N	1193380	4521	45	266	54	c
+7296	\N	1196880	4099	45	210	55	c
+7297	\N	1198190	4098	45	210	56	c
+7298	\N	1198690	5381	45	359	57	c
+7299	\N	1200900	3061	45	195	58	c
+7300	\N	1201940	3060	45	195	59	c
+7301	\N	1203510	5336	45	189	60	c
+7302	\N	1203660	3950	45	195	61	c
+7303	\N	1204690	5387	45	203	62	c
+7304	\N	1205190	4097	45	210	63	c
+7305	\N	1205640	4114	45	212	64	c
+7306	\N	1207410	4934	45	331	65	c
+7307	\N	1209060	1693	45	189	66	c
+7308	\N	1210390	3057	45	195	67	c
+7309	\N	1210770	4113	45	212	68	c
+7117	\N	1237390	5629	43	337	94	c
+7109	\N	1205120	5640	43	335	86	c
+7310	\N	1210840	3951	45	195	69	c
+7311	\N	1212140	3076	45	203	70	c
+7312	\N	1213480	4588	45	274	71	c
+7313	\N	1214360	1776	45	203	72	c
+7314	\N	1216480	5382	45	203	73	c
+7315	\N	1219240	3949	45	195	74	c
+7316	\N	1221540	5266	45	197	75	c
+7317	\N	1223030	5279	45	223	76	c
+7318	\N	1227290	5274	45	197	77	c
+7319	\N	1233670	5228	45	212	78	c
+7320	\N	1234510	4986	45	337	79	c
+7321	\N	1236200	1739	45	210	80	c
+7322	\N	1237110	4101	45	210	81	c
+7323	\N	1238000	5388	45	203	82	c
+7324	\N	1241000	3888	45	189	83	c
+7325	\N	1242080	3889	45	189	84	c
+7326	\N	1246120	3953	45	195	85	c
+7327	\N	1246520	3145	45	212	86	c
+7328	\N	1248630	5168	45	225	87	c
+7329	\N	1249280	3952	45	195	88	c
+7330	\N	1250500	4102	45	210	89	c
+7331	\N	1253280	3331	45	197	90	c
+7332	\N	1255370	3083	45	203	91	c
+7333	\N	1256030	4100	45	210	92	c
+7334	\N	1258600	4206	45	223	93	c
+7335	\N	1258890	4936	45	331	94	c
+7336	\N	1259360	1823	45	197	95	c
+7337	\N	1260100	5305	45	335	96	c
+7338	\N	1265450	1708	45	266	97	c
+7339	\N	1265960	3216	45	359	98	c
+7340	\N	1266060	5254	45	189	99	c
+7341	\N	1266690	4935	45	331	100	c
+7342	\N	1267630	5376	45	203	101	c
+7343	\N	1267840	4937	45	331	102	c
+7344	\N	1268950	1836	45	225	103	c
+7345	\N	1270290	5244	45	189	104	c
+7346	\N	1271380	1690	45	203	105	c
+7347	\N	1272440	5389	45	203	106	c
+7348	\N	1276120	3113	45	331	107	c
+7349	\N	1277590	4581	45	274	108	c
+7350	\N	1280210	5390	45	331	109	c
+7351	\N	1280280	3110	45	331	110	c
+7352	\N	1281520	5377	45	331	111	c
+7353	\N	1284130	5378	45	223	112	c
+7355	\N	1293480	4115	45	212	114	c
+7356	\N	1294250	5245	45	189	115	c
+7357	\N	1300600	3387	45	223	116	c
+7358	\N	1300960	3388	45	223	117	c
+7359	\N	1301180	3292	45	335	118	c
+7360	\N	1302930	5391	45	272	119	c
+7361	\N	1304730	5373	45	203	120	c
+7362	\N	1305370	3118	45	331	121	c
+7363	\N	1308920	3080	45	203	122	c
+7364	\N	1311030	1697	45	210	123	c
+7365	\N	1311100	5307	45	335	124	c
+7366	\N	1311840	5392	45	337	125	c
+7367	\N	1322190	1816	45	189	126	c
+7368	\N	1326720	5393	45	212	127	c
+7369	\N	1333470	4218	45	225	128	c
+7370	\N	1336460	4976	45	337	129	c
+7371	\N	1337650	4965	45	335	130	c
+7372	\N	1338230	3250	45	266	131	c
+7373	\N	1339290	4977	45	337	132	c
+7374	\N	1339980	5271	45	197	133	c
+7375	\N	1340350	5394	45	223	134	c
+7376	\N	1341510	3978	45	197	135	c
+7377	\N	1342820	5220	45	195	136	c
+7378	\N	1343290	5246	45	189	137	c
+7379	\N	1349040	5395	45	203	138	c
+7380	\N	1350020	3323	45	197	139	c
+7381	\N	1351470	3269	45	274	140	c
+7382	\N	1353310	4582	45	274	141	c
+7383	\N	1353910	5396	45	203	142	c
+7384	\N	1357140	5397	45	335	143	c
+7385	\N	1359600	3109	45	331	144	c
+7386	\N	1359910	5398	45	223	145	c
+7387	\N	1360440	5258	45	189	146	c
+7388	\N	1360910	5399	45	331	147	c
+7389	\N	1361660	5255	45	189	148	c
+7390	\N	1368090	5379	45	203	149	c
+7391	\N	1369070	5166	45	223	150	c
+7392	\N	1377260	5400	45	210	151	c
+7393	\N	1379830	5317	45	337	152	c
+7394	\N	1382170	5249	45	189	153	c
+7395	\N	1384050	3976	45	197	154	c
+7396	\N	1385550	5250	45	189	155	c
+7397	\N	1390400	5242	45	195	156	c
+7398	\N	1399390	5401	45	272	157	c
+7399	\N	1401790	5248	45	189	158	c
+7400	\N	1402270	4967	45	335	159	c
+7401	\N	1404880	5247	45	189	160	c
+7402	\N	1405870	5383	45	272	161	c
+7403	\N	1410560	4208	45	223	162	c
+7404	\N	1416540	1829	45	359	163	c
+7405	\N	1422610	5102	45	352	164	c
+7406	\N	1425300	5380	45	203	165	c
+7407	\N	1431540	3977	45	197	166	c
+7408	\N	1434060	5384	45	203	167	c
+7409	\N	1444570	5402	45	337	168	c
+7410	\N	1447080	4966	45	335	169	c
+7411	\N	1454910	3294	45	335	170	c
+7412	\N	1465050	5374	45	197	171	c
+7413	\N	1475380	1807	45	274	172	c
+7414	\N	1482450	5239	45	195	173	c
+7415	\N	1486720	5403	45	210	174	c
+7416	\N	1494340	5256	45	189	175	c
+7417	\N	1506430	3412	45	352	176	c
+7418	\N	1506890	5233	45	272	177	c
+7419	\N	1522630	4980	45	337	178	c
+7420	\N	1527130	4978	45	337	179	c
+7421	\N	1528260	4979	45	337	180	c
+7422	\N	1529870	5404	45	352	181	c
+7423	\N	1532090	5405	45	335	182	c
+12993	\N	1570000	3246	209	140	15	c
+7425	\N	1538180	4584	45	274	184	c
+7426	\N	1539710	5406	45	197	185	c
+7427	\N	1548380	1835	45	335	186	c
+7428	\N	1554770	5407	45	274	187	c
+7429	\N	1557440	3052	45	223	188	c
+7430	\N	1578590	3979	45	197	189	c
+7431	\N	1582570	5408	45	210	190	c
+7433	\N	1599430	5385	45	197	192	c
+7434	\N	1614720	5386	45	197	193	c
+7435	\N	1626440	4981	45	337	194	c
+7436	\N	1635480	3222	45	359	195	c
+7437	\N	1652680	4982	45	337	196	c
+7438	\N	1674730	5409	45	197	197	c
+7439	\N	1703470	4983	45	337	198	c
+7440	\N	1745980	3233	45	272	199	c
+7441	\N	1827770	5104	45	352	200	c
+12994	\N	1595000	3140	209	132	16	c
+7443	\N	1333170	4947	46	332	1	c
+7444	\N	1338210	3137	46	332	2	c
+7445	\N	1343620	3211	46	190	3	c
+7354	\N	1292430	5804	45	197	113	c
+7446	\N	1345000	4939	46	332	4	c
+7447	\N	1367820	3895	46	190	5	c
+7448	\N	1384440	1151	46	226	6	c
+7449	\N	1390830	4987	46	338	7	c
+7450	\N	1396470	3199	46	190	8	c
+7451	\N	1398610	3894	46	190	9	c
+7452	\N	1402610	3417	46	353	10	c
+7453	\N	1408750	4226	46	226	11	c
+7454	\N	1410320	3203	46	190	12	c
+7455	\N	1413150	4988	46	338	13	c
+7456	\N	1414240	3089	46	202	14	c
+7457	\N	1417830	3896	46	190	15	c
+7458	\N	1431210	4031	46	202	16	c
+7459	\N	1433780	5207	46	353	17	c
+7460	\N	1434850	3370	46	226	18	c
+7461	\N	1434930	4028	46	202	19	c
+7462	\N	1440470	3898	46	190	20	c
+7463	\N	1444000	2594	46	202	21	c
+7464	\N	1446370	4989	46	338	22	c
+7465	\N	1449300	3897	46	190	23	c
+7466	\N	1458700	5109	46	353	24	c
+7467	\N	1461800	5325	46	338	25	c
+7468	\N	1462320	3899	46	190	26	c
+7469	\N	1464690	5358	46	202	27	c
+7470	\N	1465890	3422	46	353	28	c
+7471	\N	1467560	4940	46	332	29	c
+7472	\N	1473170	4223	46	226	30	c
+7473	\N	1475490	3124	46	332	31	c
+7474	\N	1476130	3094	46	202	32	c
+7475	\N	1478290	3371	46	226	33	c
+7476	\N	1482970	3372	46	226	34	c
+7477	\N	1487460	3139	46	332	35	c
+7478	\N	1488570	3900	46	190	36	c
+7479	\N	1492290	3984	46	198	37	c
+7480	\N	1493060	3091	46	202	38	c
+7481	\N	1505980	3313	46	336	39	c
+16513	\N	1212400	5410	280	491	12	c
+7483	\N	1510110	2622	46	202	41	c
+7484	\N	1512350	4032	46	202	42	c
+7485	\N	1512440	5272	46	198	43	c
+7486	\N	1513010	3985	46	198	44	c
+7487	\N	1513970	3986	46	198	45	c
+7488	\N	1522510	4033	46	202	46	c
+7489	\N	1522710	3104	46	202	47	c
+7490	\N	1524840	2720	46	332	48	c
+7491	\N	1531440	4108	46	211	49	c
+7492	\N	1532480	4034	46	202	50	c
+7493	\N	1537780	5309	46	338	51	c
+7494	\N	1541600	3129	46	332	52	c
+7495	\N	1548130	5259	46	267	53	c
+7496	\N	1551550	5359	46	226	54	c
+7497	\N	1563070	4104	46	211	55	c
+7498	\N	1569130	4524	46	267	56	c
+7499	\N	1583810	3095	46	202	57	c
+7500	\N	1588750	3902	46	190	58	c
+7501	\N	1588960	3903	46	190	59	c
+7502	\N	1595460	2677	46	190	60	c
+7504	\N	1598310	5360	46	202	62	c
+7505	\N	1601660	5356	46	336	63	c
+7506	\N	1604700	3368	46	226	64	c
+7507	\N	1605960	4217	46	224	65	c
+7508	\N	1613140	1173	46	226	66	c
+7510	\N	1616340	4972	46	336	68	c
+7511	\N	1622120	5362	46	226	69	c
+7512	\N	1624870	5354	46	190	70	c
+7513	\N	1635530	5363	46	190	71	c
+7514	\N	1636870	4941	46	332	72	c
+7515	\N	1639460	5364	46	202	73	c
+7516	\N	1649520	3402	46	224	74	c
+7517	\N	1656420	3204	46	190	75	c
+7518	\N	1664050	5355	46	202	76	c
+7519	\N	1664740	4525	46	267	77	c
+7520	\N	1673470	5353	46	202	78	c
+7521	\N	1674900	3418	46	353	79	c
+7522	\N	1688310	3989	46	198	80	c
+7523	\N	1693630	5365	46	224	81	c
+7524	\N	1697140	4942	46	332	82	c
+7525	\N	1697150	5366	46	226	83	c
+7526	\N	1699380	5110	46	353	84	c
+7527	\N	1699400	3097	46	202	85	c
+7528	\N	1702510	5367	46	224	86	c
+7529	\N	1705890	5357	46	202	87	c
+7530	\N	1709570	2584	46	267	88	c
+7531	\N	1714310	5368	46	226	89	c
+7532	\N	1720710	4990	46	338	90	c
+7533	\N	1725920	4105	46	211	91	c
+7534	\N	1730680	5369	46	202	92	c
+7535	\N	1732210	5111	46	353	93	c
+7536	\N	1734100	4103	46	211	94	c
+7537	\N	1735960	5270	46	198	95	c
+7538	\N	1742170	4991	46	338	96	c
+7539	\N	1758260	3171	46	211	97	c
+7540	\N	1770530	5273	46	198	98	c
+7541	\N	1793100	5370	46	202	99	c
+7542	\N	1800370	4944	46	332	100	c
+7543	\N	1863100	4526	46	267	101	c
+7544	\N	1870630	5371	46	198	102	c
+7545	\N	1907540	4992	46	338	103	c
+7546	\N	1942270	3991	46	198	104	c
+7547	\N	1964870	3992	46	198	105	c
+7548	\N	2047120	5372	46	332	106	c
+7549	\N	2168800	3396	46	224	107	c
+7550	\N	2286310	3207	46	190	108	c
+7551	\N	1137600	5156	47	275	1	c
+7552	\N	1169300	3398	47	224	2	c
+7554	\N	1181700	3136	47	332	4	c
+7555	\N	1189800	4974	47	336	5	c
+7556	\N	1190300	4945	47	332	6	c
+7557	\N	1197800	3210	47	190	7	c
+7558	\N	1210200	4946	47	332	8	c
+7559	\N	1215600	4993	47	338	9	c
+7560	\N	1228100	2534	47	190	10	c
+7561	\N	1236000	3209	47	190	11	c
+7562	\N	1239500	3428	47	353	12	c
+7563	\N	1242500	5112	47	353	13	c
+7564	\N	1254200	3102	47	202	14	c
+7565	\N	1266200	2515	47	190	15	c
+7566	\N	1273000	4225	47	226	16	c
+7567	\N	1286600	5410	47	332	17	c
+7568	\N	1286700	4527	47	267	18	c
+7569	\N	1295400	3904	47	190	19	c
+7570	\N	1295800	3212	47	190	20	c
+7571	\N	1295800	3123	47	332	21	c
+7572	\N	1303700	4215	47	224	22	c
+7573	\N	1307000	4528	47	267	23	c
+7574	\N	1308200	3286	47	275	24	c
+7575	\N	1311200	4579	47	273	25	c
+7576	\N	1316200	3311	47	336	26	c
+7577	\N	1318800	1013	47	226	27	c
+7578	\N	1320000	5303	47	336	28	c
+7579	\N	1322200	4037	47	202	29	c
+7580	\N	1324700	4994	47	338	30	c
+7581	\N	1327600	3416	47	353	31	c
+7553	\N	1173700	5509	47	338	3	c
+7509	\N	1615700	5510	46	211	67	c
+7584	\N	1338700	3421	47	353	34	c
+7585	\N	1340600	5113	47	353	35	c
+7586	\N	1348000	4035	47	202	36	c
+7587	\N	1350300	5411	47	224	37	c
+7588	\N	1355100	3364	47	226	38	c
+7589	\N	1358400	4227	47	226	39	c
+7590	\N	1360000	4036	47	202	40	c
+7591	\N	1360600	4995	47	338	41	c
+7592	\N	1361200	5320	47	338	42	c
+7594	\N	1365100	4975	47	336	44	c
+7595	\N	1366000	5269	47	198	45	c
+7596	\N	1366700	1012	47	226	46	c
+7597	\N	1371500	4038	47	202	47	c
+7598	\N	1372300	3427	47	353	48	c
+7599	\N	1374300	5193	47	353	49	c
+7600	\N	1375500	5312	47	338	50	c
+7601	\N	1378700	5329	47	338	51	c
+7602	\N	1385800	3366	47	226	52	c
+7603	\N	1400200	2617	47	202	53	c
+7604	\N	1406700	4531	47	267	54	c
+7605	\N	1420100	2537	47	190	55	c
+7606	\N	1422300	3400	47	224	56	c
+7607	\N	1426000	3166	47	211	57	c
+7608	\N	1428600	2629	47	211	58	c
+7609	\N	1430600	5200	47	336	59	c
+7610	\N	1432900	3994	47	198	60	c
+7611	\N	1435200	3399	47	224	61	c
+7612	\N	1443600	1160	47	198	62	c
+7613	\N	1457200	5194	47	273	63	c
+7614	\N	1462800	3280	47	275	64	c
+7615	\N	1464800	4029	47	202	65	c
+7616	\N	1466000	1043	47	198	66	c
+7617	\N	1466800	3401	47	224	67	c
+7618	\N	1482100	3168	47	211	68	c
+7619	\N	1489400	3995	47	198	69	c
+7620	\N	1491000	3997	47	198	70	c
+7621	\N	1499400	3284	47	275	71	c
+7622	\N	1503000	4533	47	267	72	c
+7623	\N	1513700	4107	47	211	73	c
+7624	\N	1524600	4216	47	224	74	c
+7625	\N	1532400	3285	47	275	75	c
+7626	\N	1542000	1172	47	211	76	c
+7627	\N	1546500	4523	47	267	77	c
+7628	\N	1548900	1104	47	211	78	c
+7629	\N	1569200	3243	47	273	79	c
+7630	\N	1748600	5412	47	273	80	c
+7631	\N	1819200	5413	47	275	81	c
+7632	\N	1058000	5176	48	197	1	c
+7633	\N	1069000	3326	48	197	2	c
+7634	\N	1112000	5183	48	197	3	c
+7635	\N	1122000	3981	48	197	4	c
+7636	\N	1147000	4574	48	272	5	c
+7637	\N	1163000	5276	48	197	6	c
+10703	\N	1233800	4946	148	332	4	c
+7639	\N	1236000	5203	48	272	8	c
+7640	\N	1251000	5274	48	197	9	c
+7641	\N	1252000	5374	48	197	10	c
+7642	\N	1278000	4576	48	272	11	c
+7643	\N	1306000	5275	48	197	12	c
+7645	\N	1345000	5185	48	272	14	c
+7646	\N	1359000	1823	48	197	15	c
+7647	\N	1372000	3229	48	272	16	c
+7648	\N	1376000	5266	48	197	17	c
+7649	\N	1383000	4572	48	272	18	c
+7650	\N	1389000	4578	48	272	19	c
+16514	\N	1216100	3428	280	378	13	c
+7652	\N	1477000	5233	48	272	21	c
+7653	\N	1479000	3237	48	272	22	c
+7654	\N	1497000	5271	48	197	23	c
+7655	\N	1513000	5386	48	197	24	c
+7656	\N	1583000	3323	48	197	25	c
+7657	\N	1601000	5401	48	272	26	c
+7658	\N	1604000	5383	48	272	27	c
+7659	\N	1694000	3978	48	197	28	c
+7660	\N	1693000	5385	48	197	29	c
+7661	\N	1716000	3976	48	197	30	c
+7662	\N	1782000	3977	48	197	31	c
+7663	\N	1815000	3979	48	197	32	c
+7664	\N	1968000	3233	48	272	33	c
+7665	\N	1994000	5409	48	197	34	c
+7666	\N	1125000	4585	50	274	1	c
+7667	\N	1152000	5225	50	274	2	c
+7668	\N	1183000	3272	50	274	3	c
+7669	\N	1202000	3359	50	225	4	c
+7670	\N	1217000	3360	50	225	5	c
+7671	\N	1255000	4220	50	225	6	c
+7672	\N	1260000	4586	50	274	7	c
+7673	\N	1277000	3361	50	225	8	c
+7674	\N	1290000	3363	50	225	9	c
+7675	\N	1294000	5414	50	225	10	c
+7676	\N	1323000	5224	50	274	11	c
+7677	\N	1337000	3265	50	274	12	c
+7678	\N	1344000	3355	50	225	13	c
+7679	\N	1346000	4582	50	274	14	c
+7680	\N	1347000	5281	50	225	15	c
+7681	\N	1363000	4589	50	274	16	c
+7682	\N	1364000	1836	50	225	17	c
+7683	\N	1375000	1779	50	225	18	c
+7684	\N	1402000	5168	50	225	19	c
+7685	\N	1428000	3353	50	225	20	c
+7686	\N	1450000	4218	50	225	21	c
+7687	\N	1451000	4581	50	274	22	c
+7688	\N	1541000	4588	50	274	23	c
+7689	\N	1545000	4583	50	274	24	c
+7690	\N	1601000	3269	50	274	25	c
+7691	\N	1745000	5407	50	274	26	c
+7692	\N	1033000	1520	52	331	1	c
+7693	\N	1113000	1613	52	331	2	c
+7694	\N	1117000	1715	52	331	3	c
+7695	\N	1153000	4938	52	331	4	c
+7696	\N	1158000	1669	52	331	5	c
+7697	\N	1188000	3107	52	331	6	c
+7698	\N	1195000	5415	52	341	7	c
+7699	\N	1203000	3106	52	331	8	c
+12995	\N	1600000	3278	209	144	17	c
+7701	\N	1244000	5416	52	341	10	c
+7702	\N	1257000	4968	52	335	11	c
+7703	\N	1262000	1724	52	335	12	c
+7704	\N	1263000	5014	52	341	13	c
+7583	\N	1334000	5628	47	267	33	c
+7706	\N	1293000	5013	52	341	15	c
+7707	\N	1305000	5012	52	341	16	c
+7708	\N	1319000	5017	52	341	17	c
+7709	\N	1335000	1792	52	335	18	c
+7710	\N	1345000	5016	52	341	19	c
+7711	\N	1349000	1835	52	335	20	c
+7712	\N	1389000	4962	52	335	21	c
+7713	\N	1225000	1741	52	331	22	c
+7714	\N	1233000	1804	52	331	23	c
+7715	\N	1093000	3252	54	266	1	c
+7716	\N	1127000	5198	54	266	2	c
+7717	\N	1132000	5308	54	337	3	c
+7593	\N	1361400	5511	47	211	43	c
+7644	\N	1325000	3331	48	197	13	c
+7582	\N	1330300	5805	47	336	32	c
+7718	\N	1206000	3255	54	266	4	c
+7719	\N	1221000	3249	54	266	5	c
+7720	\N	1234000	4522	54	266	6	c
+7721	\N	1279000	3437	54	337	7	c
+7722	\N	1286000	4984	54	337	8	c
+7723	\N	1298000	1708	54	266	9	c
+7724	\N	1304000	1815	54	266	10	c
+7725	\N	1315000	5321	54	337	11	c
+7726	\N	1325000	5159	54	266	12	c
+7727	\N	1331000	4521	54	266	13	c
+7728	\N	1339000	1701	54	266	14	c
+7729	\N	1393000	4520	54	266	15	c
+7730	\N	1455000	5323	54	337	16	c
+7731	\N	1479000	4986	54	337	17	c
+7732	\N	1564000	5402	54	337	18	c
+7733	\N	1578000	5314	54	337	19	c
+7734	\N	1587000	5392	54	337	20	c
+7735	\N	1720000	4978	54	337	21	c
+7736	\N	1724000	4980	54	337	22	c
+7737	\N	1929000	4979	54	337	23	c
+7738	\N	1933000	4976	54	337	24	c
+7739	\N	1956000	4982	54	337	25	c
+7740	\N	2028000	4983	54	337	26	c
+7741	\N	1051000	5263	55	352	1	c
+7742	\N	1089000	3087	55	203	2	c
+7743	\N	1123000	3073	55	203	3	c
+7744	\N	1149000	3085	55	203	4	c
+7745	\N	1160000	1681	55	203	5	c
+7746	\N	1167000	3077	55	203	6	c
+7747	\N	1174000	3070	55	203	7	c
+7748	\N	1180000	4044	55	203	8	c
+7749	\N	1185000	3071	55	203	9	c
+7750	\N	1202000	3086	55	203	10	c
+7751	\N	1202000	1673	55	203	11	c
+7752	\N	1217000	5264	55	352	12	c
+7753	\N	1220000	1659	55	203	13	c
+7754	\N	1232000	4040	55	203	14	c
+7755	\N	1234000	3409	55	352	15	c
+7756	\N	1256000	3079	55	203	16	c
+7757	\N	1282000	3074	55	203	17	c
+7758	\N	1293000	4041	55	203	18	c
+7759	\N	1293000	3081	55	203	19	c
+7760	\N	1294000	5376	55	203	20	c
+7761	\N	1298000	5387	55	203	21	c
+7762	\N	1300000	4042	55	203	22	c
+7763	\N	1301000	4043	55	203	23	c
+7764	\N	1306000	5417	55	203	24	c
+7765	\N	1306000	5151	55	352	25	c
+7766	\N	1312000	1776	55	203	26	c
+7767	\N	1335000	5169	55	352	27	c
+7768	\N	1347000	3076	55	203	28	c
+7769	\N	1363000	4039	55	203	29	c
+7770	\N	1363000	5105	55	352	30	c
+7771	\N	1370000	1747	55	203	31	c
+7772	\N	1377000	1690	55	203	32	c
+7773	\N	1395000	3078	55	203	33	c
+7774	\N	1398000	5373	55	203	34	c
+7775	\N	1427000	3083	55	203	35	c
+7776	\N	1431000	5396	55	203	36	c
+7777	\N	1455000	5395	55	203	37	c
+7778	\N	1462000	5382	55	203	38	c
+7779	\N	1498000	5389	55	203	39	c
+7780	\N	1526000	5379	55	203	40	c
+7781	\N	1610000	5384	55	203	41	c
+7782	\N	1619000	5103	55	352	42	c
+7783	\N	1831000	5380	55	203	43	c
+7784	\N	1834000	5107	55	352	44	c
+7785	\N	1869000	5102	55	352	45	c
+7786	\N	2280000	3412	55	352	46	c
+7787	\N	978000	1517	57	210	1	c
+7788	\N	1037000	5164	57	171	2	c
+7790	\N	1069000	3648	57	171	4	c
+7791	\N	1076000	1543	57	359	5	c
+7792	\N	1095000	1531	57	359	6	c
+7793	\N	1101000	3224	57	359	7	c
+7794	\N	1113000	3214	57	359	8	c
+7795	\N	1125000	5352	57	210	9	c
+7796	\N	1132000	3649	57	171	10	c
+7797	\N	1133000	3651	57	171	11	c
+7798	\N	1134000	3680	57	171	12	c
+7799	\N	1153000	5174	57	210	13	c
+7800	\N	1161000	3156	57	210	14	c
+7801	\N	1162000	5419	57	210	15	c
+7802	\N	1163000	1625	57	210	16	c
+7803	\N	1165000	3653	57	171	17	c
+7804	\N	1167000	3155	57	210	18	c
+7805	\N	1176000	3154	57	210	19	c
+7806	\N	1183000	3643	57	171	20	c
+7807	\N	1189000	5351	57	359	21	c
+7808	\N	1193000	3672	57	171	22	c
+7809	\N	1204000	1610	57	359	23	c
+7810	\N	1211000	3642	57	171	24	c
+7811	\N	1223000	5420	57	171	25	c
+7812	\N	1253000	4098	57	210	26	c
+7813	\N	1258000	3158	57	210	27	c
+7814	\N	1267000	4099	57	210	28	c
+7815	\N	1286000	1660	57	210	29	c
+7816	\N	1301000	4101	57	210	30	c
+7817	\N	1303000	3644	57	171	31	c
+7818	\N	1307000	3157	57	210	32	c
+7819	\N	1312000	1697	57	210	33	c
+7820	\N	1314000	1739	57	210	34	c
+7821	\N	1316000	3673	57	171	35	c
+7822	\N	1319000	3671	57	171	36	c
+7823	\N	1336000	4102	57	210	37	c
+7824	\N	1353000	3675	57	171	38	c
+7825	\N	1359000	5381	57	359	39	c
+7826	\N	1390000	5421	57	359	40	c
+7827	\N	1429000	3646	57	171	41	c
+7829	\N	1447000	5423	57	210	43	c
+7830	\N	1480000	5277	57	359	44	c
+7831	\N	1493000	3678	57	171	45	c
+7832	\N	1497000	5424	57	171	46	c
+7833	\N	1563000	5400	57	210	47	c
+7834	\N	1610000	5425	57	210	48	c
+7835	\N	1618000	5403	57	210	49	c
+7836	\N	1677000	5426	57	210	50	c
+7837	\N	1717000	1829	57	359	51	c
+7838	\N	1838000	4096	57	210	52	c
+7839	\N	1935000	5408	57	210	53	c
+7840	\N	1028800	3148	60	212	1	c
+7841	\N	1067900	5130	60	356	2	c
+7842	\N	1079900	1643	60	212	3	c
+7843	\N	1086100	5131	60	356	4	c
+7844	\N	1092700	5181	60	223	5	c
+7845	\N	1101200	4212	60	223	6	c
+7846	\N	1103000	5175	60	223	7	c
+7847	\N	1116400	4116	60	212	8	c
+7848	\N	1118300	1618	60	212	9	c
+7849	\N	1126100	4117	60	212	10	c
+7850	\N	1129500	4214	60	223	11	c
+7851	\N	1133600	4111	60	212	12	c
+7852	\N	1150100	5213	60	212	13	c
+7853	\N	1170000	4209	60	223	14	c
+7828	\N	1443000	5510	57	210	42	c
+7854	\N	1171800	4213	60	223	15	c
+7855	\N	1179300	5278	60	223	16	c
+7856	\N	1184000	3142	60	212	17	c
+7857	\N	1198500	5427	60	356	18	c
+7858	\N	1230000	3141	60	212	19	c
+7859	\N	1237800	3144	60	212	20	c
+7860	\N	1245300	1794	60	223	21	c
+7861	\N	1272300	5428	60	356	22	c
+7862	\N	1282100	5132	60	356	23	c
+7863	\N	1287900	5279	60	223	24	c
+7864	\N	1295200	4204	60	223	25	c
+7865	\N	1295900	4113	60	212	26	c
+7866	\N	1299200	4203	60	223	27	c
+7867	\N	1307600	5133	60	356	28	c
+7868	\N	1320500	4112	60	212	29	c
+7869	\N	1381500	3145	60	212	30	c
+7870	\N	1393400	4114	60	212	31	c
+7871	\N	1395400	3387	60	223	32	c
+7872	\N	1413500	4115	60	212	33	c
+7873	\N	1444000	5228	60	212	34	c
+7874	\N	1483100	3381	60	223	35	c
+7875	\N	1486000	5429	60	212	36	c
+7876	\N	1505400	3388	60	223	37	c
+7877	\N	1524100	5398	60	223	38	c
+7878	\N	1530300	5430	60	356	39	c
+7879	\N	1711800	4208	60	223	40	c
+7880	\N	1464000	4062	61	205	1	c
+7881	\N	1479000	4057	61	205	2	c
+7882	\N	1488000	3898	61	190	3	c
+7883	\N	1489000	4058	61	205	4	c
+7884	\N	1553000	4056	61	205	5	c
+7885	\N	1507000	3203	61	190	6	c
+7886	\N	1510000	3895	61	190	7	c
+7887	\N	1526000	4049	61	205	8	c
+7888	\N	1535000	3897	61	190	9	c
+7889	\N	1573000	3899	61	190	10	c
+7890	\N	1574000	3204	61	190	11	c
+7891	\N	1576000	3896	61	190	12	c
+7892	\N	1591000	3900	61	190	13	c
+7893	\N	1644000	4061	61	205	14	c
+12996	\N	1603000	3125	209	132	18	c
+7895	\N	1654000	4059	61	205	16	c
+7896	\N	1676000	4065	61	205	17	c
+7897	\N	1679000	4048	61	205	18	c
+7899	\N	1691000	4064	61	205	20	c
+7900	\N	1703000	5363	61	190	21	c
+7901	\N	1744000	4050	61	205	22	c
+7902	\N	1757000	3903	61	190	23	c
+7903	\N	1762000	5354	61	190	24	c
+7904	\N	2671000	3207	61	190	25	c
+7905	\N	1119000	102	62	205	1	c
+7906	\N	1208000	3210	62	190	2	c
+7907	\N	1251000	3209	62	190	3	c
+7908	\N	1275000	2534	62	190	4	c
+7909	\N	1292000	4053	62	205	5	c
+7910	\N	1319000	2515	62	190	6	c
+7911	\N	1345000	3904	62	190	7	c
+7912	\N	1356000	4054	62	205	8	c
+7913	\N	1362000	3212	62	190	9	c
+7914	\N	1364000	2537	62	190	10	c
+7915	\N	1392000	3211	62	190	11	c
+7916	\N	1416000	116	62	205	12	c
+7917	\N	1433000	112	62	205	13	c
+7918	\N	1438000	4060	62	205	14	c
+7919	\N	1464000	4045	62	205	15	c
+7920	\N	1468000	4047	62	205	16	c
+7921	\N	1506000	3199	62	190	17	c
+7922	\N	1302000	5156	63	275	1	c
+7923	\N	1398000	1013	63	226	2	c
+7924	\N	1404000	1012	63	226	3	c
+7925	\N	1421000	4225	63	226	4	c
+7926	\N	1436000	3364	63	226	5	c
+7927	\N	1458000	5433	63	226	6	c
+7928	\N	1465000	4226	63	226	7	c
+7929	\N	1466000	3370	63	226	8	c
+7930	\N	1498000	4223	63	226	9	c
+7931	\N	1498000	3371	63	226	10	c
+7932	\N	1557000	3284	63	275	11	c
+7933	\N	1564000	3286	63	275	12	c
+7934	\N	1570000	1151	63	226	13	c
+7935	\N	1588000	3285	63	275	14	c
+7936	\N	1600000	3372	63	226	15	c
+7937	\N	1621000	3280	63	275	16	c
+7938	\N	1681000	3368	63	226	17	c
+7939	\N	1713000	3373	63	226	18	c
+7940	\N	1749000	5359	63	226	19	c
+7941	\N	1844000	5413	63	275	20	c
+7942	\N	1881000	5368	63	226	21	c
+7944	\N	1383000	4994	64	338	2	c
+7945	\N	1438000	4993	64	338	3	c
+7946	\N	1442000	5329	64	338	4	c
+7947	\N	1461000	4527	64	267	5	c
+7948	\N	1470000	4528	64	267	6	c
+7949	\N	1491000	5320	64	338	7	c
+7951	\N	1527000	5309	64	338	9	c
+7952	\N	1540000	3456	64	338	10	c
+7953	\N	1553000	4530	64	267	11	c
+7954	\N	1553000	4532	64	267	12	c
+7955	\N	1594000	5325	64	338	13	c
+7956	\N	1622000	4989	64	338	14	c
+7957	\N	1622000	5312	64	338	15	c
+7958	\N	1622000	4523	64	267	16	c
+7959	\N	1684000	4531	64	267	17	c
+7960	\N	1687000	4995	64	338	18	c
+7961	\N	1688000	4988	64	338	19	c
+7962	\N	1719000	4533	64	267	20	c
+7963	\N	1721000	2584	64	267	21	c
+7964	\N	1722000	5259	64	267	22	c
+7965	\N	1769000	4525	64	267	23	c
+7966	\N	1800000	4524	64	267	24	c
+7967	\N	1831000	4990	64	338	25	c
+7968	\N	1831000	4987	64	338	26	c
+7969	\N	1967000	4526	64	267	27	c
+7970	\N	1262000	3136	65	332	1	c
+7971	\N	1333000	5029	65	342	2	c
+7972	\N	1336000	5030	65	342	3	c
+7973	\N	1337000	5436	65	332	4	c
+7974	\N	1343000	5031	65	342	5	c
+7975	\N	1345000	5032	65	342	6	c
+7976	\N	1352000	4974	65	336	7	c
+7977	\N	1353000	3310	65	336	8	c
+7978	\N	1356000	5035	65	342	9	c
+7979	\N	1358000	5033	65	342	10	c
+7980	\N	1382000	3311	65	336	11	c
+7981	\N	1382000	5303	65	336	12	c
+7982	\N	1387000	3123	65	332	13	c
+7983	\N	1391000	4945	65	332	14	c
+7984	\N	1399000	3137	65	332	15	c
+7985	\N	1417000	3140	65	332	16	c
+7986	\N	1418000	4946	65	332	17	c
+7987	\N	1429000	5034	65	342	18	c
+7988	\N	1548000	5435	65	336	19	c
+7989	\N	1592000	5200	65	336	20	c
+7943	\N	1354000	5509	64	338	1	c
+7898	\N	1685000	5519	61	190	19	c
+7990	\N	1593000	5199	65	336	21	c
+7991	\N	1422000	5112	66	353	1	c
+7992	\N	1428000	3102	66	202	2	c
+7993	\N	1429000	3416	66	353	3	c
+7994	\N	1431000	2617	66	202	4	c
+7995	\N	1466000	5113	66	353	5	c
+7996	\N	1499000	3104	66	202	6	c
+7997	\N	1501000	4038	66	202	7	c
+7998	\N	1507000	4029	66	202	8	c
+7999	\N	1533000	4037	66	202	9	c
+8000	\N	1543000	5207	66	353	10	c
+8001	\N	1546000	4035	66	202	11	c
+8002	\N	1554000	3422	66	353	12	c
+8003	\N	1558000	4030	66	202	13	c
+8004	\N	1560000	2594	66	202	14	c
+8005	\N	1569000	4031	66	202	15	c
+8006	\N	1570000	3091	66	202	16	c
+8007	\N	1575000	4028	66	202	17	c
+8008	\N	1594000	4036	66	202	18	c
+8009	\N	1609000	2622	66	202	19	c
+8010	\N	1615000	3417	66	353	20	c
+8011	\N	1617000	3427	66	353	21	c
+8012	\N	1637000	5193	66	353	22	c
+8013	\N	1658000	3089	66	202	23	c
+8014	\N	1695000	5109	66	353	24	c
+8015	\N	1701000	4032	66	202	25	c
+8016	\N	1703000	5358	66	202	26	c
+8017	\N	1704000	3095	66	202	27	c
+8018	\N	1705000	4033	66	202	28	c
+8019	\N	1709000	5360	66	202	29	c
+8020	\N	1777000	4034	66	202	30	c
+8021	\N	1868000	5369	66	202	31	c
+8022	\N	1869000	5364	66	202	32	c
+8023	\N	1945000	2612	66	353	33	c
+8024	\N	2005000	5353	66	202	34	c
+8025	\N	2006000	5357	66	202	35	c
+8026	\N	2007000	5355	66	202	36	c
+8027	\N	2044000	5370	66	202	37	c
+8028	\N	2059000	5110	66	353	38	c
+8029	\N	2061000	5111	66	353	39	c
+8030	\N	2479000	5437	66	353	40	c
+8031	\N	1503000	1160	68	198	1	c
+8032	\N	1539000	3995	68	198	2	c
+8033	\N	1579000	1043	68	198	3	c
+8034	\N	1597000	5194	68	273	4	c
+8035	\N	1605000	5269	68	198	5	c
+8036	\N	1622000	3349	68	198	6	c
+8037	\N	1624000	3996	68	198	7	c
+8038	\N	1630000	3243	68	273	8	c
+8039	\N	1632000	3994	68	198	9	c
+8040	\N	1659000	5272	68	198	10	c
+8041	\N	1720000	3985	68	198	11	c
+8042	\N	1729000	3984	68	198	12	c
+8043	\N	1735000	3986	68	198	13	c
+8044	\N	1832000	2581	68	273	14	c
+8045	\N	1838000	5412	68	273	15	c
+8046	\N	1908000	5273	68	198	16	c
+8047	\N	1919000	3991	68	198	17	c
+8048	\N	1948000	5438	68	198	18	c
+8049	\N	1983000	5371	68	198	19	c
+8050	\N	1993000	5439	68	198	20	c
+8051	\N	2001000	3346	68	198	21	c
+8052	\N	2003000	5270	68	198	22	c
+8053	\N	2445000	5440	68	198	23	c
+8054	\N	2498000	3992	68	198	24	c
+8055	\N	1503000	1160	69	198	1	c
+8056	\N	1539000	3995	69	198	2	c
+8057	\N	1579000	1043	69	198	3	c
+8058	\N	1597000	5194	69	273	4	c
+8059	\N	1605000	5269	69	198	5	c
+8060	\N	1622000	3349	69	198	6	c
+8061	\N	1624000	3996	69	198	7	c
+8062	\N	1630000	3243	69	273	8	c
+8063	\N	1632000	3994	69	198	9	c
+8064	\N	1659000	5272	69	198	10	c
+8065	\N	1720000	5269	69	198	11	c
+8066	\N	1729000	3984	69	198	12	c
+8067	\N	1735000	3986	69	198	13	c
+8068	\N	1832000	2581	69	273	14	c
+8069	\N	1838000	5412	69	273	15	c
+8070	\N	1908000	5273	69	198	16	c
+8071	\N	1919000	3991	69	198	17	c
+8072	\N	1948000	5438	69	198	18	c
+8073	\N	1983000	5371	69	198	19	c
+8074	\N	1993000	5439	69	198	20	c
+8075	\N	2001000	3346	69	198	21	c
+8076	\N	2003000	5270	69	198	22	c
+8077	\N	2445000	5440	69	198	23	c
+8078	\N	2498000	3992	69	198	24	c
+8079	\N	1137000	102	70	204	1	c
+8080	\N	1255000	4769	70	307	2	c
+8081	\N	1256000	4870	70	364	3	c
+8082	\N	1259000	5182	70	251	4	c
+8083	\N	1263000	4337	70	248	5	c
+8084	\N	1293000	4919	70	245	6	c
+8085	\N	1300000	4052	70	204	7	c
+8086	\N	1317000	4054	70	204	8	c
+8087	\N	1321000	4770	70	307	9	c
+8088	\N	1333000	120	70	245	10	c
+8089	\N	1337000	4053	70	204	11	c
+8090	\N	1341000	5155	70	251	12	c
+8091	\N	1346000	1	70	363	13	c
+8092	\N	1351000	4323	70	245	14	c
+8093	\N	1353000	116	70	204	15	c
+8094	\N	1364000	4325	70	245	16	c
+8095	\N	1372000	4324	70	245	17	c
+8096	\N	1386000	4326	70	245	18	c
+8097	\N	1391000	4771	70	307	19	c
+8098	\N	1398000	4338	70	248	20	c
+8099	\N	1404000	5297	70	307	21	c
+8100	\N	1408000	4432	70	255	22	c
+8101	\N	1412000	75	70	307	23	c
+8102	\N	1426000	4912	70	366	24	c
+8103	\N	1433000	28	70	248	25	c
+8104	\N	1436000	4046	70	204	26	c
+8105	\N	1436000	4873	70	364	27	c
+8106	\N	1439000	4327	70	245	28	c
+8107	\N	1447000	4339	70	248	29	c
+8108	\N	1451000	63	70	245	30	c
+8109	\N	1457000	4773	70	307	31	c
+8110	\N	1461000	112	70	204	32	c
+8111	\N	1463000	71	70	307	33	c
+8112	\N	1465000	5157	70	251	34	c
+8113	\N	1476000	16	70	251	35	c
+8114	\N	1479000	4047	70	204	36	c
+8115	\N	1481000	4045	70	204	37	c
+8116	\N	1483000	5221	70	251	38	c
+8117	\N	1485000	4383	70	251	39	c
+8118	\N	1493000	4319	70	245	40	c
+8119	\N	1498000	5445	70	363	41	c
+8120	\N	1507000	4433	70	255	42	c
+8121	\N	1509000	4341	70	248	43	c
+8122	\N	1518000	4851	70	255	44	c
+8123	\N	1519000	30	70	248	45	c
+8124	\N	1521000	5145	70	251	46	c
+8125	\N	1525000	4871	70	364	47	c
+8126	\N	1528000	4340	70	248	48	c
+8127	\N	1530000	4434	70	255	49	c
+8128	\N	1531000	82	70	307	50	c
+8129	\N	1532000	4321	70	245	51	c
+8130	\N	1541000	4890	70	365	52	c
+8131	\N	1541000	5446	70	248	53	c
+8132	\N	1560000	4892	70	365	54	c
+8133	\N	1564000	5447	70	255	55	c
+8134	\N	1567000	4320	70	245	56	c
+8135	\N	1572000	4318	70	245	57	c
+8136	\N	1578000	4435	70	255	58	c
+8137	\N	1581000	5177	70	251	59	c
+8138	\N	1583000	4049	70	204	60	c
+8139	\N	1586000	50	70	366	61	c
+8140	\N	1588000	5448	70	248	62	c
+8141	\N	1596000	5219	70	251	63	c
+8142	\N	1598000	5149	70	251	64	c
+8143	\N	1599000	5206	70	251	65	c
+8144	\N	1604000	4346	70	248	66	c
+8145	\N	1609000	4436	70	255	67	c
+8146	\N	1631000	5449	70	363	68	c
+8148	\N	1658000	4048	70	204	70	c
+8149	\N	1663000	4344	70	248	71	c
+8150	\N	1673000	4874	70	364	72	c
+8151	\N	1674000	5158	70	251	73	c
+8152	\N	1678000	4050	70	204	74	c
+8153	\N	1687000	4916	70	366	75	c
+8154	\N	1693000	4767	70	307	76	c
+8155	\N	1713000	5450	70	248	77	c
+8156	\N	1725000	5442	70	204	78	c
+8157	\N	1749000	4856	70	255	79	c
+8158	\N	1752000	5451	70	248	80	c
+8159	\N	1754000	5162	70	251	81	c
+8160	\N	1754000	4431	70	255	82	c
+8161	\N	1755000	4430	70	255	83	c
+8162	\N	1763000	4768	70	307	84	c
+8163	\N	1770000	34	70	248	85	c
+8164	\N	1770000	4915	70	366	86	c
+8165	\N	1776000	4348	70	248	87	c
+8166	\N	1785000	5443	70	248	88	c
+8167	\N	1788000	99	70	255	89	c
+8168	\N	1793000	4051	70	204	90	c
+8169	\N	1806000	48	70	366	91	c
+8170	\N	1808000	7	70	364	92	c
+8171	\N	1943000	4351	70	248	93	c
+8172	\N	1958000	5444	70	366	94	c
+8173	\N	1959000	5452	70	366	95	c
+8174	\N	1985000	4378	70	251	96	c
+8175	\N	1991000	5453	70	366	97	c
+8176	\N	2001000	54	70	366	98	c
+8177	\N	2010000	5454	70	366	99	c
+8178	\N	2058000	5455	70	248	100	c
+8179	\N	2058000	5456	70	248	101	c
+8180	\N	2141000	5457	70	251	102	c
+8181	\N	1044000	5291	71	256	1	c
+8182	\N	1057000	4877	71	369	2	c
+8183	\N	1063000	5201	71	250	3	c
+8184	\N	1085000	4445	71	256	4	c
+8185	\N	1104000	4860	71	368	5	c
+8186	\N	1107000	225	71	368	6	c
+8187	\N	1113000	4446	71	256	7	c
+8188	\N	1117000	4424	71	254	8	c
+8189	\N	1118000	5187	71	250	9	c
+8190	\N	1128000	5186	71	250	10	c
+8191	\N	1128000	4371	71	250	11	c
+8192	\N	1129000	263	71	254	12	c
+8193	\N	1129000	5205	71	368	13	c
+8194	\N	1130000	5463	71	370	14	c
+8195	\N	1131000	4368	71	250	15	c
+8196	\N	1132000	248	71	368	16	c
+8197	\N	1132000	5211	71	250	17	c
+8198	\N	1134000	4428	71	254	18	c
+8199	\N	1139000	5144	71	256	19	c
+8200	\N	1146000	4426	71	254	20	c
+8201	\N	1148000	4425	71	254	21	c
+8202	\N	1154000	5208	71	250	22	c
+8203	\N	1155000	4448	71	256	23	c
+8204	\N	1165000	4878	71	369	24	c
+8205	\N	1168000	257	71	367	25	c
+8206	\N	1179000	4427	71	254	26	c
+8207	\N	1189000	5196	71	368	27	c
+8208	\N	1191000	251	71	368	28	c
+8209	\N	1192000	230	71	368	29	c
+8210	\N	1195000	5464	71	367	30	c
+8211	\N	1197000	4862	71	368	31	c
+8212	\N	1199000	4429	71	254	32	c
+8213	\N	1203000	4894	71	367	33	c
+8214	\N	1206000	4881	71	369	34	c
+8215	\N	1208000	269	71	367	35	c
+8216	\N	1208000	237	71	367	36	c
+8217	\N	1210000	5147	71	250	37	c
+8218	\N	1212000	4882	71	369	38	c
+8219	\N	1217000	4355	71	250	39	c
+8220	\N	1219000	239	71	306	40	c
+8221	\N	1223000	4416	71	254	41	c
+8222	\N	1223000	4902	71	370	42	c
+8223	\N	1226000	5184	71	250	43	c
+8224	\N	1227000	5218	71	250	44	c
+8225	\N	1235000	4415	71	254	45	c
+8226	\N	1244000	4437	71	256	46	c
+8227	\N	1254000	4353	71	250	47	c
+8228	\N	1258000	4879	71	369	48	c
+8229	\N	1258000	327	71	254	49	c
+8230	\N	1261000	4774	71	306	50	c
+8231	\N	1263000	4893	71	367	51	c
+8232	\N	1263000	5290	71	256	52	c
+8233	\N	1265000	270	71	369	53	c
+8234	\N	1266000	4417	71	254	54	c
+8235	\N	1278000	267	71	306	55	c
+8236	\N	1281000	4903	71	370	56	c
+8237	\N	1282000	276	71	369	57	c
+8238	\N	1282000	5465	71	368	58	c
+8239	\N	1283000	4864	71	368	59	c
+8240	\N	1292000	5223	71	250	60	c
+8241	\N	1295000	4880	71	369	61	c
+8242	\N	1295000	5148	71	256	62	c
+8243	\N	1298000	4840	71	254	63	c
+8244	\N	1300000	4449	71	256	64	c
+8245	\N	1300000	4896	71	367	65	c
+8246	\N	1302000	4362	71	250	66	c
+8247	\N	1304000	4441	71	256	67	c
+8248	\N	1305000	4360	71	250	68	c
+8249	\N	1306000	283	71	370	69	c
+8250	\N	1315000	4418	71	254	70	c
+8251	\N	1317000	4361	71	250	71	c
+8252	\N	1324000	5161	71	256	72	c
+8253	\N	1330000	5466	71	367	73	c
+8254	\N	1334000	5467	71	369	74	c
+8255	\N	1344000	313	71	367	75	c
+8256	\N	1360000	5173	71	250	76	c
+8257	\N	1360000	4420	71	254	77	c
+8258	\N	1367000	326	71	368	78	c
+8259	\N	1380000	4898	71	367	79	c
+8260	\N	1388000	5458	71	367	80	c
+8261	\N	1392000	320	71	250	81	c
+8262	\N	1399000	4905	71	370	82	c
+8263	\N	1404000	4422	71	254	83	c
+8264	\N	1405000	4421	71	254	84	c
+8265	\N	1409000	5459	71	250	85	c
+8266	\N	1410000	5468	71	370	86	c
+8267	\N	1410000	4442	71	256	87	c
+8268	\N	1424000	5469	71	370	88	c
+8269	\N	1428000	4364	71	250	89	c
+8270	\N	1428000	5470	71	250	90	c
+8271	\N	1437000	5298	71	254	91	c
+8272	\N	1439000	4419	71	254	92	c
+8273	\N	1449000	5471	71	254	93	c
+8274	\N	1461000	299	71	256	94	c
+8275	\N	1464000	4766	71	306	95	c
+8276	\N	1469000	5472	71	367	96	c
+8277	\N	1471000	4867	71	368	97	c
+8278	\N	1472000	5460	71	370	98	c
+8279	\N	1476000	4400	71	250	99	c
+8280	\N	1480000	4390	71	250	100	c
+8281	\N	1480000	325	71	250	101	c
+8282	\N	1486000	5473	71	369	102	c
+8283	\N	1490000	4885	71	369	103	c
+8284	\N	1498000	319	71	254	104	c
+8285	\N	1508000	315	71	369	105	c
+8286	\N	1536000	4388	71	250	106	c
+8287	\N	1540000	4443	71	256	107	c
+8288	\N	1549000	4846	71	254	108	c
+8289	\N	1557000	5474	71	256	109	c
+8290	\N	1559000	4906	71	370	110	c
+8291	\N	1561000	5475	71	250	111	c
+8292	\N	1561000	5476	71	256	112	c
+8293	\N	1578000	5461	71	367	113	c
+8294	\N	1584000	317	71	370	114	c
+8295	\N	1598000	5477	71	367	115	c
+8296	\N	1624000	5478	71	256	116	c
+8297	\N	1629000	4907	71	370	117	c
+8298	\N	1641000	5479	71	370	118	c
+8299	\N	1643000	5480	71	367	119	c
+8300	\N	1693000	5481	71	370	120	c
+8301	\N	1700000	4393	71	250	121	c
+8302	\N	1750000	5482	71	254	122	c
+8303	\N	1789000	5462	71	250	123	c
+8304	\N	1876000	4911	71	370	124	c
+8305	\N	1888000	4401	71	250	125	c
+8306	\N	2218000	4460	71	256	126	c
+8307	\N	1042000	3087	72	203	1	c
+8308	\N	1045000	3326	72	197	2	c
+8309	\N	1058000	1543	72	359	3	c
+8310	\N	1067000	3073	72	203	4	c
+8311	\N	1078000	3085	72	203	5	c
+8312	\N	1083000	1531	72	359	6	c
+8313	\N	1084000	5176	72	197	7	c
+8314	\N	1088000	5183	72	197	8	c
+8315	\N	1100000	1681	72	203	9	c
+8316	\N	1109000	3070	72	203	10	c
+8317	\N	1119000	3086	72	203	11	c
+8318	\N	1122000	4044	72	203	12	c
+8319	\N	1128000	1673	72	203	13	c
+8320	\N	1128000	3224	72	359	14	c
+8321	\N	1131000	3071	72	203	15	c
+8322	\N	1136000	3214	72	359	16	c
+8323	\N	1142000	4219	72	225	17	c
+8324	\N	1148000	3077	72	203	18	c
+8325	\N	1148000	5276	72	197	19	c
+8326	\N	1158000	3981	72	197	20	c
+8327	\N	1165000	3359	72	225	21	c
+8328	\N	1168000	4220	72	225	22	c
+8329	\N	1187000	3072	72	203	23	c
+8330	\N	1200000	1610	72	359	24	c
+8331	\N	1201000	3982	72	197	25	c
+8332	\N	1205000	5351	72	359	26	c
+8333	\N	1241000	3361	72	225	27	c
+8334	\N	1244000	5274	72	197	28	c
+8335	\N	1253000	5414	72	225	29	c
+8336	\N	1284000	5281	72	225	30	c
+8337	\N	1302000	3355	72	225	31	c
+8338	\N	1499000	5381	72	359	32	c
+8339	\N	1065000	4585	73	274	1	c
+8340	\N	1071000	5178	73	189	2	c
+8341	\N	1125000	3892	73	189	3	c
+8342	\N	1135000	3195	73	189	4	c
+8343	\N	1137000	3893	73	189	5	c
+8344	\N	1141000	5225	73	274	6	c
+8345	\N	1147000	3891	73	189	7	c
+8346	\N	1148000	3272	73	274	8	c
+8347	\N	1157000	1670	73	189	9	c
+8348	\N	1171000	5153	73	189	10	c
+8349	\N	1181000	5203	73	272	11	c
+8351	\N	1200000	5483	73	274	13	c
+8352	\N	1213000	1724	73	335	14	c
+8354	\N	1240000	5302	73	335	16	c
+8355	\N	1279000	4971	73	335	17	c
+8356	\N	1292000	5185	73	272	18	c
+8357	\N	1295000	4572	73	272	19	c
+8358	\N	1301000	3265	73	274	20	c
+8359	\N	1306000	1792	73	335	21	c
+8360	\N	1313000	3229	73	272	22	c
+8361	\N	1315000	4578	73	272	23	c
+8362	\N	1453000	4589	73	274	24	c
+8363	\N	1456000	4581	73	274	25	c
+8364	\N	1475000	5233	73	272	26	c
+8365	\N	1542000	4582	73	274	27	c
+8366	\N	1023000	1520	74	331	1	c
+8367	\N	1064000	3148	74	212	2	c
+8368	\N	1092000	3065	74	195	3	c
+8369	\N	1106000	4116	74	212	4	c
+8370	\N	1110000	1715	74	331	5	c
+8371	\N	1111000	1643	74	212	6	c
+8372	\N	1116000	5308	74	337	7	c
+8373	\N	1123000	3064	74	195	8	c
+8374	\N	1124000	3954	74	195	9	c
+8375	\N	1131000	3053	74	195	10	c
+8376	\N	1135000	1618	74	212	11	c
+8377	\N	1147000	4938	74	331	12	c
+8378	\N	1148000	1669	74	331	13	c
+8379	\N	1153000	3066	74	195	14	c
+8380	\N	1154000	3068	74	195	15	c
+8381	\N	1154000	3106	74	331	16	c
+8382	\N	1175000	4117	74	212	17	c
+8383	\N	1187000	1613	74	331	18	c
+8384	\N	1199000	3107	74	331	19	c
+8385	\N	1200000	4111	74	212	20	c
+8386	\N	1220000	5241	74	195	21	c
+8387	\N	1225000	5213	74	212	22	c
+8388	\N	1251000	3056	74	195	23	c
+8389	\N	1261000	3948	74	195	24	c
+8390	\N	1270000	3955	74	195	25	c
+8391	\N	1295000	5321	74	337	26	c
+8392	\N	1345000	3437	74	337	27	c
+8393	\N	1421000	4984	74	337	29	c
+8395	\N	1484000	5402	74	337	31	c
+8396	\N	1490000	5323	74	337	32	c
+8397	\N	1014000	5263	76	352	1	c
+8394	\N	1456000	5629	74	337	30	c
+8350	\N	1189000	5640	73	335	12	c
+8398	\N	1025000	1517	76	210	2	c
+8400	\N	1074000	3252	76	266	4	c
+8401	\N	1091000	5198	76	266	5	c
+8402	\N	1110000	5181	76	223	6	c
+8403	\N	1118000	5175	76	223	7	c
+8404	\N	1128000	4209	76	223	8	c
+8405	\N	1145000	4212	76	223	9	c
+8406	\N	1154000	4213	76	223	10	c
+8407	\N	1156000	1625	76	210	11	c
+8408	\N	1165000	5333	76	210	12	c
+8409	\N	1169000	3255	76	266	13	c
+8410	\N	1171000	3409	76	352	14	c
+8411	\N	1173000	4522	76	266	15	c
+8412	\N	1174000	3249	76	266	16	c
+8413	\N	1177000	5264	76	352	17	c
+8414	\N	1181000	4214	76	223	18	c
+8415	\N	1187000	3156	76	210	19	c
+8416	\N	1237000	5151	76	352	20	c
+8417	\N	1260000	3161	76	210	21	c
+8418	\N	1262000	1794	76	223	22	c
+8419	\N	1272000	5159	76	266	23	c
+8420	\N	1276000	3157	76	210	24	c
+8421	\N	1295000	1815	76	266	25	c
+8422	\N	1298000	1701	76	266	26	c
+8423	\N	1299000	4099	76	210	27	c
+8424	\N	1314000	4520	76	266	28	c
+8425	\N	1318000	5169	76	352	29	c
+8426	\N	1335000	4097	76	210	30	c
+8427	\N	1339000	5105	76	352	31	c
+8428	\N	1342000	4521	76	266	32	c
+8429	\N	1350000	4204	76	223	33	c
+8430	\N	1356000	1697	76	210	34	c
+8431	\N	1362000	4100	76	210	35	c
+8432	\N	1406000	3387	76	223	36	c
+8433	\N	1413000	4206	76	223	37	c
+8434	\N	1430000	5394	76	223	38	c
+8435	\N	1433000	5107	76	352	39	c
+8436	\N	1441000	3388	76	223	40	c
+8437	\N	1477000	5102	76	352	41	c
+8438	\N	1479000	5166	76	223	42	c
+8439	\N	1491000	1788	76	223	43	c
+8440	\N	1498000	4102	76	210	44	c
+8441	\N	1524000	5398	76	223	45	c
+8442	\N	1539000	5400	76	210	46	c
+8443	\N	1588000	5425	76	210	47	c
+8444	\N	1606000	5103	76	352	48	c
+8445	\N	1646000	5404	76	352	49	c
+8446	\N	1708000	3052	76	223	50	c
+8447	\N	1736000	3412	76	352	51	c
+8448	\N	1749000	5426	76	210	52	c
+8449	\N	1775000	4208	76	223	53	c
+8450	\N	1902000	5408	76	210	54	c
+8451	\N	1915000	5104	76	352	55	c
+8452	\N	2584000	5403	76	210	56	c
+8453	\N	1231000	5156	77	275	1	c
+8454	\N	1241000	3209	77	190	2	c
+8455	\N	1258000	3210	77	190	3	c
+8456	\N	1266000	4974	77	336	4	c
+8457	\N	1271000	2534	77	190	5	c
+8458	\N	1307000	3309	77	336	6	c
+8459	\N	1332000	3311	77	336	7	c
+8460	\N	1334000	5303	77	336	8	c
+8461	\N	1371000	2537	77	190	9	c
+8462	\N	1389000	3904	77	190	10	c
+8463	\N	1412000	4975	77	336	11	c
+8464	\N	1421000	3212	77	190	12	c
+8465	\N	1442000	3211	77	190	13	c
+8466	\N	1458000	3203	77	190	14	c
+8467	\N	1483000	3286	77	275	15	c
+8468	\N	1497000	3896	77	190	16	c
+8469	\N	1499000	3285	77	275	17	c
+8470	\N	1501000	5200	77	336	18	c
+8471	\N	1508000	3284	77	275	19	c
+8472	\N	1510000	3895	77	190	20	c
+8473	\N	1516000	3897	77	190	21	c
+8474	\N	1536000	3204	77	190	22	c
+8475	\N	1539000	5199	77	336	23	c
+8476	\N	1551000	3899	77	190	24	c
+8477	\N	1555000	3280	77	275	25	c
+8478	\N	1560000	3313	77	336	26	c
+8479	\N	1561000	3199	77	190	27	c
+8480	\N	1564000	3898	77	190	28	c
+8481	\N	1577000	5435	77	336	29	c
+16515	\N	1217600	4987	280	443	14	c
+8483	\N	1609000	3900	77	190	31	c
+8484	\N	1675000	5354	77	190	32	c
+8485	\N	1690000	3902	77	190	33	c
+8486	\N	1736000	5363	77	190	34	c
+8488	\N	1741000	5356	77	336	36	c
+8489	\N	1742000	3903	77	190	37	c
+8490	\N	2018000	4973	77	336	38	c
+8491	\N	2367000	3207	77	190	39	c
+8492	\N	1339000	1012	78	226	1	c
+8493	\N	1340000	3102	78	202	2	c
+8494	\N	1340000	1013	78	226	3	c
+8495	\N	1341000	4225	78	226	4	c
+8496	\N	1390000	3364	78	226	5	c
+8497	\N	1410000	2617	78	202	6	c
+8498	\N	1440000	5433	78	226	7	c
+8499	\N	1455000	4037	78	202	8	c
+8500	\N	1469000	4038	78	202	9	c
+8501	\N	1470000	3995	78	198	10	c
+8502	\N	1475000	3104	78	202	11	c
+8503	\N	1477000	4029	78	202	12	c
+8504	\N	1486000	3366	78	226	13	c
+10704	\N	1244800	2534	148	190	5	c
+8506	\N	1514000	4028	78	202	15	c
+8507	\N	1529000	4030	78	202	16	c
+8508	\N	1535000	3091	78	202	17	c
+8509	\N	1545000	1043	78	198	18	c
+8510	\N	1546000	4031	78	202	19	c
+8511	\N	1550000	5269	78	198	20	c
+8512	\N	1588000	3996	78	198	21	c
+8513	\N	1628000	3994	78	198	22	c
+8514	\N	1648000	3349	78	198	23	c
+8515	\N	1700000	3986	78	198	24	c
+8516	\N	1483000	3370	79	226	1	c
+8517	\N	1511000	1151	79	226	2	c
+8518	\N	1516000	4223	79	226	3	c
+10705	\N	1248300	3210	148	190	6	c
+8520	\N	1524000	4036	79	202	5	c
+8521	\N	1534000	2622	79	202	6	c
+8522	\N	1555000	3372	79	226	7	c
+8523	\N	1565000	3089	79	202	8	c
+8524	\N	1595000	3373	79	226	9	c
+8525	\N	1599000	4033	79	202	10	c
+8526	\N	1600000	3369	79	226	11	c
+10706	\N	1270800	3209	148	190	7	c
+8528	\N	1629000	3095	79	202	13	c
+10707	\N	1292200	5436	148	332	8	c
+8530	\N	1635000	5359	79	226	15	c
+8532	\N	1714000	5360	79	202	17	c
+8533	\N	1756000	3097	79	202	18	c
+8399	\N	1032000	5494	76	210	3	c
+8487	\N	1738000	5519	77	190	35	c
+8534	\N	1761000	3991	79	198	19	c
+8535	\N	1767000	5364	79	202	20	c
+8536	\N	1769000	5270	79	198	21	c
+8537	\N	1775000	5484	79	226	22	c
+8538	\N	1813000	1173	79	226	23	c
+8539	\N	1857000	5438	79	198	24	c
+8540	\N	1859000	5273	79	198	25	c
+8541	\N	1888000	5355	79	202	26	c
+8542	\N	1888000	5369	79	202	27	c
+8543	\N	1889000	5357	79	202	28	c
+8544	\N	1938000	3346	79	198	29	c
+8545	\N	1960000	5370	79	202	30	c
+8546	\N	1977000	5368	79	226	31	c
+8547	\N	2029000	5366	79	226	32	c
+8548	\N	2050000	3989	79	198	33	c
+8549	\N	2227000	3992	79	198	34	c
+8550	\N	1308000	3136	80	332	1	c
+10708	\N	1292500	3123	148	332	9	c
+8552	\N	1375000	5436	80	332	3	c
+8553	\N	1384000	4945	80	332	4	c
+8554	\N	1393000	4994	80	338	5	c
+8555	\N	1437000	4946	80	332	6	c
+8556	\N	1445000	3123	80	332	7	c
+8557	\N	1453000	4947	80	332	8	c
+8558	\N	1466000	3140	80	332	9	c
+8559	\N	1491000	5329	80	338	10	c
+8560	\N	1552000	5320	80	338	11	c
+8562	\N	1562000	4995	80	338	13	c
+8563	\N	1568000	4939	80	332	14	c
+8564	\N	1578000	5312	80	338	15	c
+8565	\N	1583000	3139	80	332	16	c
+8566	\N	1583000	4940	80	332	17	c
+8567	\N	1591000	5325	80	338	18	c
+8568	\N	1609000	4987	80	338	19	c
+8569	\N	1620000	3123	80	332	20	c
+8570	\N	1696000	4989	80	338	21	c
+8571	\N	1756000	5485	80	332	22	c
+8572	\N	1821000	4990	80	338	23	c
+8573	\N	1967000	4941	80	332	24	c
+8574	\N	1508000	4944	80	332	25	c
+8591	\N	1475000	5628	81	267	15	c
+8576	\N	1557000	4942	80	332	27	c
+8577	\N	1224000	3398	81	224	1	c
+8578	\N	1314000	3428	81	353	2	c
+8579	\N	1317000	5112	81	353	3	c
+8580	\N	1364000	3416	81	353	4	c
+8581	\N	1369000	4215	81	224	5	c
+8582	\N	1374000	4527	81	267	6	c
+8583	\N	1376000	4528	81	267	7	c
+8584	\N	1389000	3177	81	211	8	c
+8586	\N	1408000	5113	81	353	10	c
+8587	\N	1412000	3175	81	211	11	c
+8588	\N	1437000	3421	81	353	12	c
+8589	\N	1473000	1109	81	224	13	c
+8590	\N	1475000	4107	81	211	14	c
+8592	\N	1493000	4530	81	267	16	c
+8593	\N	1496000	2629	81	211	17	c
+8594	\N	1499000	4532	81	267	18	c
+8595	\N	1506000	3400	81	224	19	c
+8596	\N	1508000	3427	81	353	20	c
+8597	\N	1526000	3401	81	224	21	c
+8598	\N	1527000	3422	81	353	22	c
+8599	\N	1533000	3261	81	267	23	c
+8600	\N	1536000	5109	81	353	24	c
+8601	\N	1537000	4523	81	267	25	c
+8602	\N	1570000	5193	81	353	26	c
+8603	\N	1631000	1172	81	211	27	c
+8604	\N	1639000	4531	81	267	28	c
+8605	\N	1651000	4533	81	267	29	c
+8606	\N	1668000	4216	81	224	30	c
+8607	\N	1683000	3170	81	211	31	c
+8608	\N	1724000	2584	81	267	32	c
+8609	\N	1729000	4524	81	267	33	c
+8610	\N	1739000	2612	81	353	34	c
+8611	\N	1754000	4525	81	267	35	c
+8612	\N	1776000	5367	81	224	36	c
+8613	\N	1800000	4217	81	224	37	c
+8614	\N	1864000	3418	81	353	38	c
+8615	\N	1874000	5110	81	353	39	c
+12997	\N	1619000	3130	209	132	19	c
+8617	\N	1911000	4526	81	267	41	c
+8618	\N	1923000	3402	81	224	42	c
+8620	\N	1981000	4104	81	211	44	c
+8621	\N	2099000	4105	81	211	45	c
+8622	\N	2209000	5488	81	224	46	c
+8623	\N	1053000	1543	82	359	1	c
+8624	\N	1063000	3065	82	195	2	c
+8625	\N	1066000	3224	82	359	3	c
+8626	\N	1071000	3064	82	195	4	c
+8627	\N	1072000	5175	82	223	5	c
+8628	\N	1073000	1531	82	359	6	c
+8629	\N	1075000	5181	82	223	7	c
+8630	\N	1079000	4209	82	223	8	c
+8631	\N	1084000	3068	82	195	9	c
+8632	\N	1086000	3053	82	195	10	c
+8633	\N	1090000	4212	82	223	11	c
+8634	\N	1094000	3954	82	195	12	c
+8635	\N	1096000	3066	82	195	13	c
+8636	\N	1107000	4585	82	274	14	c
+8637	\N	1130000	4213	82	223	15	c
+8638	\N	1133000	4214	82	223	16	c
+8639	\N	1143000	3214	82	359	17	c
+8640	\N	1155000	5225	82	274	18	c
+8641	\N	1177000	5278	82	223	19	c
+8642	\N	1182000	5351	82	359	20	c
+8643	\N	1191000	5241	82	195	21	c
+8644	\N	1227000	4586	82	274	22	c
+8645	\N	1247000	3218	82	359	23	c
+8646	\N	1260000	5224	82	274	24	c
+8647	\N	1312000	1610	82	359	25	c
+8648	\N	1348000	3265	82	274	26	c
+8649	\N	1410000	4589	82	274	27	c
+8650	\N	1440000	4582	82	274	28	c
+8651	\N	1033000	1520	83	331	1	c
+8652	\N	1074000	3252	83	266	2	c
+8653	\N	1074000	3087	83	203	3	c
+8654	\N	1087000	1715	83	331	4	c
+8655	\N	1095000	3085	83	203	5	c
+8656	\N	1101000	3073	83	203	6	c
+8657	\N	1110000	3070	83	203	7	c
+8658	\N	1113000	5198	83	266	8	c
+8659	\N	1124000	3106	83	331	9	c
+8660	\N	1126000	1613	83	331	10	c
+8661	\N	1133000	1681	83	203	11	c
+8662	\N	1135000	4044	83	203	12	c
+8663	\N	1136000	3071	83	203	13	c
+8664	\N	1137000	3086	83	203	14	c
+8665	\N	1141000	4938	83	331	15	c
+8666	\N	1146000	1669	83	331	16	c
+8667	\N	1158000	3077	83	203	17	c
+8668	\N	1164000	1673	83	203	18	c
+8669	\N	1166000	4574	83	272	19	c
+8619	\N	1945000	5510	81	211	43	c
+8585	\N	1393000	5511	81	211	9	c
+8561	\N	1553000	5499	80	332	12	c
+8670	\N	1175000	1659	83	203	20	c
+8671	\N	1178000	4522	83	266	21	c
+8672	\N	1187000	3255	83	266	22	c
+8673	\N	1206000	5490	83	331	23	c
+8674	\N	1216000	1804	83	331	24	c
+8675	\N	1218000	3081	83	203	25	c
+8676	\N	1219000	3079	83	203	26	c
+8677	\N	1227000	3249	83	266	27	c
+8678	\N	1235000	4040	83	203	28	c
+8679	\N	1247000	3072	83	203	29	c
+8680	\N	1255000	4039	83	203	30	c
+8681	\N	1263000	5190	83	331	31	c
+8682	\N	1264000	3074	83	203	32	c
+8683	\N	1266000	1815	83	266	33	c
+8684	\N	1267000	5376	83	203	34	c
+8685	\N	1268000	4041	83	203	35	c
+8686	\N	1273000	4520	83	266	36	c
+8687	\N	1275000	5417	83	203	37	c
+8688	\N	1276000	5387	83	203	38	c
+8689	\N	1276000	4043	83	203	39	c
+8690	\N	1277000	1747	83	203	40	c
+8691	\N	1277000	4521	83	266	41	c
+8692	\N	1282000	1701	83	266	42	c
+8693	\N	1285000	4042	83	203	43	c
+8694	\N	1290000	5334	83	331	44	c
+8695	\N	1292000	1776	83	203	45	c
+8696	\N	1294000	4932	83	331	46	c
+8697	\N	1295000	1741	83	331	47	c
+8698	\N	1296000	5203	83	272	48	c
+8699	\N	1297000	3111	83	331	49	c
+8700	\N	1297000	3116	83	331	50	c
+8701	\N	1298000	3078	83	203	51	c
+8702	\N	1303000	4933	83	331	52	c
+8703	\N	1306000	5159	83	266	53	c
+8704	\N	1313000	4576	83	272	54	c
+8705	\N	1334000	3083	83	203	55	c
+8706	\N	1339000	5388	83	203	56	c
+8707	\N	1341000	5491	83	331	57	c
+8708	\N	1356000	5492	83	331	58	c
+8709	\N	1357000	5185	83	272	59	c
+8710	\N	1365000	4936	83	331	60	c
+8711	\N	1371000	4937	83	331	61	c
+8712	\N	1372000	4578	83	272	62	c
+8713	\N	1374000	1708	83	266	63	c
+8714	\N	1377000	3229	83	272	64	c
+8715	\N	1383000	3113	83	331	65	c
+8716	\N	1386000	3237	83	272	66	c
+8717	\N	1398000	3080	83	203	67	c
+8718	\N	1402000	5382	83	203	68	c
+8719	\N	1420000	1690	83	203	69	c
+8720	\N	1421000	5396	83	203	70	c
+8721	\N	1425000	3110	83	331	71	c
+8722	\N	1427000	4935	83	331	72	c
+8723	\N	1429000	5395	83	203	73	c
+8724	\N	1441000	5389	83	203	74	c
+8725	\N	1444000	4934	83	331	75	c
+8726	\N	1458000	3118	83	331	76	c
+8727	\N	1463000	3109	83	331	77	c
+8728	\N	1464000	5379	83	203	78	c
+8729	\N	1491000	5384	83	203	79	c
+8730	\N	1493000	5399	83	331	80	c
+8731	\N	1520000	5233	83	272	81	c
+8732	\N	1525000	3114	83	331	82	c
+8733	\N	1525000	5401	83	272	83	c
+8734	\N	1550000	5383	83	272	84	c
+8735	\N	1568000	5489	83	331	85	c
+8736	\N	1995000	3233	83	272	86	c
+8738	\N	1038000	5308	84	337	2	c
+8739	\N	1044000	5176	84	197	3	c
+8740	\N	1083000	5178	84	189	4	c
+8741	\N	1109000	5276	84	197	5	c
+8742	\N	1122000	1625	84	210	6	c
+8743	\N	1131000	3195	84	189	7	c
+8744	\N	1131000	3891	84	189	8	c
+8745	\N	1132000	5333	84	210	9	c
+8746	\N	1134000	3892	84	189	10	c
+8747	\N	1147000	3156	84	210	11	c
+8748	\N	1157000	3155	84	210	12	c
+8768	\N	1253000	5629	84	337	32	c
+8750	\N	1184000	5170	84	189	14	c
+8751	\N	1195000	5251	84	189	15	c
+8752	\N	1196000	5335	84	189	16	c
+8753	\N	1201000	5419	84	210	17	c
+8754	\N	1205000	3161	84	210	18	c
+8755	\N	1207000	5336	84	189	19	c
+8756	\N	1212000	5321	84	337	20	c
+8757	\N	1218000	3331	84	197	21	c
+8758	\N	1219000	3157	84	210	22	c
+8759	\N	1226000	5274	84	197	23	c
+8760	\N	1227000	5275	84	197	24	c
+8761	\N	1228000	5267	84	197	25	c
+8762	\N	1228000	3158	84	210	26	c
+8763	\N	1236000	3185	84	189	27	c
+8764	\N	1240000	5254	84	189	28	c
+8765	\N	1240000	3884	84	189	29	c
+8766	\N	1246000	3437	84	337	30	c
+8767	\N	1251000	3888	84	189	31	c
+8769	\N	1260000	4097	84	210	33	c
+8770	\N	1263000	4099	84	210	34	c
+8771	\N	1269000	3893	84	189	35	c
+8772	\N	1284000	4102	84	210	36	c
+8773	\N	1285000	4100	84	210	37	c
+8774	\N	1309000	5266	84	197	38	c
+8775	\N	1310000	5323	84	337	39	c
+8776	\N	1312000	1823	84	197	40	c
+8777	\N	1321000	4098	84	210	41	c
+8778	\N	1329000	1816	84	189	42	c
+8779	\N	1333000	5352	84	210	43	c
+8780	\N	1369000	4096	84	210	44	c
+8781	\N	1385000	5244	84	189	45	c
+8782	\N	1387000	5245	84	189	46	c
+8783	\N	1398000	4986	84	337	47	c
+8784	\N	1409000	5271	84	197	48	c
+8785	\N	1421000	4979	84	337	49	c
+8786	\N	1422000	5493	84	210	50	c
+8787	\N	1423000	5402	84	337	51	c
+8788	\N	1429000	5386	84	197	52	c
+8789	\N	1445000	4978	84	337	53	c
+8790	\N	1453000	5258	84	189	54	c
+8791	\N	1473000	5406	84	197	55	c
+8792	\N	1477000	3323	84	197	56	c
+8793	\N	1480000	5317	84	337	57	c
+8794	\N	1483000	4976	84	337	58	c
+8795	\N	1493000	3978	84	197	59	c
+8796	\N	1552000	5255	84	189	60	c
+4072	0	1067200	5494	16	134	41	c
+4073	0	1100000	5494	20	134	20	c
+4074	0	1065000	5494	18	210	8	c
+7027	\N	996180	5494	43	210	4	c
+8737	\N	1008000	5494	84	210	1	c
+7789	\N	1038000	5494	57	210	3	c
+8797	\N	1029000	5263	85	352	1	c
+8798	\N	1055000	3148	85	212	2	c
+8799	\N	1065000	1643	85	212	3	c
+8800	\N	1093000	1618	85	212	4	c
+8801	\N	1116000	5213	85	212	5	c
+8802	\N	1116000	4117	85	212	6	c
+8803	\N	1134000	4219	85	225	7	c
+8804	\N	1145000	4111	85	212	8	c
+8805	\N	1148000	5264	85	352	9	c
+8806	\N	1170000	3359	85	225	10	c
+8807	\N	1179000	3141	85	212	11	c
+8808	\N	1183000	3409	85	352	12	c
+8809	\N	1184000	5429	85	212	13	c
+8810	\N	1185000	4968	85	335	14	c
+8811	\N	1190000	3144	85	212	15	c
+8812	\N	1201000	4118	85	212	16	c
+8813	\N	1214000	5151	85	352	17	c
+12998	\N	1620000	3127	209	132	20	c
+8815	\N	1224000	4969	85	335	19	c
+8816	\N	1225000	3361	85	225	20	c
+8817	\N	1225000	5302	85	335	21	c
+8818	\N	1248000	5414	85	225	22	c
+8819	\N	1256000	5105	85	352	23	c
+8820	\N	1264000	4220	85	225	24	c
+8821	\N	1269000	5228	85	212	25	c
+8823	\N	1272000	4971	85	335	27	c
+8824	\N	1278000	5169	85	352	28	c
+8825	\N	1284000	4113	85	212	29	c
+8826	\N	1290000	4112	85	212	30	c
+8827	\N	1310000	3145	85	212	31	c
+8828	\N	1314000	3355	85	225	32	c
+8829	\N	1325000	5305	85	335	33	c
+8830	\N	1328000	1792	85	335	34	c
+8831	\N	1330000	1779	85	225	35	c
+8832	\N	1332000	4962	85	335	36	c
+8833	\N	1334000	4115	85	212	37	c
+8834	\N	1334000	5107	85	352	38	c
+8835	\N	1335000	1836	85	225	39	c
+8836	\N	1340000	4114	85	212	40	c
+8837	\N	1346000	3353	85	225	41	c
+8838	\N	1352000	5495	85	335	42	c
+8839	\N	1378000	3292	85	335	43	c
+8840	\N	1407000	4218	85	225	44	c
+8841	\N	1471000	4963	85	335	45	c
+8842	\N	1474000	4966	85	335	46	c
+8843	\N	1480000	5397	85	335	47	c
+8844	\N	1486000	5168	85	225	48	c
+8845	\N	1584000	5103	85	352	49	c
+8846	\N	1606000	5404	85	352	50	c
+8847	\N	1622000	4967	85	335	51	c
+8848	\N	1654000	4965	85	335	52	c
+8849	\N	2212000	1777	85	335	53	c
+8884	\N	1228000	3210	87	190	1	c
+8886	\N	1240000	2534	87	190	3	c
+8887	\N	1244000	4994	87	338	4	c
+8888	\N	1251000	3174	87	211	5	c
+8889	\N	1320000	4993	87	338	6	c
+10709	\N	1295200	5410	148	332	10	c
+8891	\N	1349000	5329	87	338	8	c
+10710	\N	1303200	3904	148	190	11	c
+8893	\N	1352000	3211	87	190	10	c
+8894	\N	1352000	3177	87	211	11	c
+8895	\N	1360000	3175	87	211	12	c
+8897	\N	1386000	2537	87	190	14	c
+8898	\N	1408000	4995	87	338	15	c
+8899	\N	1409000	5320	87	338	16	c
+8900	\N	1444000	3176	87	211	17	c
+8901	\N	1448000	2629	87	211	18	c
+8902	\N	1461000	5312	87	338	19	c
+8903	\N	1461000	5325	87	338	20	c
+8904	\N	1482000	3203	87	190	21	c
+8905	\N	1503000	4987	87	338	22	c
+8906	\N	1508000	1043	87	198	23	c
+8907	\N	1508000	4989	87	338	24	c
+8908	\N	1510000	3994	87	198	25	c
+8909	\N	1511000	1172	87	211	26	c
+8910	\N	1515000	3349	87	198	27	c
+8911	\N	1518000	3168	87	211	28	c
+8912	\N	1533000	3897	87	190	29	c
+8913	\N	1537000	3995	87	198	30	c
+10711	\N	1303500	4225	148	226	12	c
+8915	\N	1539000	3900	87	190	32	c
+8916	\N	1549000	3896	87	190	33	c
+8917	\N	1556000	3204	87	190	34	c
+8920	\N	1586000	3899	87	190	37	c
+8921	\N	1600000	1160	87	198	38	c
+8922	\N	1632000	5272	87	198	39	c
+8923	\N	1640000	4108	87	211	40	c
+8924	\N	1649000	3986	87	198	41	c
+8925	\N	1662000	4990	87	338	42	c
+8926	\N	1684000	5363	87	190	43	c
+8927	\N	1693000	5354	87	190	44	c
+8928	\N	1721000	1104	87	211	45	c
+8929	\N	1724000	5270	87	198	46	c
+8930	\N	1765000	5438	87	198	47	c
+8932	\N	1768000	4104	87	211	49	c
+8933	\N	1879000	3989	87	198	50	c
+8934	\N	1889000	5273	87	198	51	c
+8935	\N	1931000	3903	87	190	52	c
+8936	\N	1936000	4991	87	338	53	c
+8937	\N	2114000	3207	87	190	54	c
+8938	\N	2119000	3992	87	198	55	c
+8919	\N	1582000	5501	87	190	36	c
+8822	\N	1270000	5508	85	335	26	c
+8885	\N	1232000	5509	87	338	2	c
+8931	\N	1768000	5510	87	211	48	c
+8896	\N	1369000	5511	87	211	13	c
+10712	\N	1317200	2515	148	190	13	c
+10713	\N	1319000	4227	148	226	14	c
+10714	\N	1320800	3212	148	190	15	c
+10715	\N	1322100	3140	148	332	16	c
+10716	\N	1324500	3137	148	332	17	c
+8918	\N	1565000	5519	87	190	35	c
+10717	\N	1329700	1013	148	226	18	c
+10718	\N	1330300	5433	148	226	19	c
+10719	\N	1330900	3364	148	226	20	c
+10720	\N	1334500	1012	148	226	21	c
+10721	\N	1351700	3211	148	190	22	c
+10722	\N	1352500	4215	148	224	23	c
+10723	\N	1378100	5411	148	224	24	c
+10724	\N	1390800	2537	148	190	25	c
+10725	\N	1400900	4226	148	226	26	c
+10726	\N	1402500	3399	148	224	27	c
+10727	\N	1414600	1119	148	226	28	c
+10728	\N	1416200	3366	148	226	29	c
+10729	\N	1429700	5280	148	226	30	c
+10730	\N	1455100	3401	148	224	31	c
+10731	\N	1458300	3400	148	224	32	c
+10774	\N	1278000	5156	150	275	1	c
+10775	\N	1380000	3102	150	202	2	c
+10776	\N	1403000	4038	150	202	3	c
+10777	\N	1412000	3177	150	211	4	c
+10778	\N	1423000	5540	150	211	5	c
+10779	\N	1432000	3286	150	275	6	c
+10780	\N	1452000	4037	150	202	7	c
+10781	\N	1465000	4035	150	202	8	c
+10782	\N	1466000	4036	150	202	9	c
+10783	\N	1467000	2617	150	202	10	c
+10784	\N	1487000	3166	150	211	11	c
+8850	\N	1176000	3056	86	195	1	c
+8851	\N	1186000	3955	86	195	2	c
+8852	\N	1207000	3948	86	195	3	c
+8853	\N	1219000	3949	86	195	4	c
+8854	\N	1220000	3060	86	195	5	c
+8855	\N	1222000	3062	86	195	6	c
+8856	\N	1226000	1645	86	223	7	c
+8857	\N	1247000	3061	86	195	8	c
+8858	\N	1248000	4204	86	223	9	c
+8859	\N	1254000	3216	86	359	10	c
+8860	\N	1260000	3057	86	195	11	c
+8861	\N	1262000	3947	86	195	12	c
+8862	\N	1276000	3217	86	359	13	c
+8863	\N	1277000	5279	86	223	14	c
+8864	\N	1288000	5381	86	359	15	c
+8865	\N	1293000	1805	86	274	16	c
+8866	\N	1304000	3950	86	195	17	c
+8867	\N	1304000	3952	86	195	18	c
+8868	\N	1343000	3951	86	195	19	c
+8869	\N	1355000	4206	86	223	20	c
+8870	\N	1377000	5166	86	223	21	c
+8871	\N	1409000	5421	86	359	22	c
+8872	\N	1411000	5220	86	195	23	c
+8873	\N	1412000	5277	86	359	24	c
+8874	\N	1416000	4203	86	223	25	c
+8875	\N	1430000	5398	86	223	26	c
+8876	\N	1430000	4583	86	274	27	c
+8877	\N	1433000	4581	86	274	28	c
+8878	\N	1500000	5394	86	223	29	c
+8879	\N	1574000	3269	86	274	30	c
+8880	\N	1586000	1829	86	359	31	c
+8881	\N	1635000	3384	86	223	32	c
+8882	\N	1709000	5243	86	195	33	c
+8883	\N	1718000	5407	86	274	34	c
+10732	\N	1394300	3370	149	226	1	c
+8939	\N	1195000	5156	88	275	1	c
+8940	\N	1195000	3398	88	224	2	c
+8941	\N	1373000	5411	88	224	3	c
+8942	\N	1392000	4215	88	224	4	c
+8943	\N	1473000	1109	88	224	5	c
+8944	\N	1482000	3286	88	275	6	c
+8945	\N	1506000	3284	88	275	7	c
+8946	\N	1508000	3399	88	224	8	c
+8947	\N	1508000	3401	88	224	9	c
+8948	\N	1537000	3285	88	275	10	c
+8949	\N	1563000	3280	88	275	11	c
+8950	\N	1742000	5367	88	224	12	c
+8951	\N	1772000	5365	88	224	13	c
+8952	\N	1988000	5413	88	275	14	c
+8953	\N	1289000	3136	89	332	1	c
+8954	\N	1361000	4945	89	332	2	c
+8955	\N	1380000	3123	89	332	3	c
+8956	\N	1394000	3102	89	202	4	c
+8957	\N	1406000	4527	89	267	5	c
+8958	\N	1411000	5410	89	332	6	c
+8959	\N	1421000	3140	89	332	7	c
+8960	\N	1421000	4946	89	332	8	c
+8961	\N	1427000	4947	89	332	9	c
+8962	\N	1440000	2617	89	202	10	c
+8963	\N	1447000	4037	89	202	11	c
+8964	\N	1469000	4528	89	267	12	c
+8965	\N	1489000	4035	89	202	13	c
+8966	\N	1501000	4036	89	202	14	c
+8967	\N	1502000	3137	89	332	15	c
+8968	\N	1503000	4038	89	202	16	c
+8969	\N	1515000	3104	89	202	17	c
+8970	\N	1522000	4030	89	202	18	c
+8971	\N	1522000	5499	89	332	19	c
+8972	\N	1533000	3091	89	202	20	c
+8973	\N	1535000	2594	89	202	21	c
+8974	\N	1538000	3261	89	267	22	c
+8975	\N	1542000	4939	89	332	23	c
+8976	\N	1550000	4940	89	332	24	c
+8977	\N	1556000	4031	89	202	25	c
+8978	\N	1557000	2622	89	202	26	c
+8979	\N	1562000	5194	89	273	27	c
+8980	\N	1562000	3089	89	202	28	c
+8981	\N	1566000	4523	89	267	29	c
+8982	\N	1567000	4032	89	202	30	c
+8983	\N	1569000	5358	89	202	31	c
+8984	\N	1579000	4028	89	202	32	c
+8985	\N	1582000	3139	89	332	33	c
+8986	\N	1625000	4531	89	267	34	c
+8987	\N	1633000	4033	89	202	35	c
+8988	\N	1650000	4533	89	267	36	c
+8989	\N	1684000	4034	89	202	37	c
+8990	\N	1694000	3094	89	202	38	c
+8991	\N	1696000	5259	89	267	39	c
+8992	\N	1704000	3095	89	202	40	c
+8993	\N	1708000	2584	89	267	41	c
+8994	\N	1733000	5485	89	332	42	c
+8995	\N	1735000	3129	89	332	43	c
+8996	\N	1749000	4941	89	332	44	c
+8997	\N	1770000	4524	89	267	45	c
+8998	\N	1781000	3097	89	202	46	c
+8999	\N	1794000	5369	89	202	47	c
+9000	\N	1806000	2687	89	332	48	c
+9001	\N	1830000	5215	89	332	49	c
+9002	\N	1832000	5355	89	202	50	c
+9003	\N	1837000	5357	89	202	51	c
+9004	\N	1844000	4525	89	267	52	c
+9005	\N	1849000	5353	89	202	53	c
+9006	\N	1851000	5370	89	202	54	c
+9008	\N	1949000	4942	89	332	56	c
+9009	\N	1967000	4944	89	332	57	c
+9010	\N	1294000	4974	90	336	1	c
+9011	\N	1300000	3310	90	336	2	c
+9012	\N	1301000	4225	90	226	3	c
+9013	\N	1306000	3309	90	336	4	c
+9014	\N	1312000	3311	90	336	5	c
+9015	\N	1313000	1012	90	226	6	c
+9016	\N	1319000	3428	90	353	7	c
+9017	\N	1346000	1013	90	226	8	c
+9018	\N	1351000	5433	90	226	9	c
+9019	\N	1360000	5303	90	336	10	c
+9020	\N	1374000	4227	90	226	11	c
+9021	\N	1378000	5113	90	353	12	c
+9022	\N	1403000	3364	90	226	13	c
+9023	\N	1433000	4226	90	226	14	c
+9024	\N	1435000	3421	90	353	15	c
+9025	\N	1445000	5193	90	353	16	c
+9027	\N	1458000	5200	90	336	18	c
+9028	\N	1460000	3370	90	226	19	c
+9029	\N	1473000	5207	90	353	20	c
+9030	\N	1477000	3422	90	353	21	c
+9031	\N	1478000	3417	90	353	22	c
+9032	\N	1499000	5109	90	353	23	c
+9033	\N	1517000	3372	90	226	24	c
+9034	\N	1532000	4223	90	226	25	c
+9035	\N	1532000	3373	90	226	26	c
+9036	\N	1533000	3371	90	226	27	c
+9037	\N	1548000	5199	90	336	28	c
+9007	\N	1859000	5518	89	332	55	c
+9038	\N	1570000	5435	90	336	29	c
+9039	\N	1638000	4972	90	336	30	c
+16516	\N	1221600	4993	280	443	15	c
+9041	\N	1660000	3368	90	226	32	c
+9042	\N	1683000	5356	90	336	33	c
+9043	\N	1689000	5484	90	226	34	c
+9044	\N	1699000	5110	90	353	35	c
+9045	\N	1728000	1173	90	226	36	c
+9046	\N	1842000	5366	90	226	37	c
+9047	\N	1864000	5500	90	226	38	c
+9048	\N	1900000	5368	90	226	39	c
+9049	\N	2141000	5437	90	353	40	c
+5311	0	1575000	5501	24	190	80	c
+7482	\N	1508120	5501	46	190	40	c
+7894	\N	1647000	5501	61	190	15	c
+9050	\N	1032000	5263	91	352	1	c
+9051	\N	1064000	1715	91	331	2	c
+9052	\N	1073000	5176	91	197	3	c
+9053	\N	1086000	1613	91	331	4	c
+9054	\N	1090000	3106	91	331	5	c
+9055	\N	1105000	5183	91	197	6	c
+9056	\N	1120000	1669	91	331	7	c
+9057	\N	1129000	4938	91	331	8	c
+9058	\N	1149000	3981	91	197	9	c
+9059	\N	1155000	4585	91	274	10	c
+9060	\N	1170000	4586	91	274	11	c
+9061	\N	1173000	3107	91	331	12	c
+9062	\N	1175000	5490	91	331	13	c
+9063	\N	1178000	5264	91	352	14	c
+9064	\N	1180000	3409	91	352	15	c
+9065	\N	1189000	3982	91	197	16	c
+9066	\N	1220000	5151	91	352	17	c
+9067	\N	1246000	3331	91	197	18	c
+9068	\N	1251000	5274	91	197	19	c
+9069	\N	1266000	5224	91	274	20	c
+9070	\N	1268000	1805	91	274	21	c
+9071	\N	1274000	5169	91	352	22	c
+9072	\N	1317000	3265	91	274	23	c
+9073	\N	1337000	5105	91	352	24	c
+9074	\N	1349000	4589	91	274	25	c
+9075	\N	1374000	5107	91	352	26	c
+9076	\N	1413000	4582	91	274	27	c
+9077	\N	977000	5308	93	337	1	c
+9078	\N	988000	3087	93	203	2	c
+9079	\N	990000	3073	93	203	3	c
+9080	\N	1020000	3085	93	203	4	c
+9081	\N	1023000	4209	93	223	5	c
+9082	\N	1034000	5181	93	223	6	c
+9083	\N	1043000	4044	93	203	7	c
+9084	\N	1046000	3086	93	203	8	c
+9085	\N	1048000	3070	93	203	9	c
+9086	\N	1050000	4212	93	223	10	c
+9087	\N	1053000	3071	93	203	11	c
+9088	\N	1064000	1681	93	203	12	c
+9089	\N	1074000	5175	93	223	13	c
+9090	\N	1077000	3077	93	203	14	c
+9091	\N	1079000	1673	93	203	15	c
+9092	\N	1087000	4214	93	223	16	c
+9093	\N	1106000	5278	93	223	17	c
+9094	\N	1119000	4213	93	223	18	c
+9095	\N	1121000	4968	93	335	19	c
+9096	\N	1122000	4969	93	335	20	c
+9097	\N	1127000	5302	93	335	21	c
+9098	\N	1140000	1645	93	223	22	c
+9100	\N	1145000	3437	93	337	24	c
+9102	\N	1159000	5321	93	337	26	c
+9103	\N	1165000	4971	93	335	27	c
+9104	\N	1169000	1724	93	335	28	c
+9105	\N	1181000	3299	93	335	29	c
+9107	\N	1214000	1792	93	335	31	c
+9108	\N	1278000	5323	93	337	32	c
+9109	\N	1310000	4986	93	337	33	c
+9110	\N	1348000	4979	93	337	34	c
+9111	\N	1102000	1659	94	203	1	c
+9112	\N	1109000	3079	94	203	2	c
+9113	\N	1122000	4984	94	337	3	c
+9114	\N	1124000	4040	94	203	4	c
+9115	\N	1127000	3081	94	203	5	c
+9116	\N	1136000	3072	94	203	6	c
+9117	\N	1148000	1794	94	223	7	c
+9118	\N	1151000	5373	94	203	8	c
+9119	\N	1155000	4204	94	223	9	c
+9120	\N	1160000	5387	94	203	10	c
+9121	\N	1164000	5417	94	203	11	c
+9122	\N	1168000	3074	94	203	12	c
+9123	\N	1169000	1747	94	203	13	c
+9124	\N	1176000	4042	94	203	14	c
+9125	\N	1177000	4041	94	203	15	c
+9126	\N	1178000	1776	94	203	16	c
+9127	\N	1191000	4039	94	203	17	c
+9128	\N	1194000	4043	94	203	18	c
+9129	\N	1197000	5376	94	203	19	c
+9130	\N	1206000	5279	94	223	20	c
+9131	\N	1213000	3076	94	203	21	c
+9132	\N	1222000	3083	94	203	22	c
+9133	\N	1226000	5388	94	203	23	c
+9134	\N	1228000	5305	94	335	24	c
+9135	\N	1238000	4962	94	335	25	c
+9136	\N	1251000	1690	94	203	26	c
+9137	\N	1252000	3292	94	335	27	c
+9138	\N	1264000	3080	94	203	28	c
+9139	\N	1268000	3078	94	203	29	c
+9140	\N	1288000	1835	94	335	30	c
+9141	\N	1296000	3387	94	223	31	c
+9142	\N	1299000	5495	94	335	32	c
+9143	\N	1314000	5389	94	203	33	c
+9144	\N	1323000	3294	94	335	34	c
+9145	\N	1325000	4977	94	337	35	c
+9146	\N	1333000	5402	94	337	36	c
+9147	\N	1339000	1788	94	223	37	c
+9148	\N	1340000	5395	94	203	38	c
+9149	\N	1342000	4963	94	335	39	c
+9150	\N	1348000	4966	94	335	40	c
+9151	\N	1355000	5307	94	335	41	c
+9152	\N	1357000	5396	94	203	42	c
+9153	\N	1360000	5314	94	337	43	c
+9154	\N	1361000	4976	94	337	44	c
+9155	\N	1365000	5384	94	203	45	c
+9156	\N	1391000	5397	94	335	46	c
+9157	\N	1395000	4965	94	335	47	c
+9158	\N	1401000	4978	94	337	48	c
+9159	\N	1403000	5380	94	203	49	c
+9160	\N	1416000	5405	94	335	50	c
+9161	\N	1510000	4967	94	335	51	c
+9162	\N	1521000	4208	94	223	52	c
+9163	\N	1545000	4981	94	337	53	c
+9164	\N	1554000	3052	94	223	54	c
+9165	\N	995000	1517	95	210	1	c
+9166	\N	1005000	5494	95	210	2	c
+9167	\N	1018000	3064	95	195	3	c
+9168	\N	1040000	3065	95	195	4	c
+9169	\N	1050000	3954	95	195	5	c
+9170	\N	1060000	3068	95	195	6	c
+9106	\N	1206000	5629	93	337	30	c
+9099	\N	1141000	5640	93	335	23	c
+9171	\N	1068000	3053	95	195	7	c
+9172	\N	1082000	3066	95	195	8	c
+9173	\N	1097000	1625	95	210	9	c
+9174	\N	1099000	4574	95	272	10	c
+9175	\N	1101000	4219	95	225	11	c
+9176	\N	1106000	3156	95	210	12	c
+9177	\N	1112000	5333	95	210	13	c
+9178	\N	1116000	3359	95	225	14	c
+9179	\N	1117000	3056	95	195	15	c
+9180	\N	1124000	3955	95	195	16	c
+9181	\N	1144000	3155	95	210	17	c
+9182	\N	1148000	5241	95	195	18	c
+9183	\N	1152000	5419	95	210	19	c
+9184	\N	1158000	5203	95	272	20	c
+9185	\N	1173000	5238	95	195	21	c
+9186	\N	1211000	4576	95	272	22	c
+9187	\N	1223000	5414	95	225	23	c
+9188	\N	1244000	5185	95	272	24	c
+9189	\N	1263000	4578	95	272	25	c
+9190	\N	1269000	3229	95	272	26	c
+9191	\N	1269000	3353	95	225	27	c
+9192	\N	1290000	3361	95	225	28	c
+9193	\N	1293000	3237	95	272	29	c
+9194	\N	1308000	3355	95	225	30	c
+9195	\N	1320000	1779	95	225	31	c
+9196	\N	1328000	1836	95	225	32	c
+9197	\N	1355000	5168	95	225	33	c
+9333	\N	1365000	4029	101	202	1	c
+9334	\N	1398000	4987	101	338	2	c
+9335	\N	1403000	4989	101	338	3	c
+9336	\N	1417000	4030	101	202	4	c
+9337	\N	1420000	5325	101	338	5	c
+9338	\N	1421000	4028	101	202	6	c
+9339	\N	1423000	4216	101	224	7	c
+9340	\N	1428000	5358	101	202	8	c
+9341	\N	1437000	3091	101	202	9	c
+9342	\N	1443000	2594	101	202	10	c
+9343	\N	1450000	4032	101	202	11	c
+9344	\N	1459000	4034	101	202	12	c
+9345	\N	1464000	4033	101	202	13	c
+9346	\N	1478000	4972	101	336	14	c
+9347	\N	1491000	4031	101	202	15	c
+9348	\N	1508000	5360	101	202	16	c
+9349	\N	1511000	5356	101	336	17	c
+9351	\N	1565000	5367	101	224	19	c
+9352	\N	1568000	3094	101	202	20	c
+9353	\N	1571000	5353	101	202	21	c
+9354	\N	1581000	4217	101	224	22	c
+9355	\N	1591000	5357	101	202	23	c
+9356	\N	1609000	4990	101	338	24	c
+9357	\N	1624000	5364	101	202	25	c
+9358	\N	1627000	5355	101	202	26	c
+9359	\N	1629000	3402	101	224	27	c
+9360	\N	1673000	3097	101	202	28	c
+9361	\N	1694000	4973	101	336	29	c
+9362	\N	1756000	5370	101	202	30	c
+9363	\N	1802000	5365	101	224	31	c
+9364	\N	1845000	4992	101	338	32	c
+9365	\N	1976000	5369	101	202	33	c
+9396	\N	1261000	2534	103	190	1	c
+9397	\N	1265000	3209	103	190	2	c
+9398	\N	1320000	2515	103	190	3	c
+9399	\N	1335000	4527	103	267	4	c
+9400	\N	1344000	3904	103	190	5	c
+9401	\N	1347000	3212	103	190	6	c
+9402	\N	1349000	4528	103	267	7	c
+9403	\N	1417000	2537	103	190	8	c
+9404	\N	1424000	3211	103	190	9	c
+9405	\N	1453000	4530	103	267	10	c
+9406	\N	1456000	3895	103	190	11	c
+9350	\N	1526000	5806	101	336	18	c
+9408	\N	1485000	3203	103	190	13	c
+9409	\N	1501000	3894	103	190	14	c
+9410	\N	1521000	3897	103	190	15	c
+9411	\N	1536000	3896	103	190	16	c
+9412	\N	1547000	3900	103	190	17	c
+9413	\N	1550000	4523	103	267	18	c
+9414	\N	1552000	4531	103	267	19	c
+9415	\N	1558000	5501	103	190	20	c
+9416	\N	1563000	3261	103	267	21	c
+9417	\N	1577000	3204	103	190	22	c
+9418	\N	1578000	5507	103	190	23	c
+9419	\N	1580000	3199	103	190	24	c
+9420	\N	1582000	3898	103	190	25	c
+9421	\N	1636000	2677	103	190	26	c
+9422	\N	1654000	5354	103	190	27	c
+9423	\N	1673000	3902	103	190	28	c
+9424	\N	1678000	4524	103	267	29	c
+9425	\N	1680000	2584	103	267	30	c
+9426	\N	1681000	5259	103	267	31	c
+9427	\N	1763000	5363	103	190	32	c
+9428	\N	1842000	3903	103	190	33	c
+9429	\N	1965000	4526	103	267	34	c
+9430	\N	1968000	4525	103	267	35	c
+9431	\N	1215000	5156	104	275	1	c
+9432	\N	1225000	3136	104	332	2	c
+9433	\N	1298000	4945	104	332	3	c
+9434	\N	1323000	3428	104	353	4	c
+9435	\N	1326000	5112	104	353	5	c
+9436	\N	1349000	3123	104	332	6	c
+9437	\N	1356000	4947	104	332	7	c
+9438	\N	1357000	5113	104	353	8	c
+9439	\N	1371000	5410	104	332	9	c
+9440	\N	1393000	3286	104	275	10	c
+9441	\N	1397000	3137	104	332	11	c
+9442	\N	1423000	3416	104	353	12	c
+9443	\N	1448000	3421	104	353	13	c
+9444	\N	1470000	5207	104	353	14	c
+9445	\N	1476000	3422	104	353	15	c
+9446	\N	1480000	3349	104	198	16	c
+9447	\N	1490000	3285	104	275	17	c
+9448	\N	1493000	3996	104	198	18	c
+9449	\N	1502000	1043	104	198	19	c
+9450	\N	1536000	3994	104	198	20	c
+9451	\N	1542000	5269	104	198	21	c
+9452	\N	1554000	3280	104	275	22	c
+9453	\N	1557000	5272	104	198	23	c
+9454	\N	1575000	3995	104	198	24	c
+9455	\N	1604000	3284	104	275	25	c
+10733	\N	1403300	4939	149	332	2	c
+10734	\N	1403400	5499	149	332	3	c
+10735	\N	1413800	1151	149	226	4	c
+10736	\N	1422200	3895	149	190	5	c
+10737	\N	1433100	3203	149	190	6	c
+10738	\N	1437700	3372	149	226	7	c
+10739	\N	1452800	3897	149	190	8	c
+10740	\N	1453700	3894	149	190	9	c
+10741	\N	1460000	3371	149	226	10	c
+10742	\N	1461500	3896	149	190	11	c
+10743	\N	1480700	4940	149	332	12	c
+10744	\N	1483100	3898	149	190	13	c
+10745	\N	1483800	3199	149	190	14	c
+10746	\N	1488800	3139	149	332	15	c
+10747	\N	1526400	3900	149	190	16	c
+10748	\N	1527400	5539	149	190	17	c
+9198	\N	1133000	5352	96	210	1	c
+9199	\N	1168000	3948	96	195	2	c
+9200	\N	1176000	3154	96	210	3	c
+9201	\N	1177000	3161	96	210	4	c
+9202	\N	1191000	3061	96	195	5	c
+9203	\N	1194000	3062	96	195	6	c
+9204	\N	1194000	3949	96	195	7	c
+9205	\N	1195000	3158	96	210	8	c
+9206	\N	1217000	3060	96	195	9	c
+9207	\N	1222000	1660	96	210	10	c
+9208	\N	1225000	3950	96	195	11	c
+9209	\N	1234000	5174	96	210	12	c
+9210	\N	1248000	4099	96	210	13	c
+9211	\N	1249000	3057	96	195	14	c
+9212	\N	1249000	1697	96	210	15	c
+9213	\N	1253000	4098	96	210	16	c
+9214	\N	1263000	4100	96	210	17	c
+9215	\N	1275000	4101	96	210	18	c
+9216	\N	1280000	4102	96	210	19	c
+9217	\N	1285000	4097	96	210	20	c
+9218	\N	1286000	4096	96	210	21	c
+9219	\N	1293000	3952	96	195	22	c
+9220	\N	1328000	3953	96	195	23	c
+9221	\N	1330000	3951	96	195	24	c
+9222	\N	1338000	5242	96	195	25	c
+9223	\N	1387000	5220	96	195	26	c
+9224	\N	1398000	5257	96	195	27	c
+9225	\N	1409000	5233	96	272	28	c
+9226	\N	1420000	5401	96	272	29	c
+9228	\N	1448000	5400	96	210	31	c
+9229	\N	1482000	5239	96	195	32	c
+9230	\N	1555000	5383	96	272	33	c
+9231	\N	1608000	5243	96	195	34	c
+9232	\N	1611000	5426	96	210	35	c
+9233	\N	1746000	3233	96	272	36	c
+9234	\N	1046000	3148	98	212	1	c
+9235	\N	1096000	1543	98	359	2	c
+9236	\N	1104000	1643	98	212	3	c
+9237	\N	1107000	3252	98	266	4	c
+9238	\N	1113000	3224	98	359	5	c
+9239	\N	1117000	4116	98	212	6	c
+9240	\N	1121000	5178	98	189	7	c
+9241	\N	1124000	1531	98	359	8	c
+9242	\N	1128000	5198	98	266	9	c
+9243	\N	1144000	1618	98	212	10	c
+9244	\N	1175000	4117	98	212	11	c
+9245	\N	1184000	3195	98	189	12	c
+9246	\N	1188000	3214	98	359	13	c
+9247	\N	1195000	4111	98	212	14	c
+9248	\N	1205000	4522	98	266	15	c
+9249	\N	1207000	3255	98	266	16	c
+9250	\N	1212000	3892	98	189	17	c
+9251	\N	1214000	3893	98	189	18	c
+9252	\N	1215000	5153	98	189	19	c
+9253	\N	1219000	4118	98	212	20	c
+9254	\N	1221000	3141	98	212	21	c
+9255	\N	1222000	3249	98	266	22	c
+9256	\N	1230000	1670	98	189	23	c
+9257	\N	1239000	5351	98	359	24	c
+9258	\N	1240000	1610	98	359	25	c
+9259	\N	1247000	5213	98	212	26	c
+9260	\N	1250000	3144	98	212	27	c
+9261	\N	1250000	3142	98	212	28	c
+9262	\N	1261000	3891	98	189	29	c
+9263	\N	1272000	1815	98	266	30	c
+9264	\N	1322000	3216	98	359	31	c
+9265	\N	1323000	3218	98	359	32	c
+9266	\N	1267000	1586	99	189	1	c
+9267	\N	1276000	5159	99	266	2	c
+9268	\N	1279000	1693	99	189	3	c
+9269	\N	1282000	5170	99	189	4	c
+9270	\N	1285000	3886	99	189	5	c
+9271	\N	1287000	5335	99	189	6	c
+9272	\N	1291000	5251	99	189	7	c
+9273	\N	1311000	4521	99	266	8	c
+9274	\N	1313000	4520	99	266	9	c
+9275	\N	1315000	5226	99	189	10	c
+9276	\N	1317000	3217	99	359	11	c
+9277	\N	1318000	5216	99	212	12	c
+9278	\N	1329000	5336	99	189	13	c
+9279	\N	1332000	5381	99	359	14	c
+9280	\N	1335000	3185	99	189	15	c
+9281	\N	1336000	3884	99	189	16	c
+9282	\N	1338000	1708	99	266	17	c
+9283	\N	1340000	1701	99	266	18	c
+9284	\N	1341000	3888	99	189	19	c
+9285	\N	1342000	4112	99	212	20	c
+9286	\N	1371000	5254	99	189	21	c
+9287	\N	1379000	3889	99	189	22	c
+9288	\N	1384000	3145	99	212	23	c
+9289	\N	1385000	5228	99	212	24	c
+9290	\N	1387000	4114	99	212	25	c
+9291	\N	1401000	4115	99	212	26	c
+9292	\N	1464000	5244	99	189	27	c
+9293	\N	1470000	5421	99	359	28	c
+9294	\N	1476000	5277	99	359	29	c
+9295	\N	1544000	5393	99	212	30	c
+9296	\N	1559000	5246	99	189	31	c
+9297	\N	1582000	1816	99	189	32	c
+9298	\N	1588000	1829	99	359	33	c
+9299	\N	1590000	5429	99	212	34	c
+9300	\N	1637000	5256	99	189	35	c
+9301	\N	1642000	5255	99	189	36	c
+9302	\N	1643000	5249	99	189	37	c
+9303	\N	1727000	5503	99	189	38	c
+9304	\N	1727000	5504	99	359	39	c
+9305	\N	1792000	5247	99	189	40	c
+9306	\N	1120000	3398	100	224	1	c
+16517	\N	1228300	6319	280	378	16	c
+9308	\N	1194000	4994	100	338	3	c
+9309	\N	1235000	3310	100	336	4	c
+9310	\N	1249000	4993	100	338	5	c
+9311	\N	1254000	3311	100	336	6	c
+9312	\N	1271000	5411	100	224	7	c
+9313	\N	1285000	4215	100	224	8	c
+9314	\N	1287000	3102	100	202	9	c
+9316	\N	1307000	5329	100	338	11	c
+9317	\N	1317000	4037	100	202	12	c
+9318	\N	1322000	2617	100	202	13	c
+9319	\N	1325000	4035	100	202	14	c
+9320	\N	1327000	5320	100	338	15	c
+9321	\N	1331000	4995	100	338	16	c
+9322	\N	1344000	4036	100	202	17	c
+9323	\N	1364000	4038	100	202	18	c
+9324	\N	1375000	5312	100	338	19	c
+9325	\N	1378000	3104	100	202	20	c
+9326	\N	1384000	3401	100	224	21	c
+9327	\N	1389000	5200	100	336	22	c
+9328	\N	1391000	3400	100	224	23	c
+9329	\N	1401000	3399	100	224	24	c
+9330	\N	1437000	5199	100	336	25	c
+9331	\N	1454000	5435	100	336	26	c
+9332	\N	1489000	4975	100	336	27	c
+9366	\N	1252000	3174	102	211	1	c
+9227	\N	1430000	5517	96	210	30	c
+9367	\N	1321000	1012	102	226	2	c
+9368	\N	1331000	1013	102	226	3	c
+9369	\N	1331000	4227	102	226	4	c
+9370	\N	1333000	4225	102	226	5	c
+9371	\N	1341000	3364	102	226	6	c
+9372	\N	1367000	3175	102	211	7	c
+9374	\N	1389000	3177	102	211	9	c
+9375	\N	1392000	3366	102	226	10	c
+9376	\N	1413000	4226	102	226	11	c
+9377	\N	1426000	2629	102	211	12	c
+9378	\N	1458000	1119	102	226	13	c
+9379	\N	1475000	3372	102	226	14	c
+9380	\N	1477000	3373	102	226	15	c
+9381	\N	1498000	5362	102	226	16	c
+9382	\N	1501000	1151	102	226	17	c
+9383	\N	1509000	3176	102	211	18	c
+9384	\N	1510000	5194	102	273	19	c
+9385	\N	1554000	1172	102	211	20	c
+9386	\N	1566000	1104	102	211	21	c
+9387	\N	1580000	3170	102	211	22	c
+9388	\N	1637000	5484	102	226	23	c
+9389	\N	1641000	1173	102	226	24	c
+9390	\N	1713000	5505	102	211	25	c
+9391	\N	1729000	4104	102	211	26	c
+9392	\N	1751000	5366	102	226	27	c
+9393	\N	1790000	5500	102	226	28	c
+9394	\N	1881000	5368	102	226	29	c
+9395	\N	2127000	5506	102	273	30	c
+10749	\N	1531400	5501	149	190	18	c
+10750	\N	1532600	4223	149	226	19	c
+10751	\N	1542800	3129	149	332	20	c
+10752	\N	1559700	4216	149	224	21	c
+10753	\N	1567000	3204	149	190	22	c
+10754	\N	1578300	4224	149	226	23	c
+10755	\N	1583100	3368	149	226	24	c
+10756	\N	1586400	1173	149	226	25	c
+10757	\N	1590900	5359	149	226	26	c
+10758	\N	1598900	4941	149	332	27	c
+10759	\N	1603200	5354	149	190	28	c
+10760	\N	1618300	3903	149	190	29	c
+10761	\N	1631900	5362	149	226	30	c
+10762	\N	1635700	5363	149	190	31	c
+10763	\N	1657400	4942	149	332	32	c
+10764	\N	1660400	5526	149	226	33	c
+10765	\N	1669200	4217	149	224	34	c
+10766	\N	1671800	3402	149	224	35	c
+10767	\N	1692000	5366	149	226	36	c
+10768	\N	1699900	5518	149	332	37	c
+10769	\N	1715400	5368	149	226	38	c
+10770	\N	1746300	3902	149	190	39	c
+16518	\N	1232000	3102	280	446	17	c
+6801	0	1252000	5508	18	335	87	c
+7120	\N	1248700	5508	43	335	97	c
+7705	\N	1265000	5508	52	335	14	c
+8353	\N	1226000	5508	73	335	15	c
+9101	\N	1148000	5508	93	335	25	c
+4745	0	1335200	5509	26	156	47	c
+4760	0	1391000	5509	30	156	32	c
+8551	\N	1339000	5509	80	338	2	c
+9307	\N	1172000	5509	100	338	2	c
+5592	0	1443000	5511	28	211	49	c
+9373	\N	1382000	5511	102	211	8	c
+10771	\N	1765200	5365	149	224	40	c
+10772	\N	1906100	4944	149	332	41	c
+10773	\N	1963500	3134	149	332	42	c
+10812	\N	1218000	4974	151	336	1	c
+10813	\N	1272000	4527	151	267	2	c
+10814	\N	1274000	3310	151	336	3	c
+10815	\N	1276000	3311	151	336	4	c
+10816	\N	1282000	5136	151	357	5	c
+10817	\N	1283000	4528	151	267	6	c
+10818	\N	1298000	5137	151	357	7	c
+10819	\N	1310000	5303	151	336	8	c
+16519	\N	1236200	6292	280	446	18	c
+10821	\N	1352000	4975	151	336	10	c
+10823	\N	1364000	5142	151	357	12	c
+10825	\N	1385000	5269	151	198	14	c
+10826	\N	1394000	1160	151	198	15	c
+10828	\N	1405000	4530	151	267	17	c
+10829	\N	1407000	5200	151	336	18	c
+10830	\N	1423000	3994	151	198	19	c
+10831	\N	1428000	4532	151	267	20	c
+10832	\N	1431000	5199	151	336	21	c
+10833	\N	1434000	3995	151	198	22	c
+10834	\N	1437000	5140	151	357	23	c
+8575	\N	1548000	5518	80	332	26	c
+7638	\N	1219000	3982	48	197	7	c
+8749	\N	1175000	3982	84	197	13	c
+10835	\N	1438000	5141	151	357	24	c
+10836	\N	1440000	3996	151	198	25	c
+10863	\N	1002000	3357	153	149	1	c
+10864	\N	1006000	3064	153	128	2	c
+10865	\N	1066000	3065	153	128	3	c
+10866	\N	1102000	3358	153	149	4	c
+10867	\N	1111000	3068	153	128	5	c
+10868	\N	1130000	1580	153	149	6	c
+10869	\N	1150000	3053	153	128	7	c
+10870	\N	1154000	5238	153	128	8	c
+10871	\N	1159000	3066	153	128	9	c
+10872	\N	1163000	3058	153	128	10	c
+10873	\N	1174000	1717	153	128	11	c
+10874	\N	1182000	2889	153	149	12	c
+10875	\N	1210000	3056	153	128	13	c
+10876	\N	1220000	3059	153	128	14	c
+10877	\N	1237000	3054	153	128	15	c
+10878	\N	1253000	3055	153	128	16	c
+10879	\N	1277000	3060	153	128	17	c
+10880	\N	1288000	3359	153	149	18	c
+10881	\N	1290000	3947	153	128	19	c
+10882	\N	1314000	5188	153	149	20	c
+10883	\N	1316000	3361	153	149	21	c
+10884	\N	1318000	3061	153	128	22	c
+10885	\N	1318000	5237	153	128	23	c
+10886	\N	1320000	5542	153	128	24	c
+10887	\N	1321000	3057	153	128	25	c
+10888	\N	1333000	3062	153	128	26	c
+10889	\N	1342000	1677	153	128	27	c
+10890	\N	1347000	5220	153	128	28	c
+10891	\N	1356000	3953	153	128	29	c
+10892	\N	1367000	1779	153	149	30	c
+10893	\N	1370000	1836	153	149	31	c
+10894	\N	1377000	3360	153	149	32	c
+10895	\N	1402000	3354	153	149	33	c
+10896	\N	1402000	5281	153	149	34	c
+10897	\N	1430000	1768	153	149	35	c
+10898	\N	1431000	3355	153	149	36	c
+10899	\N	1467000	1726	153	128	37	c
+10824	\N	1379000	6371	151	357	13	c
+10901	\N	1499000	5242	153	128	39	c
+10902	\N	1740000	3353	153	149	40	c
+10903	\N	1777000	5168	153	149	41	c
+10977	\N	1039000	1523	156	143	1	c
+10978	\N	1110000	3271	156	143	2	c
+10822	\N	1363000	5628	151	267	11	c
+12999	\N	1648000	3131	209	132	21	c
+16520	\N	1241000	4946	280	491	19	c
+9475	\N	1909000	5440	105	198	20	c
+9476	\N	1939000	3346	105	198	21	c
+9477	\N	2104000	3992	105	198	22	c
+9478	\N	1105000	5308	106	337	1	c
+9479	\N	1195000	5225	106	274	2	c
+9480	\N	1211000	4586	106	274	3	c
+9481	\N	1230000	4309	106	243	4	c
+9482	\N	1233000	4984	106	337	5	c
+9483	\N	1245000	3272	106	274	6	c
+9484	\N	1247000	1805	106	274	7	c
+9485	\N	1258000	5321	106	337	8	c
+9486	\N	1277000	3437	106	337	9	c
+9488	\N	1307000	5224	106	274	11	c
+9489	\N	1341000	5323	106	337	12	c
+9490	\N	1347000	4986	106	337	13	c
+9491	\N	1349000	4589	106	274	14	c
+9492	\N	1363000	4582	106	274	15	c
+9493	\N	1366000	3265	106	274	16	c
+9494	\N	1370000	4311	106	243	17	c
+9495	\N	1383000	5314	106	337	18	c
+9496	\N	1401000	5289	106	243	19	c
+9497	\N	1401000	3051	106	243	20	c
+9498	\N	1453000	4581	106	274	21	c
+9499	\N	1457000	5288	106	243	22	c
+9500	\N	1467000	4979	106	337	23	c
+9501	\N	1470000	5402	106	337	24	c
+9502	\N	1519000	4978	106	337	25	c
+9503	\N	1590000	3269	106	274	26	c
+9504	\N	1594000	5317	106	337	27	c
+9505	\N	1618000	1807	106	274	28	c
+9506	\N	1641000	4315	106	243	29	c
+9507	\N	1672000	5407	106	274	30	c
+9508	\N	1675000	5195	106	243	31	c
+9509	\N	1691000	4980	106	337	32	c
+9510	\N	1782000	4981	106	337	33	c
+9511	\N	1865000	4983	106	337	34	c
+9512	\N	1920000	4584	106	274	35	c
+9513	\N	2358000	5402	106	337	36	c
+9514	\N	1049000	3148	107	212	1	c
+9515	\N	1127000	5176	107	197	2	c
+9516	\N	1140000	5183	107	197	3	c
+9517	\N	1143000	4116	107	212	4	c
+9518	\N	1179000	4117	107	212	5	c
+9456	\N	1469000	5193	105	353	1	c
+9457	\N	1472000	4939	105	332	2	c
+9458	\N	1476000	3427	105	353	3	c
+9459	\N	1494000	4940	105	332	4	c
+9460	\N	1507000	3417	105	353	5	c
+9461	\N	1509000	3139	105	332	6	c
+9462	\N	1515000	5109	105	353	7	c
+9463	\N	1550000	3985	105	198	8	c
+9464	\N	1561000	3124	105	332	9	c
+9465	\N	1576000	3984	105	198	10	c
+9466	\N	1644000	3986	105	198	11	c
+9467	\N	1668000	3997	105	198	12	c
+9468	\N	1734000	3418	105	353	13	c
+9469	\N	1746000	5270	105	198	14	c
+9470	\N	1763000	5110	105	353	15	c
+9519	\N	1183000	5213	107	212	6	c
+9520	\N	1212000	4118	107	212	7	c
+9521	\N	1228000	3144	107	212	8	c
+9522	\N	1230000	3981	107	197	9	c
+9523	\N	1230000	3142	107	212	10	c
+9524	\N	1257000	3141	107	212	11	c
+9525	\N	1308000	5267	107	197	12	c
+9526	\N	1327000	5228	107	212	13	c
+9527	\N	1332000	5274	107	197	14	c
+9528	\N	1342000	4114	107	212	15	c
+9529	\N	1342000	4112	107	212	16	c
+9530	\N	1347000	5266	107	197	17	c
+9531	\N	1353000	3145	107	212	18	c
+9532	\N	1378000	5275	107	197	19	c
+9534	\N	1422000	4115	107	212	21	c
+9535	\N	1424000	1823	107	197	22	c
+9536	\N	1442000	5520	107	212	23	c
+9537	\N	1542000	5374	107	197	24	c
+9538	\N	1563000	5386	107	197	25	c
+9539	\N	1569000	3323	107	197	26	c
+9540	\N	1590000	3977	107	197	27	c
+9541	\N	1606000	3976	107	197	28	c
+9542	\N	1622000	5429	107	212	29	c
+9543	\N	1704000	3978	107	197	30	c
+9544	\N	1847000	3979	107	197	31	c
+9545	\N	1953000	5374	107	197	32	c
+9546	\N	1046000	5263	108	352	1	c
+9547	\N	1089000	5178	108	189	2	c
+9548	\N	1133000	1670	108	189	3	c
+9549	\N	1163000	3195	108	189	4	c
+9550	\N	1177000	3892	108	189	5	c
+9551	\N	1179000	5264	108	352	6	c
+9552	\N	1190000	5153	108	189	7	c
+9553	\N	1203000	5335	108	189	8	c
+9554	\N	1205000	5151	108	352	9	c
+9555	\N	1207000	5251	108	189	10	c
+9556	\N	1219000	5143	108	189	11	c
+9557	\N	1221000	5336	108	189	12	c
+9558	\N	1222000	3884	108	189	13	c
+9559	\N	1254000	5226	108	189	14	c
+9560	\N	1301000	3886	108	189	15	c
+9561	\N	1304000	5170	108	189	16	c
+9471	\N	1765000	5518	105	332	16	c
+9472	\N	1778000	5111	105	353	17	c
+9473	\N	1822000	3989	105	198	18	c
+9474	\N	1825000	5273	105	198	19	c
+9562	\N	1306000	3409	108	352	17	c
+9563	\N	1325000	3893	108	189	18	c
+9564	\N	1330000	5169	108	352	19	c
+9565	\N	1330000	5254	108	189	20	c
+9566	\N	1340000	1586	108	189	21	c
+9567	\N	1361000	3889	108	189	22	c
+9568	\N	1397000	3888	108	189	23	c
+9569	\N	1398000	5246	108	189	24	c
+9570	\N	1405000	5244	108	189	25	c
+9571	\N	1405000	5245	108	189	26	c
+9572	\N	1441000	5107	108	352	27	c
+9573	\N	1503000	5258	108	189	28	c
+9574	\N	1503000	5255	108	189	29	c
+9575	\N	1540000	1816	108	189	30	c
+9576	\N	1546000	5249	108	189	31	c
+9577	\N	1607000	5103	108	352	32	c
+9578	\N	1648000	5256	108	189	33	c
+9579	\N	1649000	5247	108	189	34	c
+9580	\N	1695000	3412	108	352	35	c
+9581	\N	2242000	5104	108	352	36	c
+9582	\N	998000	1520	109	331	1	c
+9583	\N	1003000	1517	109	210	2	c
+9584	\N	1065000	5494	109	210	3	c
+9585	\N	1085000	1715	109	331	4	c
+9586	\N	1111000	1613	109	331	5	c
+9587	\N	1115000	3106	109	331	6	c
+9588	\N	1122000	5333	109	210	7	c
+9589	\N	1128000	1669	109	331	8	c
+9590	\N	1132000	5352	109	210	9	c
+9591	\N	1139000	1625	109	210	10	c
+9592	\N	1148000	4938	109	331	11	c
+9593	\N	1172000	3156	109	210	12	c
+9594	\N	1181000	3107	109	331	13	c
+9595	\N	1192000	1804	109	331	14	c
+9596	\N	1194000	5174	109	210	15	c
+9597	\N	1209000	5490	109	331	16	c
+9598	\N	1215000	3155	109	210	17	c
+9599	\N	1218000	3154	109	210	18	c
+9600	\N	1231000	4932	109	331	19	c
+9601	\N	1240000	5334	109	331	20	c
+9602	\N	1244000	5190	109	331	21	c
+9603	\N	1245000	3111	109	331	22	c
+9604	\N	1254000	3158	109	210	23	c
+9605	\N	1254000	4097	109	210	24	c
+9606	\N	1257000	3113	109	331	25	c
+9607	\N	1274000	4096	109	210	26	c
+9608	\N	1275000	3157	109	210	27	c
+9609	\N	1285000	4098	109	210	28	c
+9610	\N	1288000	4099	109	210	29	c
+9611	\N	1303000	3116	109	331	30	c
+9612	\N	1304000	4102	109	210	31	c
+9613	\N	1305000	4936	109	331	32	c
+9614	\N	1305000	4937	109	331	33	c
+9615	\N	1306000	4101	109	210	34	c
+9616	\N	1307000	4100	109	210	35	c
+9617	\N	1364000	3118	109	331	36	c
+9618	\N	1378000	4934	109	331	37	c
+9619	\N	1421000	5399	109	331	38	c
+9620	\N	1421000	5489	109	331	39	c
+9621	\N	1443000	4935	109	331	40	c
+9622	\N	1450000	5377	109	331	41	c
+9623	\N	1450000	1697	109	210	42	c
+9624	\N	1454000	3109	109	331	43	c
+9625	\N	1454000	5493	109	210	44	c
+9626	\N	1483000	5517	109	210	45	c
+9627	\N	1581000	5400	109	210	46	c
+9628	\N	1710000	3114	109	331	47	c
+9629	\N	1729000	3117	109	331	48	c
+9630	\N	1729000	5521	109	331	49	c
+9631	\N	1039000	3064	111	195	1	c
+9632	\N	1060000	3087	111	203	2	c
+9633	\N	1062000	3065	111	195	3	c
+9634	\N	1064000	3085	111	203	4	c
+9635	\N	1073000	3073	111	203	5	c
+9636	\N	1075000	3086	111	203	6	c
+9637	\N	1078000	3954	111	195	7	c
+9638	\N	1084000	1681	111	203	8	c
+9639	\N	1090000	3053	111	195	9	c
+9640	\N	1092000	3068	111	195	10	c
+9641	\N	1095000	3066	111	195	11	c
+9642	\N	1097000	4044	111	203	12	c
+9643	\N	1103000	3070	111	203	13	c
+9644	\N	1107000	3071	111	203	14	c
+9645	\N	1129000	3077	111	203	15	c
+9646	\N	1143000	1673	111	203	16	c
+9647	\N	1147000	3056	111	195	17	c
+9648	\N	1173000	3955	111	195	18	c
+9649	\N	1187000	5241	111	195	19	c
+9650	\N	1256000	3948	111	195	20	c
+9691	\N	1033000	3252	114	266	1	c
+9692	\N	1040000	5198	114	266	2	c
+9693	\N	1112000	4522	114	266	3	c
+9694	\N	1114000	3249	114	266	4	c
+9695	\N	1136000	3360	114	225	5	c
+9696	\N	1139000	3255	114	266	6	c
+9697	\N	1183000	5159	114	266	7	c
+9698	\N	1195000	1815	114	266	8	c
+9699	\N	1199000	5414	114	225	9	c
+9700	\N	1210000	4520	114	266	10	c
+9701	\N	1222000	1701	114	266	11	c
+9702	\N	1244000	5281	114	225	12	c
+9703	\N	1249000	4521	114	266	13	c
+9704	\N	1255000	3353	114	225	14	c
+9705	\N	1263000	3361	114	225	15	c
+9706	\N	1263000	1836	114	225	16	c
+9707	\N	1272000	3355	114	225	17	c
+9708	\N	1286000	1779	114	225	18	c
+9709	\N	1291000	1708	114	266	19	c
+9710	\N	1306000	5168	114	225	20	c
+9711	\N	1435000	3250	114	266	21	c
+9712	\N	1053500	5181	116	223	1	c
+9713	\N	1064800	4209	116	223	2	c
+9714	\N	1130500	4212	116	223	3	c
+9715	\N	1141700	4574	116	272	4	c
+9716	\N	1152500	4213	116	223	5	c
+9717	\N	1169200	1645	116	223	6	c
+9718	\N	1182400	4576	116	272	7	c
+9719	\N	1188300	4204	116	223	8	c
+9720	\N	1203900	4214	116	223	9	c
+9721	\N	1211000	1794	116	223	10	c
+9722	\N	1262400	4203	116	223	11	c
+9723	\N	1291200	5185	116	272	12	c
+9724	\N	1317900	3229	116	272	13	c
+9725	\N	1321000	3237	116	272	14	c
+9726	\N	1350800	4206	116	223	15	c
+9727	\N	1354500	1788	116	223	16	c
+9728	\N	1376200	3387	116	223	17	c
+9729	\N	1397500	5401	116	272	18	c
+9730	\N	1400600	3388	116	223	19	c
+9731	\N	1459500	5166	116	223	20	c
+9732	\N	1552600	5383	116	272	21	c
+9733	\N	1666700	3052	116	223	22	c
+9734	\N	1886200	3233	116	272	23	c
+10785	\N	1497000	2629	150	211	12	c
+10786	\N	1503000	4029	150	202	13	c
+10787	\N	1546000	1104	150	211	14	c
+10788	\N	1552000	4107	150	211	15	c
+10789	\N	1553000	3167	150	211	16	c
+10790	\N	1555000	2594	150	202	17	c
+10791	\N	1555000	4028	150	202	18	c
+10792	\N	1560000	4030	150	202	19	c
+10793	\N	1565000	3284	150	275	20	c
+10794	\N	1569000	3280	150	275	21	c
+10795	\N	1575000	4031	150	202	22	c
+10796	\N	1575000	4033	150	202	23	c
+10797	\N	1576000	3089	150	202	24	c
+10798	\N	1578000	5358	150	202	25	c
+10799	\N	1579000	3168	150	211	26	c
+10800	\N	1592000	3091	150	202	27	c
+10801	\N	1606000	3285	150	275	28	c
+10802	\N	1615000	1172	150	211	29	c
+10803	\N	1618000	4034	150	202	30	c
+10804	\N	1618000	3094	150	202	31	c
+10805	\N	1681000	4032	150	202	32	c
+10806	\N	1711000	5360	150	202	33	c
+10807	\N	1711000	5364	150	202	34	c
+10808	\N	1715000	4104	150	211	35	c
+10809	\N	1716000	3095	150	202	36	c
+10810	\N	1734000	5353	150	202	37	c
+10811	\N	1763000	5357	150	202	38	c
+10837	\N	1262000	5509	152	338	1	c
+10838	\N	1322000	4993	152	338	2	c
+9651	\N	1140000	3058	112	195	1	c
+9652	\N	1146000	1659	112	203	2	c
+9653	\N	1195000	4040	112	203	3	c
+9655	\N	1202000	3079	112	203	5	c
+9656	\N	1206000	3062	112	195	6	c
+9657	\N	1209000	3081	112	203	7	c
+9658	\N	1212000	4039	112	203	8	c
+9659	\N	1213000	4042	112	203	9	c
+9660	\N	1218000	3074	112	203	10	c
+9661	\N	1223000	5373	112	203	11	c
+9662	\N	1233000	3072	112	203	12	c
+9663	\N	1235000	5387	112	203	13	c
+9664	\N	1236000	4041	112	203	14	c
+9665	\N	1246000	3947	112	195	15	c
+9666	\N	1248000	5376	112	203	16	c
+9667	\N	1252000	5238	112	195	17	c
+9668	\N	1255000	5417	112	203	18	c
+9669	\N	1262000	3078	112	203	19	c
+9654	\N	1196000	3949	112	195	4	c
+9671	\N	1266000	1776	112	203	21	c
+9672	\N	1284000	3060	112	195	22	c
+9673	\N	1290000	3076	112	203	23	c
+9674	\N	1307000	3950	112	195	24	c
+9675	\N	1337000	5389	112	203	25	c
+9676	\N	1338000	3952	112	195	26	c
+9677	\N	1344000	3951	112	195	27	c
+9678	\N	1349000	1690	112	203	28	c
+9679	\N	1371000	3083	112	203	29	c
+9680	\N	1372000	3953	112	195	30	c
+9681	\N	1385000	3080	112	203	31	c
+9682	\N	1406000	5220	112	195	32	c
+9683	\N	1407000	5382	112	203	33	c
+9684	\N	1421000	5395	112	203	34	c
+9685	\N	1438000	5242	112	195	35	c
+9686	\N	1440000	5257	112	195	36	c
+9687	\N	1445000	5396	112	203	37	c
+9688	\N	1452000	5379	112	203	38	c
+9689	\N	1533000	5384	112	203	39	c
+9690	\N	1560000	5239	112	195	40	c
+9735	\N	1002000	1543	117	359	1	c
+9736	\N	1003000	5129	117	356	2	c
+9737	\N	1020000	5130	117	356	3	c
+9738	\N	1030000	3224	117	359	4	c
+9739	\N	1035000	3214	117	359	5	c
+9740	\N	1043000	5131	117	356	6	c
+9741	\N	1056000	1531	117	359	7	c
+9742	\N	1103000	5522	117	356	8	c
+9743	\N	1110000	5302	117	335	9	c
+9744	\N	1114000	5351	117	359	10	c
+9745	\N	1116000	4968	117	335	11	c
+9746	\N	1129000	3299	117	335	12	c
+9747	\N	1141000	1610	117	359	13	c
+9748	\N	1149000	4969	117	335	14	c
+9749	\N	1158000	5508	117	335	15	c
+9751	\N	1172000	5132	117	356	17	c
+9752	\N	1175000	4971	117	335	18	c
+9753	\N	1206000	3216	117	359	19	c
+9754	\N	1208000	5428	117	356	20	c
+9755	\N	1209000	5133	117	356	21	c
+9756	\N	1288000	5156	118	275	1	c
+9757	\N	1289000	5509	118	338	2	c
+9758	\N	1320000	4994	118	338	3	c
+9759	\N	1380000	4993	118	338	4	c
+9760	\N	1420000	4302	118	244	5	c
+9761	\N	1465000	3286	118	275	6	c
+9762	\N	1471000	5329	118	338	7	c
+9763	\N	1497000	5312	118	338	8	c
+9764	\N	1534000	4995	118	338	9	c
+9765	\N	1547000	5320	118	338	10	c
+9766	\N	1548000	4989	118	338	11	c
+9767	\N	1554000	3285	118	275	12	c
+9768	\N	1559000	3280	118	275	13	c
+9769	\N	1572000	3284	118	275	14	c
+9770	\N	1582000	4987	118	338	15	c
+9771	\N	1606000	5325	118	338	16	c
+9772	\N	1646000	4988	118	338	17	c
+9773	\N	1770000	4304	118	244	18	c
+9774	\N	1872000	4990	118	338	19	c
+9775	\N	1873000	4316	118	244	20	c
+9776	\N	1894000	4991	118	338	21	c
+9777	\N	1912000	5523	118	244	22	c
+9778	\N	2014000	4992	118	338	23	c
+9779	\N	2112000	4317	118	244	24	c
+9780	\N	2128000	4306	118	244	25	c
+9781	\N	2132000	5524	118	244	26	c
+9782	\N	1298000	2534	119	190	1	c
+9783	\N	1308000	3428	119	353	2	c
+9784	\N	1311000	5112	119	353	3	c
+9785	\N	1362000	3209	119	190	4	c
+9786	\N	1366000	3416	119	353	5	c
+9787	\N	1367000	3904	119	190	6	c
+9788	\N	1371000	5113	119	353	7	c
+9789	\N	1392000	2515	119	190	8	c
+9790	\N	1402000	3211	119	190	9	c
+9791	\N	1418000	3421	119	353	10	c
+9792	\N	1439000	3212	119	190	11	c
+9793	\N	1470000	5207	119	353	12	c
+9794	\N	1475000	3203	119	190	13	c
+9795	\N	1477000	3427	119	353	14	c
+9796	\N	1485000	3417	119	353	15	c
+9797	\N	1486000	3899	119	190	16	c
+9798	\N	1516000	3896	119	190	17	c
+9799	\N	1516000	3894	119	190	18	c
+9800	\N	1526000	5109	119	353	19	c
+9801	\N	1536000	3422	119	353	20	c
+9802	\N	1548000	3199	119	190	21	c
+9803	\N	1571000	3898	119	190	22	c
+9804	\N	1655000	3900	119	190	23	c
+9805	\N	1660000	3204	119	190	24	c
+9806	\N	1698000	3418	119	353	25	c
+9807	\N	1698000	5354	119	190	26	c
+9808	\N	1711000	5363	119	190	27	c
+9809	\N	1712000	3903	119	190	28	c
+9810	\N	1743000	5110	119	353	29	c
+9811	\N	1754000	5111	119	353	30	c
+9812	\N	2350000	3207	119	190	31	c
+9813	\N	1232000	3136	120	332	1	c
+9814	\N	1290000	4945	120	332	2	c
+9815	\N	1334000	4946	120	332	3	c
+9816	\N	1345000	3123	120	332	4	c
+9817	\N	1377000	3140	120	332	5	c
+9818	\N	1387000	4947	120	332	6	c
+9819	\N	1402000	3137	120	332	7	c
+9820	\N	1412000	3177	120	211	8	c
+9821	\N	1430000	5511	120	211	9	c
+9822	\N	1448000	4939	120	332	10	c
+9823	\N	1453000	5505	120	211	11	c
+9824	\N	1525000	3176	120	211	12	c
+9825	\N	1550000	2629	120	211	13	c
+9826	\N	1565000	3124	120	332	14	c
+9827	\N	1605000	4940	120	332	15	c
+9828	\N	1638000	1172	120	211	16	c
+9829	\N	1639000	1104	120	211	17	c
+9830	\N	1648000	2720	120	332	18	c
+9750	\N	1167000	5640	117	335	16	c
+9831	\N	1794000	5510	120	211	19	c
+9832	\N	1798000	4104	120	211	20	c
+9833	\N	1810000	4942	120	332	21	c
+9834	\N	1834000	5518	120	332	22	c
+9835	\N	2058000	5525	120	211	23	c
+9836	\N	2302000	5372	120	332	24	c
+9837	\N	1281000	1013	121	226	1	c
+9838	\N	1291000	1012	121	226	2	c
+9839	\N	1293000	4527	121	267	3	c
+9840	\N	1299000	3364	121	226	4	c
+9841	\N	1300000	5433	121	226	5	c
+9842	\N	1304000	3373	121	226	6	c
+9843	\N	1330000	4227	121	226	7	c
+9844	\N	1333000	3366	121	226	8	c
+9845	\N	1337000	4528	121	267	9	c
+9846	\N	1338000	4226	121	226	10	c
+9847	\N	1343000	3370	121	226	11	c
+9848	\N	1353000	3371	121	226	12	c
+9849	\N	1354000	1151	121	226	13	c
+9850	\N	1359000	1119	121	226	14	c
+9851	\N	1361000	4223	121	226	15	c
+9852	\N	1456000	3372	121	226	16	c
+13000	\N	1657000	3280	209	144	22	c
+9854	\N	1489000	4523	121	267	18	c
+9855	\N	1501000	4533	121	267	19	c
+9856	\N	1501000	4531	121	267	20	c
+9857	\N	1514000	4532	121	267	21	c
+9858	\N	1523000	3373	121	226	22	c
+9859	\N	1534000	3261	121	267	23	c
+9860	\N	1545000	5362	121	226	24	c
+9861	\N	1549000	5359	121	226	25	c
+9862	\N	1552000	3368	121	226	26	c
+9863	\N	1561000	2584	121	267	27	c
+9864	\N	1561000	1173	121	226	28	c
+9865	\N	1572000	5259	121	267	29	c
+9866	\N	1603000	4525	121	267	30	c
+9867	\N	1614000	5526	121	226	31	c
+9868	\N	1675000	5366	121	226	32	c
+9869	\N	1692000	5500	121	226	33	c
+9870	\N	1703000	5368	121	226	34	c
+9871	\N	1825000	4526	121	267	35	c
+9872	\N	1226500	3398	122	224	1	c
+9873	\N	1361300	4579	122	273	2	c
+9874	\N	1364900	4215	122	224	3	c
+9875	\N	1401000	5411	122	224	4	c
+9876	\N	1469100	3401	122	224	5	c
+9877	\N	1469600	3400	122	224	6	c
+9878	\N	1485100	3399	122	224	7	c
+9879	\N	1496300	5194	122	273	8	c
+9880	\N	1570500	4216	122	224	9	c
+9881	\N	1693200	5367	122	224	10	c
+9882	\N	1701800	3402	122	224	11	c
+9883	\N	1834500	5365	122	224	12	c
+9884	\N	1238000	4974	123	336	1	c
+9885	\N	1243000	3309	123	336	2	c
+9886	\N	1267000	3311	123	336	3	c
+9887	\N	1274000	3310	123	336	4	c
+9888	\N	1277000	5136	123	357	5	c
+9889	\N	1287000	5303	123	336	6	c
+16521	\N	1244900	6303	280	438	20	c
+9891	\N	1352000	5142	123	357	8	c
+9894	\N	1393000	4975	123	336	11	c
+9895	\N	1429000	5140	123	357	12	c
+9901	\N	1258000	5629	124	337	6	c
+9893	\N	1376000	6371	123	357	10	c
+9896	\N	1105000	5308	124	337	1	c
+9897	\N	1194000	4219	124	225	2	c
+9898	\N	1240000	3360	124	225	3	c
+9899	\N	1248000	4984	124	337	4	c
+9900	\N	1254000	4220	124	225	5	c
+9902	\N	1261000	5414	124	225	7	c
+9903	\N	1263000	5314	124	337	8	c
+9904	\N	1291000	5321	124	337	9	c
+9905	\N	1293000	3437	124	337	10	c
+9906	\N	1308000	3353	124	225	11	c
+9907	\N	1331000	5323	124	337	12	c
+9908	\N	1342000	3355	124	225	13	c
+9909	\N	1363000	4986	124	337	14	c
+9910	\N	1381000	4218	124	225	15	c
+9911	\N	1385000	4977	124	337	16	c
+9912	\N	1417000	1779	124	225	17	c
+9913	\N	1428000	5168	124	225	18	c
+9914	\N	1429000	5402	124	337	19	c
+9915	\N	1458000	4976	124	337	20	c
+9916	\N	1511000	4978	124	337	21	c
+9917	\N	1522000	5317	124	337	22	c
+9918	\N	1646000	4980	124	337	23	c
+9919	\N	1855000	4982	124	337	24	c
+9920	\N	1856000	4981	124	337	25	c
+9921	\N	1878000	4983	124	337	26	c
+9922	\N	976000	1520	125	331	1	c
+9923	\N	1058000	1715	125	331	2	c
+9924	\N	1062000	1543	125	359	3	c
+9925	\N	1072000	3224	125	359	4	c
+9926	\N	1081000	1531	125	359	5	c
+9927	\N	1093000	1613	125	331	6	c
+9928	\N	1104000	3214	125	359	7	c
+9929	\N	1118000	3106	125	331	8	c
+9930	\N	1122000	1669	125	331	9	c
+9931	\N	1125000	4938	125	331	10	c
+9932	\N	1143000	3107	125	331	11	c
+9933	\N	1164000	1804	125	331	12	c
+9934	\N	1165000	5490	125	331	13	c
+9935	\N	1171000	4932	125	331	14	c
+9936	\N	1181000	5190	125	331	15	c
+9937	\N	1202000	5351	125	359	16	c
+9938	\N	1219000	1741	125	331	17	c
+9939	\N	1221000	1610	125	359	18	c
+9940	\N	1235000	4933	125	331	19	c
+9941	\N	1263000	3217	125	359	20	c
+9942	\N	1283000	4936	125	331	21	c
+9943	\N	1294000	3218	125	359	22	c
+9944	\N	1297000	5381	125	359	23	c
+9945	\N	1302000	3116	125	331	24	c
+9946	\N	1316000	4937	125	331	25	c
+9947	\N	1320000	3216	125	359	26	c
+9948	\N	1327000	5377	125	331	27	c
+9949	\N	1341000	3118	125	331	28	c
+9950	\N	1370000	4934	125	331	29	c
+9951	\N	1409000	5390	125	331	30	c
+9952	\N	1464000	3109	125	331	31	c
+9953	\N	1571000	1829	125	359	32	c
+9954	\N	1643000	3114	125	331	33	c
+9955	\N	1696000	3117	125	331	34	c
+9956	\N	1051000	3252	126	266	1	c
+9957	\N	1082000	5198	126	266	2	c
+9958	\N	1147000	4522	126	266	3	c
+9959	\N	1153000	3249	126	266	4	c
+9960	\N	1168000	5225	126	274	5	c
+9961	\N	1181000	3272	126	274	6	c
+9962	\N	1195000	4586	126	274	7	c
+9963	\N	1209000	5224	126	274	8	c
+9964	\N	1210000	3255	126	266	9	c
+9965	\N	1224000	1815	126	266	10	c
+9966	\N	1227000	1805	126	274	11	c
+9967	\N	1298000	1708	126	266	12	c
+9968	\N	1343000	5159	126	266	13	c
+9969	\N	1359000	4588	126	274	14	c
+9970	\N	1393000	4581	126	274	15	c
+9971	\N	1397000	4589	126	274	16	c
+9972	\N	1403000	3250	126	266	17	c
+9973	\N	1408000	4582	126	274	18	c
+9974	\N	1452000	3269	126	274	19	c
+9975	\N	1553000	4583	126	274	20	c
+9976	\N	1565000	1807	126	274	21	c
+9977	\N	1591000	5407	126	274	22	c
+9978	\N	1613000	4584	126	274	23	c
+10051	\N	1151000	3072	129	203	1	c
+10052	\N	1159000	1659	129	203	2	c
+10053	\N	1165000	3074	129	203	3	c
+10054	\N	1167000	4039	129	203	4	c
+10055	\N	1173000	5170	129	189	5	c
+10056	\N	1174000	5251	129	189	6	c
+10057	\N	1175000	5143	129	189	7	c
+10058	\N	1176000	5335	129	189	8	c
+10059	\N	1177000	4041	129	203	9	c
+10060	\N	1179000	3079	129	203	10	c
+10061	\N	1182000	5226	129	189	11	c
+10062	\N	1184000	3081	129	203	12	c
+10063	\N	1195000	3884	129	189	13	c
+10064	\N	1214000	5528	129	203	14	c
+10065	\N	1214000	4043	129	203	15	c
+10066	\N	1216000	3078	129	203	16	c
+10067	\N	1217000	1747	129	203	17	c
+10068	\N	1233000	3076	129	203	18	c
+10069	\N	1235000	5376	129	203	19	c
+10070	\N	1239000	5417	129	203	20	c
+10071	\N	1240000	3185	129	189	21	c
+10072	\N	1241000	5387	129	203	22	c
+10073	\N	1248000	5248	129	189	23	c
+10074	\N	1255000	1776	129	203	24	c
+10075	\N	1258000	1693	129	189	25	c
+10076	\N	1258000	3888	129	189	26	c
+10077	\N	1259000	5254	129	189	27	c
+10078	\N	1303000	5389	129	203	28	c
+10079	\N	1303000	5388	129	203	29	c
+10080	\N	1305000	3080	129	203	30	c
+10081	\N	1307000	3889	129	189	31	c
+10082	\N	1308000	3083	129	203	32	c
+10083	\N	1313000	1690	129	203	33	c
+10084	\N	1329000	5245	129	189	34	c
+10085	\N	1335000	5382	129	203	35	c
+10086	\N	1342000	1816	129	189	36	c
+10087	\N	1358000	5246	129	189	37	c
+10088	\N	1370000	5396	129	203	38	c
+10089	\N	1387000	5373	129	203	39	c
+10090	\N	1402000	5384	129	203	40	c
+10091	\N	1403000	5255	129	189	41	c
+10092	\N	1414000	5258	129	189	42	c
+10093	\N	1429000	5249	129	189	43	c
+10094	\N	1527000	5247	129	189	44	c
+10163	\N	1239000	3209	132	190	1	c
+10164	\N	1254000	3090	132	202	2	c
+10165	\N	1299000	2515	132	190	3	c
+10166	\N	1311000	3210	132	190	4	c
+10167	\N	1321000	3904	132	190	5	c
+10168	\N	1330000	3102	132	202	6	c
+10169	\N	1350000	2537	132	190	7	c
+10170	\N	1351000	3212	132	190	8	c
+10171	\N	1351000	3211	132	190	9	c
+10172	\N	1382000	4037	132	202	10	c
+10173	\N	1385000	4036	132	202	11	c
+10174	\N	1388000	4029	132	202	12	c
+10175	\N	1393000	2617	132	202	13	c
+10176	\N	1399000	4035	132	202	14	c
+10177	\N	1404000	4038	132	202	15	c
+10178	\N	1414000	3895	132	190	16	c
+10179	\N	1432000	3894	132	190	17	c
+10180	\N	1436000	3203	132	190	18	c
+10181	\N	1458000	3104	132	202	19	c
+10182	\N	1463000	5358	132	202	20	c
+10183	\N	1480000	4032	132	202	21	c
+10184	\N	1482000	4030	132	202	22	c
+10185	\N	1482000	4031	132	202	23	c
+10186	\N	1483000	4028	132	202	24	c
+10187	\N	1500000	4033	132	202	25	c
+10188	\N	1506000	3091	132	202	26	c
+10189	\N	1509000	3089	132	202	27	c
+10190	\N	1549000	3095	132	202	28	c
+10191	\N	1567000	3900	132	190	29	c
+10192	\N	1582000	4034	132	202	30	c
+10193	\N	1586000	3204	132	190	31	c
+10194	\N	1635000	3903	132	190	32	c
+10195	\N	1640000	5363	132	190	33	c
+10196	\N	1679000	5364	132	202	34	c
+10197	\N	1679000	5360	132	202	35	c
+10198	\N	1695000	3094	132	202	36	c
+10199	\N	1697000	5369	132	202	37	c
+10200	\N	1699000	3097	132	202	38	c
+10201	\N	1720000	5357	132	202	39	c
+10202	\N	1747000	5353	132	202	40	c
+10203	\N	1765000	5355	132	202	41	c
+10204	\N	1820000	5370	132	202	42	c
+10216	\N	1259000	5509	134	338	1	c
+10217	\N	1303000	4994	134	338	2	c
+10218	\N	1321000	4993	134	338	3	c
+10219	\N	1354000	4225	134	226	4	c
+10220	\N	1365000	3364	134	226	5	c
+10221	\N	1391000	1013	134	226	6	c
+10222	\N	1393000	5433	134	226	7	c
+10223	\N	1394000	1012	134	226	8	c
+10224	\N	1415000	4227	134	226	9	c
+10225	\N	1437000	5312	134	338	10	c
+10226	\N	1439000	3366	134	226	11	c
+10227	\N	1481000	3372	134	226	12	c
+10228	\N	1486000	1119	134	226	13	c
+10229	\N	1487000	5320	134	338	14	c
+10230	\N	1495000	5329	134	338	15	c
+10231	\N	1512000	4226	134	226	16	c
+10232	\N	1519000	4987	134	338	17	c
+10233	\N	1525000	4995	134	338	18	c
+10234	\N	1531000	4988	134	338	19	c
+10235	\N	1557000	3373	134	226	20	c
+10236	\N	1565000	1151	134	226	21	c
+10237	\N	1580000	5325	134	338	22	c
+10238	\N	1635000	4989	134	338	23	c
+10239	\N	1641000	4224	134	226	24	c
+10240	\N	1666000	5362	134	226	25	c
+10241	\N	1670000	3368	134	226	26	c
+10242	\N	1753000	5366	134	226	27	c
+10243	\N	1761000	1173	134	226	28	c
+10244	\N	1765000	4990	134	338	29	c
+10245	\N	1804000	5500	134	226	30	c
+10246	\N	1805000	5368	134	226	31	c
+10247	\N	1806000	4991	134	338	32	c
+10287	\N	1354000	4527	136	267	1	c
+10288	\N	1374000	3286	136	275	2	c
+10289	\N	1406000	4528	136	267	3	c
+9979	\N	982000	1517	127	210	1	c
+9980	\N	1030000	5494	127	210	2	c
+9981	\N	1105000	5333	127	210	3	c
+9982	\N	1112000	5352	127	210	4	c
+9983	\N	1113000	1625	127	210	5	c
+9984	\N	1142000	5174	127	210	6	c
+9985	\N	1152000	3154	127	210	7	c
+9986	\N	1161000	3299	127	335	8	c
+9987	\N	1170000	4969	127	335	9	c
+9988	\N	1177000	5302	127	335	10	c
+9989	\N	1191000	4968	127	335	11	c
+9991	\N	1200000	3161	127	210	13	c
+9992	\N	1204000	3158	127	210	14	c
+9993	\N	1217000	3157	127	210	15	c
+9994	\N	1221000	4099	127	210	16	c
+9995	\N	1222000	4097	127	210	17	c
+9996	\N	1223000	4101	127	210	18	c
+9997	\N	1238000	4098	127	210	19	c
+9998	\N	1245000	4096	127	210	20	c
+9999	\N	1251000	1724	127	335	21	c
+10000	\N	1254000	4971	127	335	22	c
+10001	\N	1257000	4100	127	210	23	c
+10002	\N	1270000	4102	127	210	24	c
+10003	\N	1285000	1697	127	210	25	c
+10004	\N	1295000	1792	127	335	26	c
+10005	\N	1317000	5305	127	335	27	c
+10006	\N	1349000	3292	127	335	28	c
+10007	\N	1378000	1739	127	210	29	c
+10008	\N	1398000	4963	127	335	30	c
+10009	\N	1404000	4966	127	335	31	c
+10010	\N	1405000	5307	127	335	32	c
+10011	\N	1410000	5517	127	210	33	c
+10012	\N	1443000	4965	127	335	34	c
+10013	\N	1456000	5397	127	335	35	c
+10014	\N	1494000	3294	127	335	36	c
+10015	\N	1548000	4967	127	335	37	c
+10016	\N	1555000	5405	127	335	38	c
+10017	\N	1610000	5403	127	210	39	c
+10018	\N	1064000	5130	128	356	1	c
+10019	\N	1071000	5129	128	356	2	c
+10020	\N	1072000	1643	128	212	3	c
+10021	\N	1114000	4116	128	212	4	c
+10022	\N	1132000	5131	128	356	5	c
+10023	\N	1143000	1618	128	212	6	c
+10024	\N	1154000	5213	128	212	7	c
+10025	\N	1165000	4574	128	272	8	c
+10026	\N	1171000	4117	128	212	9	c
+10027	\N	1185000	4109	128	212	10	c
+10028	\N	1210000	4118	128	212	11	c
+10029	\N	1212000	4110	128	212	12	c
+10030	\N	1219000	3144	128	212	13	c
+10031	\N	1222000	3142	128	212	14	c
+10032	\N	1225000	3141	128	212	15	c
+10033	\N	1248000	5132	128	356	16	c
+10034	\N	1264000	4576	128	272	17	c
+10035	\N	1289000	5185	128	272	18	c
+10036	\N	1304000	5228	128	212	19	c
+10037	\N	1305000	4112	128	212	20	c
+10038	\N	1311000	4113	128	212	21	c
+10039	\N	1319000	3237	128	272	22	c
+10040	\N	1332000	5133	128	356	23	c
+10041	\N	1373000	4114	128	212	24	c
+10042	\N	1374000	4578	128	272	25	c
+10043	\N	1379000	4115	128	212	26	c
+10044	\N	1424000	5527	128	356	27	c
+10045	\N	1440000	4112	128	212	28	c
+10046	\N	1474000	5401	128	272	29	c
+10047	\N	1574000	5383	128	272	30	c
+10048	\N	1710000	5429	128	212	31	c
+10049	\N	1859000	3233	128	272	32	c
+10050	\N	1881000	5128	128	356	33	c
+10095	\N	981000	5263	130	352	1	c
+10096	\N	1068000	3064	130	195	2	c
+10097	\N	1069000	3954	130	195	3	c
+10098	\N	1076000	3068	130	195	4	c
+10099	\N	1098000	3053	130	195	5	c
+10100	\N	1107000	3066	130	195	6	c
+10101	\N	1109000	3058	130	195	7	c
+10102	\N	1119000	3056	130	195	8	c
+10103	\N	1123000	3955	130	195	9	c
+10104	\N	1138000	3409	130	352	10	c
+10105	\N	1143000	5241	130	195	11	c
+10106	\N	1170000	5151	130	352	12	c
+10107	\N	1190000	3062	130	195	13	c
+10108	\N	1191000	3948	130	195	14	c
+10109	\N	1198000	3060	130	195	15	c
+10110	\N	1220000	5105	130	352	16	c
+10111	\N	1236000	3947	130	195	17	c
+10112	\N	1251000	3950	130	195	18	c
+10113	\N	1268000	3949	130	195	19	c
+10114	\N	1281000	3057	130	195	20	c
+10115	\N	1287000	3952	130	195	21	c
+10116	\N	1288000	3951	130	195	22	c
+10117	\N	1297000	5107	130	352	23	c
+10118	\N	1308000	3953	130	195	24	c
+10119	\N	1336000	5169	130	352	25	c
+10120	\N	1411000	5257	130	195	26	c
+10121	\N	1459000	5220	130	195	27	c
+10122	\N	1484000	5102	130	352	28	c
+10123	\N	1599000	3412	130	352	29	c
+10124	\N	1667000	5243	130	195	30	c
+10125	\N	2157000	5104	130	352	31	c
+10126	\N	1043000	5176	131	197	1	c
+10127	\N	1052000	4209	131	223	2	c
+10128	\N	1075000	5181	131	223	3	c
+10129	\N	1076000	5183	131	197	4	c
+10130	\N	1104000	3326	131	197	5	c
+10131	\N	1111000	4212	131	223	6	c
+10132	\N	1115000	5276	131	197	7	c
+10133	\N	1131000	5175	131	223	8	c
+10134	\N	1138000	4214	131	223	9	c
+10135	\N	1158000	4213	131	223	10	c
+10136	\N	1162000	3981	131	197	11	c
+10137	\N	1185000	1645	131	223	12	c
+10138	\N	1199000	4203	131	223	13	c
+10139	\N	1202000	1794	131	223	14	c
+10140	\N	1217000	5271	131	197	15	c
+10141	\N	1225000	3331	131	197	16	c
+10142	\N	1229000	5275	131	197	17	c
+10143	\N	1235000	5274	131	197	18	c
+10144	\N	1256000	5266	131	197	19	c
+10145	\N	1291000	4204	131	223	20	c
+10146	\N	1306000	1823	131	197	21	c
+10147	\N	1326000	4206	131	223	22	c
+10148	\N	1360000	3387	131	223	23	c
+10149	\N	1362000	1788	131	223	24	c
+10150	\N	1378000	5271	131	197	25	c
+10151	\N	1387000	3323	131	197	26	c
+10152	\N	1405000	5386	131	197	27	c
+10153	\N	1430000	3977	131	197	28	c
+10154	\N	1442000	3388	131	223	29	c
+10155	\N	1453000	5166	131	223	30	c
+10156	\N	1456000	3976	131	197	31	c
+10157	\N	1492000	5374	131	197	32	c
+10158	\N	1493000	5529	131	197	33	c
+10159	\N	1499000	5398	131	223	34	c
+10160	\N	1528000	4208	131	223	35	c
+10161	\N	1639000	3978	131	197	36	c
+10162	\N	1651000	3979	131	197	37	c
+10205	\N	1435000	4579	133	273	1	c
+10206	\N	1496000	5136	133	357	2	c
+10207	\N	1592000	5140	133	357	3	c
+10208	\N	1592000	5142	133	357	4	c
+10210	\N	1636000	5194	133	273	6	c
+10211	\N	1735000	5530	133	357	7	c
+10212	\N	1735000	5141	133	357	8	c
+10213	\N	1764000	5531	133	357	9	c
+10214	\N	1919000	5532	133	357	10	c
+10215	\N	1954000	5533	133	357	11	c
+10248	\N	1151000	102	135	205	1	c
+10249	\N	1233000	3136	135	332	2	c
+10250	\N	1282000	4945	135	332	3	c
+10251	\N	1337000	5436	135	332	4	c
+10252	\N	1338000	4946	135	332	5	c
+10253	\N	1345000	3123	135	332	6	c
+10254	\N	1348000	3140	135	332	7	c
+10255	\N	1378000	5410	135	332	8	c
+10256	\N	1392000	3137	135	332	9	c
+10257	\N	1414000	4053	135	205	10	c
+10258	\N	1426000	4054	135	205	11	c
+10259	\N	1454000	4062	135	205	12	c
+10260	\N	1461000	4939	135	332	13	c
+10261	\N	1492000	112	135	205	14	c
+10262	\N	1498000	4057	135	205	15	c
+10263	\N	1511000	4058	135	205	16	c
+10264	\N	1519000	4940	135	332	17	c
+10265	\N	1544000	3124	135	332	18	c
+10266	\N	1544000	4060	135	205	19	c
+10267	\N	1561000	3139	135	332	20	c
+10268	\N	1565000	4047	135	205	21	c
+10269	\N	1609000	4048	135	205	22	c
+10270	\N	1613000	4056	135	205	23	c
+10271	\N	1627000	2720	135	332	24	c
+10272	\N	1631000	3129	135	332	25	c
+10273	\N	1642000	4049	135	205	26	c
+10274	\N	1649000	4941	135	332	27	c
+10275	\N	1680000	4061	135	205	28	c
+10276	\N	1693000	4059	135	205	29	c
+10277	\N	1777000	4942	135	332	30	c
+10278	\N	1780000	5518	135	332	31	c
+10279	\N	1794000	110	135	205	32	c
+10280	\N	1800000	4065	135	205	33	c
+10281	\N	1825000	2687	135	332	34	c
+10282	\N	1826000	4944	135	332	35	c
+10283	\N	1993000	4050	135	205	36	c
+10284	\N	2001000	5215	135	332	37	c
+10285	\N	2047000	3134	135	332	38	c
+10286	\N	2117000	4051	135	205	39	c
+10839	\N	1363000	5112	152	353	3	c
+10840	\N	1363000	3428	152	353	4	c
+10841	\N	1397000	4994	152	338	5	c
+10842	\N	1397000	5329	152	338	6	c
+10843	\N	1398000	5320	152	338	7	c
+10844	\N	1398000	5312	152	338	8	c
+10845	\N	1408000	4995	152	338	9	c
+10846	\N	1412000	5113	152	353	10	c
+10847	\N	1457000	3416	152	353	11	c
+10848	\N	1486000	4987	152	338	12	c
+10849	\N	1489000	5193	152	353	13	c
+10850	\N	1492000	3427	152	353	14	c
+10851	\N	1511000	4579	152	273	15	c
+10852	\N	1515000	4989	152	338	16	c
+10853	\N	1522000	4988	152	338	17	c
+10854	\N	1535000	3417	152	353	18	c
+10855	\N	1539000	5325	152	338	19	c
+10856	\N	1571000	3422	152	353	20	c
+10857	\N	1587000	5194	152	273	21	c
+10858	\N	1596000	5109	152	353	22	c
+10859	\N	1734000	3418	152	353	23	c
+10860	\N	1751000	5110	152	353	24	c
+10861	\N	1772000	4990	152	338	25	c
+10862	\N	1825000	5111	152	353	26	c
+10904	\N	1085000	1543	154	138	1	c
+10905	\N	1089000	5178	154	136	2	c
+10906	\N	1091000	1547	154	136	3	c
+10907	\N	1116000	1531	154	138	4	c
+10908	\N	1121000	1565	154	136	5	c
+10909	\N	1137000	3223	154	138	6	c
+10910	\N	1154000	1507	154	136	7	c
+10911	\N	1165000	1586	154	136	8	c
+10912	\N	1167000	3195	154	136	9	c
+10913	\N	1205000	3226	154	138	10	c
+10914	\N	1215000	3194	154	136	11	c
+10915	\N	1217000	1610	154	138	12	c
+10916	\N	1220000	3225	154	138	13	c
+10918	\N	1265000	5226	154	136	15	c
+10919	\N	1270000	5335	154	136	16	c
+10920	\N	1275000	3185	154	136	17	c
+10921	\N	1280000	5336	154	136	18	c
+10922	\N	1285000	1771	154	136	19	c
+10923	\N	1290000	1693	154	136	20	c
+10924	\N	1310000	3188	154	136	21	c
+10925	\N	1325000	5143	154	136	22	c
+10926	\N	1330000	3220	154	138	23	c
+10927	\N	1335000	3189	154	136	24	c
+10928	\N	1340000	5545	154	138	25	c
+10929	\N	1385000	5170	154	136	26	c
+10930	\N	1390000	5251	154	136	27	c
+10931	\N	1395000	3190	154	136	28	c
+10932	\N	1400000	5153	154	136	29	c
+10933	\N	1405000	3187	154	136	30	c
+10934	\N	1430000	1816	154	136	31	c
+10935	\N	1505000	1757	154	138	32	c
+10936	\N	1510000	3218	154	138	33	c
+10937	\N	1515000	3191	154	136	34	c
+10938	\N	1520000	1761	154	138	35	c
+10939	\N	1525000	5254	154	136	36	c
+10940	\N	1530000	5277	154	138	37	c
+10941	\N	1565000	1684	154	136	38	c
+10942	\N	1570000	5544	154	136	39	c
+10943	\N	1575000	1775	154	136	40	c
+10944	\N	1625000	3222	154	138	41	c
+10945	\N	1630000	1829	154	138	42	c
+10917	\N	1222000	3215	154	138	14	c
+10979	\N	1116000	5225	156	143	3	c
+10980	\N	1122000	5306	156	145	4	c
+10981	\N	1138000	3300	156	145	5	c
+10209	\N	1592000	6370	133	357	5	c
+10983	\N	1162000	3299	156	145	7	c
+10984	\N	1177000	3273	156	143	8	c
+10985	\N	1215000	3272	156	143	9	c
+10986	\N	1231000	5224	156	143	10	c
+10987	\N	1238000	1724	156	145	11	c
+10988	\N	1244000	1851	156	143	12	c
+10989	\N	1258000	5197	156	143	13	c
+10990	\N	1278000	1760	156	145	14	c
+10991	\N	1283000	3291	156	145	15	c
+10992	\N	1287000	3266	156	143	16	c
+10993	\N	1291000	3301	156	145	17	c
+10994	\N	1293000	5302	156	145	18	c
+10291	\N	1525000	3280	136	275	5	c
+10292	\N	1527000	3285	136	275	6	c
+10293	\N	1540000	4532	136	267	7	c
+10294	\N	1550000	4523	136	267	8	c
+10295	\N	1560000	3284	136	275	9	c
+10296	\N	1598000	4533	136	267	10	c
+10297	\N	1598000	4531	136	267	11	c
+10298	\N	1701000	4524	136	267	12	c
+10299	\N	1773000	5259	136	267	13	c
+10300	\N	1977000	4526	136	267	14	c
+10301	\N	2011000	5413	136	275	15	c
+10302	\N	1213000	3398	137	224	1	c
+10303	\N	1353000	4215	137	224	2	c
+10304	\N	1447000	5269	137	198	3	c
+10305	\N	1451000	1160	137	198	4	c
+10306	\N	1491000	1043	137	198	5	c
+10307	\N	1492000	3995	137	198	6	c
+10308	\N	1493000	3996	137	198	7	c
+10309	\N	1500000	3400	137	224	8	c
+10310	\N	1504000	3399	137	224	9	c
+10311	\N	1547000	3984	137	198	10	c
+10312	\N	1563000	3997	137	198	11	c
+10313	\N	1571000	3349	137	198	12	c
+10314	\N	1578000	3985	137	198	13	c
+10315	\N	1592000	3986	137	198	14	c
+10316	\N	1602000	5272	137	198	15	c
+10317	\N	1721000	5270	137	198	16	c
+10318	\N	1783000	4217	137	224	17	c
+10319	\N	1785000	3989	137	198	18	c
+10320	\N	1911000	5440	137	198	19	c
+10321	\N	2015000	3991	137	198	20	c
+10322	\N	2036000	3346	137	198	21	c
+10323	\N	2081000	3992	137	198	22	c
+10324	\N	1258000	4974	138	336	1	c
+10325	\N	1313000	5511	138	211	2	c
+10326	\N	1320000	3310	138	336	3	c
+16522	\N	1253800	6294	280	446	21	c
+10328	\N	1342000	5303	138	336	5	c
+10329	\N	1374000	5534	138	211	6	c
+10330	\N	1396000	3177	138	211	7	c
+10331	\N	1417000	2629	138	211	8	c
+10332	\N	1421000	3176	138	211	9	c
+10333	\N	1472000	4975	138	336	10	c
+10334	\N	1479000	3166	138	211	11	c
+10335	\N	1483000	5435	138	336	12	c
+10336	\N	1493000	5199	138	336	13	c
+10337	\N	1495000	5200	138	336	14	c
+10338	\N	1498000	3168	138	211	15	c
+10339	\N	1564000	5356	138	336	16	c
+10340	\N	1569000	1172	138	211	17	c
+10341	\N	1587000	1104	138	211	18	c
+10342	\N	1594000	4972	138	336	19	c
+10344	\N	1702000	4104	138	211	21	c
+10345	\N	1719000	5510	138	211	22	c
+10346	\N	1777000	3171	138	211	23	c
+9670	\N	1264000	3061	112	195	20	c
+10347	\N	1211000	4118	139	212	1	c
+10348	\N	1220000	3142	139	212	2	c
+10349	\N	1240000	3141	139	212	3	c
+10350	\N	1242000	5238	139	195	4	c
+10351	\N	1247000	5490	139	331	5	c
+10352	\N	1255000	3144	139	212	6	c
+10353	\N	1264000	1741	139	331	7	c
+10354	\N	1265000	1804	139	331	8	c
+10355	\N	1266000	3062	139	195	9	c
+10356	\N	1267000	3949	139	195	10	c
+10357	\N	1276000	3061	139	195	11	c
+10358	\N	1286000	5190	139	331	12	c
+10359	\N	1295000	3060	139	195	13	c
+10360	\N	1308000	3057	139	195	14	c
+10361	\N	1308000	3947	139	195	15	c
+10362	\N	1331000	4113	139	212	16	c
+10363	\N	1333000	4933	139	331	17	c
+10364	\N	1336000	3111	139	331	18	c
+10365	\N	1342000	3145	139	212	19	c
+10366	\N	1351000	3116	139	331	20	c
+10367	\N	1357000	3950	139	195	21	c
+10368	\N	1370000	4932	139	331	22	c
+10369	\N	1395000	3113	139	331	23	c
+10370	\N	1399000	4936	139	331	24	c
+10371	\N	1406000	5377	139	331	25	c
+10372	\N	1407000	4114	139	212	26	c
+10373	\N	1433000	3953	139	195	27	c
+10374	\N	1444000	5228	139	212	28	c
+10375	\N	1444000	4115	139	212	29	c
+10376	\N	1458000	3951	139	195	30	c
+10377	\N	1462000	4935	139	331	31	c
+10378	\N	1483000	4934	139	331	32	c
+10379	\N	1490000	5390	139	331	33	c
+10380	\N	1491000	3117	139	331	34	c
+10381	\N	1503000	5220	139	195	35	c
+10382	\N	1505000	5257	139	195	36	c
+10383	\N	1505000	3109	139	331	37	c
+10384	\N	1533000	5242	139	195	38	c
+10385	\N	1534000	4937	139	331	39	c
+10386	\N	1537000	5239	139	195	40	c
+10387	\N	1538000	5399	139	331	41	c
+10388	\N	1550000	4979	139	337	42	c
+10389	\N	1595000	5489	139	331	43	c
+10390	\N	1605000	5429	139	212	44	c
+10391	\N	1625000	4978	139	337	45	c
+10392	\N	1631000	4976	139	337	46	c
+10393	\N	1662000	5243	139	195	47	c
+10394	\N	1681000	5317	139	337	48	c
+8616	\N	1906000	5111	81	353	40	c
+10946	\N	1039000	1508	155	131	1	c
+10947	\N	1106000	5308	155	155	2	c
+10948	\N	1116000	1613	155	131	3	c
+10949	\N	1174000	1669	155	131	4	c
+10950	\N	1177000	1715	155	131	5	c
+10951	\N	1280000	3121	155	131	6	c
+10343	\N	1605000	5806	138	336	20	c
+10953	\N	1330000	1741	155	131	8	c
+10954	\N	1358000	5321	155	155	9	c
+10955	\N	1412000	3107	155	131	10	c
+10956	\N	1427000	3106	155	131	11	c
+10957	\N	1452000	1756	155	131	12	c
+10958	\N	1464000	5190	155	131	13	c
+10959	\N	1506000	3437	155	155	14	c
+10960	\N	1526000	5318	155	155	15	c
+10961	\N	1527000	1804	155	131	16	c
+10962	\N	1543000	3105	155	131	17	c
+10963	\N	1567000	3108	155	131	18	c
+10964	\N	1580000	3115	155	131	19	c
+10965	\N	1623000	3118	155	131	20	c
+10966	\N	1631000	5310	155	155	21	c
+10967	\N	1633000	3109	155	131	22	c
+10968	\N	1639000	5323	155	155	23	c
+10969	\N	1717000	5190	155	131	24	c
+10970	\N	1729000	5330	155	155	25	c
+10971	\N	1732000	3116	155	131	26	c
+10972	\N	1753000	5334	155	131	27	c
+10974	\N	1867000	3118	155	131	29	c
+10290	\N	1496000	5628	136	267	4	c
+10973	\N	1785000	5629	155	155	28	c
+10440	\N	1255500	3113	141	331	12	c
+10441	\N	1256500	1693	141	189	13	c
+10442	\N	1266000	5279	141	223	14	c
+10443	\N	1274900	5244	141	189	15	c
+10444	\N	1275400	4936	141	331	16	c
+10445	\N	1275500	4935	141	331	17	c
+10446	\N	1286100	3118	141	331	18	c
+10447	\N	1287800	5377	141	331	19	c
+10448	\N	1288700	4206	141	223	20	c
+10449	\N	1290400	4937	141	331	21	c
+10450	\N	1292900	3110	141	331	22	c
+10451	\N	1296800	5254	141	189	23	c
+10452	\N	1300600	3889	141	189	24	c
+10453	\N	1314100	3387	141	223	25	c
+10454	\N	1314400	1788	141	223	26	c
+10455	\N	1319800	4934	141	331	27	c
+10456	\N	1333800	5245	141	189	28	c
+10457	\N	1349600	5394	141	223	29	c
+10458	\N	1353800	5390	141	331	30	c
+10459	\N	1358000	5399	141	331	31	c
+10460	\N	1369200	1816	141	189	32	c
+10461	\N	1373000	3388	141	223	33	c
+10462	\N	1387400	3109	141	331	34	c
+10463	\N	1387500	5255	141	189	35	c
+10464	\N	1403300	5258	141	189	36	c
+10465	\N	1406300	5249	141	189	37	c
+10466	\N	1437500	4208	141	223	38	c
+10467	\N	1437500	5248	141	189	39	c
+10468	\N	1444700	5256	141	189	40	c
+10469	\N	2032900	5503	141	189	41	c
+10470	\N	1006000	3148	142	212	1	c
+10471	\N	1041000	1517	142	210	2	c
+10472	\N	1066000	5494	142	210	3	c
+10473	\N	1075000	3087	142	203	4	c
+10474	\N	1080000	3073	142	203	5	c
+10475	\N	1093000	4116	142	212	6	c
+10476	\N	1094000	3070	142	203	7	c
+10477	\N	1095000	1643	142	212	8	c
+10478	\N	1098000	3086	142	203	9	c
+10479	\N	1101000	3085	142	203	10	c
+10480	\N	1107000	1681	142	203	11	c
+10481	\N	1111000	4044	142	203	12	c
+10482	\N	1117000	3071	142	203	13	c
+10483	\N	1121000	1618	142	212	14	c
+10484	\N	1127000	4585	142	274	15	c
+10485	\N	1146000	5333	142	210	16	c
+10486	\N	1154000	1625	142	210	17	c
+10487	\N	1157000	5213	142	212	18	c
+10488	\N	1159000	5352	142	210	19	c
+10489	\N	1162000	1673	142	203	20	c
+10490	\N	1163000	3156	142	210	21	c
+10491	\N	1173000	4109	142	212	22	c
+10492	\N	1177000	4117	142	212	23	c
+10493	\N	1203000	5174	142	210	24	c
+10494	\N	1213000	3154	142	210	25	c
+10495	\N	1229000	5225	142	274	26	c
+10496	\N	1247000	4111	142	212	27	c
+10497	\N	1269000	4586	142	274	28	c
+10498	\N	1280000	4118	142	212	29	c
+10499	\N	1330000	5224	142	274	30	c
+10500	\N	1354000	3265	142	274	31	c
+10501	\N	1377000	1805	142	274	32	c
+10502	\N	1450000	4581	142	274	33	c
+10503	\N	1170000	1659	143	203	1	c
+10504	\N	1187000	3074	143	203	2	c
+10505	\N	1190000	4110	143	212	3	c
+10506	\N	1191000	3141	143	212	4	c
+10507	\N	1200000	3144	143	212	5	c
+10508	\N	1212000	3079	143	203	6	c
+10509	\N	1227000	4040	143	203	7	c
+10510	\N	1228000	3072	143	203	8	c
+10511	\N	1230000	3081	143	203	9	c
+10512	\N	1231000	3158	143	210	10	c
+10513	\N	1237000	4042	143	203	11	c
+10514	\N	1243000	5373	143	203	12	c
+10395	\N	992000	1520	140	331	1	c
+10396	\N	1030400	1715	140	331	2	c
+10397	\N	1031200	4209	140	223	3	c
+10398	\N	1046600	1613	140	331	4	c
+10399	\N	1052700	5181	140	223	5	c
+10400	\N	1061400	5178	140	189	6	c
+10401	\N	1070500	3106	140	331	7	c
+10402	\N	1082700	5175	140	223	8	c
+10403	\N	1092200	4212	140	223	9	c
+10404	\N	1094600	4219	140	225	10	c
+10405	\N	1098300	1670	140	189	11	c
+10406	\N	1113700	3195	140	189	12	c
+10407	\N	1116200	4213	140	223	13	c
+10408	\N	1121400	3892	140	189	14	c
+10409	\N	1124200	1669	140	331	15	c
+10410	\N	1125300	3107	140	331	16	c
+10411	\N	1131700	4938	140	331	17	c
+10412	\N	1145000	5153	140	189	18	c
+10413	\N	1151200	1645	140	223	19	c
+10414	\N	1151900	1586	140	189	20	c
+10415	\N	1157600	3891	140	189	21	c
+10416	\N	1165400	4932	140	331	22	c
+10417	\N	1194200	4220	140	225	23	c
+10418	\N	1207500	5143	140	189	24	c
+10419	\N	1213200	5170	140	189	25	c
+10420	\N	1221200	5281	140	225	26	c
+10421	\N	1256200	4214	140	223	27	c
+10422	\N	1260000	3361	140	225	28	c
+10423	\N	1268100	3355	140	225	29	c
+10424	\N	1279200	5414	140	225	30	c
+10425	\N	1283300	5168	140	225	31	c
+10426	\N	1305200	1779	140	225	32	c
+10427	\N	1310600	4218	140	225	33	c
+10428	\N	1352000	1836	140	225	34	c
+10429	\N	1160600	1804	141	331	1	c
+10430	\N	1169800	5278	141	223	2	c
+10431	\N	1182400	1794	141	223	3	c
+10432	\N	1192200	3886	141	189	4	c
+10433	\N	1197700	3884	141	189	5	c
+10434	\N	1198500	5226	141	189	6	c
+10435	\N	1199100	5335	141	189	7	c
+10436	\N	1203000	5334	141	331	8	c
+10437	\N	1217800	4204	141	223	9	c
+10438	\N	1228000	3185	141	189	10	c
+10439	\N	1231800	4933	141	331	11	c
+10515	\N	1245000	4041	143	203	13	c
+10516	\N	1251000	5376	143	203	14	c
+10517	\N	1253000	1747	143	203	15	c
+10518	\N	1259000	3078	143	203	16	c
+10519	\N	1261000	4039	143	203	17	c
+10520	\N	1265000	4043	143	203	18	c
+10521	\N	1268000	3161	143	210	19	c
+10522	\N	1271000	3155	143	210	20	c
+10523	\N	1278000	5228	143	212	21	c
+10524	\N	1286000	4099	143	210	22	c
+10525	\N	1288000	4114	143	212	23	c
+10526	\N	1289000	3157	143	210	24	c
+10527	\N	1290000	4098	143	210	25	c
+10528	\N	1297000	1776	143	203	26	c
+10529	\N	1297000	4100	143	210	27	c
+10530	\N	1300000	4112	143	212	28	c
+10531	\N	1303000	5417	143	203	29	c
+10532	\N	1311000	5382	143	203	30	c
+10533	\N	1317000	4113	143	212	31	c
+10534	\N	1324000	4096	143	210	32	c
+10535	\N	1326000	4117	143	212	33	c
+10536	\N	1335000	4589	143	274	34	c
+10537	\N	1340000	5388	143	203	35	c
+10538	\N	1341000	1697	143	210	36	c
+10539	\N	1343000	5389	143	203	37	c
+10540	\N	1345000	4101	143	210	38	c
+10541	\N	1350000	1690	143	203	39	c
+10542	\N	1365000	5535	143	203	40	c
+10543	\N	1367000	3083	143	203	41	c
+10544	\N	1374000	5536	143	212	42	c
+10545	\N	1374000	3080	143	203	43	c
+10546	\N	1390000	1739	143	210	44	c
+10547	\N	1402000	5395	143	203	45	c
+10548	\N	1419000	4582	143	274	46	c
+10549	\N	1420000	4115	143	212	47	c
+10550	\N	1425000	5400	143	210	48	c
+10551	\N	1430000	3076	143	203	49	c
+10552	\N	1441000	5396	143	203	50	c
+10553	\N	1447000	4102	143	210	51	c
+10554	\N	1452000	5379	143	203	52	c
+10555	\N	1501000	5520	143	212	53	c
+10556	\N	1552000	5517	143	210	54	c
+10557	\N	1553000	5384	143	203	55	c
+10558	\N	1592000	4583	143	274	56	c
+10559	\N	1595000	3269	143	274	57	c
+10560	\N	1595000	5403	143	210	58	c
+10561	\N	1004000	5129	145	356	1	c
+10562	\N	1006000	5130	145	356	2	c
+10563	\N	1012000	3252	145	266	3	c
+10564	\N	1029000	5176	145	197	4	c
+10565	\N	1037000	3064	145	195	5	c
+10566	\N	1038000	5522	145	356	6	c
+10567	\N	1047000	5198	145	266	7	c
+10568	\N	1054000	3954	145	195	8	c
+10569	\N	1056000	3065	145	195	9	c
+10570	\N	1059000	3066	145	195	10	c
+10571	\N	1060000	3053	145	195	11	c
+10572	\N	1062000	3068	145	195	12	c
+10573	\N	1064000	3326	145	197	13	c
+10574	\N	1069000	4522	145	266	14	c
+10575	\N	1075000	5131	145	356	15	c
+10576	\N	1101000	5183	145	197	16	c
+10577	\N	1106000	3255	145	266	17	c
+10578	\N	1107000	5276	145	197	18	c
+10579	\N	1108000	3249	145	266	19	c
+10580	\N	1113000	3981	145	197	20	c
+10581	\N	1137000	3058	145	195	21	c
+10583	\N	1141000	4968	145	335	23	c
+10584	\N	1146000	4969	145	335	24	c
+10585	\N	1157000	5302	145	335	25	c
+10586	\N	1165000	5508	145	335	26	c
+10587	\N	1166000	3982	145	197	27	c
+10588	\N	1167000	5267	145	197	28	c
+10589	\N	1169000	1815	145	266	29	c
+10590	\N	1178000	5159	145	266	30	c
+10625	\N	1325000	5804	146	197	30	c
+10592	\N	1182000	4971	145	335	32	c
+10593	\N	1196000	5527	145	356	33	c
+10594	\N	1230000	5133	145	356	34	c
+10595	\N	1236000	1792	145	335	35	c
+10596	\N	1151000	3056	146	195	1	c
+10597	\N	1154000	3955	146	195	2	c
+10598	\N	1157000	5241	146	195	3	c
+10599	\N	1162000	3948	146	195	4	c
+10600	\N	1166000	3060	146	195	5	c
+10601	\N	1172000	4520	146	266	6	c
+10602	\N	1182000	3949	146	195	7	c
+10603	\N	1192000	3331	146	197	8	c
+10604	\N	1194000	1835	146	335	9	c
+10605	\N	1195000	1708	146	266	10	c
+10606	\N	1205000	3947	146	195	11	c
+10607	\N	1207000	5385	146	197	12	c
+10608	\N	1208000	5274	146	197	13	c
+10609	\N	1209000	1701	146	266	14	c
+10610	\N	1216000	3061	146	195	15	c
+10611	\N	1224000	3950	146	195	16	c
+10612	\N	1235000	4521	146	266	17	c
+10613	\N	1240000	5266	146	197	18	c
+10614	\N	1257000	3953	146	195	19	c
+10615	\N	1261000	5428	146	356	20	c
+10616	\N	1262000	5305	146	335	21	c
+10617	\N	1276000	3057	146	195	22	c
+10618	\N	1281000	3292	146	335	23	c
+10619	\N	1282000	1823	146	197	24	c
+10620	\N	1289000	4962	146	335	25	c
+10621	\N	1298000	4963	146	335	26	c
+10622	\N	1310000	5527	146	356	27	c
+10623	\N	1318000	3951	146	195	28	c
+10624	\N	1319000	3952	146	195	29	c
+10626	\N	1326000	4965	146	335	31	c
+10627	\N	1340000	3294	146	335	32	c
+10628	\N	1349000	5271	146	197	33	c
+10629	\N	1357000	4966	146	335	34	c
+10630	\N	1372000	5307	146	335	35	c
+10631	\N	1373000	3976	146	197	36	c
+10632	\N	1373000	3323	146	197	37	c
+10633	\N	1380000	3250	146	266	38	c
+10634	\N	1403000	5220	146	195	39	c
+10635	\N	1404000	4967	146	335	40	c
+10636	\N	1407000	5257	146	195	41	c
+10637	\N	1428000	5397	146	335	42	c
+10638	\N	1433000	5405	146	335	43	c
+10639	\N	1452000	5386	146	197	44	c
+10640	\N	1466000	5430	146	356	45	c
+10641	\N	1467000	3977	146	197	46	c
+10642	\N	1478000	5537	146	356	47	c
+10643	\N	1508000	3978	146	197	48	c
+10644	\N	1522000	5374	146	197	49	c
+10645	\N	1569000	5239	146	195	50	c
+10646	\N	1585000	5243	146	195	51	c
+10647	\N	1610000	5529	146	197	52	c
+10648	\N	1649000	5409	146	197	53	c
+10649	\N	1658000	3979	146	197	54	c
+10650	\N	1744000	5128	146	356	55	c
+10651	\N	1782000	5538	146	356	56	c
+10652	\N	2017000	5495	146	335	57	c
+10653	\N	1022000	5263	147	352	1	c
+10654	\N	1035000	5308	147	337	2	c
+10655	\N	1059000	1543	147	359	3	c
+10656	\N	1088000	3224	147	359	4	c
+10657	\N	1101000	1531	147	359	5	c
+10658	\N	1130000	3214	147	359	6	c
+10659	\N	1181000	5351	147	359	7	c
+10660	\N	1202000	1610	147	359	8	c
+10661	\N	1218000	4576	147	272	9	c
+10662	\N	1234000	5151	147	352	10	c
+10582	\N	1140000	3062	145	195	22	c
+10663	\N	1242000	3409	147	352	11	c
+10664	\N	1250000	3218	147	359	12	c
+10665	\N	1254000	3217	147	359	13	c
+10666	\N	1254000	5323	147	337	14	c
+10667	\N	1266000	4984	147	337	15	c
+10669	\N	1271000	5314	147	337	17	c
+10670	\N	1275000	5105	147	352	18	c
+10671	\N	1276000	3227	147	272	19	c
+10672	\N	1289000	3437	147	337	20	c
+10673	\N	1294000	4986	147	337	21	c
+10674	\N	1300000	5381	147	359	22	c
+10675	\N	1316000	3237	147	272	23	c
+10676	\N	1320000	5185	147	272	24	c
+10677	\N	1327000	5321	147	337	25	c
+10678	\N	1337000	4578	147	272	26	c
+10679	\N	1338000	5107	147	352	27	c
+10680	\N	1355000	5392	147	337	28	c
+10681	\N	1399000	4976	147	337	29	c
+10682	\N	1411000	3229	147	272	30	c
+10683	\N	1428000	5169	147	352	31	c
+10684	\N	1432000	4977	147	337	32	c
+10685	\N	1457000	5277	147	359	33	c
+10686	\N	1473000	4979	147	337	34	c
+10687	\N	1484000	5401	147	272	35	c
+10688	\N	1500000	5383	147	272	36	c
+10689	\N	1550000	1829	147	359	37	c
+10690	\N	1572000	5404	147	352	38	c
+10691	\N	1576000	5317	147	337	39	c
+10692	\N	1588000	5102	147	352	40	c
+10693	\N	1595000	5103	147	352	41	c
+10694	\N	1639000	4980	147	337	42	c
+10695	\N	1661000	3412	147	352	43	c
+10696	\N	1697000	5233	147	272	44	c
+10697	\N	1732000	4982	147	337	45	c
+10698	\N	1761000	3233	147	272	46	c
+10699	\N	1771000	4983	147	337	47	c
+7424	\N	1534070	5503	45	189	183	c
+10975	\N	2025000	3114	155	131	30	c
+10976	\N	2120000	5327	155	155	31	c
+10952	\N	1300000	3120	155	131	7	c
+10995	\N	1301000	5547	156	145	19	c
+10996	\N	1329000	1792	156	145	20	c
+10997	\N	1331000	1835	156	145	21	c
+10998	\N	1367000	3302	156	145	22	c
+10999	\N	1377000	1805	156	143	23	c
+11000	\N	1391000	5305	156	145	24	c
+11001	\N	1394000	3296	156	145	25	c
+11002	\N	1410000	1828	156	145	26	c
+11003	\N	1439000	1801	156	143	27	c
+11004	\N	1447000	5307	156	145	28	c
+11005	\N	1494000	3297	156	145	29	c
+11006	\N	1530000	1762	156	143	30	c
+11007	\N	1543000	3269	156	143	31	c
+11008	\N	1595000	3292	156	145	32	c
+11009	\N	1634000	3294	156	145	33	c
+11010	\N	1665000	5546	156	145	34	c
+11011	\N	1741000	3268	156	143	35	c
+11012	\N	1027000	1517	157	134	1	c
+11013	\N	1103000	1622	157	134	2	c
+11014	\N	1135000	5494	157	134	3	c
+11015	\N	1136000	1681	157	129	4	c
+11016	\N	1137000	1636	157	129	5	c
+11017	\N	1144000	3086	157	129	6	c
+11018	\N	1149000	5352	157	134	7	c
+11019	\N	1151000	3087	157	129	8	c
+11020	\N	1162000	5333	157	134	9	c
+11021	\N	1169000	3085	157	129	10	c
+11022	\N	1170000	1680	157	134	11	c
+11023	\N	1171000	1749	157	129	12	c
+11024	\N	1175000	5382	157	129	13	c
+11025	\N	1191000	1673	157	129	14	c
+11026	\N	1199000	3070	157	129	15	c
+11027	\N	1204000	1659	157	129	16	c
+11028	\N	1215000	1625	157	134	17	c
+11029	\N	1217000	5174	157	134	18	c
+11030	\N	1222000	3164	157	134	19	c
+11032	\N	1228000	1660	157	134	21	c
+11033	\N	1229000	5419	157	134	22	c
+11034	\N	1234000	1695	157	134	23	c
+11035	\N	1241000	3155	157	134	24	c
+11036	\N	1246000	1672	157	129	25	c
+11037	\N	1274000	3075	157	129	26	c
+11038	\N	1297000	3154	157	134	27	c
+11039	\N	1317000	1690	157	129	28	c
+11040	\N	1323000	1739	157	134	29	c
+11031	\N	1223000	1563	157	129	20	c
+11041	\N	1275000	3156	158	134	1	c
+11042	\N	1276000	3159	158	134	2	c
+11043	\N	1277000	3072	158	129	3	c
+11044	\N	1299000	3157	158	134	4	c
+11045	\N	1307000	3071	158	129	5	c
+11046	\N	1314000	3076	158	129	6	c
+11047	\N	1315000	5333	158	134	7	c
+11048	\N	1318000	3079	158	129	8	c
+11049	\N	1321000	5554	158	129	9	c
+11050	\N	1323000	3077	158	129	10	c
+11051	\N	1340000	3078	158	129	11	c
+11052	\N	1346000	1776	158	129	12	c
+11053	\N	1359000	5555	158	129	13	c
+11054	\N	1366000	4042	158	129	14	c
+11055	\N	1379000	3160	158	134	15	c
+11056	\N	1384000	4102	158	134	16	c
+11057	\N	1411000	5493	158	134	17	c
+11058	\N	1416000	4098	158	134	18	c
+11059	\N	1426000	5551	158	129	19	c
+11060	\N	1427000	3074	158	129	20	c
+11061	\N	1433000	1740	158	129	21	c
+11062	\N	1434000	5552	158	129	22	c
+11063	\N	1436000	3083	158	129	23	c
+11064	\N	1448000	1766	158	129	24	c
+11065	\N	1449000	3081	158	129	25	c
+11066	\N	1449000	3084	158	129	26	c
+11067	\N	1450000	4039	158	129	27	c
+11068	\N	1457000	5395	158	129	28	c
+11069	\N	1467000	5553	158	129	29	c
+11070	\N	1468000	5556	158	129	30	c
+11071	\N	1474000	1767	158	129	31	c
+11072	\N	1475000	5417	158	129	32	c
+11073	\N	1529000	4043	158	129	33	c
+11074	\N	1530000	5400	158	134	34	c
+11075	\N	1536000	4096	158	134	35	c
+11076	\N	1553000	1789	158	129	36	c
+11077	\N	1558000	5557	158	129	37	c
+11078	\N	1591000	5387	158	129	38	c
+11079	\N	1603000	5549	158	134	39	c
+11080	\N	1639000	1800	158	129	40	c
+11081	\N	1780000	4099	158	134	41	c
+11082	\N	1855000	5550	158	134	42	c
+11083	\N	1876000	1858	158	134	43	c
+11084	\N	1110000	5164	159	169	1	c
+11085	\N	1122000	3650	159	169	2	c
+11086	\N	1123000	3647	159	169	3	c
+11087	\N	1126000	5176	159	147	4	c
+11088	\N	1151000	3648	159	169	5	c
+11089	\N	1182000	3649	159	169	6	c
+11090	\N	1208000	3653	159	169	7	c
+11091	\N	1213000	3651	159	169	8	c
+11092	\N	1249000	3641	159	169	9	c
+11093	\N	1259000	5183	159	147	10	c
+11094	\N	1272000	1561	159	139	11	c
+11095	\N	1292000	3326	159	147	12	c
+11096	\N	1301000	3638	159	169	13	c
+11097	\N	1304000	5274	159	147	14	c
+11098	\N	1304000	3642	159	169	15	c
+11099	\N	1319000	3640	159	169	16	c
+11100	\N	1319000	3637	159	169	17	c
+11101	\N	1345000	3982	159	147	18	c
+11102	\N	1351000	3672	159	169	19	c
+11103	\N	1407000	5276	159	147	20	c
+11104	\N	1415000	5203	159	139	21	c
+11105	\N	1419000	3239	159	139	22	c
+11106	\N	1434000	3235	159	139	23	c
+11107	\N	1443000	5275	159	147	24	c
+11108	\N	1443000	1823	159	147	25	c
+11109	\N	1454000	3237	159	139	26	c
+11110	\N	1477000	1631	159	147	27	c
+11111	\N	1484000	3646	159	169	28	c
+11112	\N	1522000	5266	159	147	29	c
+11113	\N	1557000	3319	159	147	30	c
+11114	\N	1557000	5267	159	147	31	c
+11115	\N	1594000	1608	159	139	32	c
+11116	\N	1626000	3331	159	147	33	c
+11117	\N	1660000	5233	159	139	34	c
+16523	\N	1254200	2515	280	445	22	c
+11119	\N	1730000	5268	159	147	36	c
+11120	\N	1778000	3230	159	139	37	c
+11121	\N	1792000	3979	159	147	38	c
+11122	\N	1850000	1859	159	147	39	c
+11123	\N	1898000	1842	159	147	40	c
+11124	\N	1918000	5529	159	147	41	c
+11125	\N	1946000	3231	159	139	42	c
+11126	\N	1958000	1730	159	147	43	c
+11127	\N	1959000	3978	159	147	44	c
+11128	\N	2032000	3323	159	147	45	c
+11129	\N	2093000	1855	159	147	46	c
+11130	\N	2095000	5271	159	147	47	c
+11131	\N	2097000	5374	159	147	48	c
+11132	\N	1071000	1513	160	133	1	c
+11133	\N	1072000	5263	160	153	2	c
+11134	\N	1077000	3148	160	133	3	c
+13001	\N	1659000	3126	209	132	23	c
+11136	\N	1153000	1674	160	153	5	c
+11137	\N	1203000	1618	160	133	6	c
+11138	\N	1227000	1643	160	133	7	c
+11139	\N	1250000	5264	160	153	8	c
+11140	\N	1281000	5202	160	133	9	c
+11141	\N	1290000	4111	160	133	10	c
+11142	\N	1293000	3409	160	153	11	c
+11143	\N	1300000	5213	160	133	12	c
+11144	\N	1317000	5216	160	133	13	c
+11145	\N	1336000	3141	160	133	14	c
+11146	\N	1347000	5151	160	153	15	c
+11147	\N	1402000	3144	160	133	16	c
+11148	\N	1414000	3145	160	133	17	c
+11149	\N	1420000	5262	160	133	18	c
+11150	\N	1421000	3142	160	133	19	c
+11151	\N	1424000	3403	160	153	20	c
+11152	\N	1443000	2998	160	133	21	c
+11153	\N	1465000	5228	160	133	22	c
+11154	\N	1522000	3146	160	133	23	c
+11155	\N	1627000	1772	160	153	24	c
+11198	\N	1390000	5805	162	146	8	c
+11157	\N	1111000	5198	161	141	1	c
+11158	\N	1137000	5175	161	151	2	c
+11159	\N	1151000	4470	161	258	3	c
+11160	\N	1160000	3252	161	141	4	c
+11161	\N	1180000	1645	161	151	5	c
+11162	\N	1199000	3254	161	141	6	c
+11163	\N	1217000	5181	161	151	7	c
+11164	\N	1221000	3393	161	151	8	c
+11165	\N	1232000	1639	161	151	9	c
+11166	\N	1238000	4473	161	258	10	c
+11167	\N	1257000	5343	161	258	11	c
+11168	\N	1265000	5159	161	141	12	c
+11169	\N	1267000	5261	161	141	13	c
+11170	\N	1271000	1708	161	141	14	c
+11171	\N	1299000	3255	161	141	15	c
+11172	\N	1302000	4461	161	258	16	c
+11173	\N	1310000	3249	161	141	17	c
+11174	\N	1319000	4475	161	258	18	c
+11175	\N	1325000	1687	161	141	19	c
+11176	\N	1328000	4472	161	258	20	c
+11177	\N	1330000	4463	161	258	21	c
+11178	\N	1345000	4476	161	258	22	c
+11179	\N	1403000	1815	161	141	23	c
+11180	\N	1404000	3250	161	141	24	c
+11181	\N	1405000	1701	161	141	25	c
+11182	\N	1416000	4206	161	151	26	c
+11183	\N	1515000	5559	161	151	27	c
+11184	\N	1546000	3394	161	151	28	c
+11185	\N	1593000	1788	161	151	29	c
+11186	\N	1599000	5166	161	151	30	c
+11187	\N	1607000	3382	161	151	31	c
+11188	\N	1609000	5378	161	151	32	c
+11189	\N	1784000	3387	161	151	33	c
+11190	\N	1879000	3388	161	151	34	c
+11191	\N	1116000	2505	162	137	1	c
+11192	\N	1173000	2534	162	137	2	c
+11193	\N	1246000	3309	162	146	3	c
+11194	\N	1289000	3210	162	137	4	c
+11195	\N	1311000	3311	162	146	5	c
+11196	\N	1315000	3310	162	146	6	c
+11197	\N	1353000	5303	162	146	7	c
+11199	\N	1393000	5564	162	146	9	c
+11200	\N	1421000	2515	162	137	10	c
+11201	\N	1444000	3201	162	137	11	c
+11202	\N	1452000	3211	162	137	12	c
+11203	\N	1455000	3204	162	137	13	c
+11205	\N	1471000	3313	162	146	15	c
+11206	\N	1477000	5507	162	137	16	c
+11207	\N	1500000	3199	162	137	17	c
+11208	\N	1500000	2677	162	137	18	c
+11209	\N	1516000	3212	162	137	19	c
+11210	\N	1527000	3306	162	146	20	c
+11211	\N	1576000	2643	162	146	21	c
+11212	\N	1588000	5200	162	146	22	c
+11213	\N	1614000	3206	162	137	23	c
+11214	\N	1615000	5562	162	137	24	c
+11215	\N	1645000	5199	162	146	25	c
+11216	\N	1654000	3202	162	137	26	c
+11218	\N	1714000	1071	162	146	28	c
+11219	\N	1815000	5565	162	146	29	c
+11220	\N	1880000	2719	162	137	30	c
+11221	\N	1889000	5560	162	137	31	c
+11222	\N	1992000	3207	162	137	32	c
+11223	\N	2051000	2670	162	137	33	c
+11224	\N	2113000	5561	162	137	34	c
+11225	\N	1318000	3136	163	132	1	c
+11204	\N	1466000	5806	162	146	14	c
+11217	\N	1656000	5627	162	137	27	c
+11226	\N	1332000	3137	163	132	2	c
+11227	\N	1334000	3138	163	132	3	c
+11228	\N	1341000	1118	163	132	4	c
+11229	\N	1349000	1025	163	132	5	c
+11230	\N	1357000	1026	163	132	6	c
+11231	\N	1416000	3139	163	132	7	c
+11232	\N	1459000	5566	163	132	8	c
+11233	\N	1500000	3123	163	132	9	c
+11234	\N	1506000	3128	163	132	10	c
+11235	\N	1513000	1074	163	156	11	c
+11236	\N	1540000	5309	163	156	12	c
+11237	\N	1571000	3456	163	156	13	c
+11238	\N	1606000	5509	163	156	14	c
+11239	\N	1613000	5329	163	156	15	c
+11240	\N	1619000	3124	163	132	16	c
+11241	\N	1626000	5320	163	156	17	c
+11242	\N	1628000	3126	163	132	18	c
+11243	\N	1679000	3125	163	132	19	c
+11244	\N	1679000	3127	163	132	20	c
+11245	\N	1723000	2720	163	132	21	c
+11246	\N	1727000	3130	163	132	22	c
+11247	\N	1872000	1061	163	156	23	c
+11248	\N	1879000	5316	163	156	24	c
+11249	\N	1886000	5325	163	156	25	c
+11250	\N	1891000	3129	163	132	26	c
+11251	\N	1901000	2682	163	132	27	c
+11252	\N	1917000	3140	163	132	28	c
+11253	\N	1918000	3131	163	132	29	c
+11254	\N	2063000	5215	163	132	30	c
+11255	\N	1286000	3174	164	135	1	c
+11256	\N	1291000	2504	164	130	2	c
+11257	\N	1331000	5331	164	135	3	c
+11258	\N	1387000	2594	164	130	4	c
+11259	\N	1389000	2509	164	130	5	c
+11260	\N	1394000	3103	164	130	6	c
+11261	\N	1432000	3175	164	135	7	c
+11262	\N	1434000	3177	164	135	8	c
+11263	\N	1435000	2629	164	135	9	c
+11264	\N	1450000	2617	164	130	10	c
+11265	\N	1454000	2517	164	130	11	c
+11266	\N	1460000	4107	164	135	12	c
+11267	\N	1480000	2622	164	130	13	c
+11268	\N	1530000	3104	164	130	14	c
+11269	\N	1564000	3095	164	130	15	c
+11270	\N	1567000	1172	164	135	16	c
+11271	\N	1567000	5332	164	135	17	c
+11272	\N	1592000	3089	164	130	18	c
+11273	\N	1608000	3176	164	135	19	c
+11274	\N	1617000	3094	164	130	20	c
+11275	\N	1632000	2606	164	130	21	c
+11276	\N	1644000	2630	164	130	22	c
+11277	\N	1647000	3091	164	130	23	c
+11278	\N	1657000	3093	164	130	24	c
+11279	\N	1683000	3092	164	130	25	c
+11280	\N	1688000	2654	164	130	26	c
+11281	\N	1694000	5337	164	130	27	c
+11282	\N	1738000	3090	164	130	28	c
+11283	\N	1757000	5572	164	135	29	c
+11284	\N	1771000	3097	164	130	30	c
+11285	\N	1783000	3167	164	135	31	c
+11286	\N	1796000	3168	164	135	32	c
+11287	\N	1802000	5569	164	135	33	c
+11288	\N	1846000	3172	164	135	34	c
+11289	\N	1850000	5570	164	135	35	c
+11290	\N	1857000	3170	164	135	36	c
+11291	\N	1862000	5571	164	135	37	c
+11292	\N	1872000	4033	164	130	38	c
+11293	\N	1904000	3099	164	130	39	c
+11294	\N	1913000	1104	164	135	40	c
+11295	\N	1984000	4103	164	135	41	c
+11296	\N	2080000	3100	164	130	42	c
+11297	\N	2091000	5567	164	130	43	c
+11298	\N	2102000	3173	164	135	44	c
+11299	\N	2239000	3101	164	130	45	c
+11300	\N	2364000	5568	164	130	46	c
+11301	\N	2456000	2728	164	130	47	c
+11302	\N	1255000	5156	165	144	1	c
+11303	\N	1299000	3309	165	146	2	c
+11304	\N	1332000	3284	165	144	3	c
+11305	\N	1347000	4972	165	146	4	c
+11306	\N	1351000	6369	165	144	5	c
+11308	\N	1373000	5303	165	146	7	c
+11309	\N	1374000	3310	165	146	8	c
+11310	\N	1378000	1071	165	146	9	c
+11311	\N	1389000	2544	165	144	10	c
+11312	\N	1430000	5564	165	146	11	c
+11313	\N	1461000	1056	165	146	12	c
+11314	\N	1493000	3285	165	144	13	c
+11315	\N	1505000	3278	165	144	14	c
+11316	\N	1513000	5150	165	144	15	c
+11317	\N	1517000	3286	165	144	16	c
+11319	\N	1557000	3313	165	146	18	c
+11320	\N	1586000	5301	165	144	19	c
+11321	\N	1591000	3306	165	146	20	c
+11322	\N	1626000	3280	165	144	21	c
+11323	\N	1715000	5200	165	146	22	c
+11324	\N	1720000	5199	165	146	23	c
+11325	\N	1778000	5565	165	146	24	c
+11326	\N	2849000	3281	165	144	25	c
+11327	\N	1363000	3664	166	170	1	c
+11328	\N	1385000	5265	166	148	2	c
+11329	\N	1427000	3665	166	170	3	c
+11330	\N	1456000	3667	166	170	4	c
+11331	\N	1479000	3666	166	170	5	c
+11332	\N	1525000	5574	166	170	6	c
+11333	\N	1535000	3668	166	170	7	c
+11334	\N	1552000	3688	166	170	8	c
+11335	\N	1553000	3669	166	170	9	c
+11336	\N	1565000	4579	166	140	10	c
+11337	\N	1578000	1155	166	148	11	c
+11338	\N	1680000	3654	166	170	12	c
+11339	\N	1683000	3350	166	148	13	c
+11340	\N	1685000	2572	166	140	14	c
+11341	\N	1722000	3656	166	170	15	c
+11342	\N	1739000	1043	166	148	16	c
+11343	\N	1757000	5575	166	170	17	c
+11344	\N	1765000	5269	166	148	18	c
+11345	\N	1783000	3246	166	140	19	c
+11346	\N	1792000	3243	166	140	20	c
+11347	\N	1792000	3242	166	140	21	c
+11348	\N	1797000	5272	166	148	22	c
+11349	\N	1838000	3342	166	148	23	c
+11350	\N	1867000	5235	166	148	24	c
+11351	\N	1921000	3244	166	140	25	c
+11352	\N	2006000	3349	166	148	26	c
+11353	\N	2055000	5576	166	170	27	c
+11354	\N	2056000	5577	166	140	28	c
+11355	\N	2105000	3989	166	148	29	c
+11356	\N	2159000	3345	166	148	30	c
+11357	\N	2159000	3340	166	148	31	c
+11358	\N	2181000	3339	166	148	32	c
+11359	\N	2243000	3245	166	140	33	c
+11360	\N	2664000	5573	166	148	34	c
+11361	\N	1140000	102	167	204	1	c
+11318	\N	1539000	5806	165	146	17	c
+11362	\N	1178000	2505	167	137	2	c
+11363	\N	1240000	2534	167	137	3	c
+11364	\N	1326000	3210	167	137	4	c
+11365	\N	1339000	2537	167	137	5	c
+11366	\N	1352000	3209	167	137	6	c
+11367	\N	1391000	116	167	204	7	c
+11368	\N	1418000	4054	167	204	8	c
+11369	\N	1421000	112	167	204	9	c
+11370	\N	1437000	4046	167	204	10	c
+11371	\N	1469000	3199	167	137	11	c
+11372	\N	1493000	4052	167	204	12	c
+11373	\N	1536000	5507	167	137	13	c
+11374	\N	1537000	3201	167	137	14	c
+11375	\N	1551000	4045	167	204	15	c
+11376	\N	1561000	3200	167	137	16	c
+11377	\N	1565000	3211	167	137	17	c
+11378	\N	1598000	4047	167	204	18	c
+11379	\N	1605000	3203	167	137	19	c
+11380	\N	1620000	2677	167	137	20	c
+11381	\N	1719000	5578	167	137	21	c
+11382	\N	1727000	4050	167	204	22	c
+11383	\N	1753000	3202	167	137	23	c
+11385	\N	1918000	4049	167	204	25	c
+11386	\N	1978000	5579	167	137	26	c
+11387	\N	2061000	2719	167	137	27	c
+11388	\N	2088000	3207	167	137	28	c
+11389	\N	2092000	4051	167	204	29	c
+11384	\N	1870000	5627	167	137	24	c
+13002	\N	1710000	5301	209	144	24	c
+13003	\N	1711000	2682	209	132	25	c
+13004	\N	1715000	2687	209	132	26	c
+13005	\N	1718000	3245	209	140	27	c
+13006	\N	1938000	5215	209	132	28	c
+13007	\N	1947000	5586	209	132	29	c
+13008	\N	2406000	3281	209	144	30	c
+13009	\N	1227000	2534	210	137	1	c
+13010	\N	1254000	3377	210	150	2	c
+13011	\N	1267000	3210	210	137	3	c
+13012	\N	1287000	1012	210	150	4	c
+13013	\N	1300000	3209	210	137	5	c
+13014	\N	1307000	5112	210	154	6	c
+13015	\N	1314000	2537	210	137	7	c
+13016	\N	1326000	1005	210	150	8	c
+13017	\N	1337000	3375	210	150	9	c
+13018	\N	1341000	1119	210	150	10	c
+13019	\N	1346000	2515	210	137	11	c
+13020	\N	1348000	3364	210	150	12	c
+13021	\N	1358000	2597	210	154	13	c
+13022	\N	1360000	3368	210	150	14	c
+13023	\N	1372000	1074	210	156	15	c
+13024	\N	1374000	5282	210	150	16	c
+13025	\N	1387000	3421	210	154	17	c
+13026	\N	1388000	5283	210	150	18	c
+13027	\N	1400000	1013	210	150	19	c
+13028	\N	1413000	5320	210	156	20	c
+13029	\N	1468000	3211	210	137	21	c
+13030	\N	1494000	3456	210	156	22	c
+13031	\N	1504000	3423	210	154	23	c
+13032	\N	1518000	3201	210	137	24	c
+13033	\N	1520000	3367	210	150	25	c
+13034	\N	1529000	5329	210	156	26	c
+13035	\N	1577000	5207	210	154	27	c
+13036	\N	1580000	3422	210	154	28	c
+13037	\N	1586000	5313	210	156	29	c
+13038	\N	1597000	3416	210	154	30	c
+16524	\N	1254500	3904	280	445	23	c
+16525	\N	1261900	3897	280	445	24	c
+16526	\N	1262900	5509	280	443	25	c
+16527	\N	1267700	6308	280	443	26	c
+16528	\N	1278800	3311	280	440	27	c
+16529	\N	1279800	6299	280	375	28	c
+16530	\N	1283700	3310	280	440	29	c
+16531	\N	1287400	5511	280	496	30	c
+16532	\N	1301100	6310	280	494	31	c
+16533	\N	1306300	4035	280	446	32	c
+16534	\N	1307500	6295	280	446	33	c
+16535	\N	1316700	3177	280	496	34	c
+16536	\N	1323700	5193	280	378	35	c
+16537	\N	1324500	3123	280	491	36	c
+16538	\N	1328800	3417	280	378	37	c
+16539	\N	1336100	4947	280	491	38	c
+16540	\N	1337800	4989	280	443	39	c
+16541	\N	1339200	3175	280	496	40	c
+16542	\N	1340600	6317	280	440	41	c
+16543	\N	1340900	4994	280	443	42	c
+16544	\N	1341000	4227	280	383	43	c
+16545	\N	1346600	6312	280	494	44	c
+16546	\N	1347300	3421	280	378	45	c
+16547	\N	1347500	3371	280	383	46	c
+16548	\N	1349000	6296	280	446	47	c
+16549	\N	1356600	3212	280	445	48	c
+16550	\N	1370100	4530	280	375	49	c
+16551	\N	1376500	3309	280	440	50	c
+16552	\N	1379300	3166	280	496	51	c
+16553	\N	1380900	3364	280	383	52	c
+16554	\N	1385100	6300	280	375	53	c
+16555	\N	1386800	3996	280	380	54	c
+16556	\N	1397200	3280	280	438	55	c
+16557	\N	1404600	6320	280	378	56	c
+16558	\N	1406700	4107	280	496	57	c
+16559	\N	1407400	3284	280	438	58	c
+16560	\N	1410200	4532	280	375	59	c
+16561	\N	1422300	3167	280	496	60	c
+16562	\N	1425800	4223	280	383	61	c
+16563	\N	1427100	3368	280	383	62	c
+16564	\N	1428000	4531	280	375	63	c
+16565	\N	1429100	3985	280	380	64	c
+16566	\N	1429600	3997	280	380	65	c
+16567	\N	1431900	3399	280	382	66	c
+16568	\N	1433300	6315	280	440	67	c
+16569	\N	1436300	5280	280	383	68	c
+16570	\N	1443900	4108	280	496	69	c
+16571	\N	1446700	3349	280	380	70	c
+16572	\N	1456300	6293	280	446	71	c
+16573	\N	1473700	6304	280	438	72	c
+16574	\N	1477800	6302	280	380	73	c
+16575	\N	1479800	6313	280	494	74	c
+16576	\N	1481000	6311	280	494	75	c
+16577	\N	1481800	6321	280	382	76	c
+16578	\N	1482300	6297	280	375	77	c
+16579	\N	1491200	6314	280	494	78	c
+16580	\N	1491900	6301	280	380	79	c
+16581	\N	1515400	6298	280	375	80	c
+16582	\N	1558500	3995	280	380	81	c
+16583	\N	1578700	6322	280	382	82	c
+16584	\N	1640700	6305	280	438	83	c
+16585	\N	1648600	6306	280	438	84	c
+16843	\N	1307000	3897	283	445	58	c
+16844	\N	1307000	6295	283	446	59	c
+16845	\N	1308000	6407	283	399	60	c
+16846	\N	1309000	6425	283	404	61	c
+16847	\N	1310000	4053	283	422	62	c
+16848	\N	1313000	3209	283	445	63	c
+16849	\N	1318000	3779	283	413	64	c
+16850	\N	1320000	6408	283	419	65	c
+16851	\N	1324000	6426	283	417	66	c
+11390	\N	1233000	3398	168	152	1	c
+11391	\N	1299000	3377	168	150	2	c
+11392	\N	1330000	1005	168	150	3	c
+11393	\N	1343000	1012	168	150	4	c
+11394	\N	1367000	3259	168	142	5	c
+11395	\N	1378000	3364	168	150	6	c
+11396	\N	1382000	1013	168	150	7	c
+11397	\N	1391000	1119	168	150	8	c
+11398	\N	1393000	3375	168	150	9	c
+11399	\N	1399000	3368	168	150	10	c
+11400	\N	1414000	5283	168	150	11	c
+11401	\N	1421000	5282	168	150	12	c
+11402	\N	1431000	4530	168	142	13	c
+11403	\N	1438000	4482	168	259	14	c
+11404	\N	1457000	4484	168	259	15	c
+11405	\N	1464000	2558	168	142	16	c
+11406	\N	1472000	4481	168	259	17	c
+11407	\N	1477000	5584	168	142	18	c
+11408	\N	1507000	1109	168	152	19	c
+11409	\N	1518000	4486	168	259	20	c
+11410	\N	1524000	3367	168	150	21	c
+11411	\N	1526000	3370	168	150	22	c
+11412	\N	1529000	3366	168	150	23	c
+11413	\N	1541000	1151	168	150	24	c
+11414	\N	1553000	3369	168	150	25	c
+11415	\N	1557000	5280	168	150	26	c
+11416	\N	1557000	4483	168	259	27	c
+11417	\N	1559000	3261	168	142	28	c
+11418	\N	1560000	3371	168	150	29	c
+11419	\N	1573000	2564	168	142	30	c
+11420	\N	1583000	4528	168	142	31	c
+11421	\N	1587000	3401	168	152	32	c
+11422	\N	1595000	5581	168	152	33	c
+11423	\N	1615000	3399	168	152	34	c
+11424	\N	1654000	3400	168	152	35	c
+11425	\N	1681000	5582	168	152	36	c
+11426	\N	1691000	5359	168	150	37	c
+11427	\N	1694000	4487	168	259	38	c
+11428	\N	1696000	2584	168	142	39	c
+11429	\N	1699000	5580	168	152	40	c
+11430	\N	1701000	4477	168	259	41	c
+11431	\N	1718000	4478	168	259	42	c
+11432	\N	1736000	3373	168	150	43	c
+11433	\N	1737000	3372	168	150	44	c
+11434	\N	1777000	3402	168	152	45	c
+11435	\N	1805000	4485	168	259	46	c
+11436	\N	1828000	5583	168	152	47	c
+11437	\N	1851000	1212	168	152	48	c
+11438	\N	2004000	1173	168	150	49	c
+11439	\N	2101000	5585	168	259	50	c
+11440	\N	2103000	4479	168	259	51	c
+11441	\N	2214000	3396	168	152	52	c
+11442	\N	2328000	3397	168	152	53	c
+11443	\N	1333000	2504	169	130	1	c
+11444	\N	1333000	3136	169	132	2	c
+11445	\N	1345000	3138	169	132	3	c
+11446	\N	1350000	1118	169	132	4	c
+11447	\N	1360000	1026	169	132	5	c
+11448	\N	1372000	1025	169	132	6	c
+11449	\N	1393000	3137	169	132	7	c
+11450	\N	1420000	3102	169	130	8	c
+11451	\N	1424000	3103	169	130	9	c
+11452	\N	1424000	3139	169	132	10	c
+11453	\N	1446000	5566	169	132	11	c
+11454	\N	1467000	2594	169	130	12	c
+11455	\N	1487000	2517	169	130	13	c
+11456	\N	1489000	2617	169	130	14	c
+11457	\N	1493000	3123	169	132	15	c
+11458	\N	1564000	3104	169	130	16	c
+11459	\N	1602000	3128	169	132	17	c
+11460	\N	1611000	2622	169	130	18	c
+11461	\N	1612000	3095	169	130	19	c
+11462	\N	1612000	3091	169	130	20	c
+11463	\N	1616000	2606	169	130	21	c
+11464	\N	1633000	3124	169	132	22	c
+11465	\N	1649000	3127	169	132	23	c
+11466	\N	1668000	3129	169	132	24	c
+11467	\N	1681000	3131	169	132	25	c
+11468	\N	1688000	3094	169	130	26	c
+11469	\N	1693000	3089	169	130	27	c
+11470	\N	1697000	2654	169	130	28	c
+11471	\N	1703000	2603	169	130	29	c
+11472	\N	1708000	2630	169	130	30	c
+11473	\N	1709000	3130	169	132	31	c
+11474	\N	1714000	3125	169	132	32	c
+11475	\N	1715000	2720	169	132	33	c
+11476	\N	1723000	3090	169	130	34	c
+11477	\N	1735000	5337	169	130	35	c
+11478	\N	1735000	3092	169	130	36	c
+11479	\N	1829000	4033	169	130	37	c
+11480	\N	1831000	3099	169	130	38	c
+11481	\N	1881000	2682	169	132	39	c
+11482	\N	1940000	5586	169	132	40	c
+11483	\N	1990000	3101	169	130	41	c
+11484	\N	1995000	3100	169	130	42	c
+11485	\N	1296000	5156	170	144	1	c
+11486	\N	1309000	5265	170	148	2	c
+11487	\N	1374000	3284	170	144	3	c
+11488	\N	1383000	3259	170	142	4	c
+11489	\N	1400000	1155	170	148	5	c
+11491	\N	1449000	2544	170	144	7	c
+11492	\N	1484000	2558	170	142	8	c
+11493	\N	1487000	3261	170	142	9	c
+11494	\N	1509000	5269	170	148	10	c
+11495	\N	1557000	3285	170	144	11	c
+11496	\N	1568000	3350	170	148	12	c
+11497	\N	1632000	4530	170	142	13	c
+11498	\N	1635000	3260	170	142	14	c
+11499	\N	1636000	5150	170	144	15	c
+11500	\N	1641000	1159	170	148	16	c
+11501	\N	1643000	5301	170	144	17	c
+11502	\N	1647000	5235	170	148	18	c
+11503	\N	1687000	2564	170	142	19	c
+11504	\N	1695000	5272	170	148	20	c
+11505	\N	1710000	3349	170	148	21	c
+11506	\N	1722000	1160	170	148	22	c
+11507	\N	1730000	3342	170	148	23	c
+11508	\N	1731000	3280	170	144	24	c
+11509	\N	1762000	4528	170	142	25	c
+11510	\N	1864000	3340	170	148	26	c
+11511	\N	1893000	3989	170	148	27	c
+11513	\N	2065000	5273	170	148	29	c
+11514	\N	2110000	3343	170	148	30	c
+11515	\N	2162000	5270	170	148	31	c
+11516	\N	2181000	3344	170	148	32	c
+11517	\N	2235000	3346	170	148	33	c
+11518	\N	2383000	5587	170	148	34	c
+11519	\N	1240000	3398	171	152	1	c
+11520	\N	1347000	5112	171	154	2	c
+11521	\N	1355000	2597	171	154	3	c
+11522	\N	1406000	1109	171	152	4	c
+11523	\N	1408000	4432	171	255	5	c
+11524	\N	1427000	3421	171	154	6	c
+11525	\N	1443000	3423	171	154	7	c
+11512	\N	1878000	3345	170	148	28	c
+11526	\N	1466000	3399	171	152	8	c
+11527	\N	1477000	3422	171	154	9	c
+11528	\N	1486000	5207	171	154	10	c
+11529	\N	1508000	3416	171	154	11	c
+11530	\N	1509000	5350	171	154	12	c
+11531	\N	1516000	3401	171	152	13	c
+11532	\N	1517000	2612	171	154	14	c
+11533	\N	1529000	5581	171	152	15	c
+11534	\N	1541000	5193	171	154	16	c
+11535	\N	1545000	4435	171	255	17	c
+11536	\N	1547000	3417	171	154	18	c
+11537	\N	1567000	5580	171	152	19	c
+11538	\N	1571000	5588	171	154	20	c
+11539	\N	1601000	4434	171	255	21	c
+11540	\N	1612000	4436	171	255	22	c
+11541	\N	1614000	5582	171	152	23	c
+11542	\N	1618000	4851	171	255	24	c
+11543	\N	1655000	5589	171	154	25	c
+11544	\N	1659000	3400	171	152	26	c
+11545	\N	1719000	3402	171	152	27	c
+11546	\N	1726000	3418	171	154	28	c
+11547	\N	1730000	1212	171	152	29	c
+11548	\N	1810000	96	171	255	30	c
+11549	\N	1815000	99	171	255	31	c
+11550	\N	1819000	3419	171	154	32	c
+11551	\N	1822000	3427	171	154	33	c
+11552	\N	1870000	4431	171	255	34	c
+11553	\N	1998000	4856	171	255	35	c
+11554	\N	2001000	4430	171	255	36	c
+11555	\N	2051000	3396	171	152	37	c
+11556	\N	2232000	3397	171	152	38	c
+13039	\N	1281000	5265	211	148	1	c
+13040	\N	1288000	5643	211	156	2	c
+13041	\N	1309000	5644	211	156	3	c
+13042	\N	1344000	3309	211	146	4	c
+13043	\N	1349000	3310	211	146	5	c
+13044	\N	1351000	1155	211	148	6	c
+13045	\N	1413000	5645	211	156	7	c
+13046	\N	1413000	5646	211	156	8	c
+13047	\N	1419000	3311	211	146	9	c
+13048	\N	1426000	2558	211	142	10	c
+13049	\N	1432000	5303	211	146	11	c
+13050	\N	1456000	1071	211	146	12	c
+13051	\N	1483000	5564	211	146	13	c
+13052	\N	1495000	5269	211	148	14	c
+13053	\N	1505000	5647	211	156	15	c
+13054	\N	1506000	4990	211	156	16	c
+13055	\N	1506000	5648	211	156	17	c
+16586	\N	1290700	3139	281	491	1	c
+13057	\N	1543000	3350	211	148	19	c
+13059	\N	1597000	3349	211	148	21	c
+13060	\N	1607000	5235	211	148	22	c
+13061	\N	1651000	2564	211	142	23	c
+13062	\N	1668000	5649	211	142	24	c
+13063	\N	1711000	3339	211	148	25	c
+13064	\N	1773000	5259	211	142	26	c
+13065	\N	1326000	3398	212	152	1	c
+13066	\N	1356000	2504	212	130	2	c
+13067	\N	1414000	3102	212	130	3	c
+13068	\N	1459000	2594	212	130	4	c
+13069	\N	1471000	3103	212	130	5	c
+13070	\N	1492000	2617	212	130	6	c
+13071	\N	1499000	2517	212	130	7	c
+13072	\N	1523000	3398	212	152	8	c
+13073	\N	1535000	3104	212	130	9	c
+13074	\N	1551000	3088	212	130	10	c
+13075	\N	1599000	2622	212	130	11	c
+13076	\N	1624000	3401	212	152	12	c
+13077	\N	1625000	3400	212	152	13	c
+13078	\N	1634000	3091	212	130	14	c
+13079	\N	1659000	2603	212	130	15	c
+13080	\N	1685000	3090	212	130	16	c
+13081	\N	1731000	5650	212	130	17	c
+13082	\N	1752000	3093	212	130	18	c
+13083	\N	1754000	2606	212	130	19	c
+13084	\N	1772000	2630	212	130	20	c
+13085	\N	1809000	3097	212	130	21	c
+13086	\N	1842000	4033	212	130	22	c
+13087	\N	1852000	3402	212	152	23	c
+13088	\N	1870000	3098	212	130	24	c
+13089	\N	1880000	1212	212	152	25	c
+13090	\N	1974000	3102	212	130	26	c
+13091	\N	1974000	2606	212	130	27	c
+13092	\N	2005000	5583	212	152	28	c
+13093	\N	2255000	3396	212	152	29	c
+13214	\N	1074000	3326	218	379	1	c
+13216	\N	1176000	5276	218	379	3	c
+13217	\N	1208000	5663	218	439	4	c
+13218	\N	1219000	3981	218	379	5	c
+13219	\N	1238000	3982	218	379	6	c
+16587	\N	1300300	6333	281	446	2	c
+13221	\N	1304000	5665	218	439	8	c
+13222	\N	1307000	5267	218	379	9	c
+13224	\N	1339000	5266	218	379	11	c
+13225	\N	1349000	5667	218	379	12	c
+13226	\N	1373000	5214	218	439	13	c
+13227	\N	1377000	3323	218	379	14	c
+13228	\N	1380000	5668	218	379	15	c
+13229	\N	1393000	4589	218	439	16	c
+13230	\N	1393000	5669	218	439	17	c
+13231	\N	1397000	4581	218	439	18	c
+13232	\N	1398000	5662	218	379	19	c
+13233	\N	1419000	4582	218	439	20	c
+13234	\N	1423000	3266	218	439	21	c
+13235	\N	1424000	5613	218	379	22	c
+16588	\N	1305600	6324	281	443	3	c
+13237	\N	1535000	5386	218	379	24	c
+13238	\N	1552000	4584	218	439	25	c
+13239	\N	1552000	5670	218	439	26	c
+13240	\N	1558000	3978	218	379	27	c
+13241	\N	1566000	3269	218	439	28	c
+13242	\N	1659000	3331	218	379	29	c
+13223	\N	1327000	5744	218	379	10	c
+13244	\N	1715000	5271	218	379	31	c
+13245	\N	1717000	3976	218	379	32	c
+13246	\N	1727000	3977	218	379	33	c
+13247	\N	1740000	5671	218	439	34	c
+13248	\N	1800000	5529	218	379	35	c
+13249	\N	1820000	5672	218	439	36	c
+13250	\N	990000	5494	219	497	1	c
+13251	\N	1038000	3651	219	416	2	c
+13252	\N	1047000	3224	219	493	3	c
+13253	\N	1050000	3214	219	493	4	c
+13254	\N	1053000	1543	219	493	5	c
+13255	\N	1076000	5680	219	416	6	c
+13256	\N	1082000	3156	219	497	7	c
+13257	\N	1107000	5681	219	416	8	c
+13258	\N	1108000	3680	219	416	9	c
+13259	\N	1122000	5333	219	497	10	c
+13260	\N	1139000	3651	219	416	11	c
+13261	\N	1152000	1697	219	497	12	c
+13262	\N	1159000	3643	219	416	13	c
+13263	\N	1164000	4098	219	497	14	c
+13215	\N	1081000	4585	218	439	2	c
+13058	\N	1578000	5806	211	146	20	c
+13094	\N	1341000	5156	213	144	1	c
+13095	\N	1350000	1074	213	156	2	c
+13096	\N	1360000	3284	213	144	3	c
+13098	\N	1413000	2544	213	144	5	c
+13099	\N	1416000	5320	213	156	6	c
+13100	\N	1446000	2558	213	142	7	c
+13101	\N	1473000	1061	213	156	8	c
+13102	\N	1478000	3456	213	156	9	c
+13103	\N	1483000	5309	213	156	10	c
+13104	\N	1510000	5329	213	156	11	c
+13105	\N	1598000	3285	213	144	12	c
+13106	\N	1599000	3286	213	144	13	c
+13107	\N	1613000	5316	213	156	14	c
+13108	\N	1623000	3260	213	142	15	c
+13109	\N	1694000	3280	213	144	16	c
+13110	\N	1741000	5325	213	156	17	c
+13111	\N	1776000	5313	213	156	18	c
+13112	\N	1856000	4528	213	142	19	c
+13113	\N	1903000	2584	213	142	20	c
+13114	\N	1273000	3174	214	135	1	c
+13115	\N	1310000	5331	214	135	2	c
+13116	\N	1341000	5112	214	154	3	c
+13117	\N	1369000	2597	214	154	4	c
+13118	\N	1403000	3421	214	154	5	c
+13119	\N	1438000	3175	214	135	6	c
+13120	\N	1442000	3176	214	135	7	c
+13121	\N	1462000	4107	214	135	8	c
+13122	\N	1490000	3423	214	154	9	c
+13123	\N	1497000	3422	214	154	10	c
+13124	\N	1503000	3242	214	140	11	c
+13125	\N	1510000	3166	214	135	12	c
+13126	\N	1515000	5332	214	135	13	c
+13127	\N	1521000	1172	214	135	14	c
+13128	\N	1539000	2612	214	154	15	c
+13129	\N	1543000	3417	214	154	16	c
+13130	\N	1555000	5350	214	154	17	c
+13131	\N	1607000	3246	214	140	18	c
+13132	\N	1629000	3167	214	135	19	c
+13133	\N	1633000	3170	214	135	20	c
+13134	\N	1644000	3168	214	135	21	c
+13135	\N	1670000	5569	214	135	22	c
+13136	\N	1719000	5652	214	135	23	c
+13137	\N	1735000	5588	214	154	24	c
+13138	\N	1749000	3172	214	135	25	c
+13139	\N	1765000	3418	214	154	26	c
+13140	\N	1774000	3419	214	154	27	c
+13141	\N	1826000	5412	214	140	28	c
+13142	\N	1857000	5194	214	140	29	c
+13143	\N	1330000	3377	215	150	1	c
+13144	\N	1332000	2664	215	130	2	c
+13145	\N	1340000	1012	215	150	3	c
+13146	\N	1366000	3309	215	146	4	c
+13147	\N	1373000	1119	215	150	5	c
+13148	\N	1387000	3375	215	150	6	c
+13149	\N	1393000	3102	215	130	7	c
+13150	\N	1397000	3310	215	146	8	c
+13151	\N	1406000	3311	215	146	9	c
+13152	\N	1409000	3364	215	150	10	c
+13153	\N	1409000	3103	215	130	11	c
+13154	\N	1416000	1013	215	150	12	c
+13155	\N	1420000	5303	215	146	13	c
+13156	\N	1420000	3368	215	150	14	c
+13157	\N	1428000	1071	215	146	15	c
+13158	\N	1432000	2517	215	130	16	c
+13159	\N	1434000	2594	215	130	17	c
+13160	\N	1435000	5282	215	150	18	c
+13161	\N	1441000	3366	215	150	19	c
+13162	\N	1460000	2617	215	130	20	c
+13163	\N	1448000	2622	215	130	21	c
+13164	\N	1513000	5283	215	150	22	c
+13165	\N	1513000	3104	215	130	23	c
+13166	\N	1577000	3367	215	150	24	c
+13168	\N	1622000	3313	215	146	26	c
+13169	\N	1642000	2643	215	146	27	c
+13171	\N	1676000	3306	215	146	29	c
+13170	\N	1653000	5805	215	146	28	c
+13167	\N	1595000	5806	215	146	25	c
+16589	\N	1315300	3140	281	491	4	c
+16590	\N	1317200	6347	281	491	5	c
+16591	\N	1319500	6353	281	445	6	c
+16592	\N	1322800	6329	281	446	7	c
+16593	\N	1331700	5320	281	443	8	c
+16594	\N	1340800	6323	281	443	9	c
+16595	\N	1351300	3204	281	445	10	c
+16596	\N	1357100	6330	281	446	11	c
+16597	\N	1360000	3137	281	491	12	c
+16598	\N	1361100	3094	281	446	13	c
+16599	\N	1361300	6348	281	491	14	c
+16600	\N	1362300	4995	281	443	15	c
+16601	\N	1364800	5501	281	445	16	c
+16602	\N	1364900	6349	281	491	17	c
+16603	\N	1365100	3090	281	446	18	c
+16604	\N	1370300	3203	281	445	19	c
+16605	\N	1370400	3898	281	445	20	c
+16606	\N	1376100	4031	281	446	21	c
+16607	\N	1377200	6331	281	446	22	c
+16608	\N	1382800	3902	281	445	23	c
+16609	\N	1391400	3456	281	443	24	c
+16610	\N	1392700	3088	281	446	25	c
+16611	\N	1396500	6356	281	378	26	c
+16612	\N	1396900	3372	281	383	27	c
+16613	\N	1402700	3422	281	378	28	c
+16614	\N	1405200	4033	281	446	29	c
+16615	\N	1405300	6357	281	378	30	c
+16616	\N	1405500	6358	281	378	31	c
+16617	\N	1412800	4226	281	383	32	c
+16618	\N	1421400	3091	281	446	33	c
+16619	\N	1426000	6354	281	445	34	c
+16620	\N	1430600	6355	281	445	35	c
+16621	\N	1434200	3168	281	496	36	c
+16622	\N	1434900	5500	281	383	37	c
+16623	\N	1437300	3089	281	446	38	c
+16624	\N	1442300	3903	281	445	39	c
+16625	\N	1443200	6332	281	446	40	c
+16626	\N	1443700	5359	281	383	41	c
+16627	\N	1458500	6359	281	496	42	c
+16628	\N	1468500	4029	281	446	43	c
+16629	\N	1470400	6326	281	383	44	c
+16630	\N	1473700	6328	281	446	45	c
+16631	\N	1478900	6360	281	378	46	c
+16632	\N	1483000	4104	281	496	47	c
+16633	\N	1487800	5199	281	440	48	c
+16634	\N	1491300	6327	281	383	49	c
+16635	\N	1494200	6361	281	496	50	c
+16636	\N	1495300	6340	281	375	51	c
+16637	\N	1498100	5510	281	496	52	c
+16638	\N	1508600	5519	281	445	53	c
+16639	\N	1511600	5272	281	380	54	c
+16640	\N	1512600	6338	281	380	55	c
+16641	\N	1520700	5353	281	446	56	c
+16642	\N	1521300	5270	281	380	57	c
+16643	\N	1528700	4028	281	446	58	c
+16644	\N	1529500	4224	281	383	59	c
+16645	\N	1530600	5362	281	383	60	c
+16646	\N	1537400	5109	281	378	61	c
+13172	\N	1152000	3255	216	374	1	c
+13173	\N	1169000	5655	216	442	2	c
+13174	\N	1188000	3249	216	374	3	c
+13175	\N	1208000	4522	216	374	4	c
+13176	\N	1302000	5314	216	442	5	c
+13177	\N	1330000	4521	216	374	6	c
+13178	\N	1343000	5629	216	442	7	c
+13179	\N	1370000	5323	216	442	8	c
+13180	\N	1428000	4977	216	442	9	c
+13181	\N	1444000	4976	216	442	10	c
+13182	\N	1462000	3250	216	374	11	c
+13183	\N	1531000	5656	216	442	12	c
+13184	\N	1569000	4978	216	442	13	c
+13185	\N	1573000	5657	216	442	14	c
+13186	\N	1978000	5658	216	442	15	c
+13187	\N	1063000	4219	217	384	1	c
+13188	\N	1072000	4971	217	441	2	c
+13189	\N	1092000	5302	217	441	3	c
+13190	\N	1129000	5414	217	384	4	c
+13191	\N	1136000	3363	217	384	5	c
+13192	\N	1148000	3359	217	384	6	c
+13193	\N	1155000	5659	217	384	7	c
+13194	\N	1156000	5168	217	384	8	c
+13195	\N	1171000	4220	217	384	9	c
+13196	\N	1184000	4968	217	441	10	c
+13197	\N	1200000	5508	217	441	11	c
+13198	\N	1235000	3361	217	384	12	c
+13199	\N	1250000	4218	217	384	13	c
+13200	\N	1263000	4962	217	441	14	c
+13201	\N	1266000	3353	217	384	15	c
+13202	\N	1268000	5307	217	441	16	c
+13203	\N	1289000	4963	217	441	17	c
+13204	\N	1291000	4965	217	441	18	c
+13205	\N	1299000	3292	217	441	19	c
+13206	\N	1300000	3355	217	384	20	c
+13207	\N	1348000	4967	217	441	21	c
+13208	\N	1350000	5305	217	441	22	c
+13210	\N	1393000	3294	217	441	24	c
+13211	\N	1424000	5661	217	384	25	c
+13212	\N	1486000	5405	217	441	26	c
+13213	\N	1590000	4219	217	384	27	c
+16647	\N	1547600	6334	281	446	62	c
+16648	\N	1554400	5273	281	380	63	c
+16649	\N	1559000	6342	281	440	64	c
+16650	\N	1561300	6362	281	438	65	c
+16651	\N	1567400	5368	281	383	66	c
+16652	\N	1572100	4523	281	375	67	c
+16653	\N	1576600	6325	281	443	68	c
+16654	\N	1578400	5259	281	375	69	c
+16655	\N	1581300	6343	281	440	70	c
+16656	\N	1588800	5370	281	446	71	c
+16657	\N	1590800	4991	281	443	72	c
+16658	\N	1593400	6344	281	491	73	c
+16659	\N	1602700	6363	281	438	74	c
+16660	\N	1606400	3170	281	496	75	c
+16661	\N	1606900	6335	281	380	76	c
+16662	\N	1610900	5806	281	440	77	c
+16663	\N	1617100	3097	281	446	78	c
+16664	\N	1617300	5357	281	446	79	c
+16665	\N	1618000	6339	281	380	80	c
+16666	\N	1618400	5364	281	446	81	c
+16667	\N	1638100	3373	281	383	82	c
+16668	\N	1668500	3989	281	380	83	c
+16669	\N	1675700	6345	281	491	84	c
+16670	\N	1675700	6346	281	491	85	c
+16671	\N	1718800	3346	281	380	86	c
+16672	\N	1725200	5369	281	446	87	c
+16673	\N	1747900	6350	281	491	88	c
+16674	\N	1756200	6337	281	380	89	c
+16675	\N	1762800	6341	281	375	90	c
+16676	\N	1766300	4524	281	375	91	c
+16677	\N	2019700	6352	281	445	92	c
+16678	\N	2056900	6351	281	491	93	c
+16679	\N	2180900	6336	281	380	94	c
+16680	\N	2233900	6364	281	438	95	c
+13209	\N	1373000	6367	217	384	23	c
+16852	\N	1326000	3686	283	417	67	c
+16853	\N	1330000	6427	283	417	68	c
+16854	\N	1331000	3936	283	419	69	c
+16855	\N	1335000	4054	283	422	70	c
+16856	\N	1335000	3815	283	403	71	c
+16857	\N	1338000	6428	283	419	72	c
+16858	\N	1341000	6429	283	408	73	c
+16859	\N	1343000	6430	283	413	74	c
+16860	\N	1344000	6403	283	413	75	c
+16861	\N	1347000	6296	283	446	76	c
+16862	\N	1354000	6333	283	446	77	c
+16863	\N	1360000	3923	283	419	78	c
+16864	\N	1363000	6431	283	403	79	c
+16865	\N	1364000	3729	283	408	80	c
+16866	\N	1365000	6432	283	422	81	c
+16867	\N	1370000	6409	283	404	82	c
+16868	\N	1372000	4077	283	406	83	c
+16869	\N	1373000	6433	283	413	84	c
+16870	\N	1379000	6329	283	446	85	c
+16871	\N	1385000	3882	283	404	86	c
+16872	\N	1398000	3204	283	445	87	c
+16873	\N	1409000	6434	283	403	88	c
+16874	\N	1416000	112	283	422	89	c
+16875	\N	1416000	4045	283	422	90	c
+16876	\N	1420000	4068	283	406	91	c
+16877	\N	1420000	6435	283	404	92	c
+16878	\N	1421000	4092	283	411	93	c
+16879	\N	1423000	6436	283	406	94	c
+16880	\N	1453000	3809	283	403	95	c
+16881	\N	1480000	6410	283	411	96	c
+17034	\N	1227000	3517	285	414	1	c
+17035	\N	1261000	6526	285	409	2	c
+17036	\N	1275000	3630	285	409	3	c
+17037	\N	1293000	3505	285	414	4	c
+17038	\N	1308000	6527	285	414	5	c
+17039	\N	1310000	6528	285	417	6	c
+17040	\N	1338000	6529	285	409	7	c
+17041	\N	1344000	6510	285	409	8	c
+17042	\N	1345000	6511	285	403	9	c
+17043	\N	1345000	3629	285	409	10	c
+17044	\N	1349000	3631	285	409	11	c
+17045	\N	1352000	6530	285	403	12	c
+17046	\N	1360000	3094	285	446	13	c
+17047	\N	1365000	3518	285	414	14	c
+17048	\N	1368000	6531	285	422	15	c
+17049	\N	1374000	6508	285	409	16	c
+17050	\N	1375000	6532	285	417	17	c
+17051	\N	1379000	3600	285	409	18	c
+17052	\N	1387000	3855	285	404	19	c
+17053	\N	1388000	6533	285	404	20	c
+17054	\N	1396000	5501	285	445	21	c
+17055	\N	1397000	6512	285	417	22	c
+17056	\N	1398000	3493	285	414	23	c
+17057	\N	1402000	3925	285	419	24	c
+17058	\N	1403000	3712	285	408	25	c
+17059	\N	1405000	6513	285	409	26	c
+17060	\N	1407000	5232	285	414	27	c
+17061	\N	1410000	3766	285	413	28	c
+17062	\N	1412000	6534	285	409	29	c
+17063	\N	1414000	3090	285	446	30	c
+13264	\N	1168000	5174	219	497	15	c
+13265	\N	1187000	5682	219	416	16	c
+13266	\N	1193000	4099	219	497	17	c
+13267	\N	1200000	3154	219	497	18	c
+13268	\N	1206000	5683	219	493	19	c
+13269	\N	1211000	5351	219	493	20	c
+13270	\N	1217000	5684	219	416	21	c
+13271	\N	1222000	4096	219	497	22	c
+13272	\N	1241000	5685	219	493	23	c
+13273	\N	1242000	5686	219	416	24	c
+13274	\N	1247000	5419	219	497	25	c
+13275	\N	1272000	5517	219	497	26	c
+13276	\N	1274000	5687	219	416	27	c
+13277	\N	1279000	4102	219	497	28	c
+13278	\N	1281000	5688	219	497	29	c
+13279	\N	1287000	5689	219	497	30	c
+13280	\N	1291000	3673	219	416	31	c
+13281	\N	1300000	3218	219	493	32	c
+13282	\N	1303000	5550	219	497	33	c
+13283	\N	1323000	5690	219	416	34	c
+13284	\N	1324000	5691	219	416	35	c
+13285	\N	1325000	5692	219	416	36	c
+13286	\N	1344000	5693	219	493	37	c
+13287	\N	1347000	5381	219	493	38	c
+13288	\N	1385000	5694	219	493	39	c
+13289	\N	1393000	3653	219	416	40	c
+13290	\N	1398000	3217	219	493	41	c
+13291	\N	1412000	5695	219	416	42	c
+13292	\N	1426000	5696	219	497	43	c
+13293	\N	1436000	4101	219	497	44	c
+13294	\N	1437000	5400	219	497	45	c
+13295	\N	1449000	5675	219	416	46	c
+13296	\N	1461000	5697	219	497	47	c
+13297	\N	1463000	5673	219	497	48	c
+13298	\N	1472000	5676	219	493	49	c
+13299	\N	1472000	5677	219	497	50	c
+13300	\N	1475000	5678	219	497	51	c
+13301	\N	1509000	5698	219	416	52	c
+13302	\N	1541000	5403	219	497	53	c
+13303	\N	1608000	5679	219	497	54	c
+13304	\N	1972000	5674	219	497	55	c
+13305	\N	1051000	3106	220	492	1	c
+13306	\N	1068000	3064	220	490	2	c
+13307	\N	1095000	5713	220	490	3	c
+13308	\N	1095000	3954	220	490	4	c
+13309	\N	1096000	3066	220	490	5	c
+13310	\N	1099000	5714	220	481	6	c
+13311	\N	1107000	3065	220	490	7	c
+13312	\N	1129000	3053	220	490	8	c
+13313	\N	1143000	5241	220	490	9	c
+13314	\N	1156000	3107	220	492	10	c
+13315	\N	1171000	5704	220	490	11	c
+13316	\N	1178000	5715	220	490	12	c
+13317	\N	1191000	5716	220	492	13	c
+13318	\N	1193000	5013	220	481	14	c
+13320	\N	1196000	5705	220	492	16	c
+13321	\N	1212000	5009	220	481	17	c
+13322	\N	1212000	5014	220	481	18	c
+13323	\N	1222000	3056	220	490	19	c
+13324	\N	1224000	3058	220	490	20	c
+13325	\N	1228000	3955	220	490	21	c
+13326	\N	1231000	5008	220	481	22	c
+13327	\N	1234000	3062	220	490	23	c
+13328	\N	1235000	5490	220	492	24	c
+13329	\N	1240000	5700	220	490	25	c
+13330	\N	1245000	3952	220	490	26	c
+13331	\N	1248000	3055	220	490	27	c
+13332	\N	1250000	3950	220	490	28	c
+13333	\N	1259000	5017	220	481	29	c
+13334	\N	1260000	5706	220	490	30	c
+13335	\N	1261000	3116	220	492	31	c
+13336	\N	1264000	5707	220	492	32	c
+13337	\N	1266000	4937	220	492	33	c
+13338	\N	1269000	4933	220	492	34	c
+13339	\N	1273000	5718	220	481	35	c
+13340	\N	1293000	5719	220	481	36	c
+13341	\N	1297000	5720	220	481	37	c
+13342	\N	1306000	5012	220	481	38	c
+13343	\N	1307000	3061	220	490	39	c
+13344	\N	1309000	5701	220	490	40	c
+13345	\N	1311000	4934	220	492	41	c
+13346	\N	1318000	3113	220	492	42	c
+13347	\N	1318000	5702	220	490	43	c
+13348	\N	1327000	5708	220	481	44	c
+13349	\N	1332000	5721	220	492	45	c
+13350	\N	1341000	5709	220	490	46	c
+13351	\N	1360000	5722	220	481	47	c
+13352	\N	1363000	4935	220	492	48	c
+13353	\N	1371000	5723	220	490	49	c
+13354	\N	1191000	5703	220	490	50	c
+13355	\N	1410000	5399	220	492	51	c
+13356	\N	1424000	5724	220	492	52	c
+13357	\N	1430000	4936	220	492	53	c
+13359	\N	1435000	5010	220	481	55	c
+13360	\N	1437000	5710	220	492	56	c
+13361	\N	1439000	5725	220	481	57	c
+13362	\N	1440000	5726	220	490	58	c
+13363	\N	1473000	5711	220	492	59	c
+13364	\N	1490000	5727	220	481	60	c
+13365	\N	1491000	5712	220	490	61	c
+13366	\N	1510000	5239	220	490	62	c
+13367	\N	1531000	5728	220	492	63	c
+13368	\N	1543000	5489	220	492	64	c
+13369	\N	1617000	5699	220	492	65	c
+13370	\N	1655000	5257	220	490	66	c
+13371	\N	1774000	5729	220	481	67	c
+13372	\N	1989000	5730	220	492	68	c
+13358	\N	1432000	5748	220	490	54	c
+13664	\N	1155000	6365	229	377	3	c
+15956	\N	1134000	6365	274	377	13	c
+13319	\N	1193000	6368	220	492	15	c
+15710	\N	1295000	6368	268	492	33	c
+16359	\N	1208300	6368	279	492	72	c
+16882	\N	1004000	3488	284	415	1	c
+16883	\N	1006000	3477	284	415	2	c
+16884	\N	1017000	3525	284	400	3	c
+16885	\N	1020000	6447	284	415	4	c
+16886	\N	1026000	3476	284	415	5	c
+16887	\N	1034000	6467	284	415	6	c
+16888	\N	1037000	3511	284	415	7	c
+16889	\N	1044000	6468	284	400	8	c
+16890	\N	1045000	3562	284	400	9	c
+16891	\N	1045000	3563	284	400	10	c
+16892	\N	1050000	3510	284	415	11	c
+16893	\N	1061000	3513	284	415	12	c
+16894	\N	1075000	6469	284	400	13	c
+16895	\N	1079000	3565	284	400	14	c
+16896	\N	1081000	6470	284	400	15	c
+16897	\N	1083000	3068	284	490	16	c
+16898	\N	1087000	6448	284	418	17	c
+16899	\N	1089000	3725	284	407	18	c
+16900	\N	1090000	3535	284	400	19	c
+16901	\N	1091000	3866	284	405	20	c
+16902	\N	1091000	6471	284	405	21	c
+16903	\N	1100000	6440	284	412	22	c
+16904	\N	1100000	3955	284	490	23	c
+13373	\N	1019000	5734	221	381	1	c
+13374	\N	1031000	4116	221	376	2	c
+13375	\N	1034000	4117	221	376	3	c
+13376	\N	1045000	5181	221	381	4	c
+13377	\N	1049000	5732	221	376	5	c
+13378	\N	1057000	4109	221	376	6	c
+13379	\N	1059000	4209	221	381	7	c
+13380	\N	1060000	1643	221	376	8	c
+13381	\N	1074000	4203	221	381	9	c
+13382	\N	1083000	5175	221	381	10	c
+13383	\N	1097000	4214	221	381	11	c
+13384	\N	1114000	5735	221	376	12	c
+13385	\N	1116000	4118	221	376	13	c
+13386	\N	1155000	4110	221	376	14	c
+13387	\N	1158000	4213	221	381	15	c
+13388	\N	1160000	4204	221	381	16	c
+13389	\N	1162000	5213	221	376	17	c
+13390	\N	1163000	5278	221	381	18	c
+13391	\N	1200000	4111	221	376	19	c
+13392	\N	1213000	3142	221	376	20	c
+13393	\N	1225000	5736	221	376	21	c
+13395	\N	1247000	5737	221	376	23	c
+13396	\N	1248000	5279	221	381	24	c
+13397	\N	1263000	5536	221	376	25	c
+13399	\N	1282000	4114	221	376	27	c
+13400	\N	1296000	3387	221	381	28	c
+13401	\N	1329000	3388	221	381	29	c
+13402	\N	1337000	5738	221	381	30	c
+13403	\N	1338000	5731	221	376	31	c
+13404	\N	1341000	5739	221	376	32	c
+13405	\N	1341000	5740	221	381	33	c
+13406	\N	1372000	5394	221	381	34	c
+13407	\N	1390000	5741	221	376	35	c
+13408	\N	1525000	5733	221	376	36	c
+13409	\N	1660000	5429	221	376	37	c
+13410	\N	1796000	3141	221	376	38	c
+13442	\N	1023000	5494	223	497	1	c
+13443	\N	1072000	3064	223	490	2	c
+13444	\N	1073000	5713	223	490	3	c
+13445	\N	1074000	3252	223	490	4	c
+13446	\N	1075000	3065	223	490	5	c
+13447	\N	1076000	3954	223	490	6	c
+13448	\N	1086000	3066	223	490	7	c
+13449	\N	1089000	3053	223	490	8	c
+13450	\N	1125000	5241	223	490	9	c
+13451	\N	1143000	5174	223	497	10	c
+13452	\N	1150000	5704	223	490	11	c
+13453	\N	1155000	3058	223	490	12	c
+13454	\N	1158000	5715	223	490	13	c
+13455	\N	1174000	4098	223	497	14	c
+13456	\N	1178000	3056	223	490	15	c
+13457	\N	1224000	4099	223	497	16	c
+13458	\N	1249000	1697	223	497	17	c
+13459	\N	1275000	5419	223	497	18	c
+13394	\N	1246000	5803	221	376	22	c
+13698	\N	1178000	2505	231	137	1	c
+13398	\N	1266000	5803	221	376	26	c
+13699	\N	1208000	2534	231	137	2	c
+13700	\N	1242000	3398	231	152	3	c
+13701	\N	1245000	3136	231	132	4	c
+13702	\N	1257000	1026	231	132	5	c
+13703	\N	1263000	5265	231	148	6	c
+13704	\N	1273000	3138	231	132	7	c
+13705	\N	1282000	1025	231	132	8	c
+13706	\N	1307000	2537	231	137	9	c
+13707	\N	1313000	3137	231	132	10	c
+13708	\N	1323000	3139	231	132	11	c
+13709	\N	1325000	1118	231	132	12	c
+13710	\N	1339000	1155	231	148	13	c
+13711	\N	1368000	3209	231	137	14	c
+13712	\N	1372000	2515	231	137	15	c
+13713	\N	1391000	3123	231	132	16	c
+13714	\N	1409000	1109	231	152	17	c
+13715	\N	1425000	3399	231	152	18	c
+13716	\N	1427000	3211	231	137	19	c
+13717	\N	1437000	5507	231	137	20	c
+13718	\N	1446000	3401	231	152	21	c
+13719	\N	1447000	5269	231	148	22	c
+13720	\N	1465000	3201	231	137	23	c
+13721	\N	1502000	3124	231	132	24	c
+13722	\N	1503000	3128	231	132	25	c
+13723	\N	1517000	3199	231	137	26	c
+13724	\N	1518000	3200	231	137	27	c
+13725	\N	1522000	3350	231	148	28	c
+13726	\N	1523000	3125	231	132	29	c
+13727	\N	1524000	3203	231	137	30	c
+13728	\N	1527000	3129	231	132	31	c
+13729	\N	1542000	3140	231	132	32	c
+13730	\N	1550000	1159	231	148	33	c
+13731	\N	1560000	1160	231	148	34	c
+13732	\N	1575000	2720	231	132	35	c
+13733	\N	1588000	3349	231	148	36	c
+13734	\N	1589000	5582	231	152	37	c
+13735	\N	1598000	3130	231	132	38	c
+13736	\N	1614000	5235	231	148	39	c
+13737	\N	1615000	3339	231	148	40	c
+13738	\N	1644000	5272	231	148	41	c
+13739	\N	1650000	3204	231	137	42	c
+13740	\N	1666000	2687	231	132	43	c
+13741	\N	1680000	3340	231	148	44	c
+13742	\N	1680000	2682	231	132	45	c
+13743	\N	1720000	5627	231	137	46	c
+13744	\N	1720000	3202	231	137	47	c
+13745	\N	1727000	5273	231	148	48	c
+13746	\N	1741000	3402	231	152	49	c
+13748	\N	1771000	3342	231	148	51	c
+13749	\N	1849000	3343	231	148	52	c
+13750	\N	1858000	5560	231	137	53	c
+13751	\N	1868000	2708	231	148	54	c
+13752	\N	1873000	5586	231	132	55	c
+13753	\N	1920000	3132	231	132	56	c
+13754	\N	1953000	2719	231	137	57	c
+13755	\N	1974000	3344	231	148	58	c
+13756	\N	1988000	2670	231	137	59	c
+13757	\N	1991000	3346	231	148	60	c
+13758	\N	2027000	3207	231	137	61	c
+13759	\N	2125000	5270	231	148	62	c
+13760	\N	2151000	3134	231	132	63	c
+13761	\N	2159000	3208	231	137	64	c
+13762	\N	2223000	3397	231	152	65	c
+13747	\N	1770000	3345	231	148	50	c
+13782	\N	1152000	5156	233	144	1	c
+13783	\N	1153000	2505	233	137	2	c
+13784	\N	1235000	2534	233	137	3	c
+13785	\N	1298000	4302	233	242	4	c
+13786	\N	1300000	3209	233	137	5	c
+13787	\N	1323000	3284	233	144	6	c
+13789	\N	1349000	2537	233	137	8	c
+13790	\N	1381000	2544	233	144	9	c
+13791	\N	1415000	2515	233	137	10	c
+13792	\N	1452000	3211	233	137	11	c
+13793	\N	1476000	3200	233	137	12	c
+13794	\N	1506000	3285	233	144	13	c
+13795	\N	1512000	3286	233	144	14	c
+13411	\N	1074000	4219	222	384	1	c
+13412	\N	1128000	5414	222	384	2	c
+13413	\N	1142000	3981	222	379	3	c
+13414	\N	1143000	3363	222	384	4	c
+13415	\N	1144000	5168	222	384	5	c
+13416	\N	1153000	5276	222	379	6	c
+13417	\N	1155000	3361	222	384	7	c
+13418	\N	1162000	3359	222	384	8	c
+13419	\N	1177000	5659	222	384	9	c
+13420	\N	1182000	3982	222	379	10	c
+13421	\N	1187000	4220	222	384	11	c
+13422	\N	1192000	5668	222	379	12	c
+13423	\N	1193000	5267	222	379	13	c
+13424	\N	1197000	5744	222	379	14	c
+13425	\N	1200000	4218	222	384	15	c
+13426	\N	1272000	3353	222	384	16	c
+13427	\N	1279000	5266	222	379	17	c
+13428	\N	1298000	5667	222	379	18	c
+13429	\N	1301000	3323	222	379	19	c
+13430	\N	1307000	3355	222	384	20	c
+13431	\N	1307000	3978	222	379	21	c
+13432	\N	1332000	5746	222	384	22	c
+13433	\N	1357000	5613	222	379	23	c
+13436	\N	1403000	5661	222	384	26	c
+13437	\N	1417000	3331	222	379	27	c
+13438	\N	1437000	5386	222	379	28	c
+13439	\N	1512000	5747	222	384	29	c
+13440	\N	1542000	3976	222	379	30	c
+13441	\N	1651000	5742	222	379	31	c
+13460	\N	1206000	3062	224	490	1	c
+13461	\N	1207000	5700	224	490	2	c
+13462	\N	1232000	5706	224	490	3	c
+13463	\N	1243000	5701	224	490	4	c
+13464	\N	1250000	3055	224	490	5	c
+13465	\N	1263000	3950	224	490	6	c
+13466	\N	1271000	3061	224	490	7	c
+13467	\N	1275000	3952	224	490	8	c
+13468	\N	1286000	5702	224	490	9	c
+13469	\N	1290000	5517	224	497	10	c
+13470	\N	1303000	5689	224	497	11	c
+13471	\N	1319000	5709	224	490	12	c
+13472	\N	1333000	5688	224	497	13	c
+13473	\N	1343000	5550	224	497	14	c
+13474	\N	1352000	4102	224	497	15	c
+13475	\N	1361000	5726	224	490	16	c
+13476	\N	1364000	5748	224	490	17	c
+13477	\N	1385000	5749	224	490	18	c
+13478	\N	1440000	5712	224	490	19	c
+13479	\N	1445000	5750	224	490	20	c
+13480	\N	1453000	3951	224	490	21	c
+13481	\N	1472000	5703	224	490	22	c
+13482	\N	1486000	5677	224	497	23	c
+13483	\N	1521000	5243	224	490	24	c
+13484	\N	1526000	5678	224	497	25	c
+13485	\N	1570000	5257	224	490	26	c
+13486	\N	1598000	5403	224	497	27	c
+13487	\N	1599000	5696	224	497	28	c
+13488	\N	1833000	5679	224	497	29	c
+13489	\N	2021000	5408	224	497	30	c
+13434	\N	1372000	5804	222	379	24	c
+13763	\N	1347200	3421	232	154	1	c
+13764	\N	1367300	2597	232	154	2	c
+13765	\N	1393300	3259	232	142	3	c
+13766	\N	1400400	2558	232	142	4	c
+13767	\N	1428400	3423	232	154	5	c
+13768	\N	1464500	5207	232	154	6	c
+13769	\N	1469600	5193	232	154	7	c
+13770	\N	1489900	3422	232	154	8	c
+13771	\N	1491500	5350	232	154	9	c
+13772	\N	1497100	2612	232	154	10	c
+13773	\N	1520000	3261	232	142	11	c
+13774	\N	1522100	3416	232	154	12	c
+13775	\N	1522600	3417	232	154	13	c
+13776	\N	1537100	3260	232	142	14	c
+13777	\N	1741600	2564	232	142	15	c
+13778	\N	1753400	5588	232	154	16	c
+13779	\N	1753600	5259	232	142	17	c
+13780	\N	1779500	2584	232	142	18	c
+13781	\N	1925400	3427	232	154	19	c
+13813	\N	1337000	2504	234	130	1	c
+13814	\N	1370000	3102	234	130	2	c
+13815	\N	1403000	1074	234	156	3	c
+13816	\N	1413000	2594	234	130	4	c
+13817	\N	1449000	2517	234	130	5	c
+13818	\N	1491000	2617	234	130	6	c
+13819	\N	1508000	3104	234	130	7	c
+13820	\N	1514000	5320	234	156	8	c
+13821	\N	1537000	1061	234	156	9	c
+13822	\N	1537000	3456	234	156	10	c
+13823	\N	1542000	5309	234	156	11	c
+13824	\N	1545000	5509	234	156	12	c
+13825	\N	1547000	5329	234	156	13	c
+13826	\N	1565000	3091	234	130	14	c
+13827	\N	1570000	2603	234	130	15	c
+13828	\N	1595000	3092	234	130	16	c
+13829	\N	1597000	3090	234	130	17	c
+13830	\N	1616000	3093	234	130	18	c
+13831	\N	1654000	3094	234	130	19	c
+13832	\N	1672000	5316	234	156	20	c
+13833	\N	1690000	5650	234	130	21	c
+13834	\N	1691000	2606	234	130	22	c
+13835	\N	1725000	2654	234	130	23	c
+13836	\N	1735000	3097	234	130	24	c
+13837	\N	1756000	3098	234	130	25	c
+13838	\N	1761000	4033	234	130	26	c
+13839	\N	1762000	3099	234	130	27	c
+13840	\N	1778000	2630	234	130	28	c
+13841	\N	1803000	5325	234	156	29	c
+13842	\N	1881000	5312	234	156	30	c
+13843	\N	1890000	5311	234	156	31	c
+13844	\N	1915000	5313	234	156	32	c
+13845	\N	2261000	5322	234	156	33	c
+13846	\N	2304000	2728	234	130	34	c
+14762	\N	1052000	5734	258	381	2	c
+14763	\N	1087000	4209	258	381	3	c
+14764	\N	1099000	5175	258	381	4	c
+14765	\N	1101000	4214	258	381	5	c
+14766	\N	1115000	5181	258	381	6	c
+14717	\N	1625000	5838	256	497	38	c
+14718	\N	1721000	5674	256	497	39	c
+14719	\N	1778000	5837	256	492	40	c
+14761	\N	1050000	3106	258	492	1	c
+14767	\N	1124000	5655	258	442	7	c
+14768	\N	1128000	4938	258	492	8	c
+14769	\N	1147000	3107	258	492	9	c
+14770	\N	1152000	3299	258	441	10	c
+14771	\N	1163000	4971	258	441	11	c
+14772	\N	1165000	4213	258	381	12	c
+14773	\N	1166000	4204	258	381	13	c
+14774	\N	1171000	5705	258	492	14	c
+14775	\N	1182000	5314	258	442	15	c
+14776	\N	1182000	5302	258	441	16	c
+14777	\N	1203000	5490	258	492	17	c
+14778	\N	1205000	4933	258	492	18	c
+13490	\N	1041000	4585	225	439	1	c
+13491	\N	1059000	4971	225	441	2	c
+13492	\N	1084000	3299	225	441	3	c
+13493	\N	1084000	5302	225	441	4	c
+13494	\N	1125000	5753	225	439	5	c
+13495	\N	1125000	4586	225	439	6	c
+13496	\N	1145000	4969	225	441	7	c
+13497	\N	1171000	4968	225	441	8	c
+13498	\N	1178000	5508	225	441	9	c
+13499	\N	1179000	5495	225	441	10	c
+13500	\N	1196000	5751	225	441	11	c
+13501	\N	1214000	4962	225	441	12	c
+13502	\N	1249000	5665	225	439	13	c
+13503	\N	1252000	5214	225	439	14	c
+13504	\N	1263000	4582	225	439	15	c
+13505	\N	1275000	5307	225	441	16	c
+13506	\N	1283000	5669	225	439	17	c
+13507	\N	1287000	3292	225	441	18	c
+13508	\N	1292000	4967	225	441	19	c
+13509	\N	1299000	3266	225	439	20	c
+13510	\N	1306000	5754	225	441	21	c
+13511	\N	1316000	4965	225	441	22	c
+13512	\N	1320000	4581	225	439	23	c
+13513	\N	1321000	5755	225	441	24	c
+13514	\N	1322000	5305	225	441	25	c
+13515	\N	1325000	5670	225	439	26	c
+13516	\N	1379000	5756	225	441	27	c
+13517	\N	1392000	4589	225	439	28	c
+13518	\N	1401000	3294	225	441	29	c
+13519	\N	1475000	5405	225	441	30	c
+13520	\N	1481000	4584	225	439	31	c
+13521	\N	1490000	5757	225	441	32	c
+13522	\N	1505000	3269	225	439	33	c
+13523	\N	1512000	5758	225	441	34	c
+13524	\N	1560000	5671	225	439	35	c
+13525	\N	1629000	5752	225	439	36	c
+13526	\N	1693000	5759	225	439	37	c
+13527	\N	1726000	5407	225	439	38	c
+13796	\N	1540000	3203	233	137	15	c
+13797	\N	1584000	5150	233	144	16	c
+13798	\N	1608000	3204	233	137	17	c
+13799	\N	1612000	4304	233	242	18	c
+13800	\N	1613000	4303	233	242	19	c
+13801	\N	1620000	3280	233	144	20	c
+13802	\N	1635000	5301	233	144	21	c
+13803	\N	1684000	3202	233	137	22	c
+13804	\N	1694000	4305	233	242	23	c
+13805	\N	1760000	4316	233	242	24	c
+13806	\N	1763000	5807	233	242	25	c
+13807	\N	1835000	3206	233	137	26	c
+13808	\N	1865000	1115	233	242	27	c
+13809	\N	1922000	2719	233	137	28	c
+13810	\N	1979000	2670	233	137	29	c
+13811	\N	2027000	3207	233	137	30	c
+13812	\N	2106000	3281	233	144	31	c
+13847	\N	1256000	3174	235	135	1	c
+13848	\N	1269000	3136	235	132	2	c
+13849	\N	1278000	1026	235	132	3	c
+13850	\N	1298000	1025	235	132	4	c
+13851	\N	1299000	3138	235	132	5	c
+13852	\N	1302000	1118	235	132	6	c
+13853	\N	1329000	5331	235	135	7	c
+13854	\N	1352000	3137	235	132	8	c
+13855	\N	1395000	3177	235	135	9	c
+13856	\N	1414000	3139	235	132	10	c
+13857	\N	1423000	3123	235	132	11	c
+13858	\N	1425000	3176	235	135	12	c
+13859	\N	1427000	2629	235	135	13	c
+13860	\N	1448000	5332	235	135	14	c
+13861	\N	1461000	3166	235	135	15	c
+13862	\N	1501000	1172	235	135	16	c
+13863	\N	1517000	3125	235	132	17	c
+13864	\N	1538000	3128	235	132	18	c
+13865	\N	1549000	3129	235	132	19	c
+13866	\N	1603000	2720	235	132	20	c
+13867	\N	1615000	3170	235	135	21	c
+13868	\N	1616000	3168	235	135	22	c
+13869	\N	1618000	3167	235	135	23	c
+13870	\N	1646000	3130	235	132	24	c
+13871	\N	1651000	3171	235	135	25	c
+13872	\N	1703000	3140	235	132	26	c
+13873	\N	1746000	3131	235	132	27	c
+13874	\N	1758000	2682	235	132	28	c
+13875	\N	1762000	5571	235	135	29	c
+13876	\N	1797000	3172	235	135	30	c
+13877	\N	1831000	5652	235	135	31	c
+13878	\N	1882000	5586	235	132	32	c
+14779	\N	1225000	4969	258	441	19	c
+14780	\N	1237000	4968	258	441	20	c
+14781	\N	1239000	5629	258	442	21	c
+14782	\N	1247000	5707	258	492	22	c
+14783	\N	1253000	5323	258	442	23	c
+14784	\N	1254000	3437	258	442	24	c
+14785	\N	1285000	4986	258	442	27	c
+14786	\N	1295000	5751	258	441	28	c
+14787	\N	1296000	5495	258	441	29	c
+14788	\N	1317000	4977	258	442	36	c
+14789	\N	1255000	4937	259	492	1	c
+14790	\N	1267000	4934	259	492	2	c
+14791	\N	1301000	5721	259	492	3	c
+14792	\N	1305000	4935	259	492	4	c
+14793	\N	1306000	5279	259	381	5	c
+14794	\N	1311000	3113	259	492	6	c
+14795	\N	1311000	4962	259	441	7	c
+14796	\N	1314000	5508	259	441	8	c
+14797	\N	1325000	4976	259	442	9	c
+14798	\N	1328000	5754	259	441	10	c
+14799	\N	1338000	3388	259	381	11	c
+14800	\N	1344000	5307	259	441	12	c
+14801	\N	1353000	3387	259	381	13	c
+14802	\N	1358000	5710	259	492	14	c
+14803	\N	1361000	5724	259	492	15	c
+14804	\N	1382000	5656	259	442	16	c
+14805	\N	1387000	5738	259	381	17	c
+14806	\N	1400000	4936	259	492	18	c
+14807	\N	1404000	4965	259	441	19	c
+14808	\N	1405000	5390	259	492	20	c
+14809	\N	1421000	4967	259	441	21	c
+14810	\N	1440000	5711	259	492	22	c
+14811	\N	1440000	5657	259	442	23	c
+14812	\N	1466000	5305	259	441	24	c
+14813	\N	1473000	3110	259	492	25	c
+14814	\N	1475000	5842	259	442	26	c
+14815	\N	1478000	5728	259	492	27	c
+14816	\N	1481000	4978	259	442	28	c
+14817	\N	1482000	5699	259	492	29	c
+14818	\N	1507000	5489	259	492	30	c
+14819	\N	1537000	5839	259	441	31	c
+14820	\N	1538000	5405	259	441	32	c
+14821	\N	1538000	5833	259	441	33	c
+14822	\N	1539000	5840	259	492	34	c
+14823	\N	1550000	5841	259	442	35	c
+14824	\N	1580000	5758	259	441	36	c
+13528	\N	1061000	4117	226	376	1	c
+13529	\N	1083000	5732	226	376	2	c
+13530	\N	1096000	4109	226	376	3	c
+13531	\N	1101000	5735	226	376	4	c
+13532	\N	1109000	1643	226	376	5	c
+13533	\N	1114000	5178	226	444	6	c
+13534	\N	1114000	3892	226	444	7	c
+13535	\N	1168000	3893	226	444	8	c
+13536	\N	1182000	4110	226	376	9	c
+13537	\N	1191000	3884	226	444	10	c
+13538	\N	1198000	5213	226	376	11	c
+13539	\N	1212000	4111	226	376	12	c
+13540	\N	1213000	5763	226	444	13	c
+13542	\N	1229000	5544	226	444	15	c
+13543	\N	1232000	5768	226	444	16	c
+13544	\N	1239000	5153	226	444	17	c
+13545	\N	1243000	5170	226	444	18	c
+13546	\N	1246000	5764	226	444	19	c
+13548	\N	1251000	3142	226	376	21	c
+13549	\N	1251000	4118	226	376	22	c
+13550	\N	1255000	5760	226	444	23	c
+13551	\N	1278000	3195	226	444	24	c
+13552	\N	1280000	5762	226	444	25	c
+13553	\N	1636000	5254	226	444	51	c
+13554	\N	1639000	3141	226	376	52	c
+13555	\N	1285000	4114	226	376	26	c
+13556	\N	1292000	5245	226	444	27	c
+13557	\N	1299000	4113	226	376	28	c
+13558	\N	1303000	5737	226	376	29	c
+13559	\N	1306000	3886	226	444	30	c
+13561	\N	1327000	5336	226	444	32	c
+13562	\N	1338000	5769	226	444	33	c
+13563	\N	1357000	5741	226	376	34	c
+13564	\N	1357000	5244	226	444	35	c
+13565	\N	1364000	5228	226	376	36	c
+13566	\N	1367000	5770	226	444	37	c
+13567	\N	1369000	5765	226	444	38	c
+13568	\N	1371000	5731	226	376	39	c
+13569	\N	1396000	5766	226	444	40	c
+13570	\N	1416000	5771	226	444	41	c
+13571	\N	1435000	5733	226	376	42	c
+13572	\N	1458000	5246	226	444	43	c
+13573	\N	1500000	5250	226	444	44	c
+13574	\N	1598000	5258	226	444	45	c
+13575	\N	1606000	5772	226	444	46	c
+13576	\N	1610000	5773	226	444	47	c
+13577	\N	1614000	5767	226	444	48	c
+13578	\N	1578000	5774	226	444	49	c
+13579	\N	1632000	5429	226	376	50	c
+13879	\N	1279000	3377	236	150	1	c
+13560	\N	1312000	5803	226	376	31	c
+13541	\N	1221000	5143	226	444	14	c
+13547	\N	1250000	5536	226	376	20	c
+13880	\N	1304000	1012	236	150	2	c
+13881	\N	1350000	5283	236	150	3	c
+13882	\N	1354000	1155	236	148	4	c
+13884	\N	1391000	1013	236	150	6	c
+13885	\N	1393000	5282	236	150	7	c
+13887	\N	1398000	3364	236	150	9	c
+13889	\N	1422000	3367	236	150	11	c
+13890	\N	1427000	3366	236	150	12	c
+13891	\N	1453000	5280	236	150	13	c
+13892	\N	1503000	3369	236	150	14	c
+13893	\N	1515000	3985	236	148	15	c
+13894	\N	1521000	1151	236	150	16	c
+13895	\N	1523000	2572	236	140	17	c
+13896	\N	1527000	3350	236	148	18	c
+13897	\N	1535000	3349	236	148	19	c
+13898	\N	1555000	4579	236	140	20	c
+13899	\N	1582000	1159	236	148	21	c
+13900	\N	1619000	3242	236	140	22	c
+13901	\N	1624000	3372	236	150	23	c
+13902	\N	1628000	1160	236	148	24	c
+13903	\N	1652000	5235	236	148	25	c
+13904	\N	1654000	5808	236	150	26	c
+13905	\N	1654000	5272	236	148	27	c
+13906	\N	1655000	3339	236	148	28	c
+13907	\N	1663000	3373	236	150	29	c
+13908	\N	1706000	3244	236	140	30	c
+13909	\N	1719000	2581	236	140	31	c
+13910	\N	1727000	3374	236	150	32	c
+13911	\N	1731000	1043	236	148	33	c
+13912	\N	1743000	5809	236	150	34	c
+13913	\N	1762000	3246	236	140	35	c
+13914	\N	1786000	3340	236	148	36	c
+13915	\N	1796000	2708	236	148	37	c
+13916	\N	1857000	5412	236	140	38	c
+13917	\N	1858000	2726	236	148	39	c
+13918	\N	1858000	3245	236	140	40	c
+13919	\N	1873000	3342	236	148	41	c
+13920	\N	1890000	5194	236	140	42	c
+13921	\N	1901000	5273	236	148	43	c
+13922	\N	1953000	1173	236	150	44	c
+13924	\N	2039000	3344	236	148	46	c
+13925	\N	2120000	5270	236	148	47	c
+13888	\N	1399000	3375	236	150	10	c
+13883	\N	1387000	1119	236	150	5	c
+13886	\N	1393000	3368	236	150	8	c
+13923	\N	1993000	1153	236	148	45	c
+14355	\N	1373000	6367	247	384	37	c
+14549	\N	1358000	6367	251	384	16	c
+16421	\N	1311200	6367	279	384	134	c
+13435	\N	1380000	6367	222	384	25	c
+16905	\N	1102000	6441	284	415	24	c
+16906	\N	1105000	6449	284	400	25	c
+16907	\N	1106000	5241	284	490	26	c
+16908	\N	1108000	3644	284	416	27	c
+16909	\N	1112000	3870	284	405	28	c
+16910	\N	1115000	5715	284	490	29	c
+16911	\N	1115000	6472	284	400	30	c
+16912	\N	1116000	3058	284	490	31	c
+16913	\N	1116000	6473	284	415	32	c
+16914	\N	1123000	3726	284	407	33	c
+16915	\N	1127000	3643	284	416	34	c
+16916	\N	1128000	6474	284	410	35	c
+16917	\N	1130000	3867	284	405	36	c
+16918	\N	1130000	3056	284	490	37	c
+16919	\N	1131000	3195	284	444	38	c
+16920	\N	1132000	5682	284	416	39	c
+16921	\N	1133000	3868	284	405	40	c
+16922	\N	1134000	6442	284	400	41	c
+16923	\N	1137000	6475	284	405	42	c
+16924	\N	1139000	5764	284	444	43	c
+16925	\N	1148000	3062	284	490	44	c
+16926	\N	1152000	3482	284	415	45	c
+16927	\N	1153000	6450	284	480	46	c
+16928	\N	1156000	6476	284	410	47	c
+16929	\N	1156000	6477	284	418	48	c
+14825	\N	1610000	5730	259	492	37	c
+14826	\N	1708000	5317	259	442	38	c
+14827	\N	1771000	5843	259	442	39	c
+14828	\N	1872000	4983	259	442	40	c
+14829	\N	1929000	5779	259	442	41	c
+13580	\N	1025000	3224	227	493	1	c
+13581	\N	1028000	3106	227	492	2	c
+13582	\N	1086000	1543	227	493	3	c
+13583	\N	1093000	3214	227	493	4	c
+13584	\N	1134000	3107	227	492	5	c
+13585	\N	1147000	4938	227	492	6	c
+13586	\N	1164000	5716	227	492	7	c
+13587	\N	1164000	5705	227	492	8	c
+13588	\N	1188000	5351	227	493	9	c
+13590	\N	1207000	4933	227	492	11	c
+13591	\N	1226000	5685	227	493	13	c
+13592	\N	1229000	5683	227	493	14	c
+13593	\N	1266000	3218	227	493	18	c
+13594	\N	1217000	5490	227	492	12	c
+13595	\N	1230000	4934	227	492	15	c
+13596	\N	1235000	5707	227	492	16	c
+13597	\N	1237000	3116	227	492	17	c
+13598	\N	1268000	5775	227	493	19	c
+13599	\N	1284000	5721	227	492	20	c
+13600	\N	1332000	5694	227	493	21	c
+13601	\N	1344000	4935	227	492	22	c
+13602	\N	1348000	5390	227	492	23	c
+13603	\N	1352000	5381	227	493	24	c
+13604	\N	1353000	4936	227	492	25	c
+13605	\N	1368000	5693	227	493	26	c
+13606	\N	1370000	3217	227	493	27	c
+13607	\N	1387000	5399	227	492	28	c
+13608	\N	1404000	5710	227	492	29	c
+13609	\N	1408000	5711	227	492	30	c
+13610	\N	1466000	5699	227	492	31	c
+13611	\N	1474000	5676	227	493	32	c
+13676	\N	1059600	4214	230	381	1	c
+13677	\N	1059900	5181	230	381	2	c
+13678	\N	1060100	4208	230	381	3	c
+13679	\N	1066800	4209	230	381	4	c
+13680	\N	1069600	4574	230	495	5	c
+13681	\N	1133100	4213	230	381	6	c
+13682	\N	1152900	5278	230	381	7	c
+13683	\N	1159700	4576	230	495	8	c
+13684	\N	1168100	4204	230	381	9	c
+13685	\N	1275100	5738	230	381	10	c
+13686	\N	1278500	3387	230	381	11	c
+13687	\N	1279700	3388	230	381	12	c
+13688	\N	1367100	3229	230	495	13	c
+13689	\N	1425500	3237	230	495	14	c
+13690	\N	1435500	5233	230	495	15	c
+13691	\N	1435900	5401	230	495	16	c
+13692	\N	1496100	5798	230	495	17	c
+13693	\N	1516100	5799	230	495	18	c
+13694	\N	1520700	5800	230	495	19	c
+13695	\N	1721700	5801	230	495	20	c
+13696	\N	1823500	3227	230	495	21	c
+13697	\N	1929200	5802	230	495	22	c
+13589	\N	1205000	6368	227	492	10	c
+4362	0	1239000	6369	26	144	15	c
+4363	0	1297000	6369	35	144	12	c
+11490	\N	1405000	6369	170	144	6	c
+14149	\N	1329000	6369	242	144	11	c
+13097	\N	1361000	6369	213	144	4	c
+13788	\N	1328000	6369	233	144	7	c
+14001	\N	1298000	6369	239	144	4	c
+16930	\N	1159000	3939	284	418	49	c
+16931	\N	1161000	3579	284	410	50	c
+16932	\N	1161000	6478	284	410	51	c
+16933	\N	1162000	6479	284	412	52	c
+16934	\N	1162000	6480	284	415	53	c
+16935	\N	1164000	3888	284	444	54	c
+16936	\N	1165000	5254	284	444	55	c
+16937	\N	1169000	6481	284	418	56	c
+16938	\N	1174000	5245	284	444	57	c
+16939	\N	1177000	6482	284	405	58	c
+16940	\N	1177000	6483	284	407	59	c
+16941	\N	1179000	6443	284	407	60	c
+16942	\N	1180000	3886	284	444	61	c
+16943	\N	1181000	5336	284	444	62	c
+16944	\N	1182000	3720	284	407	63	c
+16945	\N	1182000	5686	284	416	64	c
+16946	\N	1182000	5687	284	416	65	c
+16947	\N	1183000	3746	284	412	66	c
+16948	\N	1184000	3613	284	410	67	c
+16949	\N	1187000	5684	284	416	68	c
+16950	\N	1187000	5760	284	444	69	c
+16951	\N	1189000	3966	284	480	70	c
+16952	\N	1191000	5822	284	444	71	c
+16953	\N	1194000	6484	284	405	72	c
+16954	\N	1194000	5771	284	444	73	c
+16955	\N	1196000	5700	284	490	74	c
+16956	\N	1197000	5709	284	490	75	c
+16957	\N	1197000	3693	284	407	76	c
+16958	\N	1199000	6451	284	407	77	c
+16959	\N	1199000	3673	284	416	78	c
+16960	\N	1201000	6485	284	410	79	c
+16961	\N	1202000	3982	284	379	80	c
+16962	\N	1206000	6452	284	420	81	c
+16963	\N	1209000	5266	284	379	82	c
+16964	\N	1212000	5762	284	444	83	c
+16965	\N	1215000	3822	284	402	84	c
+16966	\N	1216000	4929	284	480	85	c
+16967	\N	1218000	3840	284	405	86	c
+16968	\N	1224000	6486	284	410	87	c
+16969	\N	1224000	6487	284	418	88	c
+16970	\N	1225000	3749	284	412	89	c
+16971	\N	1226000	3950	284	490	90	c
+16972	\N	1228000	5706	284	490	91	c
+16973	\N	1230000	6488	284	418	92	c
+16974	\N	1234000	6453	284	420	93	c
+16975	\N	1234000	6454	284	405	94	c
+16976	\N	1234000	6489	284	418	95	c
+16977	\N	1235000	5613	284	379	96	c
+16978	\N	1236000	5701	284	490	97	c
+16979	\N	1238000	6455	284	412	98	c
+16980	\N	1240000	5692	284	416	99	c
+16981	\N	1240000	6456	284	480	100	c
+16982	\N	1242000	6490	284	418	101	c
+16983	\N	1244000	4925	284	480	102	c
+16984	\N	1244000	6491	284	418	103	c
+16985	\N	1245000	3823	284	402	104	c
+16986	\N	1245000	5662	284	379	105	c
+16987	\N	1245000	3674	284	416	106	c
+16988	\N	1246000	6492	284	420	107	c
+16989	\N	1247000	6438	284	402	108	c
+16990	\N	1248000	3821	284	402	109	c
+16991	\N	1249000	3838	284	405	110	c
+16992	\N	1251000	6493	284	407	111	c
+16993	\N	1256000	6494	284	410	112	c
+16994	\N	1257000	3619	284	410	113	c
+16995	\N	1259000	3331	284	379	114	c
+16996	\N	1260000	6457	284	410	115	c
+16997	\N	1260000	6495	284	480	116	c
+16998	\N	1261000	6377	284	416	117	c
+16999	\N	1263000	6496	284	412	118	c
+17000	\N	1266000	6444	284	402	119	c
+17001	\N	1272000	6439	284	402	120	c
+17002	\N	1272000	6458	284	418	121	c
+17003	\N	1279000	6459	284	480	122	c
+17004	\N	1281000	6460	284	480	123	c
+13612	\N	1055000	3073	228	447	1	c
+13613	\N	1077000	5780	228	447	2	c
+11586	\N	1742000	5311	172	156	30	c
+11587	\N	1823000	1173	172	150	31	c
+11588	\N	1870000	5194	172	140	32	c
+11589	\N	1886000	5313	172	156	33	c
+11590	\N	2075000	5322	172	156	34	c
+11591	\N	2092000	5328	172	156	35	c
+11592	\N	1041000	5178	173	136	1	c
+11593	\N	1070000	1547	173	136	2	c
+11594	\N	1081000	1565	173	136	3	c
+11595	\N	1109000	3195	173	136	4	c
+11596	\N	1110000	5306	173	145	5	c
+11597	\N	1112000	3299	173	145	6	c
+11598	\N	1113000	3194	173	136	7	c
+11599	\N	1114000	3193	173	136	8	c
+11601	\N	1121000	1670	173	136	10	c
+11602	\N	1129000	3300	173	145	11	c
+11603	\N	1166000	1654	173	136	12	c
+11604	\N	1182000	1507	173	136	13	c
+11605	\N	1186000	1693	173	136	14	c
+11557	\N	1215000	3377	172	150	1	c
+11558	\N	1259000	1012	172	150	2	c
+11606	\N	1189000	3185	173	136	15	c
+11607	\N	1192000	5336	173	136	16	c
+11608	\N	1198000	3188	173	136	17	c
+11609	\N	1204000	5153	173	136	18	c
+11610	\N	1205000	3181	173	136	19	c
+11611	\N	1209000	1719	173	136	20	c
+11612	\N	1218000	1724	173	145	21	c
+11613	\N	1231000	3291	173	145	22	c
+11614	\N	1233000	3302	173	145	23	c
+11615	\N	1237000	5302	173	145	24	c
+11616	\N	1242000	5143	173	136	25	c
+11617	\N	1246000	1771	173	136	26	c
+11618	\N	1276000	1835	173	145	27	c
+11619	\N	1279000	1760	173	145	28	c
+11620	\N	1283000	3301	173	145	29	c
+11621	\N	1286000	3290	173	145	30	c
+11622	\N	1294000	1792	173	145	31	c
+11623	\N	1296000	1816	173	136	32	c
+11624	\N	1297000	3190	173	136	33	c
+11625	\N	1298000	5305	173	145	34	c
+11626	\N	1299000	5170	173	136	35	c
+11627	\N	1301000	3189	173	136	36	c
+11629	\N	1351000	1733	173	145	38	c
+11630	\N	1357000	3296	173	145	39	c
+11631	\N	1377000	3292	173	145	40	c
+11632	\N	1379000	1693	173	136	41	c
+11633	\N	1395000	5592	173	145	42	c
+11635	\N	1422000	3191	173	136	44	c
+11636	\N	1431000	1775	173	136	45	c
+11637	\N	1435000	5307	173	145	46	c
+11638	\N	1437000	3294	173	145	47	c
+11639	\N	1475000	5254	173	136	48	c
+11640	\N	1714000	5590	173	136	49	c
+11641	\N	1853000	5546	173	145	50	c
+11559	\N	1295000	1119	172	150	3	c
+11560	\N	1304000	1013	172	150	4	c
+11561	\N	1304000	3375	172	150	5	c
+11562	\N	1308000	5282	172	150	6	c
+11563	\N	1313000	3368	172	150	7	c
+11564	\N	1313000	3364	172	150	8	c
+11565	\N	1332000	4579	172	140	9	c
+11566	\N	1362000	1074	172	156	10	c
+11567	\N	1362000	5283	172	150	11	c
+11568	\N	1374000	5309	172	156	12	c
+11569	\N	1401000	5320	172	156	13	c
+11570	\N	1403000	5509	172	156	14	c
+11571	\N	1415000	3366	172	150	15	c
+11572	\N	1441000	3242	172	140	16	c
+11573	\N	1473000	5329	172	156	17	c
+11574	\N	1501000	1061	172	156	18	c
+11575	\N	1511000	3374	172	150	19	c
+11576	\N	1511000	1151	172	150	20	c
+11577	\N	1517000	3369	172	150	21	c
+11578	\N	1518000	3370	172	150	22	c
+11579	\N	1526000	3372	172	150	23	c
+11580	\N	1545000	4223	172	150	24	c
+11581	\N	1587000	3246	172	140	25	c
+11582	\N	1617000	5316	172	156	26	c
+11583	\N	1697000	3373	172	150	27	c
+11584	\N	1719000	5325	172	156	28	c
+11585	\N	1732000	3244	172	140	29	c
+11642	\N	1862000	5258	173	136	51	c
+11643	\N	999000	3357	174	149	1	c
+11644	\N	1018000	5308	174	155	2	c
+11645	\N	1090000	3358	174	149	3	c
+11646	\N	1119000	1580	174	149	4	c
+11647	\N	1168000	1561	174	139	5	c
+11648	\N	1179000	2889	174	149	6	c
+11649	\N	1229000	3359	174	149	7	c
+11650	\N	1249000	3360	174	149	8	c
+11651	\N	1258000	5203	174	139	9	c
+11652	\N	1260000	5188	174	149	10	c
+11653	\N	1262000	3361	174	149	11	c
+11654	\N	1263000	5321	174	155	12	c
+11655	\N	1273000	3235	174	139	13	c
+11656	\N	1323000	1836	174	149	14	c
+11657	\N	1325000	3437	174	155	15	c
+11658	\N	1336000	3237	174	139	16	c
+11660	\N	1386000	3354	174	149	18	c
+11661	\N	1396000	5318	174	155	19	c
+11662	\N	1406000	3355	174	149	20	c
+11663	\N	1411000	5281	174	149	21	c
+11665	\N	1516000	5233	174	139	23	c
+11667	\N	1587000	5168	174	149	25	c
+11668	\N	1829000	3231	174	139	26	c
+11669	\N	1018000	1508	175	131	1	c
+11670	\N	1091000	1613	175	131	2	c
+11671	\N	1165000	3086	175	129	3	c
+11672	\N	1169000	1681	175	129	4	c
+11673	\N	1175000	3087	175	129	5	c
+11674	\N	1175000	1636	175	129	6	c
+11675	\N	1176000	1715	175	131	7	c
+11676	\N	1177000	1669	175	131	8	c
+11677	\N	1178000	3085	175	129	9	c
+11678	\N	1199000	1663	175	129	10	c
+11679	\N	1202000	1749	175	129	11	c
+11680	\N	1220000	1659	175	129	12	c
+11681	\N	1249000	3070	175	129	13	c
+11682	\N	1274000	1563	175	129	14	c
+11683	\N	1275000	3120	175	131	15	c
+11684	\N	1284000	3072	175	129	16	c
+11685	\N	1306000	1672	175	129	17	c
+11686	\N	1317000	3075	175	129	18	c
+11687	\N	1318000	3079	175	129	19	c
+11659	\N	1360000	5617	174	149	17	c
+11664	\N	1514000	5629	174	155	22	c
+11600	\N	1120000	5640	173	145	9	c
+11688	\N	1319000	3071	175	129	20	c
+11689	\N	1334000	1741	175	131	21	c
+11690	\N	1346000	3077	175	129	22	c
+11691	\N	1356000	1776	175	129	23	c
+11692	\N	1361000	1690	175	129	24	c
+11693	\N	1363000	3078	175	129	25	c
+11694	\N	1388000	5555	175	129	26	c
+11695	\N	1391000	3083	175	129	27	c
+11696	\N	1391000	5190	175	131	28	c
+11697	\N	1404000	5551	175	129	29	c
+11698	\N	1412000	3107	175	131	30	c
+11699	\N	1414000	5395	175	129	31	c
+11700	\N	1418000	3074	175	129	32	c
+11701	\N	1426000	3081	175	129	33	c
+11702	\N	1435000	1740	175	129	34	c
+11703	\N	1444000	3076	175	129	35	c
+11704	\N	1447000	4039	175	129	36	c
+11705	\N	1449000	3108	175	131	37	c
+11706	\N	1451000	3084	175	129	38	c
+11707	\N	1470000	1767	175	129	39	c
+11708	\N	1475000	5553	175	129	40	c
+11709	\N	1480000	1756	175	131	41	c
+11710	\N	1489000	5595	175	129	42	c
+11711	\N	1490000	5387	175	129	43	c
+11712	\N	1490000	1804	175	131	44	c
+11713	\N	1491000	4043	175	129	45	c
+11714	\N	1500000	5552	175	129	46	c
+11715	\N	1510000	3106	175	131	47	c
+11716	\N	1512000	5597	175	129	48	c
+11717	\N	1512000	1766	175	129	49	c
+11718	\N	1516000	3080	175	129	50	c
+11719	\N	1520000	3115	175	131	51	c
+11720	\N	1524000	3118	175	131	52	c
+11721	\N	1529000	1800	175	129	53	c
+11722	\N	1531000	4040	175	129	54	c
+11723	\N	1539000	3113	175	131	55	c
+11724	\N	1543000	3114	175	131	56	c
+11725	\N	1561000	5557	175	129	57	c
+11726	\N	1619000	5594	175	131	58	c
+11727	\N	1628000	1789	175	129	59	c
+11728	\N	1662000	5596	175	129	60	c
+11729	\N	1666000	5190	175	131	61	c
+11730	\N	1689000	5334	175	131	62	c
+11731	\N	1715000	3118	175	131	63	c
+11732	\N	1814000	3116	175	131	64	c
+11762	\N	966000	1506	177	128	1	c
+11763	\N	1067000	3064	177	128	2	c
+11764	\N	1081000	5176	177	147	3	c
+11765	\N	1109000	3065	177	128	4	c
+11766	\N	1147000	3068	177	128	5	c
+11767	\N	1153000	1566	177	128	6	c
+11768	\N	1160000	3067	177	128	7	c
+11769	\N	1161000	3053	177	128	8	c
+11770	\N	1162000	3326	177	147	9	c
+11771	\N	1164000	3066	177	128	10	c
+11772	\N	1183000	5274	177	147	11	c
+11773	\N	1184000	5238	177	128	12	c
+11774	\N	1202000	3058	177	128	13	c
+11775	\N	1204000	3056	177	128	14	c
+11776	\N	1205000	3059	177	128	15	c
+11777	\N	1209000	5601	177	147	16	c
+11778	\N	1212000	3982	177	147	17	c
+11779	\N	1234000	5275	177	147	18	c
+11780	\N	1239000	1823	177	147	19	c
+11812	\N	1114000	1543	179	138	1	c
+11813	\N	1147000	1531	179	138	2	c
+11814	\N	1155000	5225	179	143	3	c
+11815	\N	1174000	3223	179	138	4	c
+11816	\N	1222000	3273	179	143	5	c
+11817	\N	1228000	1610	179	138	6	c
+11818	\N	1270000	3271	179	143	7	c
+11819	\N	1271000	3225	179	138	8	c
+11820	\N	1276000	3272	179	143	9	c
+11821	\N	1302000	3226	179	138	10	c
+11822	\N	1306000	3215	179	138	11	c
+11823	\N	1308000	5197	179	143	12	c
+11824	\N	1346000	5224	179	143	13	c
+11825	\N	1349000	1851	179	143	14	c
+11826	\N	1393000	3266	179	143	15	c
+11827	\N	1393000	3220	179	138	16	c
+11828	\N	1411000	3265	179	143	17	c
+11829	\N	1472000	1805	179	143	18	c
+11830	\N	1486000	1757	179	138	19	c
+11831	\N	1486000	3269	179	143	20	c
+11832	\N	1494000	1801	179	143	21	c
+11833	\N	1495000	3217	179	138	22	c
+11834	\N	1608000	5277	179	138	23	c
+11835	\N	1694000	1762	179	143	24	c
+11836	\N	1924000	1829	179	138	25	c
+13614	\N	1108000	3087	228	447	3	c
+13615	\N	1130000	3086	228	447	4	c
+13616	\N	1134000	3077	228	447	5	c
+13617	\N	1135000	5655	228	442	6	c
+13618	\N	1149000	3072	228	447	7	c
+13619	\N	1161000	5789	228	447	8	c
+13620	\N	1180000	5373	228	447	9	c
+13621	\N	1212000	3070	228	447	10	c
+13622	\N	1215000	5387	228	447	11	c
+13623	\N	1217000	4041	228	447	12	c
+13624	\N	1219000	5314	228	442	13	c
+13625	\N	1220000	4042	228	447	14	c
+13626	\N	1259000	5781	228	447	15	c
+13627	\N	1260000	5776	228	447	16	c
+13628	\N	1266000	5388	228	447	17	c
+13629	\N	1283000	5777	228	442	18	c
+13630	\N	1288000	5376	228	447	19	c
+13631	\N	1303000	5790	228	447	20	c
+13632	\N	1310000	4039	228	447	21	c
+13633	\N	1311000	5782	228	447	22	c
+13634	\N	1312000	5323	228	442	23	c
+13635	\N	1314000	4986	228	442	24	c
+13636	\N	1324000	5629	228	442	25	c
+13637	\N	1340000	3076	228	447	26	c
+13638	\N	1368000	5778	228	447	27	c
+13639	\N	1381000	4977	228	442	28	c
+13640	\N	1383000	5382	228	447	29	c
+13641	\N	1387000	5417	228	447	30	c
+13642	\N	1395000	5783	228	447	31	c
+13643	\N	1400000	5784	228	447	32	c
+13644	\N	1420000	5389	228	447	33	c
+13645	\N	1426000	5396	228	447	34	c
+13646	\N	1432000	5657	228	442	35	c
+13647	\N	1433000	5785	228	447	36	c
+13648	\N	1450000	5786	228	447	37	c
+13649	\N	1467000	5656	228	442	38	c
+13650	\N	1472000	5791	228	447	39	c
+13651	\N	1488000	5787	228	447	40	c
+13652	\N	1491000	3080	228	447	41	c
+13653	\N	1537000	4978	228	442	42	c
+13654	\N	1587000	5792	228	442	43	c
+13655	\N	1774000	5384	228	447	44	c
+13656	\N	1778000	5788	228	447	45	c
+13657	\N	1808000	5793	228	442	46	c
+13658	\N	1922000	5658	228	442	47	c
+13659	\N	1927000	5794	228	442	48	c
+13660	\N	2029000	4983	228	442	49	c
+11733	\N	1060000	3148	176	133	1	c
+11734	\N	1084000	1513	176	133	2	c
+13661	\N	2557000	5779	228	442	50	c
+11736	\N	1153000	1535	176	133	4	c
+11737	\N	1171000	3252	176	141	5	c
+11738	\N	1185000	1618	176	133	6	c
+11739	\N	1220000	1643	176	133	7	c
+11740	\N	1225000	4111	176	133	8	c
+11741	\N	1247000	1708	176	141	9	c
+11742	\N	1258000	5202	176	133	10	c
+11743	\N	1282000	5216	176	133	11	c
+11744	\N	1292000	3141	176	133	12	c
+11745	\N	1294000	3255	176	141	13	c
+11746	\N	1297000	5213	176	133	14	c
+11747	\N	1300000	5159	176	141	15	c
+11748	\N	1329000	3142	176	133	16	c
+11749	\N	1334000	3144	176	133	17	c
+11750	\N	1346000	3249	176	141	18	c
+11751	\N	1365000	5262	176	133	19	c
+11752	\N	1373000	5598	176	133	20	c
+11753	\N	1376000	3145	176	133	21	c
+11754	\N	1387000	5261	176	141	22	c
+11755	\N	1424000	5599	176	141	23	c
+11756	\N	1429000	2998	176	133	24	c
+11757	\N	1434000	1815	176	141	25	c
+11758	\N	1443000	1701	176	141	26	c
+11759	\N	1536000	3146	176	133	27	c
+11760	\N	2062000	5600	176	133	28	c
+11761	\N	2138000	3251	176	141	29	c
+11781	\N	1212000	3054	178	128	1	c
+11782	\N	1226000	3055	178	128	2	c
+11783	\N	1262000	3060	178	128	3	c
+11784	\N	1289000	3062	178	128	4	c
+11785	\N	1297000	3947	178	128	5	c
+11786	\N	1306000	3061	178	128	6	c
+11787	\N	1315000	3057	178	128	7	c
+11788	\N	1327000	3319	178	147	8	c
+11789	\N	1328000	5542	178	128	9	c
+11790	\N	1338000	3949	178	128	10	c
+11791	\N	1339000	3331	178	147	11	c
+11792	\N	1343000	5220	178	128	12	c
+11793	\N	1344000	3953	178	128	13	c
+11794	\N	1360000	1677	178	128	14	c
+11795	\N	1377000	5266	178	147	15	c
+11796	\N	1384000	5603	178	128	16	c
+11797	\N	1391000	5602	178	147	17	c
+11798	\N	1401000	5237	178	128	18	c
+11799	\N	1408000	1726	178	128	19	c
+11871	\N	1614000	6372	180	153	35	c
+11801	\N	1432000	5242	178	128	21	c
+11802	\N	1502000	5267	178	147	22	c
+11803	\N	1572000	5268	178	147	23	c
+11804	\N	1575000	3979	178	147	24	c
+11805	\N	1608000	1730	178	147	25	c
+11806	\N	1616000	1855	178	147	26	c
+11807	\N	1705000	5374	178	147	27	c
+11808	\N	1720000	1842	178	147	28	c
+11809	\N	1980000	3323	178	147	29	c
+11810	\N	1987000	5604	178	128	30	c
+11811	\N	2147000	3978	178	147	31	c
+11837	\N	1007000	5263	180	153	1	c
+11838	\N	1067000	5175	180	151	2	c
+11839	\N	1087000	1674	180	153	3	c
+11840	\N	1087000	1645	180	151	4	c
+11841	\N	1108000	5181	180	151	5	c
+11842	\N	1112000	4424	180	254	6	c
+11843	\N	1125000	4426	180	254	7	c
+11844	\N	1130000	263	180	254	8	c
+11845	\N	1135000	5264	180	153	9	c
+11846	\N	1140000	3393	180	151	10	c
+11847	\N	1154000	1639	180	151	11	c
+11848	\N	1177000	5278	180	151	12	c
+11849	\N	1185000	4425	180	254	13	c
+11850	\N	1192000	3391	180	151	14	c
+11851	\N	1228000	4416	180	254	15	c
+11852	\N	1263000	4427	180	254	16	c
+11853	\N	1316000	3409	180	153	17	c
+11854	\N	1316000	4418	180	254	18	c
+11855	\N	1318000	4415	180	254	19	c
+11856	\N	1321000	5279	180	151	20	c
+11857	\N	1326000	4840	180	254	21	c
+11858	\N	1336000	3405	180	153	22	c
+11859	\N	1356000	4421	180	254	23	c
+11860	\N	1358000	3394	180	151	24	c
+11861	\N	1361000	4206	180	151	25	c
+11862	\N	1362000	3381	180	151	26	c
+11863	\N	1365000	1772	180	153	27	c
+11864	\N	1385000	4422	180	254	28	c
+11865	\N	1403000	4417	180	254	29	c
+13662	\N	1100000	3255	229	374	1	c
+11867	\N	1448000	5166	180	151	31	c
+11868	\N	1449000	1788	180	151	32	c
+11869	\N	1456000	5298	180	254	33	c
+11870	\N	1579000	4420	180	254	34	c
+11872	\N	1622000	3388	180	151	36	c
+11873	\N	1700000	3387	180	151	37	c
+11874	\N	1866000	5482	180	254	38	c
+11875	\N	1014000	1513	181	133	1	c
+11876	\N	1019000	3148	181	133	2	c
+11877	\N	1065000	1523	181	143	3	c
+11878	\N	1083000	1613	181	131	4	c
+11879	\N	1103000	1535	181	133	5	c
+11880	\N	1116000	1643	181	133	6	c
+11881	\N	1120000	1618	181	133	7	c
+11882	\N	1121000	5605	181	131	8	c
+11883	\N	1128000	5225	181	143	9	c
+11884	\N	1133000	1715	181	131	10	c
+11885	\N	1163000	1669	181	131	11	c
+11886	\N	1172000	4111	181	133	12	c
+11887	\N	1174000	5216	181	133	13	c
+11888	\N	1194000	1561	181	139	14	c
+11889	\N	1203000	3121	181	131	15	c
+11890	\N	1211000	3271	181	143	16	c
+11891	\N	1213000	5202	181	133	17	c
+11892	\N	1220000	5203	181	139	18	c
+11893	\N	1235000	5213	181	133	19	c
+11894	\N	1238000	3141	181	133	20	c
+11895	\N	1243000	1741	181	131	21	c
+11896	\N	1258000	3120	181	131	22	c
+11897	\N	1260000	1851	181	143	23	c
+11898	\N	1261000	5197	181	143	24	c
+11899	\N	1261000	3235	181	139	25	c
+11900	\N	1289000	5224	181	143	26	c
+11901	\N	1293000	3111	181	131	27	c
+11902	\N	1354000	3237	181	139	28	c
+11903	\N	1388000	3266	181	143	29	c
+11904	\N	1008000	1517	182	134	1	c
+11905	\N	1082000	1622	182	134	2	c
+11906	\N	1090000	5494	182	134	3	c
+11907	\N	1103000	5176	182	147	4	c
+11908	\N	1113000	3252	182	141	5	c
+11909	\N	1114000	5352	182	134	6	c
+11911	\N	1145000	3326	182	147	8	c
+11912	\N	1146000	5333	182	134	9	c
+11910	\N	1122000	5640	182	145	7	c
+11913	\N	1151000	5274	182	147	10	c
+11914	\N	1153000	5183	182	147	11	c
+11915	\N	1164000	5306	182	145	12	c
+11916	\N	1181000	1680	182	134	13	c
+11917	\N	1193000	1625	182	134	14	c
+11918	\N	1195000	1708	182	141	15	c
+11919	\N	1203000	3299	182	145	16	c
+11920	\N	1222000	3300	182	145	17	c
+11921	\N	1231000	5159	182	141	18	c
+11922	\N	1236000	3982	182	147	19	c
+11923	\N	1254000	3255	182	141	20	c
+11924	\N	1303000	1823	182	147	21	c
+11925	\N	1304000	3302	182	145	22	c
+11926	\N	1320000	3291	182	145	23	c
+11927	\N	1363000	5302	182	145	24	c
+11928	\N	1446000	5275	182	147	25	c
+11929	\N	1016000	3357	183	149	1	c
+11930	\N	1030000	5308	183	155	2	c
+11931	\N	1076000	5178	183	136	3	c
+11932	\N	1085000	1547	183	136	4	c
+11933	\N	1087000	3358	183	149	5	c
+11934	\N	1105000	1674	183	153	6	c
+11935	\N	1112000	1580	183	149	7	c
+11936	\N	1115000	3194	183	136	8	c
+11937	\N	1125000	1565	183	136	9	c
+11938	\N	1144000	1670	183	136	10	c
+11939	\N	1157000	3195	183	136	11	c
+11940	\N	1163000	3193	183	136	12	c
+11941	\N	1175000	1654	183	136	13	c
+11942	\N	1180000	2889	183	149	14	c
+11943	\N	1205000	3409	183	153	15	c
+11944	\N	1211000	5321	183	155	16	c
+11945	\N	1217000	3185	183	136	17	c
+11946	\N	1227000	3359	183	149	18	c
+11947	\N	1233000	1693	183	136	19	c
+11948	\N	1240000	5188	183	149	20	c
+11949	\N	1319000	3361	183	149	21	c
+11950	\N	1349000	5151	183	153	22	c
+11951	\N	1370000	5318	183	155	23	c
+11952	\N	1375000	3437	183	155	24	c
+11953	\N	1480000	5310	183	155	25	c
+13663	\N	1144000	4522	229	374	2	c
+11955	\N	1496000	5323	183	155	27	c
+11956	\N	1012000	1506	184	128	1	c
+11957	\N	1094000	3064	184	128	2	c
+11958	\N	1097000	1543	184	138	3	c
+11959	\N	1129000	1531	184	138	4	c
+11960	\N	1132000	3065	184	128	5	c
+11961	\N	1150000	1681	184	129	6	c
+11962	\N	1158000	3086	184	129	7	c
+11963	\N	1160000	5175	184	151	8	c
+11964	\N	1166000	5181	184	151	9	c
+11965	\N	1167000	1566	184	128	10	c
+11966	\N	1168000	3087	184	129	11	c
+11967	\N	1171000	3068	184	128	12	c
+11968	\N	1175000	1645	184	151	13	c
+11969	\N	1175000	3223	184	138	14	c
+11970	\N	1181000	1663	184	129	15	c
+11971	\N	1185000	3085	184	129	16	c
+11972	\N	1186000	1636	184	129	17	c
+11973	\N	1187000	1673	184	129	18	c
+11974	\N	1192000	1749	184	129	19	c
+11975	\N	1205000	3067	184	128	20	c
+11976	\N	1226000	5238	184	128	21	c
+11977	\N	1239000	3053	184	128	22	c
+11978	\N	1244000	3066	184	128	23	c
+11979	\N	1252000	3226	184	138	24	c
+11980	\N	1253000	1610	184	138	25	c
+11981	\N	1254000	5278	184	151	26	c
+11982	\N	1257000	3056	184	128	27	c
+11983	\N	1260000	1563	184	129	28	c
+11984	\N	1268000	3391	184	151	29	c
+11985	\N	1278000	3072	184	129	30	c
+11986	\N	1295000	3393	184	151	31	c
+11987	\N	1352000	3215	184	138	32	c
+11988	\N	1387000	5279	184	151	33	c
+11989	\N	1476000	3220	184	138	34	c
+11990	\N	1259000	3054	185	128	1	c
+11991	\N	1263000	3055	185	128	2	c
+11992	\N	1263000	3079	185	129	3	c
+11993	\N	1264000	3077	185	129	4	c
+11994	\N	1271000	3071	185	129	5	c
+11995	\N	1291000	3075	185	129	6	c
+11996	\N	1295000	3076	185	129	7	c
+11997	\N	1317000	3073	185	129	8	c
+11998	\N	1327000	3060	185	128	9	c
+11999	\N	1334000	1776	185	129	10	c
+12000	\N	1357000	3062	185	128	11	c
+12001	\N	1360000	3081	185	129	12	c
+12002	\N	1360000	3057	185	128	13	c
+12003	\N	1362000	1690	185	129	14	c
+12004	\N	1367000	5556	185	129	15	c
+12005	\N	1372000	3949	185	128	16	c
+12006	\N	1375000	5603	185	128	17	c
+12007	\N	1387000	3080	185	129	18	c
+12008	\N	1392000	5551	185	129	19	c
+12009	\N	1394000	3083	185	129	20	c
+12010	\N	1406000	3217	185	138	21	c
+12011	\N	1410000	5395	185	129	22	c
+12012	\N	1417000	1740	185	129	23	c
+12013	\N	1420000	5553	185	129	24	c
+12014	\N	1421000	3394	185	151	25	c
+12015	\N	1423000	3953	185	128	26	c
+12016	\N	1425000	4039	185	129	27	c
+12017	\N	1430000	5387	185	129	28	c
+12018	\N	954000	1506	186	128	1	c
+12019	\N	1045000	5308	186	155	2	c
+12020	\N	1062000	1523	186	143	3	c
+12021	\N	1077000	3064	186	128	4	c
+12022	\N	1093000	3252	186	141	5	c
+12023	\N	1094000	3065	186	128	6	c
+12024	\N	1140000	5225	186	143	7	c
+12025	\N	1147000	1566	186	128	8	c
+12026	\N	1149000	3068	186	128	9	c
+12027	\N	1161000	3254	186	141	10	c
+12028	\N	1168000	3067	186	128	11	c
+12029	\N	1171000	3273	186	143	12	c
+12030	\N	1173000	5238	186	128	13	c
+12031	\N	1177000	3053	186	128	14	c
+12032	\N	1193000	1708	186	141	15	c
+12033	\N	1197000	3271	186	143	16	c
+12034	\N	1200000	3056	186	128	17	c
+12035	\N	1214000	3255	186	141	18	c
+12036	\N	1228000	5321	186	155	19	c
+12037	\N	1229000	3059	186	128	20	c
+12038	\N	1230000	1717	186	128	21	c
+12039	\N	1245000	1851	186	143	22	c
+12040	\N	1254000	5197	186	143	23	c
+12041	\N	1260000	3272	186	143	24	c
+12042	\N	1265000	1687	186	141	25	c
+12043	\N	1265000	5261	186	141	26	c
+12044	\N	1314000	5318	186	155	27	c
+12045	\N	1392000	3437	186	155	28	c
+12046	\N	1469000	5323	186	155	29	c
+12048	\N	1238000	3055	187	128	1	c
+12049	\N	1239000	3054	187	128	2	c
+12050	\N	1258000	3249	187	141	3	c
+12051	\N	1280000	3060	187	128	4	c
+12052	\N	1282000	3057	187	128	5	c
+12053	\N	1300000	3062	187	128	6	c
+12054	\N	1320000	3255	187	141	7	c
+12055	\N	1320000	3061	187	128	8	c
+12056	\N	1347000	3949	187	128	9	c
+12057	\N	1349000	5603	187	128	10	c
+12058	\N	1361000	1677	187	128	11	c
+12059	\N	1365000	1701	187	141	12	c
+12060	\N	1372000	3953	187	128	13	c
+12061	\N	1375000	3947	187	128	14	c
+12062	\N	1376000	3266	187	143	15	c
+12063	\N	1380000	5214	187	143	16	c
+12064	\N	1417000	5220	187	128	17	c
+12065	\N	1440000	1805	187	143	18	c
+12066	\N	1459000	5242	187	128	19	c
+12067	\N	1484000	1801	187	143	20	c
+12068	\N	1487000	1762	187	143	21	c
+13665	\N	1166000	3409	229	377	4	c
+12070	\N	1629000	5330	187	155	23	c
+12071	\N	1808000	5314	187	155	24	c
+12072	\N	1987000	5606	187	155	25	c
+12073	\N	2046000	5317	187	155	26	c
+12074	\N	1021000	1513	188	133	1	c
+12075	\N	1045000	3148	188	133	2	c
+12076	\N	1084000	3357	188	149	3	c
+13926	\N	1231000	3377	237	150	1	c
+12078	\N	1108000	1643	188	133	5	c
+12079	\N	1109000	1531	188	138	6	c
+12080	\N	1114000	1543	188	138	7	c
+12081	\N	1124000	3358	188	149	8	c
+12082	\N	1138000	5129	188	498	9	c
+12083	\N	1143000	5130	188	498	10	c
+12084	\N	1146000	1681	188	129	11	c
+12085	\N	1151000	3086	188	129	12	c
+12086	\N	1152000	1580	188	149	13	c
+12087	\N	1154000	3223	188	138	14	c
+12088	\N	1155000	5607	188	498	15	c
+12089	\N	1164000	3087	188	129	16	c
+12090	\N	1166000	3085	188	129	17	c
+12091	\N	1168000	1673	188	129	18	c
+12092	\N	1173000	1663	188	129	19	c
+12094	\N	1175000	1636	188	129	21	c
+12095	\N	1180000	1749	188	129	22	c
+12096	\N	1183000	5216	188	133	23	c
+12097	\N	1184000	5306	188	145	24	c
+12098	\N	1197000	2889	188	149	25	c
+12099	\N	1206000	3299	188	145	26	c
+12100	\N	1221000	1659	188	129	27	c
+12101	\N	1231000	5522	188	498	28	c
+12102	\N	1235000	1610	188	138	29	c
+12103	\N	1249000	3300	188	145	30	c
+12104	\N	1269000	5608	188	498	31	c
+12105	\N	1271000	5609	188	498	32	c
+12106	\N	1278000	5213	188	133	33	c
+12107	\N	1284000	5610	188	498	34	c
+12108	\N	1289000	3141	188	133	35	c
+12109	\N	1289000	5611	188	498	36	c
+12110	\N	1290000	3361	188	149	37	c
+12111	\N	1297000	3225	188	138	38	c
+12112	\N	1303000	3226	188	138	39	c
+12113	\N	1305000	3302	188	145	40	c
+12114	\N	1308000	5427	188	498	41	c
+12093	\N	1173000	5640	188	145	20	c
+12116	\N	1315000	1724	188	145	43	c
+12117	\N	1321000	5188	188	149	44	c
+12118	\N	1324000	3291	188	145	45	c
+12119	\N	1325000	3215	188	138	46	c
+12120	\N	1363000	3301	188	145	47	c
+12121	\N	1023000	1517	189	134	1	c
+12122	\N	1054000	5263	189	153	2	c
+12123	\N	1080000	1622	189	134	3	c
+12124	\N	1081000	5494	189	134	4	c
+12125	\N	1121000	5352	189	134	5	c
+12126	\N	1139000	1674	189	153	6	c
+12127	\N	1141000	5333	189	134	7	c
+12128	\N	1173000	1680	189	134	8	c
+12129	\N	1176000	5264	189	153	9	c
+12130	\N	1177000	3164	189	134	10	c
+12131	\N	1181000	1625	189	134	11	c
+12132	\N	1192000	1561	189	139	12	c
+12133	\N	1205000	5174	189	134	13	c
+12134	\N	1214000	3156	189	134	14	c
+12135	\N	1216000	5151	189	153	15	c
+12136	\N	1217000	3235	189	139	16	c
+12137	\N	1218000	5203	189	139	17	c
+12138	\N	1254000	3157	189	134	18	c
+12139	\N	1264000	3158	189	134	19	c
+12140	\N	1277000	3154	189	134	20	c
+12141	\N	1285000	1697	189	134	21	c
+12142	\N	1306000	3237	189	139	22	c
+12143	\N	1312000	1695	189	134	23	c
+12144	\N	1313000	3409	189	153	24	c
+12145	\N	1333000	4098	189	134	25	c
+12146	\N	1344000	5548	189	134	26	c
+12147	\N	1347000	5222	189	139	27	c
+12148	\N	1349000	3161	189	134	28	c
+12149	\N	1361000	3405	189	153	29	c
+12150	\N	1372000	4102	189	134	30	c
+12151	\N	1409000	1772	189	153	31	c
+12152	\N	1424000	4096	189	134	32	c
+12153	\N	1442000	5169	189	153	33	c
+12154	\N	1468000	5612	189	134	34	c
+12155	\N	1492000	5233	189	139	35	c
+12156	\N	1509000	5185	189	139	36	c
+12157	\N	1555000	3230	189	139	37	c
+12158	\N	1558000	5400	189	134	38	c
+12159	\N	1609000	5425	189	134	39	c
+12160	\N	1622000	1858	189	134	40	c
+12161	\N	1022000	1520	190	131	1	c
+12162	\N	1051000	1613	190	131	2	c
+12163	\N	1054000	5178	190	136	3	c
+12164	\N	1055000	5175	190	151	4	c
+12165	\N	1089000	1547	190	136	5	c
+12166	\N	1092000	5181	190	151	6	c
+12167	\N	1098000	5605	190	131	7	c
+12168	\N	1102000	1669	190	131	8	c
+12169	\N	1107000	1715	190	131	9	c
+12170	\N	1122000	1645	190	151	10	c
+12171	\N	1126000	1565	190	136	11	c
+12172	\N	1132000	3193	190	136	12	c
+12173	\N	1133000	3194	190	136	13	c
+12174	\N	1136000	3326	190	147	14	c
+12175	\N	1137000	3195	190	136	15	c
+12176	\N	1138000	1670	190	136	16	c
+12177	\N	1143000	5274	190	147	17	c
+12178	\N	1169000	1654	190	136	18	c
+12179	\N	1181000	3120	190	131	19	c
+12180	\N	1184000	3982	190	147	20	c
+12181	\N	1188000	5278	190	151	21	c
+12182	\N	1189000	3393	190	151	22	c
+12183	\N	1191000	1693	190	136	23	c
+12184	\N	1192000	5601	190	147	24	c
+13927	\N	1247000	3136	237	132	2	c
+12185	\N	1197000	1741	190	131	25	c
+12186	\N	1198000	1639	190	151	26	c
+12187	\N	1209000	5153	190	136	27	c
+12188	\N	1209000	3391	190	151	28	c
+12189	\N	1212000	5336	190	136	29	c
+12190	\N	1214000	3185	190	136	30	c
+12191	\N	1215000	5226	190	136	31	c
+12192	\N	1216000	3181	190	136	32	c
+12193	\N	1232000	5143	190	136	33	c
+12194	\N	1242000	3188	190	136	34	c
+12195	\N	1247000	3107	190	131	35	c
+12196	\N	1248000	3331	190	147	36	c
+12197	\N	1254000	1771	190	136	37	c
+12198	\N	1257000	1719	190	136	38	c
+12199	\N	1263000	5170	190	136	39	c
+12200	\N	1279000	5190	190	131	40	c
+12201	\N	1290000	5279	190	151	41	c
+12202	\N	1299000	3106	190	131	42	c
+12203	\N	1302000	1816	190	136	43	c
+12204	\N	1314000	1756	190	131	44	c
+12205	\N	1319000	1804	190	131	45	c
+12206	\N	1352000	3394	190	151	46	c
+12207	\N	1353000	3187	190	136	47	c
+12208	\N	1355000	5251	190	136	48	c
+12209	\N	1356000	4206	190	151	49	c
+12210	\N	1363000	1775	190	136	50	c
+12211	\N	1364000	5602	190	147	51	c
+12212	\N	1365000	3382	190	151	52	c
+12213	\N	1366000	1684	190	136	53	c
+12214	\N	1367000	5544	190	136	54	c
+12215	\N	1375000	5266	190	147	55	c
+12216	\N	1376000	1788	190	151	56	c
+12218	\N	1384000	3190	190	136	58	c
+12219	\N	1385000	3191	190	136	59	c
+12220	\N	1409000	5521	190	131	60	c
+12221	\N	1422000	3108	190	131	61	c
+12222	\N	1423000	3114	190	131	62	c
+12223	\N	1424000	5254	190	136	63	c
+12224	\N	1425000	1859	190	147	64	c
+13667	\N	1201000	3249	229	374	6	c
+13668	\N	1252000	5169	229	377	7	c
+13669	\N	1275000	5105	229	377	8	c
+13670	\N	1307000	5797	229	374	9	c
+13671	\N	1352000	4521	229	374	10	c
+13672	\N	1362000	1758	229	377	11	c
+13673	\N	1508000	5103	229	377	12	c
+13674	\N	1584000	5103	229	377	13	c
+13675	\N	1902000	5104	229	377	14	c
+12217	\N	1377000	5804	190	147	57	c
+13928	\N	1248000	1012	237	150	3	c
+13929	\N	1258000	1026	237	132	4	c
+13930	\N	1299000	1025	237	132	5	c
+13931	\N	1304000	3138	237	132	6	c
+13932	\N	1317000	1118	237	132	7	c
+13933	\N	1337000	3137	237	132	8	c
+13934	\N	1343000	3139	237	132	9	c
+13935	\N	1358000	1119	237	150	10	c
+13936	\N	1363000	1013	237	150	11	c
+13937	\N	1366000	5282	237	150	12	c
+13938	\N	1367000	3259	237	142	13	c
+13939	\N	1374000	3375	237	150	14	c
+13940	\N	1375000	3366	237	150	15	c
+13941	\N	1377000	3367	237	150	16	c
+13942	\N	1392000	3364	237	150	17	c
+13943	\N	1403000	3368	237	150	18	c
+13944	\N	1419000	5280	237	150	19	c
+13945	\N	1446000	2558	237	142	20	c
+13946	\N	1476000	5283	237	150	21	c
+13947	\N	1480000	3370	237	150	22	c
+13948	\N	1485000	1151	237	150	23	c
+13949	\N	1486000	3125	237	132	24	c
+13950	\N	1506000	3371	237	150	25	c
+13951	\N	1509000	3261	237	142	26	c
+13952	\N	1519000	3124	237	132	27	c
+13953	\N	1536000	3140	237	132	28	c
+13954	\N	1566000	3372	237	150	29	c
+13955	\N	1571000	3130	237	132	30	c
+13956	\N	1572000	3373	237	150	31	c
+13957	\N	1573000	3129	237	132	32	c
+13958	\N	1578000	4223	237	150	33	c
+13959	\N	1582000	3127	237	132	34	c
+13960	\N	1601000	3131	237	132	35	c
+13961	\N	1627000	3260	237	142	36	c
+13962	\N	1651000	3374	237	150	37	c
+13963	\N	1676000	2584	237	142	38	c
+13964	\N	1693000	2682	237	132	39	c
+13965	\N	1740000	5259	237	142	40	c
+13966	\N	1837000	1173	237	150	41	c
+13967	\N	1880000	5586	237	132	42	c
+6970	0	1428000	6370	38	357	57	c
+10827	\N	1404000	6370	151	357	16	c
+9892	\N	1362000	6370	123	357	9	c
+17005	\N	1289000	6497	284	412	124	c
+17006	\N	1291000	6498	284	402	125	c
+17007	\N	1296000	3943	284	418	126	c
+17008	\N	1298000	6461	284	420	127	c
+17009	\N	1299000	5292	284	407	128	c
+17010	\N	1299000	6462	284	420	129	c
+17011	\N	1302000	6445	284	480	130	c
+17012	\N	1303000	6499	284	418	131	c
+17013	\N	1310000	6446	284	410	132	c
+17014	\N	1313000	6500	284	407	133	c
+17015	\N	1316000	5698	284	416	134	c
+17016	\N	1325000	6501	284	405	135	c
+17017	\N	1329000	3741	284	412	136	c
+17018	\N	1344000	3976	284	379	137	c
+17019	\N	1351000	5386	284	379	138	c
+17020	\N	1360000	6502	284	412	139	c
+17021	\N	1371000	6503	284	412	140	c
+17022	\N	1372000	6504	284	402	141	c
+17023	\N	1375000	6463	284	412	142	c
+17024	\N	1376000	6437	284	412	143	c
+17025	\N	1392000	5804	284	379	144	c
+17026	\N	1408000	6505	284	407	145	c
+17027	\N	1417000	6464	284	480	146	c
+17028	\N	1422000	6465	284	480	147	c
+17029	\N	1426000	5271	284	379	148	c
+17030	\N	1473000	3978	284	379	149	c
+17031	\N	1475000	6466	284	480	150	c
+17032	\N	1536000	3977	284	379	151	c
+17033	\N	1830000	6282	284	379	152	c
+17158	\N	1044000	5494	286	497	1	c
+17159	\N	1048000	5735	286	376	2	c
+17160	\N	1053000	5734	286	381	3	c
+17161	\N	1056000	4117	286	376	4	c
+17162	\N	1066000	4209	286	381	5	c
+17163	\N	1066000	4156	286	474	6	c
+17164	\N	1070000	3106	286	492	7	c
+17165	\N	1072000	3086	286	447	8	c
+17166	\N	1072000	4145	286	387	9	c
+17167	\N	1075000	5181	286	381	10	c
+17168	\N	1077000	6570	286	391	11	c
+17169	\N	1077000	4121	286	387	12	c
+13666	\N	1170000	6286	229	377	5	c
+12225	\N	1100000	5176	191	147	1	c
+12226	\N	1126000	3358	191	149	2	c
+12227	\N	1144000	1580	191	149	3	c
+12228	\N	1156000	3982	191	147	4	c
+12229	\N	1167000	5183	191	147	5	c
+12230	\N	1170000	5613	191	147	6	c
+12231	\N	1172000	5274	191	147	7	c
+12232	\N	1226000	3359	191	149	8	c
+12233	\N	1229000	5276	191	147	9	c
+12234	\N	1279000	3331	191	147	10	c
+12236	\N	1314000	5188	191	149	12	c
+12237	\N	1321000	1823	191	147	13	c
+12239	\N	1362000	5601	191	147	15	c
+12240	\N	1362000	5602	191	147	16	c
+12241	\N	1378000	5281	191	149	17	c
+12242	\N	1390000	3363	191	149	18	c
+12243	\N	1391000	5267	191	147	19	c
+12244	\N	1398000	3319	191	147	20	c
+12245	\N	1409000	5266	191	147	21	c
+12246	\N	1415000	1836	191	149	22	c
+12247	\N	1438000	1768	191	149	23	c
+12248	\N	1503000	3353	191	149	24	c
+12249	\N	1512000	1730	191	147	25	c
+12250	\N	1527000	3323	191	147	26	c
+12251	\N	1532000	5268	191	147	27	c
+12252	\N	1545000	5271	191	147	28	c
+12253	\N	1573000	5168	191	149	29	c
+12254	\N	1607000	1855	191	147	30	c
+12255	\N	1621000	3978	191	147	31	c
+12256	\N	1675000	5374	191	147	32	c
+12257	\N	1705000	5615	191	147	33	c
+12258	\N	1899000	5409	191	147	34	c
+12259	\N	1903000	5385	191	147	35	c
+4651	0	1538900	6372	11	153	168	c
+11628	\N	1346000	5616	173	136	37	c
+11634	\N	1405000	5616	173	136	43	c
+10900	\N	1468000	5617	153	149	38	c
+12235	\N	1298000	5617	191	149	11	c
+11156	\N	1855000	5618	160	153	25	c
+11866	\N	1421000	5618	180	153	30	c
+12260	\N	1040900	5263	192	153	1	c
+12261	\N	1074800	3252	192	141	2	c
+12262	\N	1083000	1674	192	153	3	c
+12263	\N	1087600	5198	192	141	4	c
+12264	\N	1125400	3254	192	141	5	c
+12265	\N	1174900	1708	192	141	6	c
+12266	\N	1176000	5159	192	141	7	c
+12267	\N	1177800	5264	192	153	8	c
+12268	\N	1181500	3255	192	141	9	c
+12269	\N	1208000	3249	192	141	10	c
+12270	\N	1208500	5261	192	141	11	c
+12271	\N	1214200	3409	192	153	12	c
+12272	\N	1242100	5151	192	153	13	c
+12273	\N	1247200	1687	192	141	14	c
+12274	\N	1277600	1815	192	141	15	c
+12275	\N	1298200	1701	192	141	16	c
+12276	\N	1348800	3250	192	141	17	c
+12277	\N	1386200	3403	192	153	18	c
+12278	\N	1386500	5169	192	153	19	c
+12279	\N	1400800	1772	192	153	20	c
+12280	\N	1440500	3405	192	153	21	c
+12282	\N	1824900	5618	192	153	23	c
+12283	\N	2011100	3251	192	141	24	c
+12284	\N	1035000	1523	193	143	1	c
+12285	\N	1078000	5178	193	136	2	c
+12286	\N	1082000	1547	193	136	3	c
+12287	\N	1090000	5225	193	143	4	c
+12288	\N	1106000	1565	193	136	5	c
+12289	\N	1142000	3194	193	136	6	c
+12290	\N	1143000	3195	193	136	7	c
+12291	\N	1144000	3193	193	136	8	c
+12292	\N	1155000	3273	193	143	9	c
+12293	\N	1162000	1670	193	136	10	c
+12294	\N	1208000	1654	193	136	11	c
+12295	\N	1220000	3272	193	143	12	c
+12296	\N	1221000	5335	193	136	13	c
+12297	\N	1222000	3188	193	136	14	c
+12298	\N	1223000	5226	193	136	15	c
+12299	\N	1225000	3181	193	136	16	c
+12300	\N	1229000	5153	193	136	17	c
+12301	\N	1230000	5336	193	136	18	c
+12302	\N	1231000	3185	193	136	19	c
+12303	\N	1234000	5224	193	143	20	c
+12304	\N	1235000	3271	193	143	21	c
+12305	\N	1236000	5143	193	136	22	c
+12306	\N	1237000	1719	193	136	23	c
+12307	\N	1241000	5197	193	143	24	c
+12308	\N	1254000	5619	193	241	25	c
+12309	\N	1268000	1771	193	136	26	c
+12310	\N	1293000	5170	193	136	27	c
+12311	\N	1294000	4299	193	241	28	c
+12312	\N	1297000	3187	193	136	29	c
+12313	\N	1316000	4301	193	241	30	c
+12314	\N	1323000	1586	193	136	31	c
+12315	\N	1336000	1805	193	143	32	c
+12316	\N	1337000	3266	193	143	33	c
+12317	\N	1339000	3265	193	143	34	c
+12318	\N	1340000	5288	193	241	35	c
+12319	\N	1366000	3189	193	136	36	c
+12320	\N	1376000	4301	193	241	37	c
+12321	\N	1378000	5616	193	136	38	c
+12322	\N	1390000	1775	193	136	39	c
+12323	\N	1393000	1801	193	143	40	c
+12324	\N	1394000	3190	193	136	41	c
+12325	\N	1403000	1762	193	143	42	c
+12326	\N	1409000	5544	193	136	43	c
+12327	\N	1458000	3191	193	136	44	c
+12328	\N	1495000	5254	193	136	45	c
+12329	\N	1751000	3269	193	143	46	c
+12330	\N	1762000	5249	193	136	47	c
+12331	\N	1795000	5620	193	136	48	c
+12332	\N	1821000	3268	193	143	49	c
+12333	\N	1923000	5590	193	136	50	c
+12334	\N	1927000	5258	193	136	51	c
+12335	\N	1002000	1520	194	131	1	c
+12336	\N	1015000	1517	194	134	2	c
+12337	\N	1045000	1613	194	131	3	c
+12338	\N	1067000	1622	194	134	4	c
+12339	\N	1075000	5494	194	134	5	c
+12340	\N	1096000	1715	194	131	6	c
+12341	\N	1100000	1669	194	131	7	c
+12342	\N	1105000	5352	194	134	8	c
+12343	\N	1133000	5333	194	134	9	c
+12344	\N	1150000	3121	194	131	10	c
+12345	\N	1151000	1625	194	134	11	c
+12346	\N	1155000	3164	194	134	12	c
+12347	\N	1168000	5174	194	134	13	c
+12348	\N	1178000	5419	194	134	14	c
+12349	\N	1196000	3155	194	134	15	c
+12350	\N	1200000	3156	194	134	16	c
+12351	\N	1222000	1695	194	134	17	c
+12352	\N	1225000	3157	194	134	18	c
+12353	\N	1227000	3154	194	134	19	c
+12238	\N	1359000	5804	191	147	14	c
+12354	\N	1246000	1741	194	131	20	c
+12355	\N	1260000	1748	194	131	21	c
+12356	\N	1272000	4098	194	134	22	c
+12357	\N	1272000	3107	194	131	23	c
+12358	\N	1279000	1804	194	131	24	c
+12359	\N	1280000	3160	194	134	25	c
+12360	\N	1302000	3161	194	134	26	c
+12361	\N	1323000	4100	194	134	27	c
+12362	\N	1342000	4102	194	134	28	c
+12363	\N	1345000	5493	194	134	29	c
+12364	\N	1348000	3106	194	131	30	c
+12365	\N	1368000	4096	194	134	31	c
+12366	\N	1405000	5521	194	131	32	c
+12367	\N	1406000	3108	194	131	33	c
+12368	\N	1407000	4099	194	134	34	c
+12369	\N	1427000	3110	194	131	35	c
+12370	\N	1449000	5621	194	134	36	c
+12371	\N	1452000	3114	194	131	37	c
+12372	\N	1471000	3115	194	131	38	c
+12373	\N	1472000	3109	194	131	39	c
+12374	\N	1475000	5334	194	131	40	c
+12375	\N	1482000	3116	194	131	41	c
+12376	\N	1490000	3117	194	131	42	c
+12377	\N	1492000	3118	194	131	43	c
+12378	\N	1494000	5594	194	131	44	c
+12379	\N	1554000	5400	194	134	45	c
+12380	\N	1832000	5550	194	134	46	c
+12381	\N	1884000	5489	194	131	47	c
+12077	\N	1096000	5638	188	133	4	c
+12115	\N	1311000	5617	188	149	42	c
+13243	\N	1708000	5385	218	379	30	c
+13236	\N	1495000	5804	218	379	23	c
+13056	\N	1526000	5805	211	146	18	c
+13220	\N	1239000	5753	218	439	7	c
+13968	\N	1213000	3174	238	135	1	c
+13969	\N	1219000	2534	238	137	2	c
+13970	\N	1269000	5331	238	135	3	c
+13971	\N	1275000	3209	238	137	4	c
+13972	\N	1279000	2537	238	137	5	c
+13973	\N	1297000	3210	238	137	6	c
+13974	\N	1348000	3212	238	137	7	c
+13975	\N	1356000	3175	238	135	8	c
+13976	\N	1358000	3176	238	135	9	c
+13977	\N	1362000	3177	238	135	10	c
+13978	\N	1376000	3211	238	137	11	c
+13979	\N	1393000	2629	238	135	12	c
+13980	\N	1394000	5332	238	135	13	c
+13981	\N	1404000	3166	238	135	14	c
+13982	\N	1431000	2515	238	137	15	c
+13983	\N	1439000	1172	238	135	16	c
+13984	\N	1444000	3201	238	137	17	c
+13985	\N	1454000	5507	238	137	18	c
+13986	\N	1460000	3199	238	137	19	c
+13987	\N	1477000	3167	238	135	20	c
+13988	\N	1490000	2621	238	137	21	c
+13989	\N	1546000	3168	238	135	22	c
+13990	\N	1567000	3203	238	137	23	c
+13991	\N	1596000	3202	238	137	24	c
+13992	\N	1620000	5571	238	135	25	c
+13993	\N	1624000	3172	238	135	26	c
+13994	\N	1634000	3204	238	137	27	c
+13995	\N	1710000	3206	238	137	28	c
+13996	\N	1950000	3207	238	137	29	c
+13997	\N	1994000	3208	238	137	30	c
+13998	\N	1254000	5156	239	144	1	c
+13999	\N	1263000	2504	239	130	2	c
+14000	\N	1293000	5265	239	148	3	c
+14002	\N	1307000	3102	239	130	5	c
+14003	\N	1323000	1155	239	148	6	c
+14004	\N	1331000	2597	239	154	7	c
+14005	\N	1346000	3284	239	144	8	c
+14006	\N	1347000	2594	239	130	9	c
+14007	\N	1361000	3103	239	130	10	c
+14008	\N	1364000	2517	239	130	11	c
+14009	\N	1395000	2544	239	144	12	c
+14010	\N	1407000	3421	239	154	13	c
+14011	\N	1449000	3104	239	130	14	c
+14012	\N	1468000	2708	239	148	15	c
+14013	\N	1469000	3090	239	130	16	c
+14014	\N	1472000	2603	239	130	17	c
+14015	\N	1476000	5193	239	154	18	c
+14016	\N	1481000	3091	239	130	19	c
+14017	\N	1484000	3422	239	154	20	c
+14018	\N	1485000	5350	239	154	21	c
+14019	\N	1487000	3089	239	130	22	c
+14020	\N	1487000	3286	239	144	23	c
+14021	\N	1490000	3285	239	144	24	c
+14022	\N	1492000	3416	239	154	25	c
+14023	\N	1500000	1160	239	148	26	c
+14024	\N	1508000	5207	239	154	27	c
+14025	\N	1510000	3417	239	154	28	c
+14026	\N	1511000	3350	239	148	29	c
+14027	\N	1523000	3094	239	130	30	c
+14028	\N	1530000	3095	239	130	31	c
+14029	\N	1538000	3093	239	130	32	c
+14030	\N	1541000	1159	239	148	33	c
+14031	\N	1566000	2654	239	130	34	c
+14032	\N	1598000	5588	239	154	35	c
+14033	\N	1606000	3097	239	130	36	c
+14034	\N	1609000	5150	239	144	37	c
+14035	\N	1620000	1043	239	148	38	c
+14036	\N	1623000	5235	239	148	39	c
+14037	\N	1626000	3349	239	148	40	c
+14038	\N	1640000	3280	239	144	41	c
+14039	\N	1677000	5272	239	148	42	c
+14040	\N	1682000	4033	239	130	43	c
+14041	\N	1684000	3099	239	130	44	c
+14042	\N	1686000	3339	239	148	45	c
+14043	\N	1722000	3418	239	154	46	c
+14044	\N	1725000	2708	239	148	47	c
+14045	\N	1743000	3340	239	148	48	c
+14046	\N	1762000	5589	239	154	49	c
+14047	\N	1775000	3342	239	148	50	c
+14048	\N	1787000	3345	239	148	51	c
+14049	\N	1800000	3343	239	148	52	c
+14050	\N	1822000	3101	239	130	53	c
+14051	\N	1827000	3420	239	154	54	c
+14052	\N	1831000	5273	239	148	55	c
+14053	\N	1887000	5567	239	130	56	c
+14054	\N	1925000	3344	239	148	57	c
+14055	\N	1946000	3427	239	154	58	c
+14056	\N	2005000	5270	239	148	59	c
+14057	\N	2036000	3346	239	148	60	c
+14277	\N	1019000	5178	246	444	1	c
+14278	\N	1034000	3073	246	447	2	c
+14279	\N	1035000	3087	246	447	3	c
+14280	\N	1038000	5780	246	447	4	c
+14281	\N	1048000	3086	246	447	5	c
+14282	\N	1051000	5713	246	490	6	c
+14283	\N	1052000	3065	246	490	7	c
+14284	\N	1054000	3954	246	490	8	c
+14285	\N	1057000	3893	246	444	9	c
+14286	\N	1062000	3064	246	490	10	c
+14287	\N	1063000	3066	246	490	11	c
+12382	\N	1013000	1506	195	128	1	c
+12383	\N	1169000	3064	195	128	2	c
+12384	\N	1170000	3065	195	128	3	c
+12385	\N	1199000	3068	195	128	4	c
+12386	\N	1215000	3067	195	128	5	c
+12387	\N	1216000	1566	195	128	6	c
+12388	\N	1221000	3053	195	128	7	c
+12389	\N	1238000	3066	195	128	8	c
+12390	\N	1248000	3058	195	128	9	c
+12391	\N	1257000	3054	195	128	10	c
+12392	\N	1261000	1561	195	139	11	c
+12393	\N	1263000	3056	195	128	12	c
+12394	\N	1269000	3235	195	139	13	c
+12395	\N	1269000	3055	195	128	14	c
+12396	\N	1288000	3057	195	128	15	c
+12397	\N	1296000	3060	195	128	16	c
+12398	\N	1298000	5203	195	139	17	c
+12399	\N	1316000	3062	195	128	18	c
+12400	\N	1340000	3237	195	139	19	c
+12401	\N	1381000	3061	195	128	20	c
+12402	\N	1389000	5603	195	128	21	c
+12403	\N	1447000	5220	195	128	22	c
+12404	\N	1477000	5222	195	139	23	c
+12405	\N	1504000	5185	195	139	24	c
+12406	\N	1716000	3229	195	139	25	c
+12407	\N	1758000	5233	195	139	26	c
+12408	\N	1884000	3232	195	139	27	c
+12409	\N	2309000	3233	195	139	28	c
+12410	\N	1097000	5308	196	155	1	c
+12411	\N	1142000	1681	196	129	2	c
+12412	\N	1145000	3085	196	129	3	c
+12413	\N	1149000	3087	196	129	4	c
+12414	\N	1161000	1636	196	129	5	c
+12415	\N	1180000	1749	196	129	6	c
+12416	\N	1182000	1673	196	129	7	c
+12417	\N	1184000	1663	196	129	8	c
+12418	\N	1197000	3070	196	129	9	c
+12419	\N	1232000	1659	196	129	10	c
+12420	\N	1261000	3071	196	129	11	c
+12421	\N	1262000	3075	196	129	12	c
+12422	\N	1268000	1563	196	129	13	c
+12423	\N	1269000	3072	196	129	14	c
+12424	\N	1270000	5321	196	155	15	c
+12425	\N	1274000	3077	196	129	16	c
+12426	\N	1295000	3076	196	129	17	c
+12427	\N	1299000	5554	196	129	18	c
+12428	\N	1304000	1672	196	129	19	c
+12429	\N	1307000	1776	196	129	20	c
+12430	\N	1313000	3074	196	129	21	c
+12431	\N	1314000	3078	196	129	22	c
+12432	\N	1326000	1690	196	129	23	c
+12433	\N	1349000	5556	196	129	24	c
+12434	\N	1356000	3080	196	129	25	c
+12435	\N	1362000	3081	196	129	26	c
+12436	\N	1364000	4039	196	129	27	c
+12437	\N	1370000	1740	196	129	28	c
+12438	\N	1386000	5557	196	129	29	c
+12439	\N	1389000	3083	196	129	30	c
+12440	\N	1396000	5551	196	129	31	c
+12441	\N	1401000	1766	196	129	32	c
+12442	\N	1404000	5395	196	129	33	c
+12443	\N	1406000	3437	196	155	34	c
+12444	\N	1408000	5552	196	129	35	c
+12445	\N	1410000	5387	196	129	36	c
+12446	\N	1418000	3079	196	129	37	c
+12447	\N	1425000	1767	196	129	38	c
+12448	\N	1426000	3084	196	129	39	c
+12449	\N	1430000	4042	196	129	40	c
+12450	\N	1444000	5555	196	129	41	c
+12451	\N	1451000	4043	196	129	42	c
+12452	\N	1457000	4040	196	129	43	c
+12453	\N	1461000	5595	196	129	44	c
+12454	\N	1572000	5323	196	155	45	c
+7432	\N	1589150	5803	45	212	191	c
+12456	\N	1708000	5596	196	129	47	c
+12457	\N	1782000	5330	196	155	48	c
+12459	\N	1917000	5327	196	155	50	c
+12491	\N	1016000	1520	198	131	1	c
+12492	\N	1029000	3357	198	149	2	c
+12493	\N	1049000	1613	198	131	3	c
+12494	\N	1060000	1543	198	138	4	c
+12495	\N	1068000	3252	198	141	5	c
+12496	\N	1071000	1531	198	138	6	c
+12497	\N	1084000	1715	198	131	7	c
+12498	\N	1092000	1669	198	131	8	c
+12499	\N	1098000	3358	198	149	9	c
+12500	\N	1118000	3254	198	141	10	c
+12501	\N	1132000	1580	198	149	11	c
+12502	\N	1178000	1610	198	138	12	c
+12503	\N	1181000	3120	198	131	13	c
+12504	\N	1186000	1708	198	141	14	c
+12505	\N	1190000	5159	198	141	15	c
+12506	\N	1191000	3359	198	149	16	c
+12507	\N	1195000	5190	198	131	17	c
+12508	\N	1201000	3121	198	131	18	c
+12509	\N	1215000	3226	198	138	19	c
+12510	\N	1222000	3255	198	141	20	c
+12511	\N	1223000	3225	198	138	21	c
+12512	\N	1249000	1687	198	141	22	c
+12513	\N	1249000	3215	198	138	23	c
+12514	\N	1265000	3361	198	149	24	c
+12515	\N	1276000	1815	198	141	25	c
+12516	\N	1284000	5188	198	149	26	c
+12517	\N	1357000	3217	198	138	27	c
+12615	\N	1077000	3148	201	133	2	c
+12616	\N	1087000	1643	201	133	3	c
+12617	\N	1121000	1618	201	133	4	c
+12618	\N	1142000	5181	201	151	5	c
+12619	\N	1145000	1645	201	151	6	c
+12620	\N	1156000	5216	201	133	7	c
+12621	\N	1181000	3141	201	133	8	c
+12622	\N	1192000	1639	201	151	9	c
+12623	\N	1204000	3393	201	151	10	c
+12624	\N	1220000	5278	201	151	11	c
+12625	\N	1220000	3144	201	133	12	c
+12626	\N	1236000	3391	201	151	13	c
+12627	\N	1238000	3142	201	133	14	c
+12628	\N	1242000	5213	201	133	15	c
+12629	\N	1256000	5175	201	151	16	c
+12630	\N	1284000	5279	201	151	17	c
+12631	\N	1295000	3145	201	133	18	c
+12632	\N	1309000	5262	201	133	19	c
+12633	\N	1370000	1788	201	151	20	c
+12634	\N	1371000	3394	201	151	21	c
+12635	\N	1385000	3382	201	151	22	c
+12636	\N	1412000	5228	201	133	23	c
+12637	\N	1451000	3147	201	133	24	c
+12638	\N	1458000	5166	201	151	25	c
+12639	\N	1459000	3385	201	151	26	c
+12640	\N	1514000	1794	201	151	27	c
+12641	\N	1588000	3384	201	151	28	c
+12642	\N	1607000	3386	201	151	29	c
+12645	\N	1013000	5308	202	155	1	c
+12518	\N	1029000	5263	199	153	1	c
+12519	\N	1050000	1523	199	143	2	c
+12520	\N	1082000	1674	199	153	3	c
+12521	\N	1083000	3085	199	129	4	c
+12522	\N	1099000	3086	199	129	5	c
+12523	\N	1103000	3087	199	129	6	c
+12524	\N	1106000	1681	199	129	7	c
+12525	\N	1111000	5225	199	143	8	c
+12526	\N	1113000	1663	199	129	9	c
+12527	\N	1117000	5176	199	147	10	c
+12528	\N	1126000	3326	199	147	11	c
+12529	\N	1128000	5274	199	147	12	c
+12530	\N	1130000	3271	199	143	13	c
+12531	\N	1131000	1749	199	129	14	c
+12532	\N	1146000	3070	199	129	15	c
+12533	\N	1163000	3072	199	129	16	c
+12534	\N	1169000	5264	199	153	17	c
+12535	\N	1173000	3071	199	129	18	c
+12536	\N	1178000	3077	199	129	19	c
+12537	\N	1183000	3073	199	129	20	c
+12538	\N	1193000	1673	199	129	21	c
+12539	\N	1195000	5224	199	143	22	c
+12540	\N	1197000	3082	199	129	23	c
+12541	\N	1206000	3409	199	153	24	c
+12542	\N	1212000	3076	199	129	25	c
+12543	\N	1213000	3075	199	129	26	c
+12544	\N	1214000	5151	199	153	27	c
+12545	\N	1223000	3074	199	129	28	c
+12546	\N	1226000	1536	199	129	29	c
+12547	\N	1227000	3078	199	129	30	c
+12548	\N	1231000	1851	199	143	31	c
+12549	\N	1233000	1672	199	129	32	c
+12550	\N	1237000	3272	199	143	33	c
+12551	\N	1245000	5197	199	143	34	c
+12552	\N	1250000	1776	199	129	35	c
+12553	\N	1263000	5275	199	147	36	c
+12554	\N	1270000	3080	199	129	37	c
+12555	\N	1284000	3265	199	143	38	c
+12556	\N	1288000	3083	199	129	39	c
+12557	\N	1291000	3331	199	147	40	c
+12558	\N	1291000	3081	199	129	41	c
+12559	\N	1294000	1690	199	129	42	c
+12560	\N	1311000	5556	199	129	43	c
+12561	\N	1311000	1740	199	129	44	c
+12562	\N	1313000	4043	199	129	45	c
+12563	\N	1313000	5267	199	147	46	c
+12564	\N	1326000	5551	199	129	47	c
+12565	\N	1335000	5554	199	129	48	c
+12566	\N	1339000	3405	199	153	49	c
+12567	\N	1340000	4040	199	129	50	c
+12568	\N	1342000	5552	199	129	51	c
+12569	\N	1343000	5553	199	129	52	c
+12570	\N	1343000	1772	199	153	53	c
+12571	\N	1351000	5595	199	129	54	c
+12572	\N	1358000	5387	199	129	55	c
+12573	\N	1364000	1766	199	129	56	c
+12574	\N	1367000	1859	199	147	57	c
+12575	\N	1382000	3403	199	153	58	c
+12576	\N	1383000	5169	199	153	59	c
+12578	\N	946000	1506	200	128	1	c
+12579	\N	970000	1513	200	133	2	c
+12580	\N	971000	3148	200	133	3	c
+12581	\N	990000	1517	200	134	4	c
+12583	\N	1039000	1622	200	134	6	c
+12584	\N	1040000	5178	200	136	7	c
+12585	\N	1042000	5494	200	134	8	c
+12586	\N	1052000	3065	200	128	9	c
+12587	\N	1063000	1643	200	133	10	c
+12588	\N	1071000	1535	200	133	11	c
+12589	\N	1080000	1618	200	133	12	c
+12590	\N	1085000	1547	200	136	13	c
+12591	\N	1086000	1680	200	134	14	c
+12592	\N	1087000	1565	200	136	15	c
+12593	\N	1089000	5333	200	134	16	c
+12594	\N	1095000	3193	200	136	17	c
+12595	\N	1097000	3066	200	128	18	c
+12596	\N	1102000	3068	200	128	19	c
+12597	\N	1104000	3194	200	136	20	c
+12598	\N	1111000	5213	200	133	21	c
+12599	\N	1116000	3067	200	128	22	c
+12600	\N	1118000	3195	200	136	23	c
+12601	\N	1127000	3053	200	128	24	c
+12602	\N	1132000	5216	200	133	25	c
+12603	\N	1134000	3142	200	133	26	c
+12604	\N	1136000	3144	200	133	27	c
+12605	\N	1138000	3058	200	128	28	c
+12606	\N	1154000	1670	200	136	29	c
+12607	\N	1160000	1586	200	136	30	c
+12608	\N	1166000	5174	200	134	31	c
+12609	\N	1166000	1625	200	134	32	c
+12610	\N	1167000	1717	200	128	33	c
+12611	\N	1178000	3059	200	128	34	c
+12612	\N	1193000	3141	200	133	35	c
+12613	\N	1288000	3187	200	136	36	c
+12582	\N	1024000	5638	200	133	5	c
+4449	0	1248700	5804	11	147	85	c
+4450	0	1288000	5804	14	147	116	c
+4451	0	1372000	5804	19	197	94	c
+7651	\N	1404000	5804	48	197	20	c
+9533	\N	1405000	5804	107	197	20	c
+11118	\N	1661000	5804	159	147	35	c
+11800	\N	1413000	5804	178	147	20	c
+12577	\N	1385000	5804	199	147	60	c
+7503	\N	1597200	5806	46	336	61	c
+8482	\N	1598000	5806	77	336	30	c
+9040	\N	1653000	5806	90	336	31	c
+14058	\N	1227000	3398	240	152	1	c
+14059	\N	1295000	3309	240	146	2	c
+14060	\N	1305000	1074	240	156	3	c
+14061	\N	1331000	3311	240	146	4	c
+14062	\N	1333000	3310	240	146	5	c
+14063	\N	1338000	5303	240	146	6	c
+14064	\N	1378000	1071	240	146	7	c
+14065	\N	1386000	1109	240	152	8	c
+14066	\N	1387000	1061	240	156	9	c
+14067	\N	1395000	3456	240	156	10	c
+14068	\N	1406000	5509	240	156	11	c
+14069	\N	1415000	5329	240	156	12	c
+14070	\N	1424000	3399	240	152	13	c
+14071	\N	1433000	3242	240	140	14	c
+14072	\N	1443000	5309	240	156	15	c
+14073	\N	1486000	3401	240	152	16	c
+14074	\N	1493000	3313	240	146	17	c
+14075	\N	1498000	3246	240	140	18	c
+4665	0	1594000	6372	32	153	87	c
+1824	639	1516000	5804	6	55	212	c
+4018	0	972800	5638	16	133	6	c
+4019	0	1040000	5638	20	133	4	c
+12614	\N	1042000	5638	201	133	1	c
+14076	\N	1502000	5316	240	156	19	c
+14077	\N	1504000	5200	240	146	20	c
+14078	\N	1507000	5199	240	146	21	c
+14079	\N	1511000	3243	240	140	22	c
+14080	\N	1523000	5805	240	146	23	c
+3500	279	981000	5638	9	53	1	c
+12643	\N	1661000	3387	201	151	30	c
+12644	\N	1864000	3388	201	151	31	c
+12281	\N	1649000	6372	192	153	22	c
+4416	0	1419000	5805	28	336	43	c
+9315	\N	1295000	5805	100	336	10	c
+9026	\N	1450000	5805	90	336	17	c
+10820	\N	1344000	5805	151	336	9	c
+9890	\N	1296000	5805	123	336	7	c
+10327	\N	1340000	5805	138	336	4	c
+11307	\N	1359000	5805	165	146	6	c
+14081	\N	1528000	5806	240	146	24	c
+14082	\N	1530000	3306	240	146	25	c
+14083	\N	1545000	3400	240	152	26	c
+14084	\N	1618000	3244	240	140	27	c
+14085	\N	1626000	5325	240	156	28	c
+14086	\N	1645000	2581	240	140	29	c
+14087	\N	1746000	3402	240	152	30	c
+14088	\N	1755000	5412	240	140	31	c
+14089	\N	1783000	3402	240	152	32	c
+14090	\N	1797000	1212	240	152	33	c
+14091	\N	1838000	5322	240	156	34	c
+14092	\N	1983000	5328	240	156	35	c
+14288	\N	1072000	5789	246	447	12	c
+14289	\N	1076000	3053	246	490	13	c
+14290	\N	1080000	3077	246	447	14	c
+14291	\N	1113000	3072	246	447	15	c
+14292	\N	1118000	5704	246	490	16	c
+14293	\N	1121000	3359	246	384	17	c
+14294	\N	1121000	5763	246	444	18	c
+14295	\N	1131000	5373	246	447	19	c
+14296	\N	1133000	5715	246	490	20	c
+14297	\N	1136000	3884	246	444	21	c
+14298	\N	1139000	5414	246	384	22	c
+14299	\N	1139000	5170	246	444	23	c
+14300	\N	1139000	5153	246	444	24	c
+14301	\N	1143000	5241	246	490	25	c
+14302	\N	1147000	3070	246	447	26	c
+14303	\N	1148000	5387	246	447	27	c
+14304	\N	1149000	5143	246	444	28	c
+14305	\N	1151000	4041	246	447	29	c
+14306	\N	1155000	5820	246	444	30	c
+14307	\N	1157000	5764	246	444	31	c
+14308	\N	1158000	5776	246	447	32	c
+14309	\N	1171000	3056	246	490	33	c
+14310	\N	1172000	3058	246	490	34	c
+14311	\N	1178000	5659	246	384	35	c
+14312	\N	1180000	3363	246	384	36	c
+14313	\N	1193000	3361	246	384	37	c
+14314	\N	1198000	5760	246	444	38	c
+14315	\N	1239000	4218	246	384	39	c
+14316	\N	1273000	3888	246	444	40	c
+14317	\N	1311000	3355	246	384	41	c
+14318	\N	1367000	3353	246	384	42	c
+14994	\N	1498000	5857	262	506	85	c
+14995	\N	1500000	5891	262	502	86	c
+14996	\N	1501000	5892	262	508	87	c
+14997	\N	1501000	5893	262	508	88	c
+14998	\N	1511000	5894	262	508	89	c
+14999	\N	1522000	4093	262	508	90	c
+15000	\N	1540000	3654	262	509	91	c
+15001	\N	1558000	5895	262	506	92	c
+15002	\N	1571000	4069	262	504	93	c
+15003	\N	1571000	5872	262	506	94	c
+15004	\N	1638000	5896	262	504	95	c
+15064	\N	1128000	5945	263	520	60	c
+15065	\N	1129000	3647	263	520	61	c
+15066	\N	1130000	5916	263	512	62	c
+15067	\N	1131000	3795	263	513	63	c
+15068	\N	1131000	1564	263	55	64	c
+15069	\N	1133000	5917	263	514	65	c
+15070	\N	1134000	5946	263	522	66	c
+15071	\N	1135000	5947	263	520	67	c
+15072	\N	1137000	5948	263	512	68	c
+15073	\N	1138000	1521	263	55	69	c
+15074	\N	1141000	1557	263	43	70	c
+15075	\N	1143000	1558	263	43	71	c
+15076	\N	1146000	3906	263	522	72	c
+15077	\N	1151000	1566	263	43	73	c
+15078	\N	1157000	1556	263	50	74	c
+15079	\N	1162000	5949	263	514	75	c
+15080	\N	1165000	1628	263	50	76	c
+15081	\N	1167000	3971	263	511	77	c
+15082	\N	1169000	3691	263	516	78	c
+15083	\N	1171000	5918	263	513	79	c
+15084	\N	1174000	3851	263	514	80	c
+15085	\N	1177000	5900	263	521	81	c
+15086	\N	1177000	3796	263	513	82	c
+15087	\N	1186000	3755	263	518	83	c
+15088	\N	1188000	5950	263	513	84	c
+15089	\N	1189000	1565	263	50	85	c
+15090	\N	1189000	5919	263	522	86	c
+15091	\N	1195000	5951	263	511	87	c
+15092	\N	1195000	1650	263	43	88	c
+15093	\N	1205000	5952	263	519	89	c
+15094	\N	1207000	5953	263	512	90	c
+15095	\N	1207000	5954	263	516	91	c
+15096	\N	1208000	3871	263	514	92	c
+15097	\N	1215000	5901	263	517	93	c
+15098	\N	1220000	5955	263	514	94	c
+15099	\N	1223000	5920	263	511	95	c
+15100	\N	1224000	5902	263	513	96	c
+15101	\N	1231000	4016	263	521	97	c
+15102	\N	1238000	5921	263	511	98	c
+15103	\N	1241000	5897	263	521	99	c
+15104	\N	1257000	5956	263	518	100	c
+15105	\N	1260000	3958	263	511	101	c
+15106	\N	1284000	1587	263	50	102	c
+15107	\N	1329000	5899	263	511	103	c
+15108	\N	1339000	5957	263	521	104	c
+15109	\N	1318000	5963	264	503	1	c
+15110	\N	1345000	5990	264	500	2	c
+15111	\N	1353000	5971	264	503	3	c
+15112	\N	1353000	5991	264	500	4	c
+15113	\N	1360000	3546	264	500	5	c
+15114	\N	1365000	5972	264	503	6	c
+15115	\N	1366000	3545	264	500	7	c
+15116	\N	1376000	3549	264	500	8	c
+15117	\N	1380000	5973	264	503	9	c
+15118	\N	1382000	3556	264	500	10	c
+15119	\N	1384000	5974	264	503	11	c
+15120	\N	1386000	5975	264	507	12	c
+15121	\N	1394000	5992	264	503	13	c
+15122	\N	1400000	3494	264	503	14	c
+15123	\N	1407000	5976	264	503	15	c
+15124	\N	1412000	5993	264	500	16	c
+15125	\N	1419000	3496	264	503	17	c
+15126	\N	1427000	5994	264	500	18	c
+12646	\N	1068000	5175	202	151	2	c
+12648	\N	1103000	5181	202	151	4	c
+12649	\N	1117000	1561	202	139	5	c
+12650	\N	1122000	1645	202	151	6	c
+12651	\N	1125000	3299	202	145	7	c
+12652	\N	1146000	5278	202	151	8	c
+12653	\N	1184000	3393	202	151	9	c
+12654	\N	1196000	3300	202	145	10	c
+12655	\N	1200000	3235	202	139	11	c
+12656	\N	1204000	5321	202	155	12	c
+12657	\N	1209000	5203	202	139	13	c
+12658	\N	1218000	3391	202	151	14	c
+12659	\N	1231000	3302	202	145	15	c
+12660	\N	1235000	3237	202	139	16	c
+12661	\N	1259000	1724	202	145	17	c
+12662	\N	1262000	3437	202	155	18	c
+12663	\N	1280000	5318	202	155	19	c
+12664	\N	1281000	3291	202	145	20	c
+12665	\N	1281000	5185	202	139	21	c
+12666	\N	1285000	5302	202	145	22	c
+12667	\N	1292000	5222	202	139	23	c
+12668	\N	1293000	3381	202	151	24	c
+12669	\N	1325000	3382	202	151	25	c
+12670	\N	1331000	1788	202	151	26	c
+12671	\N	1354000	1835	202	145	27	c
+12672	\N	1355000	3292	202	145	28	c
+12673	\N	1361000	5305	202	145	29	c
+12674	\N	1362000	3290	202	145	30	c
+12675	\N	1363000	1792	202	145	31	c
+12676	\N	1365000	1760	202	145	32	c
+12677	\N	1371000	5233	202	139	33	c
+12678	\N	1376000	3296	202	145	34	c
+12679	\N	1378000	5323	202	155	35	c
+12680	\N	1379000	5166	202	151	36	c
+12681	\N	1382000	3297	202	145	37	c
+12682	\N	1389000	3294	202	145	38	c
+12683	\N	1393000	5310	202	155	39	c
+12685	\N	1404000	1828	202	145	41	c
+12686	\N	1421000	5307	202	145	42	c
+12687	\N	1425000	3384	202	151	43	c
+12688	\N	1446000	3385	202	151	44	c
+12689	\N	1485000	3229	202	139	45	c
+12690	\N	1487000	5330	202	155	46	c
+12691	\N	1499000	3386	202	151	47	c
+12693	\N	1523000	5624	202	145	49	c
+12694	\N	1524000	3231	202	139	50	c
+12695	\N	1556000	3387	202	151	51	c
+12696	\N	1561000	5378	202	151	52	c
+12697	\N	1574000	3388	202	151	53	c
+12698	\N	1638000	3052	202	151	54	c
+12699	\N	1644000	5317	202	155	55	c
+12700	\N	1688000	5327	202	155	56	c
+12701	\N	1697000	5314	202	155	57	c
+12702	\N	2050000	3233	202	139	58	c
+12863	\N	1001000	1517	207	134	1	c
+4180	0	1571400	5627	21	137	70	c
+4208	0	1615000	5627	23	137	87	c
+6245	0	1398000	5628	38	267	46	c
+7950	\N	1518000	5628	64	267	8	c
+9407	\N	1462000	5628	103	267	12	c
+9853	\N	1462000	5628	121	267	17	c
+4733	0	1256000	5629	18	337	89	c
+4723	0	1702000	5629	17	155	84	c
+4718	0	1377100	5629	16	155	109	c
+9487	\N	1285000	5629	106	337	10	c
+10668	\N	1269000	5629	147	337	16	c
+11954	\N	1483000	5629	183	155	26	c
+12047	\N	1484000	5629	186	155	30	c
+12455	\N	1603000	5629	196	155	46	c
+12684	\N	1395000	5629	202	155	40	c
+11666	\N	1554000	5629	174	155	24	c
+12069	\N	1610000	5629	187	155	22	c
+12458	\N	1793000	5629	196	155	49	c
+12692	\N	1505000	5629	202	155	48	c
+12703	\N	1167000	4117	203	133	1	c
+12704	\N	1172000	3057	203	128	2	c
+12705	\N	1175000	5419	203	134	3	c
+12706	\N	1177000	3056	203	128	4	c
+12707	\N	1192000	3155	203	134	5	c
+12708	\N	1196000	1624	203	134	6	c
+12709	\N	1197000	5153	203	136	7	c
+12710	\N	1198000	1693	203	136	8	c
+12711	\N	1199000	3158	203	134	9	c
+12712	\N	1207000	3145	203	133	10	c
+12713	\N	1209000	3154	203	134	11	c
+12714	\N	1212000	3157	203	134	12	c
+12715	\N	1215000	3185	203	136	13	c
+12716	\N	1218000	3060	203	128	14	c
+12717	\N	1221000	1695	203	134	15	c
+12718	\N	1222000	5262	203	133	16	c
+12719	\N	1231000	5228	203	133	17	c
+12720	\N	1233000	3062	203	128	18	c
+12721	\N	1236000	5542	203	128	19	c
+12722	\N	1239000	1660	203	134	20	c
+12723	\N	1240000	3188	203	136	21	c
+12724	\N	1255000	1719	203	136	22	c
+12725	\N	1260000	4098	203	134	23	c
+12726	\N	1262000	5603	203	128	24	c
+12727	\N	1267000	3160	203	134	25	c
+12728	\N	1271000	3054	203	128	26	c
+12729	\N	1273000	1677	203	128	27	c
+12730	\N	1277000	1771	203	136	28	c
+12731	\N	1279000	3156	203	134	29	c
+12732	\N	1279000	5630	203	133	30	c
+12733	\N	1283000	1739	203	134	31	c
+12734	\N	1283000	5143	203	136	32	c
+12735	\N	1284000	3161	203	134	33	c
+12736	\N	1286000	5170	203	136	34	c
+12737	\N	1289000	1816	203	136	35	c
+12738	\N	1291000	4100	203	134	36	c
+12739	\N	1295000	3061	203	128	37	c
+12740	\N	1302000	3189	203	136	38	c
+12741	\N	1304000	1775	203	136	39	c
+12742	\N	1307000	4102	203	134	40	c
+12743	\N	1311000	4096	203	134	41	c
+12744	\N	1322000	3191	203	136	42	c
+12745	\N	1339000	1697	203	134	43	c
+12746	\N	1367000	3146	203	133	44	c
+12747	\N	1371000	5251	203	136	45	c
+12748	\N	1395000	4113	203	133	46	c
+12749	\N	1401000	5544	203	136	47	c
+12750	\N	1415000	5254	203	136	48	c
+12751	\N	1426000	3147	203	133	49	c
+12752	\N	1436000	5400	203	134	50	c
+12753	\N	1451000	5621	203	134	51	c
+12754	\N	1462000	3190	203	136	52	c
+12864	\N	1017000	3357	207	149	2	c
+12865	\N	1053000	1622	207	134	3	c
+12866	\N	1061000	5494	207	134	4	c
+12867	\N	1067000	1523	207	143	5	c
+12868	\N	1090000	1680	207	134	6	c
+12869	\N	1093000	3358	207	149	7	c
+12870	\N	1095000	5333	207	134	8	c
+12871	\N	1096000	1580	207	149	9	c
+12872	\N	1097000	5225	207	143	10	c
+12755	\N	1517000	1684	203	136	53	c
+12756	\N	1611000	5620	203	136	54	c
+12757	\N	1636000	5550	203	134	55	c
+12758	\N	1640000	5249	203	136	56	c
+12759	\N	1644000	1858	203	134	57	c
+12760	\N	1832000	5258	203	136	58	c
+14093	\N	1271000	3136	241	132	1	c
+14094	\N	1283000	1026	241	132	2	c
+14095	\N	1295000	1025	241	132	3	c
+14096	\N	1297000	3138	241	132	4	c
+14097	\N	1301000	3309	241	146	5	c
+14098	\N	1344000	1118	241	132	6	c
+14099	\N	1362000	3311	241	146	7	c
+14100	\N	1370000	3310	241	146	8	c
+14101	\N	1395000	2597	241	154	9	c
+14102	\N	1400000	3139	241	132	10	c
+14103	\N	1403000	5303	241	146	11	c
+14104	\N	1411000	3421	241	154	12	c
+14105	\N	1414000	3137	241	132	13	c
+14106	\N	1436000	5193	241	154	14	c
+14107	\N	1447000	1071	241	146	15	c
+14108	\N	1470000	3123	241	132	16	c
+14109	\N	1499000	3422	241	154	17	c
+14110	\N	1500000	3423	241	154	18	c
+14111	\N	1503000	5207	241	154	19	c
+14112	\N	1505000	5350	241	154	20	c
+14113	\N	1513000	3416	241	154	21	c
+14114	\N	1528000	3127	241	132	22	c
+14115	\N	1534000	3129	241	132	23	c
+14116	\N	1535000	2612	241	154	24	c
+14117	\N	1537000	3313	241	146	25	c
+14118	\N	1542000	3125	241	132	26	c
+14119	\N	1550000	5200	241	146	27	c
+14120	\N	1566000	3128	241	132	28	c
+14121	\N	1571000	5199	241	146	29	c
+14122	\N	1575000	5805	241	146	30	c
+14123	\N	1596000	3306	241	146	31	c
+14124	\N	1629000	5806	241	146	32	c
+14125	\N	1633000	5588	241	154	33	c
+14126	\N	1636000	3126	241	132	34	c
+14127	\N	1648000	2720	241	132	35	c
+14128	\N	1667000	2687	241	132	36	c
+14129	\N	1728000	2643	241	146	37	c
+14130	\N	1739000	3418	241	154	38	c
+12835	\N	966000	1506	206	128	1	c
+12836	\N	1016000	1508	206	131	2	c
+12837	\N	1029000	1520	206	131	3	c
+12838	\N	1050000	5263	206	153	4	c
+12839	\N	1073000	1613	206	131	5	c
+12841	\N	1103000	1674	206	153	7	c
+12842	\N	1110000	3065	206	128	8	c
+12843	\N	1122000	1669	206	131	9	c
+12844	\N	1122000	1715	206	131	10	c
+12845	\N	1143000	3064	206	128	11	c
+12846	\N	1146000	3066	206	128	12	c
+12847	\N	1146000	3068	206	128	13	c
+12848	\N	1147000	1566	206	128	14	c
+12849	\N	1157000	5306	206	145	15	c
+12850	\N	1163000	3053	206	128	16	c
+12851	\N	1186000	3120	206	131	18	c
+12852	\N	1241000	1741	206	131	24	c
+12853	\N	1247000	3299	206	145	25	c
+12854	\N	1251000	3409	206	153	28	c
+12855	\N	1273000	5151	206	153	30	c
+12856	\N	1286000	3300	206	145	32	c
+12857	\N	1294000	3301	206	145	33	c
+12858	\N	1305000	1724	206	145	34	c
+12859	\N	1305000	3302	206	145	35	c
+12860	\N	1370000	3405	206	153	44	c
+12861	\N	1373000	5169	206	153	46	c
+12862	\N	1386000	1772	206	153	49	c
+4394	0	1050100	5640	16	145	33	c
+4395	0	1120000	5640	20	145	23	c
+4396	0	1246000	5640	18	335	83	c
+7700	\N	1222000	5640	52	335	9	c
+8814	\N	1224000	5640	85	335	18	c
+9990	\N	1193000	5640	127	335	12	c
+10982	\N	1150000	5640	156	145	6	c
+10591	\N	1180000	5640	145	335	31	c
+12647	\N	1095000	5640	202	145	3	c
+12840	\N	1100000	5640	206	145	6	c
+14131	\N	1744000	3131	241	132	39	c
+14132	\N	1778000	2682	241	132	40	c
+14133	\N	1862000	5586	241	132	41	c
+14134	\N	2021000	3420	241	154	42	c
+14135	\N	2027000	3133	241	132	43	c
+14136	\N	2065000	5215	241	132	44	c
+14137	\N	2068000	3427	241	154	45	c
+14138	\N	2364000	3134	241	132	46	c
+14319	\N	1151000	4044	247	447	1	c
+14320	\N	1162000	3955	247	490	2	c
+14321	\N	1169000	3071	247	447	3	c
+14322	\N	1174000	3062	247	490	4	c
+14323	\N	1178000	5700	247	490	5	c
+14324	\N	1181000	5824	247	447	6	c
+14325	\N	1202000	5706	247	490	7	c
+14326	\N	1210000	5771	247	444	8	c
+14327	\N	1212000	5376	247	447	9	c
+14328	\N	1213000	3952	247	490	10	c
+14329	\N	1232000	3195	247	444	11	c
+14330	\N	1233000	5766	247	444	12	c
+14331	\N	1234000	5245	247	444	13	c
+14332	\N	1234000	3061	247	490	14	c
+14333	\N	1240000	4039	247	447	15	c
+14334	\N	1248000	5709	247	490	16	c
+14335	\N	1249000	3055	247	490	17	c
+14336	\N	1250000	5762	247	444	18	c
+14337	\N	1251000	3950	247	490	19	c
+14338	\N	1252000	5244	247	444	20	c
+14339	\N	1256000	5782	247	447	21	c
+14340	\N	1258000	5784	247	447	22	c
+14341	\N	1272000	5254	247	444	23	c
+14342	\N	1279000	5702	247	490	24	c
+14343	\N	1279000	5778	247	447	25	c
+14344	\N	1282000	5770	247	444	26	c
+14345	\N	1282000	5382	247	447	27	c
+14346	\N	1293000	5783	247	447	28	c
+14347	\N	1307000	5726	247	490	29	c
+14348	\N	1317000	3076	247	447	30	c
+14349	\N	1329000	5723	247	490	31	c
+14350	\N	1333000	5748	247	490	32	c
+14351	\N	1336000	5822	247	444	33	c
+14352	\N	1337000	5389	247	447	34	c
+14353	\N	1338000	5749	247	490	35	c
+14354	\N	1341000	5246	247	444	36	c
+14356	\N	1378000	5712	247	490	38	c
+14357	\N	1385000	3951	247	490	39	c
+14358	\N	1386000	5785	247	447	40	c
+14359	\N	1392000	5750	247	490	41	c
+14360	\N	1400000	5773	247	444	42	c
+14361	\N	1405000	5823	247	444	43	c
+14362	\N	1421000	5825	247	447	44	c
+14363	\N	1429000	5821	247	444	45	c
+3687	109	1251000	5640	10	45	77	c
+12761	\N	1219000	4116	204	133	1	c
+12762	\N	1227000	3142	204	133	2	c
+12763	\N	1257000	5228	204	133	3	c
+12764	\N	1258000	3331	204	147	4	c
+12765	\N	1269000	3145	204	133	5	c
+12766	\N	1272000	5610	204	498	6	c
+12767	\N	1282000	5262	204	133	7	c
+12768	\N	1283000	4118	204	133	8	c
+12769	\N	1295000	5133	204	498	9	c
+12770	\N	1302000	5632	204	498	10	c
+12771	\N	1317000	3216	204	138	11	c
+12773	\N	1346000	3217	204	138	13	c
+12774	\N	1356000	1859	204	147	14	c
+12775	\N	1379000	3319	204	147	15	c
+12776	\N	1395000	5277	204	138	16	c
+12777	\N	1398000	3218	204	138	17	c
+12778	\N	1401000	5271	204	147	18	c
+12779	\N	1405000	5267	204	147	19	c
+12780	\N	1411000	5266	204	147	20	c
+12781	\N	1415000	5602	204	147	21	c
+12782	\N	1435000	1757	204	138	22	c
+12783	\N	1424000	3146	204	133	23	c
+12784	\N	1439000	1798	204	147	24	c
+12785	\N	1486000	3147	204	133	25	c
+12786	\N	1491000	3323	204	147	26	c
+12787	\N	1496000	5330	204	155	27	c
+12788	\N	1512000	3977	204	147	28	c
+12789	\N	1518000	5529	204	147	29	c
+12790	\N	1525000	5268	204	147	30	c
+12791	\N	1574000	1829	204	138	31	c
+12792	\N	1575000	5634	204	498	32	c
+12793	\N	1684000	5600	204	133	33	c
+12794	\N	1686000	3222	204	138	34	c
+12795	\N	1687000	1842	204	147	35	c
+12796	\N	1738000	5631	204	155	36	c
+12797	\N	1747000	5314	204	155	37	c
+12798	\N	1852000	5409	204	147	38	c
+12799	\N	1029000	5637	205	498	1	c
+12800	\N	1030000	5308	205	155	2	c
+12801	\N	1042000	3148	205	133	3	c
+12803	\N	1070000	5129	205	498	5	c
+12804	\N	1072000	1543	205	138	6	c
+12805	\N	1084000	1535	205	133	7	c
+12806	\N	1087000	1643	205	133	8	c
+12807	\N	1089000	5176	205	147	9	c
+12808	\N	1103000	5636	205	498	10	c
+12809	\N	1112000	5522	205	498	11	c
+12810	\N	1112000	1618	205	133	12	c
+12811	\N	1112000	5545	205	138	13	c
+12812	\N	1115000	3326	205	147	14	c
+12813	\N	1147000	5216	205	133	15	c
+12814	\N	1147000	5130	205	498	16	c
+12815	\N	1147000	5608	205	498	17	c
+12816	\N	1147000	5183	205	147	18	c
+12817	\N	1152000	5276	205	147	19	c
+12818	\N	1154000	1610	205	138	20	c
+12819	\N	1172000	5613	205	147	21	c
+12820	\N	1180000	3223	205	138	22	c
+12821	\N	1190000	5274	205	147	23	c
+12822	\N	1195000	3141	205	133	24	c
+12823	\N	1202000	5609	205	498	25	c
+12824	\N	1213000	5213	205	133	26	c
+12825	\N	1231000	3226	205	138	27	c
+12826	\N	1235000	5321	205	155	28	c
+12827	\N	1244000	3225	205	138	29	c
+12828	\N	1282000	5275	205	147	30	c
+12829	\N	1297000	3215	205	138	31	c
+12830	\N	1300000	3437	205	155	32	c
+12831	\N	1354000	5318	205	155	33	c
+12832	\N	1434000	5310	205	155	34	c
+12833	\N	1439000	5323	205	155	35	c
+12834	\N	1473000	5629	205	155	36	c
+11135	\N	1148000	5638	160	133	4	c
+11735	\N	1117000	5638	176	133	3	c
+12802	\N	1067000	5638	205	133	4	c
+12772	\N	1336000	5804	204	147	12	c
+14139	\N	1179000	5156	242	144	1	c
+14140	\N	1190000	3377	242	150	2	c
+14141	\N	1197000	3398	242	152	3	c
+14142	\N	1217000	3174	242	135	4	c
+14143	\N	1277000	5331	242	135	5	c
+14144	\N	1277000	1012	242	150	6	c
+14145	\N	1319000	1119	242	150	7	c
+14146	\N	1325000	5283	242	150	8	c
+14147	\N	1327000	3364	242	150	9	c
+14148	\N	1329000	3284	242	144	10	c
+14150	\N	1335000	3366	242	150	12	c
+14151	\N	1337000	3368	242	150	13	c
+14152	\N	1342000	2629	242	135	14	c
+14153	\N	1352000	1013	242	150	15	c
+14154	\N	1371000	3175	242	135	16	c
+14155	\N	1373000	5282	242	150	17	c
+14156	\N	1377000	5280	242	150	18	c
+14157	\N	1379000	2544	242	144	19	c
+14158	\N	1384000	3176	242	135	20	c
+14159	\N	1394000	3375	242	150	21	c
+14160	\N	1415000	3166	242	135	22	c
+14161	\N	1422000	3177	242	135	23	c
+14162	\N	1425000	1172	242	135	24	c
+14163	\N	1439000	3367	242	150	25	c
+14164	\N	1491000	3286	242	144	26	c
+14165	\N	1492000	3285	242	144	27	c
+14166	\N	1508000	3399	242	152	28	c
+14167	\N	1528000	3400	242	152	29	c
+14168	\N	1541000	3401	242	152	30	c
+14169	\N	1666000	3280	242	144	31	c
+14170	\N	2326000	3281	242	144	32	c
+14171	\N	1414000	3369	243	150	1	c
+14172	\N	1424000	3370	243	150	2	c
+14173	\N	1435000	1151	243	150	3	c
+14174	\N	1442000	3371	243	150	4	c
+14175	\N	1455000	3167	243	135	5	c
+14176	\N	1478000	3170	243	135	6	c
+14177	\N	1484000	3372	243	150	7	c
+14178	\N	1529000	3169	243	135	8	c
+14179	\N	1535000	3168	243	135	9	c
+14180	\N	1571000	4223	243	150	10	c
+14181	\N	1581000	3373	243	150	11	c
+14182	\N	1608000	3171	243	135	12	c
+14183	\N	1621000	3374	243	150	13	c
+14184	\N	1635000	5810	243	150	14	c
+14185	\N	1668000	5359	243	150	15	c
+14186	\N	1713000	3172	243	135	16	c
+14187	\N	1739000	1173	243	150	17	c
+14188	\N	1758000	3173	243	135	18	c
+14189	\N	1786000	3402	243	152	19	c
+14190	\N	1816000	1212	243	152	20	c
+14191	\N	2088000	3396	243	152	21	c
+14192	\N	2163000	3397	243	152	22	c
+14193	\N	1240000	2505	244	137	1	c
+14194	\N	1268000	2534	244	137	2	c
+14195	\N	1304000	2504	244	130	3	c
+14196	\N	1346000	3102	244	130	4	c
+14197	\N	1392000	3210	244	137	5	c
+14198	\N	1394000	3209	244	137	6	c
+12873	\N	1106000	5175	207	151	11	c
+12874	\N	1130000	5181	207	151	12	c
+12875	\N	1137000	1645	207	151	13	c
+12876	\N	1145000	3273	207	143	14	c
+12877	\N	1148000	5174	207	134	15	c
+12878	\N	1153000	3391	207	151	16	c
+12879	\N	1156000	3271	207	143	17	c
+12880	\N	1158000	3359	207	149	18	c
+12881	\N	1166000	1625	207	134	19	c
+12882	\N	1180000	3393	207	151	20	c
+12883	\N	1185000	3272	207	143	21	c
+12884	\N	1220000	5224	207	143	22	c
+12885	\N	1255000	5197	207	143	23	c
+12886	\N	1260000	3361	207	149	24	c
+12887	\N	1277000	5279	207	151	25	c
+12888	\N	1297000	5281	207	149	26	c
+12889	\N	1337000	3265	207	143	27	c
+12890	\N	1350000	3381	207	151	28	c
+12891	\N	1473000	3353	207	149	29	c
+12892	\N	1103000	3252	208	141	1	c
+12893	\N	1122000	5178	208	136	2	c
+12894	\N	1124000	3085	208	129	3	c
+12895	\N	1128000	1681	208	129	4	c
+12896	\N	1139000	3254	208	141	5	c
+12897	\N	1139000	3194	208	136	6	c
+12898	\N	1140000	1547	208	136	7	c
+12899	\N	1141000	3087	208	129	8	c
+12900	\N	1142000	3193	208	136	9	c
+12901	\N	1148000	3086	208	129	10	c
+12902	\N	1169000	3195	208	136	11	c
+12903	\N	1172000	1749	208	129	12	c
+12904	\N	1180000	1673	208	129	13	c
+12905	\N	1188000	3072	208	129	14	c
+12906	\N	1205000	1561	208	139	15	c
+12907	\N	1211000	3071	208	129	16	c
+12908	\N	1222000	1659	208	129	17	c
+12909	\N	1225000	5203	208	139	18	c
+12910	\N	1236000	3235	208	139	19	c
+12911	\N	1237000	1563	208	129	20	c
+12912	\N	1238000	3074	208	129	21	c
+12913	\N	1239000	1586	208	136	22	c
+12914	\N	1241000	3076	208	129	23	c
+12915	\N	1241000	3078	208	129	24	c
+12916	\N	1251000	1693	208	136	25	c
+12917	\N	1254000	3255	208	141	26	c
+12918	\N	1256000	3073	208	129	27	c
+12919	\N	1261000	5226	208	136	28	c
+12920	\N	1263000	5335	208	136	29	c
+12921	\N	1269000	5336	208	136	30	c
+12922	\N	1271000	3075	208	129	31	c
+12923	\N	1271000	3079	208	129	32	c
+12924	\N	1272000	3181	208	136	33	c
+12925	\N	1278000	1672	208	129	34	c
+12926	\N	1287000	5153	208	136	35	c
+12927	\N	1288000	3249	208	141	36	c
+12928	\N	1290000	5143	208	136	37	c
+12929	\N	1294000	3185	208	136	38	c
+12930	\N	1295000	5159	208	141	39	c
+12931	\N	1295000	1776	208	129	40	c
+12932	\N	1305000	1815	208	141	41	c
+12933	\N	1314000	1687	208	141	42	c
+12934	\N	1315000	3080	208	129	43	c
+12935	\N	1318000	3082	208	129	44	c
+12936	\N	1320000	3188	208	136	45	c
+12937	\N	1321000	3081	208	129	46	c
+12938	\N	1322000	1690	208	129	47	c
+12939	\N	1326000	5261	208	141	48	c
+12940	\N	1334000	5170	208	136	49	c
+12941	\N	1335000	1719	208	136	50	c
+12942	\N	1342000	1771	208	136	51	c
+12943	\N	1343000	4040	208	129	52	c
+12944	\N	1349000	3237	208	139	53	c
+12945	\N	1362000	3083	208	129	54	c
+12946	\N	1365000	3189	208	136	55	c
+12947	\N	1367000	4043	208	129	56	c
+12948	\N	1369000	5551	208	129	57	c
+12949	\N	1370000	1740	208	129	58	c
+12950	\N	1372000	4039	208	129	59	c
+12951	\N	1372000	5552	208	129	60	c
+12952	\N	1389000	5555	208	129	61	c
+12953	\N	1391000	5553	208	129	62	c
+12954	\N	1393000	1775	208	136	63	c
+12955	\N	1398000	5387	208	129	64	c
+12956	\N	1402000	5557	208	129	65	c
+12957	\N	1410000	5395	208	129	66	c
+12958	\N	1420000	3239	208	139	67	c
+12959	\N	1423000	1816	208	136	68	c
+12960	\N	1424000	5222	208	139	69	c
+12961	\N	1425000	1766	208	129	70	c
+12962	\N	1439000	3191	208	136	71	c
+12963	\N	1464000	5642	208	129	72	c
+12964	\N	1479000	5544	208	136	73	c
+12965	\N	1487000	3190	208	136	74	c
+12966	\N	1514000	5417	208	129	75	c
+12967	\N	1530000	5233	208	139	76	c
+12968	\N	1545000	5254	208	136	77	c
+12969	\N	1571000	5597	208	129	78	c
+12970	\N	1611000	3230	208	139	79	c
+12971	\N	1615000	5590	208	136	80	c
+12972	\N	1618000	3229	208	139	81	c
+12973	\N	1635000	5641	208	129	82	c
+12974	\N	1813000	5249	208	136	83	c
+12975	\N	1827000	3232	208	139	84	c
+12976	\N	1886000	5620	208	136	85	c
+12977	\N	1889000	5258	208	136	86	c
+12978	\N	2000000	3251	208	141	87	c
+14199	\N	1414000	2537	244	137	7	c
+14200	\N	1429000	3103	244	130	8	c
+14201	\N	1436000	3259	244	142	9	c
+14202	\N	1447000	2617	244	130	10	c
+14203	\N	1478000	3104	244	130	11	c
+14204	\N	1484000	3211	244	137	12	c
+14205	\N	1495000	3092	244	130	13	c
+14206	\N	1501000	2622	244	130	14	c
+14207	\N	1506000	3242	244	140	15	c
+14208	\N	1510000	2515	244	137	16	c
+14209	\N	1511000	3199	244	137	17	c
+14210	\N	1534000	3090	244	130	18	c
+14211	\N	1553000	3091	244	130	19	c
+14212	\N	1559000	3201	244	137	20	c
+14213	\N	1561000	2603	244	130	21	c
+14214	\N	1571000	5649	244	142	22	c
+14215	\N	1578000	3094	244	130	23	c
+14216	\N	1584000	3089	244	130	24	c
+14217	\N	1590000	3203	244	137	25	c
+14218	\N	1611000	3093	244	130	26	c
+14219	\N	1618000	3202	244	137	27	c
+14220	\N	1623000	3095	244	130	28	c
+14221	\N	1682000	3212	244	137	29	c
+14222	\N	1685000	2654	244	130	30	c
+14223	\N	1686000	3204	244	137	31	c
+14224	\N	1695000	3097	244	130	32	c
+14225	\N	1702000	2606	244	130	33	c
+14226	\N	1717000	4033	244	130	34	c
+14227	\N	1734000	5337	244	130	35	c
+14228	\N	1768000	2630	244	130	36	c
+14229	\N	1770000	3098	244	130	37	c
+14230	\N	1787000	2584	244	142	38	c
+14231	\N	1793000	5259	244	142	39	c
+14232	\N	1840000	3099	244	130	40	c
+14233	\N	1841000	3100	244	130	41	c
+14234	\N	1854000	5627	244	137	42	c
+14235	\N	1920000	3263	244	142	43	c
+14236	\N	1921000	3101	244	130	44	c
+14237	\N	1922000	3207	244	137	45	c
+14238	\N	2236000	5568	244	130	46	c
+14239	\N	2295000	2728	244	130	47	c
+14240	\N	1266000	5265	245	148	1	c
+14241	\N	1267000	5811	245	499	2	c
+14242	\N	1355000	1074	245	156	3	c
+14243	\N	1360000	1155	245	148	4	c
+14244	\N	1446000	5812	245	499	5	c
+14246	\N	1447000	1061	245	156	7	c
+14247	\N	1451000	5813	245	499	8	c
+14248	\N	1456000	5329	245	156	9	c
+14249	\N	1478000	5309	245	156	10	c
+14251	\N	1546000	5316	245	156	12	c
+14252	\N	1549000	3350	245	148	13	c
+14253	\N	1579000	1159	245	148	14	c
+14255	\N	1613000	3349	245	148	16	c
+14256	\N	1630000	1160	245	148	17	c
+14257	\N	1640000	5325	245	156	18	c
+14258	\N	1649000	5531	245	499	19	c
+14259	\N	1656000	5312	245	156	20	c
+14260	\N	1662000	5816	245	499	21	c
+14261	\N	1679000	1043	245	148	22	c
+14262	\N	1696000	5235	245	148	23	c
+14263	\N	1736000	5272	245	148	24	c
+14264	\N	1768000	3340	245	148	25	c
+14265	\N	1785000	3342	245	148	26	c
+14266	\N	1789000	5817	245	499	27	c
+14267	\N	1805000	5322	245	156	28	c
+14269	\N	1816000	2708	245	148	30	c
+14270	\N	1819000	5273	245	148	31	c
+14271	\N	1836000	5818	245	499	32	c
+14272	\N	1867000	3343	245	148	33	c
+14273	\N	1945000	5819	245	499	34	c
+14274	\N	2001000	3344	245	148	35	c
+14275	\N	2024000	5270	245	148	36	c
+14245	\N	1447000	5509	245	156	6	c
+14268	\N	1808000	3345	245	148	29	c
+14276	\N	2237000	1153	245	148	37	c
+14364	\N	1447000	5772	247	444	46	c
+14365	\N	1459000	5243	247	490	47	c
+14366	\N	1486000	5239	247	490	48	c
+14367	\N	1510000	5767	247	444	49	c
+14368	\N	1549000	5774	247	444	50	c
+14369	\N	1551000	5826	247	447	51	c
+14370	\N	1559000	5661	247	384	52	c
+14371	\N	1564000	5788	247	447	53	c
+14372	\N	1568000	5257	247	490	54	c
+14373	\N	1578000	5747	247	384	55	c
+14254	\N	1599000	6370	245	499	15	c
+14250	\N	1545000	6371	245	499	11	c
+14389	\N	1192000	6365	248	377	16	c
+14424	\N	1452000	6367	248	384	51	c
+14395	\N	1227000	6368	248	492	22	c
+17064	\N	1416000	6514	285	414	31	c
+17065	\N	1419000	6515	285	422	32	c
+17066	\N	1420000	3852	285	404	33	c
+17067	\N	1420000	6535	285	409	34	c
+17068	\N	1420000	6536	285	404	35	c
+17069	\N	1421000	3854	285	404	36	c
+17070	\N	1422000	6537	285	404	37	c
+17071	\N	1424000	6538	285	422	38	c
+17072	\N	1425000	6355	285	445	39	c
+17073	\N	1425000	6516	285	403	40	c
+17074	\N	1427000	3853	285	404	41	c
+17075	\N	1429000	4059	285	422	42	c
+17076	\N	1429000	6517	285	399	43	c
+17077	\N	1431000	3737	285	408	44	c
+14374	\N	1046000	5263	248	377	1	c
+14375	\N	1066000	4117	248	376	2	c
+14376	\N	1084000	5735	248	376	3	c
+14377	\N	1091000	3106	248	492	4	c
+14378	\N	1106000	5732	248	376	5	c
+14379	\N	1115000	4109	248	376	6	c
+14380	\N	1125000	1643	248	376	7	c
+14381	\N	1171000	3107	248	492	8	c
+14382	\N	1173000	4118	248	376	9	c
+14383	\N	1175000	5705	248	492	10	c
+14384	\N	1176000	5213	248	376	11	c
+14385	\N	1181000	5414	248	384	12	c
+14387	\N	1191000	3359	248	384	14	c
+14388	\N	1191000	3361	248	384	15	c
+14390	\N	1194000	5736	248	376	17	c
+14391	\N	1195000	3363	248	384	18	c
+14392	\N	1200000	4110	248	376	19	c
+14393	\N	1210000	4111	248	376	20	c
+14394	\N	1214000	3409	248	377	21	c
+14397	\N	1255000	4114	248	376	24	c
+14398	\N	1255000	5490	248	492	25	c
+14399	\N	1260000	4934	248	492	26	c
+14400	\N	1260000	5105	248	377	27	c
+14401	\N	1261000	5737	248	376	28	c
+14402	\N	1265000	5659	248	384	29	c
+14403	\N	1268000	4933	248	492	30	c
+14404	\N	1281000	5404	248	377	31	c
+14405	\N	1287000	4218	248	384	32	c
+14406	\N	1289000	5707	248	492	33	c
+14407	\N	1291000	5169	248	377	34	c
+14408	\N	1299000	5168	248	384	35	c
+14409	\N	1299000	4220	248	384	36	c
+14410	\N	1303000	3142	248	376	37	c
+14411	\N	1313000	5739	248	376	38	c
+14412	\N	1323000	3116	248	492	39	c
+14414	\N	1333000	5741	248	376	41	c
+14415	\N	1346000	5721	248	492	42	c
+14416	\N	1354000	5731	248	376	43	c
+14417	\N	1360000	5228	248	376	44	c
+14418	\N	1368000	1758	248	377	45	c
+14419	\N	1386000	4935	248	492	46	c
+14420	\N	1396000	3355	248	384	47	c
+14421	\N	1403000	3113	248	492	48	c
+14423	\N	1411000	5724	248	492	50	c
+14425	\N	1455000	3353	248	384	52	c
+14426	\N	1463000	5699	248	492	53	c
+14427	\N	1465000	5711	248	492	54	c
+14428	\N	1475000	5710	248	492	55	c
+14429	\N	1480000	5728	248	492	56	c
+14430	\N	987000	5178	249	444	1	c
+14431	\N	990000	5734	249	381	2	c
+14432	\N	1044000	5181	249	381	3	c
+14433	\N	1047000	4209	249	381	4	c
+14434	\N	1082000	4214	249	381	5	c
+14435	\N	1110000	5763	249	444	6	c
+14436	\N	1124000	4204	249	381	7	c
+14437	\N	1132000	3884	249	444	8	c
+14438	\N	1137000	5153	249	444	9	c
+14439	\N	1138000	5170	249	444	10	c
+14440	\N	1151000	5768	249	444	11	c
+14441	\N	1156000	4213	249	381	12	c
+14442	\N	1166000	5764	249	444	13	c
+14443	\N	1171000	5760	249	444	14	c
+14444	\N	1184000	5771	249	444	15	c
+14445	\N	1194000	3888	249	444	16	c
+14446	\N	1195000	3195	249	444	17	c
+14447	\N	1198000	5245	249	444	18	c
+14448	\N	1202000	5830	249	444	19	c
+14449	\N	1211000	5336	249	444	20	c
+14450	\N	1230000	5738	249	381	21	c
+14451	\N	1234000	5279	249	381	22	c
+14452	\N	1256000	5254	249	444	23	c
+14453	\N	1277000	5822	249	444	24	c
+14454	\N	1309000	3892	249	444	25	c
+14455	\N	1325000	3387	249	381	26	c
+14456	\N	1328000	3388	249	381	27	c
+14457	\N	1355000	5246	249	444	28	c
+14458	\N	1356000	5823	249	444	29	c
+14459	\N	1357000	5258	249	444	30	c
+14460	\N	1478000	5772	249	444	31	c
+14461	\N	1507000	5773	249	444	32	c
+14462	\N	1538000	5336	249	444	33	c
+14396	\N	1239000	5536	248	376	23	c
+14413	\N	1327000	4937	248	492	40	c
+17078	\N	1434000	6539	285	399	45	c
+17079	\N	1436000	3203	285	445	46	c
+17080	\N	1437000	3781	285	413	47	c
+17081	\N	1440000	6518	285	406	48	c
+17082	\N	1441000	4033	285	446	49	c
+17083	\N	1441000	6540	285	414	50	c
+17084	\N	1441000	3658	285	417	51	c
+17085	\N	1441000	6541	285	413	52	c
+17086	\N	1443000	6507	285	422	53	c
+17087	\N	1444000	3595	285	409	54	c
+17088	\N	1448000	6519	285	413	55	c
+17089	\N	1450000	3570	285	399	56	c
+17090	\N	1456000	6542	285	404	57	c
+17091	\N	1462000	4056	285	422	58	c
+17092	\N	1463000	6520	285	404	59	c
+17093	\N	1467000	3551	285	399	60	c
+17094	\N	1469000	3807	285	403	61	c
+17095	\N	1469000	3802	285	403	62	c
+17096	\N	1471000	4031	285	446	63	c
+17097	\N	1471000	4061	285	422	64	c
+17098	\N	1472000	6330	285	446	65	c
+17099	\N	1475000	3777	285	413	66	c
+17100	\N	1476000	6506	285	422	67	c
+17101	\N	1477000	3091	285	446	68	c
+17102	\N	1479000	6543	285	408	69	c
+17103	\N	1480000	6544	285	406	70	c
+17104	\N	1484000	3089	285	446	71	c
+17105	\N	1486000	6521	285	406	72	c
+17106	\N	1486000	6545	285	406	73	c
+17107	\N	1488000	6546	285	413	74	c
+14422	\N	1405000	5837	248	492	49	c
+14386	\N	1182000	6286	248	377	13	c
+14463	\N	1049000	3224	250	493	1	c
+14464	\N	1050000	5734	250	381	2	c
+14465	\N	1053000	3073	250	447	3	c
+14466	\N	1074000	3087	250	447	4	c
+14467	\N	1084000	1543	250	493	5	c
+14468	\N	1089000	5181	250	381	6	c
+14469	\N	1090000	4209	250	381	7	c
+14470	\N	1091000	3214	250	493	8	c
+14471	\N	1098000	4585	250	439	9	c
+14472	\N	1105000	4214	250	381	10	c
+14473	\N	1107000	5780	250	447	11	c
+14474	\N	1119000	5175	250	381	12	c
+14475	\N	1128000	3086	250	447	13	c
+14476	\N	1143000	3077	250	447	14	c
+14477	\N	1147000	5789	250	447	15	c
+14478	\N	1157000	5373	250	447	16	c
+14479	\N	1171000	3072	250	447	17	c
+14480	\N	1178000	3070	250	447	18	c
+14481	\N	1182000	4204	250	381	19	c
+14482	\N	1201000	5387	250	447	20	c
+14483	\N	1204000	5351	250	493	21	c
+14484	\N	1211000	4213	250	381	22	c
+14485	\N	1212000	4041	250	447	23	c
+14486	\N	1219000	5776	250	447	24	c
+14487	\N	1238000	3071	250	447	25	c
+14488	\N	1241000	5831	250	447	26	c
+14489	\N	1247000	5388	250	447	27	c
+14490	\N	1248000	4586	250	439	28	c
+14491	\N	1249000	5775	250	493	29	c
+14492	\N	1253000	5685	250	493	30	c
+14493	\N	1257000	5683	250	493	31	c
+14494	\N	1272000	5663	250	439	32	c
+14495	\N	1282000	5376	250	447	33	c
+14496	\N	1285000	4039	250	447	34	c
+14497	\N	1289000	4042	250	447	35	c
+14498	\N	1291000	5665	250	439	36	c
+14499	\N	1293000	5782	250	447	37	c
+14500	\N	1296000	3388	250	381	38	c
+14501	\N	1299000	5790	250	447	39	c
+14502	\N	1302000	3218	250	493	40	c
+14503	\N	1307000	5781	250	447	41	c
+14504	\N	1309000	3387	250	381	42	c
+14505	\N	1310000	3079	250	447	43	c
+14506	\N	1314000	5784	250	447	44	c
+14507	\N	1332000	3076	250	447	45	c
+14508	\N	1336000	5381	250	493	46	c
+14509	\N	1340000	5214	250	439	47	c
+14510	\N	1342000	3217	250	493	48	c
+14511	\N	1344000	5382	250	447	49	c
+14512	\N	1350000	5738	250	381	50	c
+14513	\N	1351000	4582	250	439	51	c
+14514	\N	1352000	5778	250	447	52	c
+14515	\N	1355000	4589	250	439	53	c
+14516	\N	1380000	5694	250	493	54	c
+14517	\N	1384000	5791	250	447	55	c
+14518	\N	1385000	5389	250	447	56	c
+14519	\N	1392000	5396	250	447	57	c
+14520	\N	1398000	5417	250	447	58	c
+14521	\N	1421000	5693	250	493	59	c
+14522	\N	1434000	5783	250	447	60	c
+14523	\N	1475000	5670	250	439	61	c
+14524	\N	1511000	5384	250	447	62	c
+14525	\N	1515000	3080	250	447	63	c
+14526	\N	1530000	4581	250	439	64	c
+14527	\N	1532000	5676	250	493	65	c
+14528	\N	1556000	5832	250	447	66	c
+14529	\N	1577000	5788	250	447	67	c
+14530	\N	1750000	5407	250	439	68	c
+14531	\N	1951000	3269	250	439	69	c
+14532	\N	2051000	5752	250	439	70	c
+14533	\N	2205000	4584	250	439	71	c
+15005	\N	940000	5903	263	517	1	c
+15006	\N	944000	5922	263	515	2	c
+15007	\N	945000	5904	263	518	3	c
+15008	\N	985000	5923	263	519	4	c
+15009	\N	991000	5905	263	517	5	c
+15010	\N	1000000	1506	263	43	6	c
+15011	\N	1002000	5924	263	519	7	c
+15012	\N	1004000	5925	263	520	8	c
+15013	\N	1005000	1503	263	55	9	c
+15014	\N	1009000	5906	263	522	10	c
+15015	\N	1014000	5907	263	515	11	c
+15016	\N	1024000	3485	263	515	12	c
+15017	\N	1027000	3702	263	516	13	c
+15018	\N	1028000	5926	263	516	14	c
+15019	\N	1028000	5927	263	515	15	c
+15020	\N	1030000	1507	263	50	16	c
+15021	\N	1030000	3471	263	515	17	c
+15022	\N	1035000	5928	263	515	18	c
+15023	\N	1039000	5929	263	515	19	c
+15024	\N	1039000	1514	263	55	20	c
+15025	\N	1056000	4006	263	512	21	c
+15026	\N	1056000	5930	263	519	22	c
+15027	\N	1062000	5908	263	517	23	c
+15028	\N	1062000	5931	263	519	24	c
+15029	\N	1064000	5932	263	520	25	c
+15030	\N	1066000	3750	263	518	26	c
+15031	\N	1067000	5933	263	514	27	c
+15032	\N	1069000	3752	263	518	28	c
+15033	\N	1070000	5934	263	518	29	c
+15034	\N	1074000	3585	263	517	30	c
+15035	\N	1076000	5935	263	519	31	c
+15036	\N	1079000	5898	263	520	32	c
+15037	\N	1081000	5936	263	511	33	c
+15038	\N	1082000	1530	263	43	34	c
+15039	\N	1085000	5937	263	520	35	c
+15040	\N	1086000	5909	263	519	36	c
+15041	\N	1088000	5938	263	513	37	c
+15042	\N	1091000	1533	263	55	38	c
+15043	\N	1093000	5910	263	516	39	c
+15044	\N	1096000	5939	263	522	40	c
+15045	\N	1103000	3703	263	516	41	c
+15046	\N	1104000	5911	263	522	42	c
+15047	\N	1108000	5912	263	516	43	c
+15048	\N	1108000	5913	263	517	44	c
+15049	\N	1110000	1547	263	50	45	c
+15050	\N	1111000	5914	263	512	46	c
+15051	\N	1111000	1573	263	43	47	c
+15052	\N	1112000	1534	263	55	48	c
+15053	\N	1115000	5915	263	514	49	c
+15054	\N	1115000	3581	263	517	50	c
+15055	\N	1117000	4024	263	521	51	c
+15056	\N	1118000	5940	263	512	52	c
+15057	\N	1119000	5941	263	522	53	c
+15058	\N	1124000	5942	263	513	54	c
+15059	\N	1124000	5943	263	521	55	c
+15060	\N	1125000	1538	263	50	56	c
+15061	\N	1127000	1549	263	55	57	c
+15062	\N	1127000	5944	263	512	58	c
+15063	\N	1127000	4023	263	521	59	c
+14534	\N	1083000	4585	251	439	1	c
+14535	\N	1106000	4219	251	384	2	c
+14536	\N	1152000	5414	251	384	3	c
+14537	\N	1180000	3359	251	384	4	c
+14538	\N	1193000	3361	251	384	5	c
+14539	\N	1197000	5663	251	439	6	c
+14540	\N	1222000	5659	251	384	7	c
+14541	\N	1255000	5665	251	439	8	c
+14542	\N	1269000	4218	251	384	9	c
+14543	\N	1277000	3353	251	384	10	c
+14544	\N	1304000	3355	251	384	11	c
+14545	\N	1331000	4589	251	439	12	c
+14546	\N	1333000	3266	251	439	13	c
+14547	\N	1346000	5752	251	439	14	c
+14548	\N	1353000	4582	251	439	15	c
+14550	\N	1360000	4581	251	439	17	c
+14551	\N	1506000	5669	251	439	18	c
+14552	\N	1578000	5747	251	384	19	c
+14553	\N	1666000	5407	251	439	20	c
+14554	\N	1974000	5752	251	439	21	c
+14884	\N	1059000	3224	261	493	1	c
+14885	\N	1063000	1543	261	493	2	c
+14886	\N	1070000	4117	261	376	3	c
+14887	\N	1091000	5735	261	376	4	c
+14888	\N	1101000	3214	261	493	5	c
+14889	\N	1103000	4109	261	376	6	c
+14890	\N	1113000	1643	261	376	7	c
+14891	\N	1125000	5732	261	376	8	c
+14892	\N	1146000	3255	261	374	9	c
+14893	\N	1173000	4111	261	376	10	c
+14894	\N	1175000	4118	261	376	11	c
+14895	\N	1183000	5276	261	379	12	c
+14896	\N	1192000	3249	261	374	13	c
+14897	\N	1200000	5351	261	493	14	c
+14898	\N	1212000	3981	261	379	15	c
+14899	\N	1232000	5683	261	493	16	c
+14900	\N	1243000	5775	261	493	17	c
+14901	\N	1277000	5685	261	493	18	c
+14902	\N	1280000	5797	261	374	19	c
+14903	\N	1280000	5267	261	379	20	c
+14904	\N	1281000	4520	261	374	21	c
+14905	\N	1300000	3982	261	379	22	c
+14906	\N	1301000	5744	261	379	23	c
+14907	\N	1330000	4521	261	374	24	c
+14908	\N	1354000	5266	261	379	25	c
+14909	\N	1397000	5667	261	379	26	c
+14910	\N	1114000	102	262	2	1	c
+14911	\N	1167000	5858	262	502	2	c
+14912	\N	1215000	5859	262	506	3	c
+14913	\N	1222000	5873	262	500	4	c
+14914	\N	1223000	5874	262	508	5	c
+14915	\N	1226000	5847	262	503	6	c
+14916	\N	1226000	5850	262	503	7	c
+14917	\N	1232000	3501	262	503	8	c
+14918	\N	1240000	2505	262	61	9	c
+14919	\N	1243000	5875	262	503	10	c
+14920	\N	1246000	103	262	2	11	c
+14921	\N	1248000	5876	262	507	12	c
+14922	\N	1251000	5860	262	503	13	c
+14923	\N	1255000	5877	262	501	14	c
+14924	\N	1257000	3666	262	509	15	c
+14925	\N	1259000	5878	262	502	16	c
+14926	\N	1260000	2507	262	61	17	c
+14927	\N	1264000	105	262	2	18	c
+14928	\N	1264000	4071	262	504	19	c
+14929	\N	1264000	2504	262	62	20	c
+14930	\N	1265000	2509	262	62	21	c
+14931	\N	1274000	5851	262	507	22	c
+14932	\N	1274000	4074	262	504	23	c
+14933	\N	1277000	3558	262	500	24	c
+14934	\N	1279000	5861	262	509	25	c
+14935	\N	1282000	5862	262	503	26	c
+14936	\N	1284000	2510	262	62	27	c
+14937	\N	1285000	106	262	2	28	c
+14938	\N	1287000	2508	262	62	29	c
+14939	\N	1290000	5863	262	503	30	c
+14940	\N	1292000	5879	262	506	31	c
+14941	\N	1297000	5864	262	500	32	c
+14942	\N	1299000	3608	262	506	33	c
+14943	\N	1304000	3665	262	509	34	c
+14944	\N	1306000	3544	262	500	35	c
+14945	\N	1314000	5852	262	502	36	c
+14946	\N	1318000	3938	262	510	37	c
+14947	\N	1318000	5853	262	510	38	c
+14948	\N	1321000	5880	262	504	39	c
+14949	\N	1322000	5865	262	507	40	c
+14950	\N	1322000	3714	262	505	41	c
+14951	\N	1323000	3814	262	501	42	c
+14952	\N	1328000	5881	262	505	43	c
+14953	\N	1334000	2537	262	61	44	c
+14954	\N	1339000	2534	262	61	45	c
+14955	\N	1343000	5882	262	500	46	c
+14956	\N	1352000	2517	262	62	47	c
+14957	\N	1356000	5854	262	500	48	c
+14958	\N	1358000	3860	262	502	49	c
+14959	\N	1364000	5866	262	501	50	c
+14960	\N	1372000	2539	262	61	51	c
+14961	\N	1388000	2591	262	62	52	c
+14962	\N	1390000	5883	262	510	53	c
+14963	\N	1390000	3592	262	506	54	c
+14964	\N	1390000	5867	262	505	55	c
+14965	\N	1394000	107	262	2	56	c
+14966	\N	1394000	5884	262	507	57	c
+14967	\N	1396000	108	262	2	58	c
+14968	\N	1401000	5885	262	505	59	c
+14969	\N	1404000	5868	262	502	60	c
+14970	\N	1408000	3920	262	510	61	c
+14971	\N	1409000	2542	262	61	62	c
+14972	\N	1410000	5886	262	505	63	c
+14973	\N	1410000	5855	262	502	64	c
+14974	\N	1410000	5869	262	509	65	c
+14975	\N	1413000	5848	262	509	66	c
+14976	\N	1414000	3670	262	509	67	c
+14977	\N	1415000	5887	262	507	68	c
+14978	\N	1430000	5870	262	510	69	c
+14979	\N	1435000	4073	262	504	70	c
+14980	\N	1436000	109	262	2	71	c
+14981	\N	1439000	2594	262	62	72	c
+14982	\N	1439000	3716	262	505	73	c
+14983	\N	1440000	4082	262	508	74	c
+14984	\N	1441000	4095	262	508	75	c
+14985	\N	1445000	3762	262	507	76	c
+14986	\N	1454000	3813	262	501	77	c
+14987	\N	1467000	2598	262	61	78	c
+14988	\N	1468000	5888	262	510	79	c
+14989	\N	1468000	5889	262	505	80	c
+14990	\N	1469000	5890	262	507	81	c
+14991	\N	1478000	5871	262	501	82	c
+14992	\N	1479000	5849	262	510	83	c
+14993	\N	1484000	5856	262	501	84	c
+14555	\N	1026600	5494	252	497	1	c
+14556	\N	1057000	5178	252	444	2	c
+14557	\N	1087700	3892	252	444	3	c
+14558	\N	1112000	5655	252	442	4	c
+14559	\N	1127700	5276	252	379	5	c
+14560	\N	1133600	5174	252	497	6	c
+14561	\N	1138500	3884	252	444	7	c
+14562	\N	1146700	3156	252	497	8	c
+14563	\N	1151100	3158	252	497	9	c
+14564	\N	1155900	4098	252	497	10	c
+14565	\N	1159800	5768	252	444	11	c
+14566	\N	1162800	5170	252	444	12	c
+14567	\N	1168300	5763	252	444	13	c
+14568	\N	1172500	5143	252	444	14	c
+14569	\N	1174900	5820	252	444	15	c
+14570	\N	1175900	5314	252	442	16	c
+14571	\N	1176500	5153	252	444	17	c
+14572	\N	1184900	5764	252	444	18	c
+14573	\N	1194500	5267	252	379	19	c
+14574	\N	1196400	1697	252	497	20	c
+14575	\N	1201800	3154	252	497	21	c
+14576	\N	1216600	5629	252	442	22	c
+14577	\N	1217100	5760	252	444	23	c
+14578	\N	1237700	3982	252	379	24	c
+14579	\N	1260700	5744	252	379	25	c
+14580	\N	1266400	5323	252	442	26	c
+14581	\N	1288900	4986	252	442	27	c
+14582	\N	1301300	5266	252	379	28	c
+14583	\N	1325000	4977	252	442	29	c
+14584	\N	1386500	3323	252	379	30	c
+14585	\N	1465100	3978	252	379	31	c
+14586	\N	1012000	3073	253	447	1	c
+14587	\N	1024000	3087	253	447	2	c
+14588	\N	1035000	5780	253	447	3	c
+14589	\N	1053000	3086	253	447	4	c
+14590	\N	1064000	4044	253	447	5	c
+14591	\N	1070000	3255	253	374	6	c
+14592	\N	1081000	3077	253	447	7	c
+14593	\N	1098000	4522	253	374	8	c
+14594	\N	1107000	3249	253	374	9	c
+14595	\N	1124000	3072	253	447	10	c
+14596	\N	1131000	3070	253	447	11	c
+14597	\N	1149000	5373	253	447	12	c
+14598	\N	1152000	5387	253	447	13	c
+14599	\N	1156000	4041	253	447	14	c
+14600	\N	1157000	5776	253	447	15	c
+14601	\N	1170000	3071	253	447	16	c
+14602	\N	1180000	5376	253	447	17	c
+14603	\N	1188000	5782	253	447	18	c
+14604	\N	1190000	5831	253	447	19	c
+14605	\N	1192000	5388	253	447	20	c
+14606	\N	1193000	4520	253	374	21	c
+14607	\N	1193000	4042	253	447	22	c
+14608	\N	1236000	4521	253	374	23	c
+14609	\N	1237000	3079	253	447	24	c
+14610	\N	1237000	5784	253	447	25	c
+14611	\N	1243000	5790	253	447	26	c
+14612	\N	1277000	5783	253	447	27	c
+14613	\N	1282000	3076	253	447	28	c
+14614	\N	1287000	5778	253	447	29	c
+14615	\N	1291000	5382	253	447	30	c
+14616	\N	1302000	5797	253	374	31	c
+14617	\N	1339000	5389	253	447	32	c
+14618	\N	1363000	5785	253	447	33	c
+14619	\N	1411000	5825	253	447	34	c
+14620	\N	1417000	5786	253	447	35	c
+14621	\N	1431000	5826	253	447	36	c
+14622	\N	1447000	5384	253	447	37	c
+14623	\N	1078000	3326	254	379	1	c
+14624	\N	1131000	4971	254	441	2	c
+14625	\N	1137000	3299	254	441	3	c
+14626	\N	1142000	3981	254	379	4	c
+14627	\N	1195000	4969	254	441	5	c
+14628	\N	1201000	5267	254	379	6	c
+14629	\N	1204000	5744	254	379	7	c
+14630	\N	1208000	4968	254	441	8	c
+14631	\N	1225000	5495	254	441	9	c
+14632	\N	1231000	3982	254	379	10	c
+14633	\N	1243000	5667	254	379	11	c
+14634	\N	1250000	5508	254	441	12	c
+14635	\N	1256000	5305	254	441	13	c
+14636	\N	1261000	5751	254	441	1	c
+14637	\N	1264000	5266	254	379	14	c
+14638	\N	1267000	5754	254	441	2	c
+14639	\N	1285000	4962	254	441	3	c
+14640	\N	1286000	5307	254	441	4	c
+14641	\N	1293000	3331	254	379	5	c
+14642	\N	1295000	4963	254	441	6	c
+14643	\N	1312000	3323	254	379	7	c
+14644	\N	1330000	5276	254	379	8	c
+14645	\N	1352000	5662	254	379	9	c
+14646	\N	1363000	4967	254	441	10	c
+14647	\N	1366000	5613	254	379	11	c
+14648	\N	1370000	5833	254	441	12	c
+14649	\N	1376000	5804	254	379	13	c
+14650	\N	1391000	4965	254	441	14	c
+14651	\N	1397000	3294	254	441	15	c
+14652	\N	1427000	5386	254	379	16	c
+14653	\N	1429000	3978	254	379	17	c
+14680	\N	993000	5494	256	497	1	c
+14681	\N	1022000	3106	256	492	2	c
+14682	\N	1105000	4938	256	492	3	c
+14683	\N	1111000	3156	256	497	4	c
+14684	\N	1131000	3158	256	497	5	c
+14685	\N	1140000	4098	256	497	6	c
+14686	\N	1163000	5174	256	497	7	c
+14687	\N	1168000	4933	256	492	8	c
+14688	\N	1170000	5716	256	492	9	c
+14689	\N	1181000	5490	256	492	10	c
+14690	\N	1201000	4099	256	497	11	c
+14691	\N	1211000	4096	256	497	12	c
+14692	\N	1220000	5419	256	497	13	c
+14693	\N	1233000	4934	256	492	14	c
+14694	\N	1236000	5688	256	497	15	c
+14695	\N	1239000	1697	256	497	16	c
+14696	\N	1244000	5517	256	497	17	c
+14697	\N	1245000	5707	256	492	18	c
+14698	\N	1252000	5689	256	497	19	c
+14699	\N	1279000	3116	256	492	20	c
+14700	\N	1306000	4102	256	497	21	c
+14701	\N	1316000	5696	256	497	22	c
+14702	\N	1319000	5710	256	492	23	c
+14703	\N	1330000	4936	256	492	24	c
+14704	\N	1350000	5724	256	492	25	c
+14705	\N	1374000	5711	256	492	26	c
+14706	\N	1386000	5837	256	492	27	c
+14707	\N	1396000	5699	256	492	28	c
+14708	\N	1404000	3110	256	492	29	c
+14709	\N	1408000	5677	256	497	30	c
+14710	\N	1457000	4935	256	492	31	c
+14711	\N	1467000	5403	256	497	32	c
+14712	\N	1470000	3109	256	492	33	c
+14713	\N	1472000	5679	256	497	34	c
+14714	\N	1474000	5489	256	492	35	c
+14715	\N	1563000	5730	256	492	36	c
+14716	\N	1605000	3108	256	492	37	c
+14654	\N	1053000	5263	255	377	1	c
+14655	\N	1091000	5655	255	442	2	c
+14658	\N	1140000	5314	255	442	5	c
+14659	\N	1216000	3437	255	442	6	c
+14660	\N	1221000	5323	255	442	7	c
+14661	\N	1223000	5629	255	442	8	c
+14662	\N	1228000	5404	255	377	9	c
+14663	\N	1229000	4976	255	442	10	c
+14664	\N	1230000	5169	255	377	11	c
+14665	\N	1240000	5105	255	377	12	c
+14666	\N	1300000	4977	255	442	13	c
+14667	\N	1346000	5656	255	442	14	c
+14668	\N	1346000	5835	255	377	15	c
+14669	\N	1420000	5657	255	442	16	c
+14670	\N	1423000	4978	255	442	17	c
+14671	\N	1427000	5836	255	377	18	c
+14672	\N	1430000	5792	255	442	19	c
+14673	\N	1467000	5658	255	442	20	c
+14674	\N	1544000	5103	255	377	21	c
+14675	\N	1568000	5317	255	442	22	c
+14676	\N	1723000	4983	255	442	23	c
+14677	\N	1914000	5104	255	377	24	c
+14678	\N	1972000	5779	255	442	25	c
+14679	\N	2198000	5834	255	442	26	c
+14720	\N	1058000	3224	257	493	1	c
+14721	\N	1075000	1543	257	493	2	c
+14722	\N	1085000	3252	257	490	3	c
+14723	\N	1092000	3214	257	493	4	c
+14724	\N	1097000	3064	257	490	5	c
+14725	\N	1104000	3065	257	490	6	c
+14726	\N	1109000	3066	257	490	7	c
+14727	\N	1128000	3954	257	490	8	c
+14728	\N	1152000	3068	257	490	9	c
+14729	\N	1169000	5713	257	490	10	c
+14730	\N	1170000	3053	257	490	11	c
+14731	\N	1198000	5351	257	493	12	c
+14732	\N	1206000	5715	257	490	13	c
+14733	\N	1215000	5241	257	490	14	c
+14734	\N	1223000	3056	257	490	15	c
+14735	\N	1224000	3062	257	490	16	c
+14736	\N	1224000	3955	257	490	17	c
+14737	\N	1226000	5700	257	490	18	c
+14738	\N	1230000	5683	257	493	19	c
+14739	\N	1234000	5775	257	493	20	c
+14740	\N	1251000	3058	257	490	21	c
+14741	\N	1254000	5706	257	490	22	c
+14742	\N	1260000	5685	257	493	23	c
+14743	\N	1274000	3218	257	493	24	c
+14744	\N	1278000	5603	257	490	25	c
+14745	\N	1293000	3952	257	490	26	c
+14746	\N	1294000	5694	257	493	27	c
+14747	\N	1306000	3217	257	493	28	c
+14748	\N	1313000	5381	257	493	29	c
+14749	\N	1321000	5693	257	493	30	c
+14750	\N	1332000	3950	257	490	31	c
+14751	\N	1382000	3061	257	490	32	c
+14752	\N	1427000	5709	257	490	33	c
+14753	\N	1436000	5723	257	490	34	c
+14754	\N	1438000	5748	257	490	35	c
+14755	\N	1441000	5726	257	490	36	c
+14756	\N	1501000	3951	257	490	37	c
+14757	\N	1503000	5750	257	490	38	c
+14758	\N	1530000	5243	257	490	39	c
+14759	\N	1546000	5703	257	490	40	c
+14760	\N	1751000	5257	257	490	41	c
+14830	\N	1020000	5494	260	497	1	c
+14831	\N	1069000	4574	260	495	2	c
+14832	\N	1096000	4585	260	439	3	c
+14833	\N	1131000	3156	260	497	4	c
+14835	\N	1151000	5174	260	497	6	c
+14837	\N	1158000	4576	260	495	8	c
+14838	\N	1161000	3158	260	497	9	c
+14839	\N	1177000	3409	260	377	10	c
+14840	\N	1188000	1697	260	497	11	c
+14841	\N	1190000	3154	260	497	12	c
+14842	\N	1191000	4098	260	497	13	c
+14843	\N	1194000	4099	260	497	14	c
+14844	\N	1208000	4096	260	497	15	c
+14845	\N	1212000	4586	260	439	16	c
+14846	\N	1225000	5404	260	377	17	c
+14847	\N	1232000	5419	260	497	18	c
+14848	\N	1238000	5169	260	377	19	c
+14849	\N	1281000	5665	260	439	20	c
+14850	\N	1296000	5688	260	497	21	c
+14851	\N	1302000	5517	260	497	22	c
+14852	\N	1303000	5689	260	497	23	c
+14853	\N	1317000	5835	260	377	24	c
+14854	\N	1326000	4102	260	497	25	c
+14855	\N	1329000	4582	260	439	26	c
+14856	\N	1331000	3237	260	495	27	c
+14857	\N	1363000	5844	260	497	28	c
+14858	\N	1363000	3229	260	495	29	c
+14859	\N	1371000	5670	260	439	30	c
+14860	\N	1377000	5673	260	497	31	c
+14861	\N	1387000	4581	260	439	32	c
+14862	\N	1387000	4589	260	439	33	c
+14863	\N	1410000	5696	260	497	34	c
+14864	\N	1444000	5836	260	377	35	c
+14865	\N	1451000	5677	260	497	36	c
+14866	\N	1469000	5669	260	439	37	c
+14867	\N	1474000	5233	260	495	38	c
+14868	\N	1484000	5800	260	495	39	c
+14869	\N	1508000	5403	260	497	40	c
+14870	\N	1514000	5679	260	497	41	c
+14871	\N	1520000	5798	260	495	42	c
+14872	\N	1520000	5401	260	495	43	c
+14873	\N	1622000	5799	260	495	44	c
+14874	\N	1625000	5845	260	495	45	c
+14875	\N	1660000	5407	260	439	46	c
+14876	\N	1680000	5802	260	495	47	c
+14877	\N	1687000	5753	260	439	48	c
+14878	\N	1693000	5408	260	497	49	c
+14879	\N	1709000	5672	260	439	50	c
+14880	\N	1746000	5801	260	495	51	c
+14881	\N	1843000	5752	260	439	52	c
+14882	\N	1860000	5104	260	377	53	c
+14883	\N	2002000	5674	260	497	54	c
+14656	\N	1118000	6365	255	377	3	c
+14834	\N	1143000	6365	260	377	5	c
+16681	\N	896000	3483	282	415	1	c
+16682	\N	906000	3537	282	400	2	c
+16683	\N	919000	3622	282	410	3	c
+16684	\N	941000	3514	282	415	4	c
+16685	\N	950000	4007	282	401	5	c
+16686	\N	957000	3567	282	400	6	c
+16687	\N	971000	3724	282	407	7	c
+16688	\N	974000	3473	282	415	8	c
+16689	\N	979000	3515	282	415	9	c
+16690	\N	982000	4930	282	480	10	c
+16691	\N	982000	3065	282	490	11	c
+16692	\N	982000	6385	282	415	12	c
+16693	\N	983000	3587	282	410	13	c
+1015	498	1251000	5846	2	29	14	c
+14657	\N	1126000	6286	255	377	4	c
+14836	\N	1157000	6286	260	377	7	c
+15127	\N	1427000	5995	264	505	19	c
+15128	\N	1428000	5964	264	503	20	c
+15129	\N	1436000	5996	264	501	21	c
+15130	\N	1438000	5997	264	510	22	c
+15131	\N	1441000	5998	264	505	23	c
+15132	\N	1441000	5977	264	506	24	c
+15133	\N	1443000	5999	264	501	25	c
+15134	\N	1444000	6000	264	500	26	c
+15135	\N	1445000	110	264	2	27	c
+15136	\N	1445000	5978	264	507	28	c
+15137	\N	1449000	2605	264	62	29	c
+15138	\N	1451000	2603	264	62	30	c
+15139	\N	1459000	6001	264	506	31	c
+15140	\N	1459000	6002	264	507	32	c
+15141	\N	1461000	2615	264	61	33	c
+15142	\N	1461000	2621	264	61	34	c
+15143	\N	1462000	2614	264	61	35	c
+15144	\N	1462000	3875	264	502	36	c
+15145	\N	1463000	5979	264	510	37	c
+15146	\N	1469000	3717	264	505	38	c
+15147	\N	1471000	111	264	2	39	c
+15148	\N	1481000	112	264	2	40	c
+15149	\N	1485000	5965	264	500	41	c
+15150	\N	1493000	2613	264	62	42	c
+15151	\N	1493000	2609	264	62	43	c
+15152	\N	1495000	2618	264	62	44	c
+15153	\N	1496000	2617	264	62	45	c
+15154	\N	1497000	6003	264	501	46	c
+15155	\N	1498000	5966	264	510	47	c
+15156	\N	1501000	3856	264	502	48	c
+15157	\N	1502000	2606	264	62	49	c
+15158	\N	1502000	5960	264	509	50	c
+15159	\N	1503000	2627	264	62	51	c
+15160	\N	1504000	3929	264	510	52	c
+15161	\N	1505000	6004	264	500	53	c
+15162	\N	1508000	3805	264	501	54	c
+15163	\N	1509000	114	264	2	55	c
+15164	\N	1513000	5980	264	505	56	c
+15165	\N	1514000	5337	264	62	57	c
+15166	\N	1515000	113	264	2	58	c
+15167	\N	1518000	6005	264	510	59	c
+15168	\N	1525000	6006	264	509	60	c
+15169	\N	1526000	4067	264	504	61	c
+15170	\N	1527000	2622	264	62	62	c
+15171	\N	1528000	6007	264	505	63	c
+15172	\N	1528000	2619	264	62	64	c
+15173	\N	1534000	5958	264	506	65	c
+15174	\N	1536000	5981	264	509	66	c
+15175	\N	1539000	5982	264	509	67	c
+15176	\N	1541000	2630	264	62	68	c
+15177	\N	1542000	5983	264	501	69	c
+15178	\N	1544000	5967	264	510	70	c
+15179	\N	1549000	115	264	2	71	c
+15180	\N	1552000	6008	264	508	72	c
+15181	\N	1553000	6009	264	500	73	c
+15182	\N	1554000	3708	264	505	74	c
+15183	\N	1555000	6010	264	510	75	c
+15184	\N	1557000	3924	264	510	76	c
+15185	\N	1561000	2616	264	61	77	c
+15186	\N	1566000	5984	264	505	78	c
+15187	\N	1568000	5961	264	61	79	c
+15188	\N	1570000	2644	264	61	80	c
+15189	\N	1573000	5985	264	507	81	c
+15190	\N	1576000	5968	264	501	82	c
+15191	\N	1577000	2645	264	61	83	c
+15192	\N	1578000	6011	264	509	84	c
+15193	\N	1584000	6012	264	507	85	c
+15194	\N	1585000	5986	264	506	86	c
+15195	\N	1600000	117	264	2	87	c
+15196	\N	1602000	3927	264	510	88	c
+15197	\N	1604000	3657	264	509	89	c
+15198	\N	1605000	6013	264	509	90	c
+15199	\N	1610000	116	264	2	91	c
+15200	\N	1611000	6014	264	510	92	c
+15201	\N	1612000	5969	264	61	93	c
+15202	\N	1614000	5442	264	2	94	c
+15203	\N	1620000	5962	264	501	95	c
+15204	\N	1629000	3808	264	501	96	c
+15205	\N	1640000	5987	264	506	97	c
+15206	\N	1644000	5959	264	506	98	c
+15207	\N	1645000	6015	264	61	99	c
+15208	\N	1669000	6016	264	501	100	c
+15209	\N	1674000	6017	264	510	101	c
+15210	\N	1692000	6018	264	507	102	c
+15211	\N	1698000	2676	264	61	103	c
+15212	\N	1737000	3765	264	507	104	c
+15213	\N	1747000	119	264	2	105	c
+15214	\N	1757000	3632	264	506	106	c
+15215	\N	1784000	3757	264	507	107	c
+15216	\N	1799000	2694	264	61	108	c
+15217	\N	1817000	5988	264	508	109	c
+15218	\N	1827000	6019	264	508	110	c
+15219	\N	1829000	6020	264	506	111	c
+15220	\N	1871000	5970	264	506	112	c
+15221	\N	1879000	6021	264	506	113	c
+15222	\N	2000000	3596	264	506	114	c
+15223	\N	2043000	5989	264	502	115	c
+15224	\N	1058000	6038	265	515	1	c
+15225	\N	1086000	3487	265	515	2	c
+15226	\N	1095000	6039	265	515	3	c
+15227	\N	1096000	6040	265	515	4	c
+15228	\N	1101000	6041	265	515	5	c
+15229	\N	1102000	6027	265	519	6	c
+15230	\N	1103000	6070	265	515	7	c
+15231	\N	1109000	6042	265	517	8	c
+15232	\N	1114000	3541	265	519	9	c
+15233	\N	1122000	6028	265	515	10	c
+15234	\N	1126000	6071	265	515	11	c
+15235	\N	1127000	6022	265	519	12	c
+15236	\N	1131000	3472	265	515	13	c
+15237	\N	1133000	6023	265	515	14	c
+15238	\N	1138000	1637	265	55	15	c
+15239	\N	1140000	6072	265	518	16	c
+15240	\N	1142000	3540	265	519	17	c
+15241	\N	1143000	6043	265	520	18	c
+15242	\N	1143000	1627	265	55	19	c
+15243	\N	1148000	3648	265	520	20	c
+15244	\N	1151000	6073	265	519	21	c
+15245	\N	1152000	6024	265	517	22	c
+15246	\N	1152000	3532	265	519	23	c
+15247	\N	1156000	6074	265	517	24	c
+15248	\N	1157000	6075	265	516	25	c
+15249	\N	1158000	6076	265	518	26	c
+15250	\N	1168000	6029	265	515	27	c
+15251	\N	1169000	6044	265	515	28	c
+15252	\N	1173000	6045	265	513	29	c
+15253	\N	1174000	6077	265	519	30	c
+15254	\N	1175000	6046	265	522	31	c
+15255	\N	1178000	1602	265	43	32	c
+15256	\N	1179000	3590	265	517	33	c
+15257	\N	1180000	6047	265	517	34	c
+15258	\N	1181000	3798	265	513	35	c
+15259	\N	1181000	6048	265	516	36	c
+15260	\N	1183000	3641	265	520	37	c
+15261	\N	1184000	6078	265	519	38	c
+15262	\N	1184000	3653	265	520	39	c
+15263	\N	1187000	3589	265	517	40	c
+15264	\N	1187000	6049	265	519	41	c
+15265	\N	1188000	6030	265	513	42	c
+15266	\N	1188000	6031	265	520	43	c
+15267	\N	1191000	1640	265	55	44	c
+15268	\N	1192000	6032	265	55	45	c
+15269	\N	1195000	1722	265	50	46	c
+15270	\N	1195000	6050	265	516	47	c
+15271	\N	1196000	3916	265	522	48	c
+15272	\N	1197000	6033	265	519	49	c
+15273	\N	1198000	6051	265	516	50	c
+15274	\N	1199000	6079	265	519	51	c
+15275	\N	1200000	3739	265	518	52	c
+15276	\N	1200000	6080	265	522	53	c
+15277	\N	1201000	1651	265	43	54	c
+15278	\N	1202000	5183	265	55	55	c
+15279	\N	1203000	1683	265	50	56	c
+15280	\N	1204000	6052	265	517	57	c
+15281	\N	1204000	1679	265	55	58	c
+15282	\N	1205000	6081	265	520	59	c
+15283	\N	1205000	3788	265	513	60	c
+15284	\N	1206000	6082	265	517	61	c
+15285	\N	1209000	6083	265	513	62	c
+15286	\N	1209000	1653	265	55	63	c
+15287	\N	1210000	6084	265	514	64	c
+15288	\N	1211000	6085	265	518	65	c
+15289	\N	1212000	5226	265	50	66	c
+15290	\N	1214000	6086	265	513	67	c
+15291	\N	1216000	3738	265	518	68	c
+15292	\N	1216000	6034	265	513	69	c
+15293	\N	1217000	6053	265	517	70	c
+15294	\N	1219000	6087	265	516	71	c
+15295	\N	1219000	3756	265	518	72	c
+15296	\N	1220000	1667	265	50	73	c
+15297	\N	1223000	6054	265	517	74	c
+15298	\N	1225000	1652	265	50	75	c
+15299	\N	1225000	3753	265	518	76	c
+15300	\N	1226000	6088	265	516	77	c
+15301	\N	1226000	1677	265	43	78	c
+15302	\N	1227000	1717	265	43	79	c
+15303	\N	1228000	1670	265	50	80	c
+15304	\N	1229000	1662	265	43	81	c
+15305	\N	1232000	6089	265	519	82	c
+15306	\N	1233000	6055	265	516	83	c
+15307	\N	1233000	1696	265	43	84	c
+15308	\N	1235000	6090	265	513	85	c
+15309	\N	1235000	6091	265	522	86	c
+15310	\N	1236000	6056	265	518	87	c
+15311	\N	1239000	1665	265	43	88	c
+15312	\N	1241000	6057	265	520	89	c
+15313	\N	1242000	6025	265	514	90	c
+15314	\N	1243000	6092	265	516	91	c
+15315	\N	1244000	6093	265	517	92	c
+15316	\N	1246000	6035	265	516	93	c
+15317	\N	1246000	6094	265	513	94	c
+15318	\N	1247000	6095	265	522	95	c
+15319	\N	1249000	6058	265	516	96	c
+15320	\N	1250000	6059	265	55	97	c
+15321	\N	1250000	1684	265	50	98	c
+15322	\N	1250000	1693	265	50	99	c
+15323	\N	1251000	3578	265	517	100	c
+15324	\N	1251000	3694	265	516	101	c
+15325	\N	1251000	3740	265	518	102	c
+15326	\N	1254000	1689	265	50	103	c
+15327	\N	1255000	5275	265	55	104	c
+15328	\N	1256000	1694	265	55	105	c
+15329	\N	1259000	1702	265	43	106	c
+15330	\N	1260000	1671	265	43	107	c
+15331	\N	1261000	6096	265	520	108	c
+15332	\N	1261000	1700	265	43	109	c
+15333	\N	1263000	3919	265	522	110	c
+15334	\N	1263000	6097	265	513	111	c
+15335	\N	1263000	6098	265	520	112	c
+15336	\N	1263000	6099	265	518	113	c
+15337	\N	1267000	3642	265	520	114	c
+15338	\N	1268000	6100	265	520	115	c
+15339	\N	1268000	6101	265	513	116	c
+15340	\N	1270000	6060	265	518	117	c
+15341	\N	1271000	1644	265	50	118	c
+15342	\N	1272000	6061	265	511	119	c
+15343	\N	1273000	3956	265	511	120	c
+15344	\N	1273000	1726	265	43	121	c
+15345	\N	1275000	6102	265	514	122	c
+15346	\N	1278000	6062	265	513	123	c
+15347	\N	1280000	6103	265	514	124	c
+15348	\N	1282000	6063	265	511	125	c
+15349	\N	1283000	1707	265	55	126	c
+15350	\N	1284000	6064	265	512	127	c
+15351	\N	1285000	6104	265	516	128	c
+15352	\N	1292000	3834	265	514	129	c
+15353	\N	1293000	6105	265	521	130	c
+15354	\N	1295000	6106	265	522	131	c
+15355	\N	1298000	6026	265	518	132	c
+15356	\N	1300000	6107	265	514	133	c
+15357	\N	1307000	6065	265	521	134	c
+15358	\N	1314000	6066	265	522	135	c
+15359	\N	1325000	1731	265	43	136	c
+15360	\N	1334000	6036	265	511	137	c
+15361	\N	1342000	6108	265	521	138	c
+15362	\N	1342000	1718	265	55	139	c
+15363	\N	1349000	6109	265	511	140	c
+15364	\N	1365000	6110	265	522	141	c
+15365	\N	1376000	6111	265	512	142	c
+15366	\N	1387000	6112	265	521	143	c
+15367	\N	1389000	3972	265	511	144	c
+15368	\N	1390000	6067	265	521	145	c
+15369	\N	1412000	3999	265	512	146	c
+15370	\N	1424000	6113	265	521	147	c
+15371	\N	1427000	6068	265	512	148	c
+15372	\N	1428000	6114	265	521	149	c
+15373	\N	1431000	6069	265	522	150	c
+15374	\N	1432000	3839	265	514	151	c
+15375	\N	1434000	3965	265	511	152	c
+15376	\N	1437000	6037	265	511	153	c
+15377	\N	1478000	3837	265	514	154	c
+15378	\N	1495000	4004	265	512	155	c
+15379	\N	1515000	4000	265	512	156	c
+15380	\N	1575000	6115	265	522	157	c
+15381	\N	2300000	4005	265	512	158	c
+15382	\N	996000	88	266	5	1	c
+15383	\N	1164000	6123	266	536	2	c
+15384	\N	1173000	6124	266	528	3	c
+15385	\N	1184000	6117	266	536	4	c
+15386	\N	1199000	6125	266	526	5	c
+15387	\N	1203000	2522	266	64	6	c
+15388	\N	1204000	6126	266	529	7	c
+15389	\N	1207000	2526	266	64	8	c
+15390	\N	1221000	6127	266	523	9	c
+15391	\N	1228000	4729	266	529	10	c
+15392	\N	1233000	6128	266	523	11	c
+15393	\N	1240000	4799	266	533	12	c
+15394	\N	1247000	4510	266	528	13	c
+15395	\N	1249000	4610	266	536	14	c
+15396	\N	1250000	6129	266	529	15	c
+15397	\N	1253000	2536	266	63	16	c
+15398	\N	1260000	6118	266	529	17	c
+15399	\N	1261000	4800	266	533	18	c
+15400	\N	1263000	2535	266	64	19	c
+15401	\N	1264000	6119	266	535	20	c
+15402	\N	1268000	2544	266	59	21	c
+15403	\N	1270000	2543	266	64	22	c
+15404	\N	1272000	6130	266	536	23	c
+15405	\N	1278000	6131	266	536	24	c
+15406	\N	1281000	6132	266	527	25	c
+15407	\N	1281000	4662	266	530	26	c
+15408	\N	1283000	4826	266	537	27	c
+15409	\N	1286000	5112	266	64	28	c
+15410	\N	1288000	2563	266	60	29	c
+15411	\N	1289000	71	266	4	30	c
+15412	\N	1295000	2547	266	64	31	c
+15413	\N	1302000	6133	266	533	32	c
+15414	\N	1305000	2558	266	63	33	c
+15415	\N	1305000	2551	266	64	34	c
+15416	\N	1307000	6134	266	530	35	c
+15417	\N	1308000	73	266	4	36	c
+15418	\N	1309000	6135	266	530	37	c
+15419	\N	1311000	76	266	4	38	c
+15420	\N	1313000	6136	266	525	39	c
+15421	\N	1313000	72	266	4	40	c
+15422	\N	1318000	6137	266	537	41	c
+15423	\N	1319000	2554	266	59	42	c
+15424	\N	1327000	5348	266	537	43	c
+15425	\N	1330000	5297	266	4	44	c
+15426	\N	1332000	2553	266	59	45	c
+15427	\N	1332000	90	266	5	46	c
+15428	\N	1333000	4663	266	530	47	c
+15429	\N	1336000	75	266	4	48	c
+15430	\N	1348000	6138	266	533	49	c
+15431	\N	1352000	4481	266	534	50	c
+15432	\N	1353000	6116	266	529	51	c
+15433	\N	1354000	6139	266	528	52	c
+15434	\N	1354000	6140	266	531	53	c
+15435	\N	1355000	6141	266	59	54	c
+15436	\N	1355000	6142	266	525	55	c
+15437	\N	1356000	16	266	6	56	c
+15438	\N	1356000	6143	266	535	57	c
+15439	\N	1356000	6144	266	527	58	c
+15440	\N	1357000	2564	266	63	59	c
+15441	\N	1359000	6145	266	534	60	c
+15442	\N	1359000	2568	266	60	61	c
+15443	\N	1361000	6146	266	527	62	c
+15444	\N	1362000	4660	266	530	63	c
+15445	\N	1373000	6147	266	534	64	c
+15446	\N	1378000	6148	266	523	65	c
+15447	\N	1378000	5155	266	6	66	c
+15448	\N	1379000	5157	266	6	67	c
+15449	\N	1384000	6149	266	538	68	c
+15450	\N	1386000	6150	266	526	69	c
+15451	\N	1388000	18	266	6	70	c
+15452	\N	1388000	4512	266	528	71	c
+15453	\N	1390000	4820	266	526	72	c
+15454	\N	1392000	6151	266	537	73	c
+15455	\N	1394000	6120	266	523	74	c
+15456	\N	1395000	77	266	4	75	c
+15457	\N	1397000	6152	266	526	76	c
+15458	\N	1400000	6153	266	539	77	c
+15459	\N	1403000	6154	266	532	78	c
+15460	\N	1404000	91	266	5	79	c
+15461	\N	1408000	6155	266	535	80	c
+15462	\N	1411000	89	266	5	81	c
+15463	\N	1413000	4487	266	534	82	c
+15464	\N	1413000	6121	266	534	83	c
+15465	\N	1416000	6156	266	526	84	c
+15466	\N	1422000	6157	266	533	85	c
+15467	\N	1422000	4792	266	533	86	c
+15468	\N	1424000	6158	266	524	87	c
+15469	\N	1428000	6159	266	523	88	c
+15470	\N	1434000	6160	266	536	89	c
+15471	\N	1435000	6161	266	538	90	c
+15472	\N	1438000	20	266	6	91	c
+15473	\N	1440000	92	266	5	92	c
+15474	\N	1444000	6162	266	533	93	c
+15475	\N	1449000	4819	266	526	94	c
+15476	\N	1449000	6122	266	529	95	c
+15477	\N	1451000	4556	266	523	96	c
+15478	\N	1457000	6163	266	527	97	c
+15479	\N	1463000	6164	266	524	98	c
+15480	\N	1464000	6165	266	535	99	c
+15481	\N	1465000	6166	266	524	100	c
+15482	\N	1467000	6167	266	536	101	c
+15483	\N	1471000	94	266	5	102	c
+15484	\N	1473000	5301	266	59	103	c
+15485	\N	1477000	2581	266	60	104	c
+15486	\N	1479000	21	266	6	105	c
+15487	\N	1481000	2578	266	60	106	c
+15488	\N	1484000	6168	266	531	107	c
+15489	\N	1486000	6169	266	530	108	c
+15490	\N	1488000	6170	266	539	109	c
+15491	\N	1490000	6171	266	538	110	c
+15492	\N	1493000	2583	266	60	111	c
+15493	\N	1494000	6172	266	526	112	c
+15494	\N	1496000	6173	266	531	113	c
+15495	\N	1496000	4696	266	532	114	c
+15496	\N	1498000	6174	266	523	115	c
+15497	\N	1500000	6175	266	537	116	c
+15498	\N	1507000	93	266	5	117	c
+15499	\N	1516000	6176	266	537	118	c
+15500	\N	1523000	6177	266	535	119	c
+15501	\N	1529000	6178	266	537	120	c
+15502	\N	1534000	4699	266	532	121	c
+15503	\N	1537000	6179	266	524	122	c
+15504	\N	1543000	6180	266	534	123	c
+15505	\N	1545000	6181	266	534	124	c
+15506	\N	1547000	6182	266	530	125	c
+15507	\N	1549000	6183	266	531	126	c
+15508	\N	1551000	6184	266	535	127	c
+15509	\N	1555000	6185	266	524	128	c
+15510	\N	1558000	6186	266	539	129	c
+15511	\N	1564000	6187	266	528	130	c
+15512	\N	1584000	6188	266	532	131	c
+15513	\N	1597000	6189	266	59	132	c
+15514	\N	1601000	2713	266	60	133	c
+15515	\N	1602000	6190	266	531	134	c
+15516	\N	1625000	6191	266	539	135	c
+15517	\N	1626000	6192	266	527	136	c
+15518	\N	1682000	6193	266	529	137	c
+15519	\N	1686000	6194	266	524	138	c
+15520	\N	1689000	2584	266	63	139	c
+15521	\N	1899000	2586	266	59	140	c
+15522	\N	1902000	6195	266	539	141	c
+15523	\N	1910000	6196	266	539	142	c
+15524	\N	1946000	6197	266	525	143	c
+15525	\N	1953000	6198	266	527	144	c
+15526	\N	1987000	6199	266	539	145	c
+15527	\N	2079000	6200	266	538	146	c
+15528	\N	2207000	4679	266	525	147	c
+15529	\N	2600000	2572	266	60	148	c
+15530	\N	934000	1501	267	48	1	c
+15531	\N	946000	203	267	36	2	c
+15532	\N	958000	202	267	42	3	c
+15533	\N	970000	6204	267	540	4	c
+15534	\N	971000	5201	267	37	5	c
+15535	\N	971000	6215	267	548	6	c
+15536	\N	987000	1511	267	52	7	c
+15537	\N	992000	6216	267	546	8	c
+15538	\N	998000	6217	267	544	9	c
+15539	\N	998000	204	267	35	10	c
+15540	\N	999000	1523	267	44	11	c
+15541	\N	1001000	5291	267	42	12	c
+15542	\N	1007000	1554	267	48	13	c
+15543	\N	1013000	208	267	42	14	c
+15544	\N	1014000	214	267	42	15	c
+15545	\N	1017000	6205	267	52	16	c
+15546	\N	1020000	6206	267	547	17	c
+15547	\N	1020000	210	267	42	18	c
+15548	\N	1026000	1561	267	48	19	c
+15549	\N	1027000	4721	267	545	20	c
+15550	\N	1029000	1539	267	54	21	c
+15551	\N	1031000	6218	267	550	22	c
+15552	\N	1031000	209	267	35	23	c
+15553	\N	1033000	1570	267	54	24	c
+15554	\N	1035000	1568	267	52	25	c
+15555	\N	1035000	213	267	37	26	c
+15556	\N	1037000	217	267	36	27	c
+15557	\N	1038000	6219	267	545	28	c
+15558	\N	1040000	6220	267	545	29	c
+15559	\N	1041000	219	267	42	30	c
+15560	\N	1044000	6221	267	552	31	c
+15561	\N	1046000	1584	267	52	32	c
+15562	\N	1047000	4710	267	549	33	c
+15563	\N	1048000	211	267	42	34	c
+15564	\N	1050000	1540	267	52	35	c
+15565	\N	1051000	4371	267	37	36	c
+15566	\N	1052000	1551	267	54	37	c
+15567	\N	1054000	6222	267	540	38	c
+15568	\N	1055000	1583	267	54	39	c
+15569	\N	1060000	6223	267	540	40	c
+15570	\N	1062000	5187	267	37	41	c
+15571	\N	1064000	6207	267	545	42	c
+15572	\N	1064000	221	267	37	43	c
+15573	\N	1068000	6224	267	544	44	c
+15574	\N	1071000	6225	267	550	45	c
+15575	\N	1072000	6226	267	551	46	c
+15576	\N	1073000	5198	267	52	47	c
+15577	\N	1075000	6227	267	543	48	c
+15578	\N	1075000	6228	267	546	49	c
+15579	\N	1076000	6229	267	540	50	c
+15580	\N	1078000	4631	267	552	51	c
+15581	\N	1079000	4546	267	540	52	c
+15582	\N	1080000	1574	267	48	53	c
+15583	\N	1082000	227	267	35	54	c
+15584	\N	1083000	4502	267	544	55	c
+15585	\N	1084000	6230	267	553	56	c
+15586	\N	1086000	6231	267	551	57	c
+15587	\N	1087000	6232	267	543	58	c
+15588	\N	1088000	6233	267	548	59	c
+15589	\N	1089000	6234	267	544	60	c
+15590	\N	1091000	6235	267	546	61	c
+15591	\N	1094000	1572	267	54	62	c
+15592	\N	1094000	226	267	35	63	c
+15593	\N	1096000	228	267	37	64	c
+15594	\N	1102000	223	267	37	65	c
+15595	\N	1104000	6208	267	552	66	c
+15596	\N	1105000	6236	267	553	67	c
+15597	\N	1108000	1601	267	44	68	c
+15598	\N	1108000	6237	267	551	69	c
+15599	\N	1109000	6201	267	548	70	c
+15600	\N	1109000	1588	267	54	71	c
+15601	\N	1110000	6238	267	52	72	c
+15602	\N	1112000	1591	267	54	73	c
+15603	\N	1112000	6239	267	552	74	c
+15604	\N	1120000	6240	267	551	75	c
+15605	\N	1121000	247	267	36	76	c
+15606	\N	1124000	4547	267	540	77	c
+15607	\N	1124000	6241	267	541	78	c
+15608	\N	1124000	6209	267	547	79	c
+15609	\N	1127000	4548	267	540	80	c
+15610	\N	1128000	6242	267	550	81	c
+15611	\N	1128000	6243	267	545	82	c
+15612	\N	1128000	4505	267	544	83	c
+15613	\N	1128000	4503	267	544	84	c
+15614	\N	1130000	4687	267	547	85	c
+15615	\N	1131000	4650	267	546	86	c
+15616	\N	1131000	6244	267	552	87	c
+15617	\N	1134000	4632	267	552	88	c
+15618	\N	1134000	6245	267	549	89	c
+15619	\N	1137000	252	267	36	90	c
+15620	\N	1137000	239	267	35	91	c
+15621	\N	1137000	6246	267	542	92	c
+15622	\N	1139000	6247	267	542	93	c
+15623	\N	1139000	6210	267	546	94	c
+15624	\N	1140000	1598	267	48	95	c
+15625	\N	1144000	6248	267	544	96	c
+15626	\N	1147000	256	267	36	97	c
+15627	\N	1149000	249	267	35	98	c
+15628	\N	1152000	1592	267	44	99	c
+15629	\N	1153000	253	267	36	100	c
+15630	\N	1154000	1599	267	44	101	c
+15631	\N	1155000	6249	267	550	102	c
+15632	\N	1156000	1611	267	48	103	c
+15633	\N	1158000	6250	267	548	104	c
+15634	\N	1161000	6251	267	542	105	c
+15635	\N	1163000	6252	267	553	106	c
+15636	\N	1166000	1597	267	44	107	c
+15637	\N	1167000	4652	267	546	108	c
+15638	\N	1167000	6211	267	547	109	c
+15639	\N	1169000	1608	267	48	110	c
+15640	\N	1170000	6253	267	550	111	c
+15641	\N	1172000	6254	267	550	112	c
+15642	\N	1175000	6255	267	547	113	c
+15643	\N	1176000	4669	267	542	114	c
+15644	\N	1177000	6256	267	546	115	c
+15645	\N	1177000	6212	267	548	116	c
+15646	\N	1178000	245	267	35	117	c
+15647	\N	1181000	5197	267	44	118	c
+15648	\N	1186000	6202	267	542	119	c
+15649	\N	1188000	4606	267	550	120	c
+15650	\N	1190000	1604	267	44	121	c
+15651	\N	1192000	261	267	36	122	c
+15652	\N	1195000	6203	267	548	123	c
+15653	\N	1199000	6257	267	551	124	c
+15654	\N	1212000	6213	267	542	125	c
+15655	\N	1214000	6258	267	547	126	c
+15656	\N	1214000	6259	267	541	127	c
+15657	\N	1220000	6260	267	545	128	c
+15658	\N	1222000	6261	267	545	129	c
+15659	\N	1225000	6262	267	552	130	c
+15660	\N	1226000	6214	267	547	131	c
+15661	\N	1251000	4463	267	548	132	c
+15662	\N	1260000	6263	267	553	133	c
+15663	\N	1263000	6264	267	543	134	c
+15664	\N	1263000	6265	267	542	135	c
+15665	\N	1281000	6266	267	549	136	c
+15666	\N	1283000	6267	267	541	137	c
+15667	\N	1301000	6268	267	543	138	c
+15668	\N	1305000	6269	267	541	139	c
+15669	\N	1346000	6270	267	553	140	c
+15670	\N	1350000	6271	267	549	141	c
+15671	\N	1352000	6272	267	549	142	c
+15672	\N	1420000	6273	267	543	143	c
+15673	\N	1441000	6274	267	553	144	c
+15674	\N	1479000	6275	267	541	145	c
+15675	\N	1508000	6276	267	543	146	c
+15676	\N	1556000	6277	267	541	147	c
+15677	\N	1776000	6278	267	543	148	c
+1	3	1286000	1	1	9	11	c
+4	1	1683000	4	1	9	97	c
+21	32	1524000	21	1	6	62	c
+37	57	1678000	37	1	3	93	c
+52	62	1707000	52	1	8	100	c
+67	73	1539000	67	1	1	69	c
+83	92	1654000	83	1	4	88	c
+98	119	1921000	98	1	5	114	c
+113	129	1443000	113	1	2	44	c
+17	19	1449000	5155	1	6	45	c
+1004	619	1183000	1005	2	26	3	c
+1022	686	1263000	1023	2	32	21	c
+1033	605	1304000	1034	2	23	32	c
+1049	505	1341000	1050	2	29	48	c
+1065	429	1372000	1066	2	13	64	c
+1081	439	1405000	1082	2	27	80	c
+1096	660	1451000	1097	2	34	95	c
+1111	459	1586000	1112	2	14	110	c
+1045	471	1334000	5331	2	15	45	c
+2004	489	1387000	1120	3	29	3	c
+2019	413	1449000	1135	3	13	18	c
+2034	677	1485000	1150	3	33	33	c
+2051	499	1520000	1167	3	29	51	c
+2067	486	1562000	1183	3	29	66	c
+2082	454	1619000	1198	3	14	81	c
+2095	647	1712000	1211	3	25	94	c
+208	249	1081000	208	4	42	8	c
+226	270	1160000	226	4	35	26	c
+244	154	1219000	244	4	40	44	c
+260	192	1274000	260	4	38	60	c
+275	200	1308000	275	4	38	75	c
+292	183	1361000	292	4	41	92	c
+309	281	1465000	309	4	35	109	c
+324	297	1712000	324	4	36	124	c
+288	208	1349000	5173	4	37	88	c
+1509	580	1031000	1509	5	53	10	c
+1524	372	1088000	1524	5	45	25	c
+1539	620	1118000	1539	5	54	40	c
+1551	616	1136000	1551	5	54	53	c
+1554	430	1139000	1554	5	48	55	c
+1569	378	1156000	1569	5	46	70	c
+1586	488	1183000	1586	5	50	87	c
+1601	330	1246000	1601	5	44	102	c
+1502	583	989000	5638	5	53	3	c
+1616	475	1124000	1616	6	49	3	c
+1634	471	1187000	1634	6	49	22	c
+1651	315	1213000	1651	6	43	40	c
+1668	671	1234000	1668	6	57	56	c
+1630	588	1182000	5202	6	53	18	c
+1691	564	1270000	1691	6	52	79	c
+1693	512	1271000	1693	6	50	81	c
+1710	627	1300000	1710	6	55	98	c
+1729	563	1328000	1729	6	52	119	c
+1745	387	1350000	1745	6	46	133	c
+1761	660	1375000	1761	6	56	149	c
+1777	354	1398000	1777	6	45	165	c
+1794	676	1432000	1794	6	57	182	c
+1810	551	1480000	1810	6	51	198	c
+1812	450	1483000	5334	6	49	200	c
+1839	613	1565000	1839	6	54	227	c
+1855	630	1736000	1855	6	55	243	c
+1688	374	1267000	5227	6	45	76	c
+1802	487	1462000	5616	6	50	190	c
+1711	360	1303000	5640	6	45	99	c
+3005	124	1243000	2505	7	61	6	c
+3022	200	1317000	2522	7	64	23	c
+3038	66	1370000	1057	7	15	39	c
+3053	9	1429000	2553	7	59	54	c
+3068	79	1489000	2568	7	60	69	c
+3084	190	1946000	2584	7	63	85	c
+3097	199	1428000	2597	8	64	10	c
+3112	197	1478000	2612	8	64	25	c
+3128	99	1505000	1132	8	17	41	c
+3145	117	1542000	2645	8	61	58	c
+3161	59	1583000	1171	8	15	74	c
+3176	140	1624000	2676	8	61	89	c
+3191	73	1682000	2691	8	15	104	c
+3208	220	1790000	2708	8	23	121	c
+3225	186	1911000	2725	8	62	138	c
+3140	16	1538000	5805	8	13	53	c
+3503	274	991000	1500	9	53	4	c
+3518	282	1048000	1513	9	53	19	c
+3533	381	1091000	2833	9	125	34	c
+3547	162	1109000	1552	9	47	48	c
+3550	314	1111000	2850	9	127	51	c
+3565	256	1131000	1553	9	51	66	c
+3581	174	1151000	1542	9	47	82	c
+3596	213	1217000	2896	9	122	97	c
+3598	154	1221000	5321	9	46	99	c
+3626	378	1143000	2926	10	125	16	c
+3643	275	1175000	1643	10	53	33	c
+3659	252	1192000	1678	10	51	49	c
+3671	187	1212000	2971	10	121	61	c
+3688	204	1256000	2988	10	122	78	c
+3704	385	1291000	3004	10	125	94	c
+3721	307	1319000	3021	10	123	111	c
+3737	131	1403000	3037	10	120	127	c
+3752	334	1541000	3052	10	57	142	c
+16694	\N	984000	3326	282	379	14	c
+16695	\N	986000	6386	282	401	15	c
+16696	\N	992000	5178	282	444	16	c
+16697	\N	994000	3539	282	400	17	c
+16698	\N	997000	3701	282	407	18	c
+16699	\N	997000	3568	282	400	19	c
+16700	\N	997000	3905	282	418	20	c
+16701	\N	999000	3846	282	405	21	c
+16702	\N	999000	6380	282	415	22	c
+16703	\N	1002000	3252	282	490	23	c
+16704	\N	1003000	5680	282	416	24	c
+16705	\N	1011000	6387	282	407	25	c
+16706	\N	1014000	5164	282	416	26	c
+16707	\N	1014000	3561	282	400	27	c
+16708	\N	1016000	3864	282	405	28	c
+16709	\N	1016000	3767	282	412	29	c
+16710	\N	1017000	3560	282	400	30	c
+16711	\N	1019000	6388	282	412	31	c
+16712	\N	1019000	3705	282	407	32	c
+16713	\N	1025000	3064	282	490	33	c
+16714	\N	1026000	3651	282	416	34	c
+16715	\N	1027000	3835	282	405	35	c
+16716	\N	1030000	3066	282	490	36	c
+16717	\N	1032000	3529	282	400	37	c
+16718	\N	1034000	3478	282	415	38	c
+16719	\N	1034000	3624	282	410	39	c
+16720	\N	1039000	3914	282	418	40	c
+16721	\N	1039000	5681	282	416	41	c
+16722	\N	1042000	6279	282	416	42	c
+16723	\N	1043000	4008	282	401	43	c
+16724	\N	1046000	5713	282	490	44	c
+15678	\N	1051000	3073	268	447	1	c
+15679	\N	1055000	5164	268	416	2	c
+15680	\N	1059000	5680	268	416	3	c
+15681	\N	1059000	3106	268	492	4	c
+15682	\N	1066000	3087	268	447	5	c
+15683	\N	1070000	3326	268	379	6	c
+15684	\N	1072000	4574	268	495	7	c
+15685	\N	1087000	4044	268	447	8	c
+15686	\N	1090000	4938	268	492	9	c
+15687	\N	1094000	5780	268	447	10	c
+15688	\N	1100000	3651	268	416	11	c
+15689	\N	1105000	6279	268	416	12	c
+15690	\N	1114000	3077	268	447	13	c
+15691	\N	1123000	3680	268	416	14	c
+15692	\N	1133000	4576	268	495	15	c
+15693	\N	1137000	5716	268	492	16	c
+15694	\N	1149000	3107	268	492	17	c
+15695	\N	1152000	5705	268	492	18	c
+15696	\N	1159000	4933	268	492	19	c
+15697	\N	1171000	5373	268	447	20	c
+15698	\N	1178000	3981	268	379	21	c
+15699	\N	1180000	3644	268	416	22	c
+15700	\N	1193000	3072	268	447	23	c
+15701	\N	1193000	5387	268	447	24	c
+15702	\N	1209000	5276	268	379	25	c
+15703	\N	1212000	5682	268	416	26	c
+15704	\N	1224000	5490	268	492	27	c
+15705	\N	1240000	3643	268	416	28	c
+15706	\N	1244000	5267	268	379	29	c
+15707	\N	1248000	5684	268	416	30	c
+15708	\N	1258000	5744	268	379	31	c
+15709	\N	1265000	5668	268	379	32	c
+15711	\N	1321000	5667	268	379	34	c
+15712	\N	1341000	3237	268	495	35	c
+15713	\N	1344000	3229	268	495	36	c
+15714	\N	1348000	5662	268	379	37	c
+15715	\N	1440000	5401	268	495	38	c
+15716	\N	1542000	5233	268	495	39	c
+15717	\N	1635000	5799	268	495	40	c
+15718	\N	1209000	5776	269	447	1	c
+15719	\N	1210000	4041	269	447	2	c
+15720	\N	1224000	3071	269	447	3	c
+15721	\N	1234000	5831	269	447	4	c
+15722	\N	1238000	5388	269	447	5	c
+15723	\N	1240000	5376	269	447	6	c
+15724	\N	1243000	5707	269	492	7	c
+15725	\N	1255000	4937	269	492	8	c
+15726	\N	1265000	5782	269	447	9	c
+15727	\N	1280000	5721	269	492	10	c
+15728	\N	1280000	4039	269	447	11	c
+15729	\N	1285000	5266	269	379	12	c
+15730	\N	1290000	5710	269	492	13	c
+15731	\N	1322000	4935	269	492	14	c
+15732	\N	1342000	5783	269	447	15	c
+15733	\N	1354000	5784	269	447	16	c
+15734	\N	1356000	3331	269	379	17	c
+15735	\N	1358000	5778	269	447	18	c
+15736	\N	1360000	3323	269	379	19	c
+15737	\N	1361000	3113	269	492	20	c
+15738	\N	1374000	4936	269	492	21	c
+15739	\N	1390000	3982	269	379	22	c
+15740	\N	1404000	3076	269	447	23	c
+15741	\N	1408000	4578	269	495	24	c
+15742	\N	1413000	5711	269	492	25	c
+15743	\N	1414000	5837	269	492	26	c
+15744	\N	1417000	5399	269	492	27	c
+15745	\N	1422000	5785	269	447	28	c
+15746	\N	1430000	5786	269	447	29	c
+15747	\N	1435000	5699	269	492	30	c
+15748	\N	1455000	5798	269	495	31	c
+15749	\N	1456000	5804	269	379	32	c
+15750	\N	1457000	5396	269	447	33	c
+15751	\N	1495000	3110	269	492	34	c
+15752	\N	1498000	5386	269	379	35	c
+15753	\N	1524000	5788	269	447	36	c
+15754	\N	1530000	5384	269	447	37	c
+15755	\N	1540000	3976	269	379	38	c
+15756	\N	1548000	5489	269	492	39	c
+15757	\N	1548000	3109	269	492	40	c
+15758	\N	1548000	3977	269	379	41	c
+15759	\N	1553000	5840	269	492	42	c
+15760	\N	1599000	3978	269	379	43	c
+15761	\N	1644000	5271	269	379	44	c
+15762	\N	1664000	5730	269	492	45	c
+15763	\N	1704000	5832	269	447	46	c
+15764	\N	1778000	5845	269	495	47	c
+15765	\N	1853000	5800	269	495	48	c
+15766	\N	1892000	6283	269	492	49	c
+15767	\N	2005000	5802	269	495	50	c
+15768	\N	2587000	6282	269	379	51	c
+15769	\N	962000	3073	270	447	1	c
+15770	\N	965000	5494	270	497	2	c
+15771	\N	975000	3087	270	447	3	c
+15772	\N	976000	5735	270	376	4	c
+15773	\N	987000	5780	270	447	5	c
+15774	\N	982000	4117	270	376	6	c
+15775	\N	995000	3086	270	447	7	c
+15776	\N	1014000	4109	270	376	8	c
+15777	\N	1022000	5732	270	376	9	c
+15778	\N	1032000	4044	270	447	10	c
+15779	\N	1039000	3077	270	447	11	c
+15780	\N	1042000	4971	270	441	12	c
+15781	\N	1043000	1643	270	376	13	c
+15782	\N	1049000	3072	270	447	14	c
+15783	\N	1063000	4116	270	376	16	c
+15784	\N	1067000	4118	270	376	17	c
+15785	\N	1072000	3158	270	497	18	c
+15786	\N	1087000	3156	270	497	19	c
+15787	\N	1098000	5174	270	497	20	c
+15788	\N	1102000	3070	270	447	21	c
+15789	\N	1106000	3299	270	441	22	c
+15790	\N	1112000	5213	270	376	23	c
+15791	\N	1116000	5302	270	441	24	c
+15792	\N	1120000	4098	270	497	25	c
+15793	\N	1136000	4111	270	376	26	c
+15794	\N	1145000	4110	270	376	27	c
+15795	\N	1151000	4099	270	497	28	c
+15796	\N	1154000	1697	270	497	29	c
+15797	\N	1155000	4968	270	441	30	c
+15798	\N	1170000	5508	270	441	31	c
+15799	\N	1173000	5495	270	441	32	c
+15800	\N	1187000	5751	270	441	33	c
+15801	\N	1193000	5305	270	441	34	c
+15802	\N	1075000	5736	271	376	1	c
+15803	\N	1083000	5373	271	447	2	c
+15804	\N	1091000	5387	271	447	3	c
+15805	\N	1106000	5776	271	447	4	c
+15806	\N	1108000	4041	271	447	5	c
+15807	\N	1122000	3071	271	447	6	c
+15808	\N	1123000	5831	271	447	7	c
+15809	\N	1133000	5388	271	447	8	c
+15810	\N	1138000	3142	271	376	9	c
+15811	\N	1142000	4042	271	447	10	c
+15812	\N	1145000	5376	271	447	11	c
+15813	\N	1147000	5737	271	376	12	c
+15814	\N	1148000	4114	271	376	13	c
+15815	\N	1149000	5419	271	497	14	c
+15816	\N	1157000	5803	271	376	15	c
+15817	\N	1160000	3079	271	447	16	c
+15818	\N	1166000	5782	271	447	17	c
+15819	\N	1169000	5688	271	497	18	c
+15820	\N	1193000	5689	271	497	19	c
+15821	\N	1194000	5783	271	447	20	c
+15822	\N	1200000	5781	271	447	21	c
+15823	\N	1201000	5307	271	441	22	c
+15824	\N	1203000	5784	271	447	23	c
+15825	\N	1204000	5536	271	376	24	c
+15826	\N	1204000	5739	271	376	25	c
+15827	\N	1207000	4113	271	376	26	c
+15828	\N	1217000	5754	271	441	27	c
+15829	\N	1218000	6284	271	376	28	c
+15830	\N	1220000	4962	271	441	29	c
+15831	\N	1224000	5790	271	447	30	c
+15832	\N	1233000	4963	271	441	31	c
+15833	\N	1238000	5517	271	497	32	c
+15834	\N	1247000	4039	271	447	33	c
+15835	\N	1253000	4102	271	497	34	c
+15836	\N	1255000	5778	271	447	35	c
+15837	\N	1256000	5389	271	447	36	c
+15838	\N	1258000	5731	271	376	37	c
+15839	\N	1272000	5755	271	441	38	c
+15840	\N	1275000	5733	271	376	39	c
+15841	\N	1277000	5844	271	497	40	c
+15842	\N	1278000	3292	271	441	41	c
+15843	\N	1301000	3294	271	441	42	c
+15844	\N	1303000	5786	271	447	43	c
+15845	\N	1307000	5785	271	447	44	c
+15846	\N	1330000	5826	271	447	45	c
+15847	\N	1338000	4965	271	441	46	c
+15848	\N	1340000	5825	271	447	47	c
+15849	\N	1342000	5679	271	497	48	c
+15850	\N	1349000	5833	271	441	49	c
+15851	\N	1353000	5396	271	447	50	c
+15852	\N	1361000	4967	271	441	51	c
+15853	\N	1372000	5384	271	447	52	c
+15854	\N	1383000	5677	271	497	53	c
+15855	\N	1425000	5839	271	441	54	c
+15856	\N	1450000	5788	271	447	55	c
+15857	\N	1056000	5735	272	376	1	c
+15858	\N	1064000	4117	272	376	2	c
+15859	\N	1070000	3065	272	490	3	c
+15860	\N	1091000	4109	272	376	4	c
+15861	\N	1099000	1643	272	376	5	c
+15862	\N	1104000	3066	272	490	6	c
+15863	\N	1107000	4585	272	439	7	c
+15864	\N	1108000	5732	272	376	8	c
+15865	\N	1112000	5713	272	490	9	c
+15866	\N	1116000	5655	272	442	10	c
+15867	\N	1125000	3954	272	490	11	c
+15868	\N	1127000	3064	272	490	12	c
+15869	\N	1137000	3068	272	490	13	c
+15870	\N	1149000	3252	272	490	14	c
+15871	\N	1164000	5241	272	490	15	c
+15872	\N	1171000	4111	272	376	16	c
+15873	\N	1177000	5715	272	490	17	c
+15874	\N	1179000	5213	272	376	18	c
+15875	\N	1189000	4116	272	376	19	c
+15876	\N	1190000	4586	272	439	20	c
+15877	\N	1190000	5314	272	442	21	c
+15878	\N	1212000	4118	272	376	22	c
+15879	\N	1235000	3053	272	490	23	c
+15880	\N	1241000	3056	272	490	24	c
+15881	\N	1249000	5629	272	442	25	c
+15882	\N	1253000	4986	272	442	26	c
+15883	\N	1290000	5663	272	439	27	c
+15884	\N	1308000	3266	272	439	28	c
+15885	\N	1313000	5323	272	442	29	c
+15886	\N	1320000	4582	272	439	30	c
+15887	\N	1330000	4977	272	442	31	c
+15888	\N	1340000	5214	272	439	32	c
+15889	\N	1352000	5656	272	442	33	c
+15890	\N	1359000	5670	272	439	34	c
+15891	\N	1627000	4581	272	439	35	c
+15892	\N	1182000	5736	273	376	1	c
+15893	\N	1200000	3058	273	490	2	c
+15894	\N	1201000	4110	273	376	3	c
+15895	\N	1217000	5704	273	490	4	c
+15896	\N	1220000	3955	273	490	5	c
+15897	\N	1222000	3062	273	490	6	c
+15898	\N	1226000	6285	273	376	7	c
+15899	\N	1226000	5737	273	376	8	c
+15900	\N	1235000	5536	273	376	9	c
+15901	\N	1246000	3142	273	376	10	c
+15902	\N	1259000	5700	273	490	11	c
+15903	\N	1282000	4113	273	376	12	c
+15904	\N	1284000	4114	273	376	13	c
+15905	\N	1286000	5803	273	376	14	c
+15906	\N	1287000	5709	273	490	15	c
+15907	\N	1293000	5739	273	376	16	c
+15908	\N	1301000	3950	273	490	17	c
+15909	\N	1324000	5228	273	376	18	c
+15910	\N	1346000	5702	273	490	19	c
+15911	\N	1347000	3055	273	490	20	c
+15912	\N	1349000	3952	273	490	21	c
+15913	\N	1351000	5741	273	376	22	c
+15914	\N	1366000	5731	273	376	23	c
+15915	\N	1382000	4589	273	439	24	c
+15916	\N	1384000	5701	273	490	25	c
+15917	\N	1394000	5723	273	490	26	c
+15918	\N	1405000	5748	273	490	27	c
+15919	\N	1409000	5726	273	490	28	c
+15920	\N	1434000	5792	273	442	29	c
+15921	\N	1453000	3061	273	490	30	c
+15922	\N	1458000	4978	273	442	31	c
+15923	\N	1459000	5657	273	442	32	c
+15924	\N	1480000	3951	273	490	33	c
+15925	\N	1512000	5750	273	490	34	c
+15926	\N	1515000	5733	273	376	35	c
+15927	\N	1549000	5842	273	442	36	c
+15928	\N	1559000	5243	273	490	37	c
+15929	\N	1598000	5841	273	442	38	c
+15930	\N	1613000	5843	273	442	39	c
+15931	\N	1615000	5669	273	439	40	c
+15932	\N	1616000	5753	273	439	41	c
+15933	\N	1667000	3141	273	376	42	c
+15934	\N	1667000	5671	273	439	43	c
+15935	\N	1668000	5317	273	442	44	c
+15936	\N	1684000	5429	273	376	45	c
+15937	\N	1714000	5793	273	442	46	c
+15938	\N	1717000	5257	273	490	47	c
+15939	\N	1760000	5407	273	439	48	c
+15940	\N	1845000	4983	273	442	49	c
+15941	\N	2006000	5779	273	442	50	c
+15942	\N	2118000	5752	273	439	51	c
+15943	\N	2270000	5834	273	442	52	c
+15944	\N	1023000	5263	274	377	1	c
+15945	\N	1032000	5734	274	381	2	c
+15946	\N	1038000	5181	274	381	3	c
+15947	\N	1041000	3326	274	379	4	c
+15948	\N	1041000	3065	274	490	5	c
+15949	\N	1065000	4209	274	381	6	c
+15950	\N	1082000	3064	274	490	7	c
+15951	\N	1083000	4214	274	381	8	c
+15952	\N	1085000	5713	274	490	9	c
+15953	\N	1106000	3066	274	490	10	c
+15954	\N	1110000	3954	274	490	11	c
+15955	\N	1125000	5276	274	379	12	c
+15957	\N	1135000	5241	274	490	14	c
+15959	\N	1141000	4213	274	381	16	c
+15960	\N	1151000	3053	274	490	17	c
+15961	\N	1155000	3068	274	490	18	c
+15962	\N	1172000	3981	274	379	19	c
+15963	\N	1172000	3409	274	377	20	c
+15964	\N	1183000	3056	274	490	21	c
+15965	\N	1189000	5715	274	490	22	c
+15966	\N	1196000	4204	274	381	23	c
+15967	\N	1213000	3955	274	490	24	c
+15968	\N	1226000	3062	274	490	25	c
+15969	\N	1251000	5700	274	490	26	c
+15970	\N	1255000	5169	274	377	27	c
+15971	\N	1257000	5278	274	381	28	c
+15972	\N	1269000	5404	274	377	29	c
+15973	\N	1273000	3055	274	490	30	c
+15974	\N	1274000	3950	274	490	31	c
+15975	\N	1275000	5667	274	379	32	c
+15976	\N	1276000	5105	274	377	33	c
+15977	\N	1276000	5267	274	379	34	c
+15978	\N	1284000	5701	274	490	35	c
+15979	\N	1298000	5709	274	490	36	c
+15980	\N	1308000	3388	274	381	37	c
+15981	\N	1314000	5266	274	379	38	c
+15982	\N	1317000	3061	274	490	39	c
+15983	\N	1318000	5706	274	490	40	c
+15984	\N	1323000	5603	274	490	41	c
+15985	\N	1329000	3952	274	490	42	c
+15986	\N	1330000	3331	274	379	43	c
+15987	\N	1337000	5702	274	490	44	c
+15988	\N	1341000	5723	274	490	45	c
+15989	\N	1342000	5835	274	377	46	c
+15990	\N	1345000	5726	274	490	47	c
+15991	\N	1320000	3387	274	381	48	c
+15992	\N	1356000	3323	274	379	49	c
+15993	\N	1359000	5748	274	490	50	c
+15994	\N	1360000	5662	274	379	51	c
+15995	\N	1370000	5712	274	490	52	c
+15996	\N	1384000	5740	274	381	53	c
+15997	\N	1424000	5613	274	379	54	c
+15998	\N	1437000	5243	274	490	55	c
+15999	\N	1449000	5804	274	379	56	c
+16000	\N	1476000	3951	274	490	57	c
+16001	\N	1482000	5750	274	490	58	c
+16002	\N	1483000	5836	274	377	59	c
+16003	\N	1531000	5103	274	377	60	c
+16004	\N	1545000	3976	274	379	61	c
+16005	\N	1592000	5271	274	379	62	c
+16006	\N	1656000	3977	274	379	63	c
+16007	\N	1683000	5257	274	490	64	c
+16008	\N	1686000	5374	274	379	65	c
+16009	\N	2395000	6282	274	379	66	c
+15958	\N	1138000	6286	274	377	15	c
+16010	\N	1073000	3106	275	492	1	c
+16011	\N	1103000	5178	275	444	2	c
+16012	\N	1123000	3255	275	374	3	c
+16013	\N	1145000	4938	275	492	4	c
+16014	\N	1161000	4522	275	374	5	c
+16015	\N	1161000	5763	275	444	6	c
+16016	\N	1163000	5705	275	492	7	c
+16017	\N	1168000	3884	275	444	8	c
+16018	\N	1201000	3107	275	492	9	c
+16019	\N	1212000	5143	275	444	10	c
+16020	\N	1216000	4933	275	492	11	c
+16021	\N	1216000	5170	275	444	12	c
+16022	\N	1217000	5490	275	492	13	c
+16023	\N	1219000	3893	275	444	14	c
+16024	\N	1231000	3249	275	374	15	c
+16025	\N	1234000	4586	275	439	16	c
+16026	\N	1247000	5768	275	444	17	c
+16027	\N	1253000	4520	275	374	18	c
+16028	\N	1256000	4937	275	492	19	c
+16029	\N	1274000	5665	275	439	20	c
+16030	\N	1274000	5762	275	444	21	c
+16031	\N	1276000	3195	275	444	22	c
+16032	\N	1277000	5769	275	444	23	c
+16033	\N	1281000	5244	275	444	24	c
+16034	\N	1284000	4934	275	492	25	c
+16035	\N	1285000	5707	275	492	26	c
+16036	\N	1294000	5797	275	374	27	c
+16037	\N	1296000	5245	275	444	28	c
+16038	\N	1307000	5721	275	492	29	c
+16039	\N	1314000	5771	275	444	30	c
+16040	\N	1330000	3113	275	492	31	c
+16041	\N	1333000	4935	275	492	32	c
+16042	\N	1341000	3116	275	492	33	c
+16043	\N	1341000	5254	275	444	34	c
+16044	\N	1353000	5710	275	492	35	c
+16045	\N	1354000	3266	275	439	36	c
+16046	\N	1362000	4589	275	439	37	c
+16047	\N	1365000	5670	275	439	38	c
+16048	\N	1373000	3886	275	444	39	c
+16049	\N	1388000	4936	275	492	40	c
+16050	\N	1390000	4581	275	439	41	c
+16051	\N	1393000	4521	275	374	42	c
+16052	\N	1393000	5711	275	492	43	c
+16053	\N	1407000	5699	275	492	44	c
+16054	\N	1418000	5821	275	444	45	c
+16055	\N	1427000	5837	275	492	46	c
+16056	\N	1437000	5669	275	439	47	c
+16057	\N	1451000	5399	275	492	48	c
+16058	\N	1476000	4582	275	439	49	c
+16059	\N	1485000	5258	275	444	50	c
+16060	\N	1503000	5822	275	444	51	c
+16061	\N	1560000	5772	275	444	52	c
+16062	\N	1571000	5336	275	444	53	c
+16063	\N	1571000	5489	275	492	54	c
+16064	\N	1578000	3109	275	492	55	c
+16065	\N	1583000	5840	275	492	56	c
+16066	\N	1621000	3108	275	492	57	c
+16067	\N	1632000	5730	275	492	58	c
+16068	\N	1641000	5671	275	439	59	c
+16069	\N	1645000	5767	275	444	60	c
+16070	\N	1700000	5407	275	439	61	c
+16071	\N	1742000	5752	275	439	62	c
+16072	\N	1779000	5503	275	444	63	c
+16073	\N	1046000	3224	276	493	1	c
+16074	\N	1080000	3214	276	493	2	c
+16075	\N	1082000	1543	276	493	3	c
+16076	\N	1082000	4574	276	495	4	c
+16077	\N	1127000	5655	276	442	5	c
+16078	\N	1161000	4219	276	384	6	c
+16079	\N	1183000	5414	276	384	7	c
+16080	\N	1199000	3359	276	384	8	c
+16081	\N	1207000	4576	276	495	9	c
+16082	\N	1211000	5314	276	442	10	c
+16083	\N	1213000	3361	276	384	11	c
+16084	\N	1218000	5775	276	493	12	c
+16085	\N	1238000	5685	276	493	13	c
+16086	\N	1248000	5351	276	493	14	c
+16087	\N	1267000	3353	276	384	15	c
+16088	\N	1268000	5168	276	384	16	c
+16089	\N	1269000	3218	276	493	17	c
+16090	\N	1269000	5323	276	442	18	c
+16091	\N	1283000	3437	276	442	19	c
+16092	\N	1283000	4986	276	442	20	c
+16093	\N	1288000	5694	276	493	21	c
+16094	\N	1302000	4976	276	442	22	c
+16095	\N	1305000	5629	276	442	23	c
+16096	\N	1314000	5381	276	493	24	c
+16097	\N	1323000	4977	276	442	25	c
+16098	\N	1328000	4218	276	384	26	c
+16099	\N	1344000	5693	276	493	27	c
+16100	\N	1373000	5656	276	442	28	c
+16101	\N	1383000	3237	276	495	29	c
+16102	\N	1386000	3355	276	384	30	c
+16103	\N	1413000	5746	276	384	31	c
+16104	\N	1431000	3229	276	495	32	c
+16105	\N	1442000	5792	276	442	33	c
+16107	\N	1457000	5401	276	495	35	c
+16108	\N	1458000	4978	276	442	36	c
+16109	\N	1460000	5233	276	495	37	c
+16110	\N	1469000	5657	276	442	38	c
+16111	\N	1470000	5842	276	442	39	c
+16112	\N	1476000	5799	276	495	40	c
+16113	\N	1524000	5798	276	495	41	c
+16114	\N	1556000	5841	276	442	42	c
+16115	\N	1564000	5800	276	495	43	c
+16116	\N	1659000	5793	276	442	44	c
+16117	\N	1660000	5843	276	442	45	c
+16118	\N	1743000	5317	276	442	46	c
+16119	\N	1770000	4983	276	442	47	c
+16120	\N	1790000	5801	276	495	48	c
+16121	\N	1820000	5802	276	495	49	c
+16122	\N	1832000	5834	276	442	50	c
+16123	\N	1979000	5779	276	442	51	c
+16124	\N	2046000	4578	276	495	52	c
+16125	\N	998000	5494	277	497	1	c
+16126	\N	1003000	5734	277	381	2	c
+16127	\N	1051000	4209	277	381	3	c
+16128	\N	1052000	4219	277	384	4	c
+16129	\N	1076000	5181	277	381	5	c
+16130	\N	1088000	4522	277	374	6	c
+16131	\N	1091000	3255	277	374	7	c
+16132	\N	1099000	3158	277	497	8	c
+16133	\N	1105000	3156	277	497	9	c
+16134	\N	1130000	4214	277	381	10	c
+16135	\N	1134000	5175	277	381	11	c
+16136	\N	1137000	3249	277	374	12	c
+16137	\N	1143000	5174	277	497	13	c
+16138	\N	1144000	5414	277	384	14	c
+16139	\N	1151000	4098	277	497	15	c
+16140	\N	1161000	3361	277	384	16	c
+16141	\N	1161000	3363	277	384	17	c
+16142	\N	1162000	3353	277	384	18	c
+16143	\N	1163000	3359	277	384	19	c
+16144	\N	1169000	4099	277	497	20	c
+16145	\N	1176000	4213	277	381	21	c
+16146	\N	1190000	5168	277	384	22	c
+16147	\N	1201000	5419	277	497	23	c
+16148	\N	1214000	5688	277	497	24	c
+16149	\N	1221000	4521	277	374	25	c
+16150	\N	1228000	4096	277	497	26	c
+16151	\N	1228000	4520	277	374	27	c
+16152	\N	1247000	1697	277	497	28	c
+16153	\N	1249000	5689	277	497	29	c
+16154	\N	1261000	5279	277	381	30	c
+16155	\N	1272000	4102	277	497	31	c
+16156	\N	1272000	5517	277	497	32	c
+16157	\N	1279000	5797	277	374	33	c
+16158	\N	1281000	3355	277	384	34	c
+16159	\N	1292000	4218	277	384	35	c
+16160	\N	1296000	5673	277	497	36	c
+16161	\N	1301000	3388	277	381	37	c
+16162	\N	1314000	4220	277	384	38	c
+16163	\N	1319000	5844	277	497	39	c
+16164	\N	1323000	3387	277	381	40	c
+16165	\N	1330000	5696	277	497	41	c
+16167	\N	1347000	5352	277	497	43	c
+16168	\N	1385000	4101	277	497	44	c
+16169	\N	1409000	5677	277	497	45	c
+16170	\N	1447000	5679	277	497	46	c
+16171	\N	1480000	5747	277	384	47	c
+16172	\N	1486000	5678	277	497	48	c
+16173	\N	1557000	5838	277	497	49	c
+16174	\N	1655000	5697	277	497	50	c
+16175	\N	1684000	5408	277	497	51	c
+16176	\N	1769000	5674	277	497	52	c
+16106	\N	1442000	6367	276	384	34	c
+16166	\N	1340000	6367	277	384	42	c
+16725	\N	1047000	3849	282	405	45	c
+16726	\N	1047000	3623	282	410	46	c
+16727	\N	1049000	6389	282	418	47	c
+16728	\N	1053000	4012	282	401	48	c
+16729	\N	1056000	3680	282	416	49	c
+16730	\N	1060000	6381	282	412	50	c
+16731	\N	1062000	6382	282	410	51	c
+16732	\N	1064000	6390	282	407	52	c
+16733	\N	1068000	6391	282	410	53	c
+16734	\N	1069000	3954	282	490	54	c
+16735	\N	1071000	3970	282	480	55	c
+16736	\N	1074000	3917	282	418	56	c
+16737	\N	1077000	3649	282	416	57	c
+16738	\N	1079000	3915	282	418	58	c
+16739	\N	1080000	3772	282	412	59	c
+16740	\N	1080000	3704	282	407	60	c
+16741	\N	1081000	3591	282	410	61	c
+16742	\N	1082000	6392	282	405	62	c
+16743	\N	1082000	3768	282	412	63	c
+16744	\N	1083000	4023	282	420	64	c
+16745	\N	1091000	6383	282	407	65	c
+16746	\N	1091000	3053	282	490	66	c
+16747	\N	1092000	3770	282	412	67	c
+16748	\N	1093000	3912	282	418	68	c
+16749	\N	1094000	3893	282	444	69	c
+16750	\N	1097000	5276	282	379	70	c
+16751	\N	1100000	3833	282	405	71	c
+16752	\N	1102000	3818	282	402	72	c
+16753	\N	1104000	6393	282	402	73	c
+16754	\N	1110000	4021	282	420	74	c
+16755	\N	1116000	5170	282	444	75	c
+16756	\N	1118000	5763	282	444	76	c
+16757	\N	1120000	6394	282	401	77	c
+16758	\N	1123000	6379	282	420	78	c
+16759	\N	1124000	5267	282	379	79	c
+16760	\N	1125000	5153	282	444	80	c
+16761	\N	1126000	3911	282	418	81	c
+16215	\N	1070100	6365	278	377	39	c
+16762	\N	1127000	6395	282	402	82	c
+16763	\N	1129000	3981	282	379	83	c
+16764	\N	1133000	3884	282	444	84	c
+16765	\N	1141000	4014	282	401	85	c
+16766	\N	1144000	3816	282	402	86	c
+16767	\N	1148000	3850	282	405	87	c
+16768	\N	1149000	6378	282	480	88	c
+16769	\N	1154000	5768	282	444	89	c
+16770	\N	1154000	4924	282	480	90	c
+16771	\N	1161000	3800	282	402	91	c
+16772	\N	1170000	6396	282	480	92	c
+16773	\N	1183000	3968	282	480	93	c
+16774	\N	1195000	6397	282	420	94	c
+16775	\N	1199000	3957	282	480	95	c
+16776	\N	1206000	6384	282	420	96	c
+16777	\N	1209000	5668	282	379	97	c
+16778	\N	1213000	3817	282	402	98	c
+16177	\N	961800	5263	278	377	1	c
+16178	\N	970400	3224	278	493	2	c
+16179	\N	973400	3065	278	490	3	c
+16180	\N	975600	5494	278	497	4	c
+16181	\N	977600	3326	278	379	5	c
+16182	\N	978200	3073	278	447	6	c
+16183	\N	980100	5735	278	376	7	c
+16184	\N	980600	5734	278	381	8	c
+16185	\N	983000	3087	278	447	9	c
+16186	\N	986000	1543	278	493	10	c
+16187	\N	986000	5178	278	444	11	c
+16188	\N	993600	3106	278	492	12	c
+16189	\N	996500	3064	278	490	13	c
+16190	\N	998900	4574	278	495	14	c
+16191	\N	1001700	3214	278	493	15	c
+16192	\N	1003800	4117	278	376	16	c
+16193	\N	1010900	4209	278	381	17	c
+16194	\N	1012300	3086	278	447	18	c
+16195	\N	1013100	4109	278	376	19	c
+16196	\N	1013400	4585	278	439	20	c
+16197	\N	1016300	3066	278	490	21	c
+16198	\N	1016400	5780	278	447	22	c
+16199	\N	1017100	5181	278	381	23	c
+16200	\N	1019600	4044	278	447	24	c
+16201	\N	1025600	3252	278	490	25	c
+16202	\N	1033400	4116	278	376	26	c
+16203	\N	1039400	1643	278	376	27	c
+16204	\N	1044200	4214	278	381	28	c
+16205	\N	1045200	3255	278	374	29	c
+16206	\N	1046200	4219	278	384	30	c
+16207	\N	1048300	5732	278	376	31	c
+16208	\N	1051300	4522	278	374	32	c
+16209	\N	1054100	5713	278	490	33	c
+16210	\N	1055600	4938	278	492	34	c
+16211	\N	1063500	5655	278	442	35	c
+16212	\N	1065100	3954	278	490	36	c
+16213	\N	1066500	3156	278	497	37	c
+16214	\N	1069500	3077	278	447	38	c
+16216	\N	1071300	3158	278	497	40	c
+16217	\N	1072200	3249	278	374	41	c
+16218	\N	1073900	5175	278	381	42	c
+16219	\N	1074400	3299	278	441	43	c
+16220	\N	1074600	5174	278	497	44	c
+16221	\N	1082800	5170	278	444	45	c
+16222	\N	1082800	5716	278	492	46	c
+16223	\N	1082900	5763	278	444	47	c
+16224	\N	1084200	5414	278	384	48	c
+16225	\N	1085100	4576	278	495	49	c
+16226	\N	1088600	3361	278	384	50	c
+16227	\N	1091700	3359	278	384	51	c
+16228	\N	1092600	3107	278	492	52	c
+16229	\N	1093500	4971	278	441	53	c
+16230	\N	1094300	3068	278	490	54	c
+16231	\N	1094800	3981	278	379	55	c
+16232	\N	1095300	5267	278	379	56	c
+16233	\N	1095600	3409	278	377	57	c
+16234	\N	1098400	5705	278	492	58	c
+16235	\N	1102800	6286	278	377	59	c
+16236	\N	1105800	5683	278	493	60	c
+16237	\N	1108100	4586	278	439	61	c
+16238	\N	1108300	3884	278	444	62	c
+16239	\N	1108700	4098	278	497	63	c
+16240	\N	1109400	5351	278	493	64	c
+16241	\N	1110000	3072	278	447	65	c
+16242	\N	1111900	4111	278	376	66	c
+16243	\N	1112700	5314	278	442	67	c
+16244	\N	1112800	4969	278	441	68	c
+16245	\N	1114700	4213	278	381	69	c
+16246	\N	1116500	3363	278	384	70	c
+16247	\N	1117800	5775	278	493	71	c
+16248	\N	1125200	5276	278	379	72	c
+16249	\N	1128100	5143	278	444	73	c
+16250	\N	1130200	4933	278	492	74	c
+16251	\N	1137100	4099	278	497	75	c
+16252	\N	1137100	5153	278	444	76	c
+16253	\N	1147100	5744	278	379	77	c
+16254	\N	1150100	6287	278	377	78	c
+16255	\N	1151200	4520	278	374	79	c
+16256	\N	1155200	4968	278	441	80	c
+16257	\N	1158800	3353	278	384	81	c
+16258	\N	1159900	5419	278	497	82	c
+16259	\N	1163000	3218	278	493	83	c
+16260	\N	1170700	5663	278	439	84	c
+16261	\N	1173200	5490	278	492	85	c
+16262	\N	1176000	5302	278	441	86	c
+16263	\N	1179900	5629	278	442	87	c
+16264	\N	1181600	5404	278	377	88	c
+16265	\N	1183100	3893	278	444	89	c
+16266	\N	1183600	4986	278	442	90	c
+16267	\N	1186200	4521	278	374	91	c
+16268	\N	1187400	5495	278	441	92	c
+16269	\N	1188600	5323	278	442	93	c
+16270	\N	1192900	5169	278	377	94	c
+16271	\N	1196500	5168	278	384	95	c
+16272	\N	1196700	5266	278	379	96	c
+16273	\N	1196900	5665	278	439	97	c
+16274	\N	1215800	5508	278	441	98	c
+16275	\N	1218200	3982	278	379	99	c
+16276	\N	1226000	4976	278	442	100	c
+16277	\N	1228500	5279	278	381	101	c
+16278	\N	1229300	4582	278	439	102	c
+16279	\N	1230700	5797	278	374	103	c
+16280	\N	1238200	3237	278	495	104	c
+16281	\N	1241700	5214	278	439	105	c
+16282	\N	1258700	3437	278	442	106	c
+16283	\N	1266600	3266	278	439	107	c
+16284	\N	1270600	5401	278	495	108	c
+16285	\N	1293000	3229	278	495	109	c
+16286	\N	1314000	5233	278	495	110	c
+16287	\N	1372800	5798	278	495	111	c
+16779	\N	1222000	3790	282	402	99	c
+16780	\N	1229000	5667	282	379	100	c
+16781	\N	1234000	6398	282	401	101	c
+16782	\N	1242000	6399	282	420	102	c
+16783	\N	1247000	6400	282	420	103	c
+16784	\N	1252000	3771	282	412	104	c
+16785	\N	1272000	5744	282	379	105	c
+17108	\N	1488000	6547	285	417	75	c
+17109	\N	1489000	5172	285	411	76	c
+17110	\N	1490000	6548	285	413	77	c
+17111	\N	1492000	3903	285	445	78	c
+17112	\N	1493000	3500	285	414	79	c
+17113	\N	1494000	3775	285	413	80	c
+17114	\N	1494000	6549	285	406	81	c
+17115	\N	1495000	4029	285	446	82	c
+17116	\N	1496000	6550	285	413	83	c
+17117	\N	1503000	3877	285	404	84	c
+17118	\N	1509000	6551	285	419	85	c
+17119	\N	1509000	3830	285	403	86	c
+17120	\N	1510000	6552	285	411	87	c
+17121	\N	1511000	6509	285	413	88	c
+17122	\N	1511000	3661	285	417	89	c
+17123	\N	1515000	4049	285	422	90	c
+17124	\N	1516000	3874	285	404	91	c
+17125	\N	1516000	3902	285	445	92	c
+17126	\N	1517000	3930	285	419	93	c
+17127	\N	1521000	6522	285	404	94	c
+17128	\N	1527000	6332	285	446	95	c
+17129	\N	1528000	6523	285	419	96	c
+17130	\N	1528000	6553	285	422	97	c
+17131	\N	1529000	6554	285	419	98	c
+17132	\N	1530000	6555	285	414	99	c
+17133	\N	1531000	6328	285	446	100	c
+17134	\N	1532000	6524	285	414	101	c
+17135	\N	1535000	4065	285	422	102	c
+17136	\N	1536000	6525	285	411	103	c
+17137	\N	1537000	4094	285	411	104	c
+17138	\N	1549000	3829	285	403	105	c
+17139	\N	1552000	3572	285	399	106	c
+17140	\N	1553000	6556	285	419	107	c
+17141	\N	1561000	6557	285	414	108	c
+17142	\N	1578000	6558	285	417	109	c
+17143	\N	1579000	6559	285	417	110	c
+17144	\N	1595000	4063	285	422	111	c
+17145	\N	1598000	6560	285	411	112	c
+17146	\N	1599000	3945	285	419	113	c
+17147	\N	1602000	3827	285	403	114	c
+17148	\N	1608000	5519	285	445	115	c
+17149	\N	1608000	6561	285	413	116	c
+17150	\N	1610000	5353	285	446	117	c
+17151	\N	1611000	4080	285	406	118	c
+17152	\N	1618000	6562	285	411	119	c
+17153	\N	1636000	4028	285	446	120	c
+17154	\N	1658000	3682	285	417	121	c
+17155	\N	1679000	4085	285	411	122	c
+17156	\N	1683000	6563	285	417	123	c
+17157	\N	1693000	6564	285	419	124	c
+17170	\N	1078000	5714	286	481	13	c
+17171	\N	1081000	1643	286	376	14	c
+17172	\N	1083000	4044	286	447	15	c
+17173	\N	1083000	5732	286	376	16	c
+17174	\N	1094000	3087	286	447	17	c
+17175	\N	1096000	4953	286	389	18	c
+17176	\N	1097000	5655	286	442	19	c
+17177	\N	1103000	4168	286	474	20	c
+17178	\N	1106000	2950	286	474	21	c
+17179	\N	1111000	4214	286	381	22	c
+17180	\N	1113000	3070	286	447	23	c
+17181	\N	1113000	4999	286	461	24	c
+17182	\N	1114000	4109	286	376	25	c
+17183	\N	1115000	4176	286	474	26	c
+17184	\N	1117000	5002	286	461	27	c
+17185	\N	1119000	4159	286	474	28	c
+17186	\N	1122000	6566	286	395	29	c
+17187	\N	1123000	5780	286	447	30	c
+17188	\N	1127000	4219	286	384	31	c
+17189	\N	1128000	4116	286	376	32	c
+17190	\N	1129000	5285	286	474	33	c
+17191	\N	1131000	3156	286	497	34	c
+17192	\N	1135000	4123	286	387	35	c
+17193	\N	1137000	4285	286	398	36	c
+17194	\N	1137000	5373	286	447	37	c
+17195	\N	1139000	4971	286	441	38	c
+17196	\N	1140000	4938	286	492	39	c
+17197	\N	1145000	4158	286	474	40	c
+17198	\N	1147000	5165	286	387	41	c
+17199	\N	1148000	5414	286	384	42	c
+17200	\N	1149000	3359	286	384	43	c
+17201	\N	1150000	4309	286	395	44	c
+17202	\N	1153000	3158	286	497	45	c
+17203	\N	1157000	4137	286	387	46	c
+17204	\N	1159000	4242	286	385	47	c
+17205	\N	1160000	4213	286	381	48	c
+17206	\N	1164000	5174	286	497	49	c
+17207	\N	1167000	6571	286	387	50	c
+17208	\N	1169000	3361	286	384	51	c
+17209	\N	1174000	3072	286	447	52	c
+17210	\N	1175000	6567	286	389	53	c
+17211	\N	1178000	5213	286	376	54	c
+17212	\N	1181000	3107	286	492	55	c
+17213	\N	1181000	4244	286	385	56	c
+17214	\N	1182000	5314	286	442	57	c
+17215	\N	1186000	5705	286	492	58	c
+17216	\N	1188000	4969	286	441	59	c
+17217	\N	1189000	3363	286	384	60	c
+17218	\N	1190000	4098	286	497	61	c
+17219	\N	1191000	4968	286	441	62	c
+17220	\N	1192000	4247	286	391	63	c
+17221	\N	1192000	4933	286	492	64	c
+17222	\N	1193000	3154	286	497	65	c
+17223	\N	1195000	6572	286	461	66	c
+17224	\N	1195000	6573	286	389	67	c
+17225	\N	1197000	4292	286	461	68	c
+17226	\N	1203000	5013	286	481	69	c
+17227	\N	1206000	6574	286	398	70	c
+17228	\N	1210000	4955	286	389	71	c
+17229	\N	1214000	3353	286	384	72	c
+17230	\N	1215000	5720	286	481	73	c
+17231	\N	1215000	4196	286	389	74	c
+17232	\N	1219000	4948	286	389	75	c
+17233	\N	1219000	4188	286	389	76	c
+17234	\N	1223000	6568	286	393	77	c
+17235	\N	1223000	5009	286	481	78	c
+17236	\N	1230000	4140	286	387	79	c
+17237	\N	1232000	6569	286	461	80	c
+17238	\N	1237000	4204	286	381	81	c
+17239	\N	1239000	5014	286	481	82	c
+17240	\N	1242000	5629	286	442	83	c
+17241	\N	1249000	6575	286	391	84	c
+17242	\N	1254000	5279	286	381	85	c
+17243	\N	1260000	6576	286	398	86	c
+17244	\N	1260000	1697	286	497	87	c
+17245	\N	1263000	5716	286	492	88	c
+17246	\N	1265000	4243	286	385	89	c
+17247	\N	1267000	4976	286	442	90	c
+17248	\N	1268000	4220	286	384	91	c
+16288	\N	1063600	3053	279	490	1	c
+16289	\N	1068400	5213	279	376	2	c
+16290	\N	1077100	5736	279	376	3	c
+16291	\N	1082500	5241	279	490	4	c
+16292	\N	1090600	5373	279	447	5	c
+16293	\N	1091300	3070	279	447	6	c
+16294	\N	1091900	3058	279	490	7	c
+16295	\N	1094200	3955	279	490	8	c
+16296	\N	1100200	5776	279	447	9	c
+16297	\N	1101600	4041	279	447	10	c
+16298	\N	1104900	3056	279	490	11	c
+16299	\N	1105100	5715	279	490	12	c
+16300	\N	1106200	3062	279	490	13	c
+16301	\N	1118000	4110	279	376	14	c
+16302	\N	1120200	1697	279	497	15	c
+16303	\N	1121600	5764	279	444	16	c
+16304	\N	1124100	3142	279	376	17	c
+16305	\N	1127200	5737	279	376	18	c
+16306	\N	1127900	6285	279	376	19	c
+16307	\N	1129000	5768	279	444	20	c
+16308	\N	1130700	4118	279	376	21	c
+16309	\N	1131700	5831	279	447	22	c
+16310	\N	1135100	3154	279	497	23	c
+16311	\N	1140800	3195	279	444	24	c
+16312	\N	1143200	5803	279	376	25	c
+16313	\N	1146100	5387	279	447	26	c
+16314	\N	1149300	3071	279	447	27	c
+16315	\N	1149600	5820	279	444	28	c
+16316	\N	1154200	5760	279	444	29	c
+16317	\N	1155900	4042	279	447	30	c
+16318	\N	1157100	3888	279	444	31	c
+16319	\N	1157600	5694	279	493	32	c
+16320	\N	1161600	5388	279	447	33	c
+16321	\N	1164000	5688	279	497	34	c
+16322	\N	1164600	3886	279	444	35	c
+16323	\N	1165700	5245	279	444	36	c
+16324	\N	1166800	5771	279	444	37	c
+16325	\N	1168200	5668	279	379	38	c
+16326	\N	1169200	4934	279	492	39	c
+16327	\N	1170200	5700	279	490	40	c
+16328	\N	1170500	4114	279	376	41	c
+16329	\N	1171300	5105	279	377	42	c
+16330	\N	1173400	4096	279	497	43	c
+16331	\N	1175300	4113	279	376	44	c
+16332	\N	1178200	5376	279	447	45	c
+16333	\N	1178800	4937	279	492	46	c
+16334	\N	1180000	5782	279	447	47	c
+16335	\N	1180600	5751	279	441	48	c
+16336	\N	1180600	5264	279	377	49	c
+16337	\N	1181400	5659	279	384	50	c
+16338	\N	1181800	5536	279	376	51	c
+16339	\N	1182200	5689	279	497	52	c
+16340	\N	1183200	5709	279	490	53	c
+16341	\N	1186600	3217	279	493	54	c
+16342	\N	1188800	4102	279	497	55	c
+16343	\N	1189900	5762	279	444	56	c
+16344	\N	1190200	5336	279	444	57	c
+16345	\N	1191100	4962	279	441	58	c
+16346	\N	1191900	5710	279	492	59	c
+16347	\N	1192300	5739	279	376	60	c
+16348	\N	1192600	5822	279	444	61	c
+16349	\N	1192900	5305	279	441	62	c
+16350	\N	1193700	5244	279	444	63	c
+16351	\N	1193700	4220	279	384	64	c
+16352	\N	1198100	5707	279	492	65	c
+16353	\N	1198300	3079	279	447	66	c
+16354	\N	1198700	5228	279	376	67	c
+16355	\N	1201400	5667	279	379	68	c
+16356	\N	1202000	5721	279	492	69	c
+16357	\N	1205200	3355	279	384	70	c
+16358	\N	1207800	4977	279	442	71	c
+16360	\N	1211200	5254	279	444	73	c
+16361	\N	1216100	5702	279	490	74	c
+16362	\N	1216600	5701	279	490	75	c
+16363	\N	1217000	4965	279	441	76	c
+16364	\N	1219700	5673	279	497	77	c
+16365	\N	1221000	5693	279	493	78	c
+16366	\N	1221200	5790	279	447	79	c
+16367	\N	1222000	3388	279	381	80	c
+16368	\N	1222200	5307	279	441	81	c
+16369	\N	1223500	3947	279	490	82	c
+16370	\N	1224900	3061	279	490	83	c
+16371	\N	1225400	5783	279	447	84	c
+16372	\N	1227300	5784	279	447	85	c
+16373	\N	1227600	5835	279	377	86	c
+16374	\N	1227600	4963	279	441	87	c
+16375	\N	1229100	5706	279	490	88	c
+16376	\N	1230100	3113	279	492	89	c
+16377	\N	1230600	4935	279	492	90	c
+16378	\N	1231800	5770	279	444	91	c
+16379	\N	1232700	3950	279	490	92	c
+16380	\N	1236800	4589	279	439	93	c
+16381	\N	1237000	3331	279	379	94	c
+16382	\N	1238000	5381	279	493	95	c
+16383	\N	1242400	5712	279	490	96	c
+16384	\N	1244200	5778	279	447	97	c
+16385	\N	1244500	6288	279	444	98	c
+16386	\N	1245900	5662	279	379	99	c
+16387	\N	1247900	5699	279	492	100	c
+16388	\N	1252100	5726	279	490	101	c
+16389	\N	1254100	5754	279	441	102	c
+16390	\N	1257400	5723	279	490	103	c
+16391	\N	1257700	5250	279	444	104	c
+16392	\N	1258500	3952	279	490	105	c
+16393	\N	1259200	5711	279	492	106	c
+16394	\N	1264300	5741	279	376	107	c
+16395	\N	1267700	5670	279	439	108	c
+16396	\N	1268500	5755	279	441	109	c
+16397	\N	1270300	3387	279	381	110	c
+16398	\N	1274500	5748	279	490	111	c
+16399	\N	1276400	5517	279	497	112	c
+16400	\N	1277400	3055	279	490	113	c
+16401	\N	1277900	5246	279	444	114	c
+16402	\N	1278400	4578	279	495	115	c
+16403	\N	1280000	4936	279	492	116	c
+16404	\N	1280700	3323	279	379	117	c
+16405	\N	1280700	5733	279	376	118	c
+16406	\N	1282100	5792	279	442	119	c
+16407	\N	1283500	5613	279	379	120	c
+16408	\N	1284900	5746	279	384	121	c
+16409	\N	1289300	3951	279	490	122	c
+16410	\N	1290700	5679	279	497	123	c
+16411	\N	1291400	5731	279	376	124	c
+16412	\N	1291900	5785	279	447	125	c
+16413	\N	1296100	5258	279	444	126	c
+16414	\N	1298400	4581	279	439	127	c
+16415	\N	1298900	5836	279	377	128	c
+16416	\N	1304400	5399	279	492	129	c
+16417	\N	1305100	3294	279	441	130	c
+16418	\N	1306400	5773	279	444	131	c
+16419	\N	1306800	5756	279	441	132	c
+16420	\N	1310800	5703	279	490	133	c
+16422	\N	1311500	5750	279	490	135	c
+16423	\N	1312800	5676	279	493	136	c
+16424	\N	1313000	5786	279	447	137	c
+16425	\N	1315500	5772	279	444	138	c
+16426	\N	1317200	5826	279	447	139	c
+16427	\N	1317900	5677	279	497	140	c
+16428	\N	1319300	3116	279	492	141	c
+16429	\N	1323100	4218	279	384	142	c
+16430	\N	1325300	3978	279	379	143	c
+16431	\N	1326600	4101	279	497	144	c
+16432	\N	1329000	5839	279	441	145	c
+16433	\N	1330600	5386	279	379	146	c
+16434	\N	1331900	5821	279	444	147	c
+16435	\N	1334000	5837	279	492	148	c
+16436	\N	1338400	5804	279	379	149	c
+16437	\N	1342600	5678	279	497	150	c
+16438	\N	1347600	5382	279	447	151	c
+16439	\N	1352300	5753	279	439	152	c
+16440	\N	1352600	5243	279	490	153	c
+16441	\N	1353100	5669	279	439	154	c
+16442	\N	1353100	5657	279	442	155	c
+16443	\N	1354500	5823	279	444	156	c
+16444	\N	1355500	5842	279	442	157	c
+16445	\N	1356200	6289	279	444	158	c
+16446	\N	1356800	5390	279	492	159	c
+16447	\N	1364300	5799	279	495	160	c
+16448	\N	1371000	5103	279	377	161	c
+16449	\N	1371300	4967	279	441	162	c
+16450	\N	1374500	5529	279	379	163	c
+16451	\N	1378000	3110	279	492	164	c
+16452	\N	1383700	5747	279	384	165	c
+16453	\N	1385500	5384	279	447	166	c
+16454	\N	1389800	5405	279	441	167	c
+16455	\N	1392700	4978	279	442	168	c
+16456	\N	1395300	5489	279	492	169	c
+16457	\N	1396000	3976	279	379	170	c
+16458	\N	1407700	5396	279	447	171	c
+16459	\N	1409200	5787	279	447	172	c
+16460	\N	1411900	5788	279	447	173	c
+16461	\N	1412700	5841	279	442	174	c
+16462	\N	1416900	5767	279	444	175	c
+16463	\N	1420600	5697	279	497	176	c
+16464	\N	1426700	5843	279	442	177	c
+16465	\N	1431400	3109	279	492	178	c
+16466	\N	1432600	5407	279	439	179	c
+16467	\N	1435800	5757	279	441	180	c
+16468	\N	1442400	5825	279	447	181	c
+16469	\N	1442500	5271	279	379	182	c
+16470	\N	1445500	5417	279	447	183	c
+16471	\N	1448100	5840	279	492	184	c
+16472	\N	1450000	3977	279	379	185	c
+16473	\N	1453800	5671	279	439	186	c
+16474	\N	1456600	3269	279	439	187	c
+16475	\N	1465900	5800	279	495	188	c
+16476	\N	1468500	4584	279	439	189	c
+16477	\N	1469000	5832	279	447	190	c
+16478	\N	1469300	5406	279	379	191	c
+16479	\N	1477600	5730	279	492	192	c
+16480	\N	1479200	5802	279	495	193	c
+16481	\N	1486300	5408	279	497	194	c
+16482	\N	1496400	5758	279	441	195	c
+16483	\N	1502000	5429	279	376	196	c
+16484	\N	1507200	5845	279	495	197	c
+16485	\N	1509600	5317	279	442	198	c
+16487	\N	1516300	3141	279	376	200	c
+16488	\N	1528400	5793	279	442	201	c
+16489	\N	1536200	5374	279	379	202	c
+16490	\N	1557000	6290	279	376	203	c
+16491	\N	1566900	5674	279	497	204	c
+16492	\N	1611500	5257	279	490	205	c
+16493	\N	1633400	5779	279	442	206	c
+16494	\N	1656800	5385	279	379	207	c
+16495	\N	1668400	5503	279	444	208	c
+16496	\N	1699900	6283	279	492	209	c
+16497	\N	1709700	4983	279	442	210	c
+16498	\N	1740000	6282	279	379	211	c
+16499	\N	1801200	6291	279	376	212	c
+16500	\N	1849600	5104	279	377	213	c
+16501	\N	1927100	5834	279	442	214	c
+16486	\N	1511000	6366	279	492	199	c
+16786	\N	1095000	6404	283	406	1	c
+16787	\N	1101000	3503	283	414	2	c
+16788	\N	1110000	3502	283	414	3	c
+16789	\N	1112000	6411	283	399	4	c
+16790	\N	1117000	3557	283	399	5	c
+16791	\N	1139000	4071	283	406	6	c
+16792	\N	1152000	5295	283	409	7	c
+16793	\N	1155000	3605	283	409	8	c
+16794	\N	1166000	6412	283	399	9	c
+16795	\N	1170000	6413	283	408	10	c
+16796	\N	1176000	6405	283	403	11	c
+16797	\N	1180000	3683	283	417	12	c
+16798	\N	1183000	6414	283	399	13	c
+16799	\N	1184000	3636	283	409	14	c
+16800	\N	1195000	3832	283	403	15	c
+16801	\N	1197000	6415	283	413	16	c
+16802	\N	1203000	6401	283	422	17	c
+16803	\N	1217000	3932	283	419	18	c
+16804	\N	1218000	6416	283	414	19	c
+16805	\N	1218000	3210	283	445	20	c
+16806	\N	1219000	3519	283	414	21	c
+16807	\N	1221000	3504	283	414	22	c
+16808	\N	1221000	3492	283	414	23	c
+16809	\N	1223000	3609	283	409	24	c
+16810	\N	1223000	3593	283	409	25	c
+16811	\N	1225000	3627	283	409	26	c
+16812	\N	1232000	3499	283	414	27	c
+16813	\N	1233000	3934	283	419	28	c
+16814	\N	1237000	6307	283	445	29	c
+16815	\N	1238000	6417	283	411	30	c
+16816	\N	1239000	6418	283	411	31	c
+16817	\N	1243000	3933	283	419	32	c
+16818	\N	1248000	6419	283	404	33	c
+16819	\N	1250000	6420	283	404	34	c
+16820	\N	1254000	6421	283	404	35	c
+16821	\N	1255000	3102	283	446	36	c
+16822	\N	1256000	3574	283	399	37	c
+16823	\N	1259000	3610	283	409	38	c
+16824	\N	1260000	3810	283	403	39	c
+16825	\N	1261000	4084	283	411	40	c
+16826	\N	1262000	3687	283	417	41	c
+16827	\N	1267000	3735	283	408	42	c
+16828	\N	1268000	3904	283	445	43	c
+16829	\N	1268000	5294	283	408	44	c
+16830	\N	1280000	6402	283	417	45	c
+16831	\N	1283000	6422	283	413	46	c
+16832	\N	1287000	3733	283	408	47	c
+16833	\N	1294000	6423	283	411	48	c
+16834	\N	1294000	3778	283	413	49	c
+16835	\N	1294000	6424	283	417	50	c
+16836	\N	1296000	6406	283	408	51	c
+16837	\N	1298000	6294	283	446	52	c
+16838	\N	1298000	4091	283	411	53	c
+16839	\N	1299000	4079	283	406	54	c
+16840	\N	1302000	3547	283	399	55	c
+16841	\N	1303000	3212	283	445	56	c
+16842	\N	1306000	4035	283	446	57	c
+17249	\N	1269000	5039	286	391	92	c
+17250	\N	1270000	6577	286	385	93	c
+17251	\N	1272000	5751	286	441	94	c
+17252	\N	1273000	5302	286	441	95	c
+17253	\N	1274000	4234	286	385	96	c
+17254	\N	1274000	5495	286	441	97	c
+17255	\N	1276000	5008	286	481	98	c
+17256	\N	1276000	4986	286	442	99	c
+17257	\N	1283000	5323	286	442	100	c
+17258	\N	1283000	6565	286	385	101	c
+17259	\N	1283000	5718	286	481	102	c
+17260	\N	1284000	4235	286	385	103	c
+17261	\N	1286000	4977	286	442	104	c
+17262	\N	1287000	4962	286	441	105	c
+17263	\N	1304000	5490	286	492	106	c
+17264	\N	1308000	4252	286	393	107	c
+17265	\N	1310000	6578	286	398	108	c
+17266	\N	1313000	6579	286	398	109	c
+17267	\N	1314000	6580	286	393	110	c
+17268	\N	1322000	5160	286	391	111	c
+17269	\N	1326000	4269	286	393	112	c
+17270	\N	1331000	6581	286	398	113	c
+17271	\N	1340000	6582	286	393	114	c
+17272	\N	1350000	4311	286	395	115	c
+17273	\N	1358000	6583	286	391	116	c
+17274	\N	1361000	6584	286	398	117	c
+17275	\N	1364000	5042	286	391	118	c
+17276	\N	1368000	6585	286	393	119	c
+17277	\N	1372000	4252	286	393	120	c
+17278	\N	1399000	6586	286	395	121	c
+17279	\N	1521000	4313	286	395	122	c
+17280	\N	1526000	6587	286	395	123	c
+17281	\N	1528000	6588	286	395	124	c
+17282	\N	1191000	6316	287	440	1	c
+17283	\N	1208000	4974	287	440	2	c
+17284	\N	1217000	3136	287	491	3	c
+17285	\N	1237000	6309	287	443	4	c
+17286	\N	1255000	4337	287	423	5	c
+17287	\N	1264000	6591	287	491	6	c
+17288	\N	1265000	4151	287	388	7	c
+17289	\N	1276000	4945	287	491	8	c
+17290	\N	1280000	6599	287	489	9	c
+17291	\N	1283000	6592	287	460	10	c
+17292	\N	1286000	4993	287	443	11	c
+17293	\N	1292000	4987	287	443	12	c
+17294	\N	1295000	6600	287	394	13	c
+17295	\N	1295000	4225	287	383	14	c
+17296	\N	1299000	5032	287	482	15	c
+17297	\N	1300000	5004	287	460	16	c
+17298	\N	1303000	5410	287	491	17	c
+17299	\N	1303000	4946	287	491	18	c
+17300	\N	1307000	4919	287	421	19	c
+17301	\N	1312000	1015	287	388	20	c
+17302	\N	1319000	6308	287	443	21	c
+17303	\N	1321000	4239	287	386	22	c
+17304	\N	1332000	4130	287	388	23	c
+17305	\N	1341000	3311	287	440	24	c
+17306	\N	1344000	5509	287	443	25	c
+17307	\N	1345000	3310	287	440	26	c
+17308	\N	1361000	5035	287	482	27	c
+17309	\N	1368000	6601	287	388	28	c
+17310	\N	1371000	5019	287	482	29	c
+17311	\N	1372000	4302	287	396	30	c
+17312	\N	1373000	4330	287	489	31	c
+17313	\N	1377000	4134	287	388	32	c
+17314	\N	1378000	4989	287	443	33	c
+17315	\N	1379000	6324	287	443	34	c
+17316	\N	1380000	6602	287	392	35	c
+17317	\N	1382000	5511	287	496	36	c
+17318	\N	1391000	5034	287	482	37	c
+17319	\N	1393000	6603	287	460	38	c
+17320	\N	1395000	6604	287	475	39	c
+17321	\N	1397000	3177	287	496	40	c
+17322	\N	1398000	6593	287	388	41	c
+17323	\N	1402000	6605	287	423	42	c
+17324	\N	1407000	5152	287	388	43	c
+17325	\N	1416000	3139	287	491	44	c
+17326	\N	1417000	3175	287	496	45	c
+17327	\N	1420000	3123	287	491	46	c
+17328	\N	1422000	6317	287	440	47	c
+17329	\N	1423000	4166	287	475	48	c
+17330	\N	1429000	5020	287	482	49	c
+17331	\N	1431000	4338	287	423	50	c
+17332	\N	1445000	3309	287	440	51	c
+17333	\N	1449000	3371	287	383	52	c
+17334	\N	1453000	3996	287	380	53	c
+17335	\N	1454000	6606	287	460	54	c
+17336	\N	1455000	4343	287	423	55	c
+17337	\N	1462000	4326	287	421	56	c
+17338	\N	1463000	4275	287	394	57	c
+17339	\N	1465000	4186	287	475	58	c
+17340	\N	1470000	3166	287	496	59	c
+17341	\N	1472000	6607	287	386	60	c
+17342	\N	1473000	3372	287	383	61	c
+17343	\N	1478000	3364	287	383	62	c
+17344	\N	1480000	4107	287	496	63	c
+17345	\N	1486000	4223	287	383	64	c
+17346	\N	1489000	6321	287	382	65	c
+17347	\N	1491000	6594	287	394	66	c
+17348	\N	1492000	5025	287	482	67	c
+17349	\N	1494000	3997	287	380	68	c
+17350	\N	1499000	3399	287	382	69	c
+17351	\N	1500000	4108	287	496	70	c
+17352	\N	1505000	6608	287	489	71	c
+17353	\N	1506000	4227	287	383	72	c
+17354	\N	1514000	3167	287	496	73	c
+17355	\N	1515000	4271	287	394	74	c
+17356	\N	1516000	4920	287	421	75	c
+17357	\N	1522000	3349	287	380	76	c
+17358	\N	1524000	6609	287	475	77	c
+17359	\N	1524000	6589	287	423	78	c
+17360	\N	1525000	3985	287	380	79	c
+17361	\N	1526000	6610	287	421	80	c
+17362	\N	1530000	6595	287	489	81	c
+17363	\N	1533000	6315	287	440	82	c
+17364	\N	1537000	6611	287	489	83	c
+17365	\N	1543000	4319	287	421	84	c
+17366	\N	1544000	6612	287	421	85	c
+17367	\N	1554000	5204	287	489	86	c
+17368	\N	1566000	4226	287	383	87	c
+17369	\N	1566000	6613	287	394	88	c
+17370	\N	1571000	6614	287	421	89	c
+17371	\N	1575000	4959	287	390	90	c
+17372	\N	1577000	6615	287	489	91	c
+17373	\N	1581000	6301	287	380	92	c
+17374	\N	1584000	6616	287	386	93	c
+17375	\N	1584000	6302	287	380	94	c
+17376	\N	1589000	5005	287	460	95	c
+17377	\N	1603000	5044	287	392	96	c
+17378	\N	1607000	6617	287	382	97	c
+17379	\N	1608000	1179	287	475	98	c
+17380	\N	1617000	4187	287	475	99	c
+17381	\N	1619000	6618	287	390	100	c
+17382	\N	1620000	4178	287	475	101	c
+17383	\N	1623000	5272	287	380	102	c
+17384	\N	1625000	6590	287	396	103	c
+17385	\N	1636000	6596	287	382	104	c
+17386	\N	1640000	4274	287	394	105	c
+17387	\N	1648000	6619	287	394	106	c
+17388	\N	1655000	6620	287	423	107	c
+17389	\N	1663000	4345	287	423	108	c
+17390	\N	1672000	6322	287	382	109	c
+17391	\N	1672000	6621	287	392	110	c
+17392	\N	1698000	5022	287	482	111	c
+17393	\N	1785000	5340	287	460	112	c
+17394	\N	1791000	6622	287	382	113	c
+17395	\N	1805000	4316	287	396	114	c
+17396	\N	1812000	5524	287	396	115	c
+17397	\N	1861000	6597	287	396	116	c
+17398	\N	1879000	6598	287	396	117	c
+17399	\N	1139000	5736	288	376	1	c
+17400	\N	1147000	4110	288	376	2	c
+17401	\N	1150000	4171	288	474	3	c
+17402	\N	1167000	5776	288	447	4	c
+17403	\N	1174000	4111	288	376	5	c
+17404	\N	1177000	4041	288	447	6	c
+17405	\N	1179000	3142	288	376	7	c
+17406	\N	1179000	6368	288	492	8	c
+17407	\N	1181000	4138	288	387	9	c
+17408	\N	1186000	3071	288	447	10	c
+17409	\N	1188000	5831	288	447	11	c
+17410	\N	1189000	5737	288	376	12	c
+17411	\N	1190000	5803	288	376	13	c
+17412	\N	1192000	5387	288	447	14	c
+17413	\N	1194000	5286	288	474	15	c
+17414	\N	1207000	4099	288	497	16	c
+17415	\N	1210000	4096	288	497	17	c
+17416	\N	1212000	5536	288	376	18	c
+17417	\N	1212000	6630	288	387	19	c
+17418	\N	1213000	4042	288	447	20	c
+17419	\N	1214000	6631	288	387	21	c
+17420	\N	1214000	5376	288	447	22	c
+17421	\N	1224000	6632	288	387	23	c
+17422	\N	1228000	4118	288	376	24	c
+17423	\N	1233000	5688	288	497	25	c
+17424	\N	1237000	4124	288	387	26	c
+17425	\N	1237000	5689	288	497	27	c
+17426	\N	1240000	5508	288	441	28	c
+17427	\N	1242000	6633	288	474	29	c
+17428	\N	1243000	4114	288	376	30	c
+17429	\N	1245000	4135	288	387	31	c
+17430	\N	1246000	6624	288	387	32	c
+17431	\N	1249000	5707	288	492	33	c
+17432	\N	1255000	5168	288	384	34	c
+17433	\N	1255000	5388	288	447	35	c
+17434	\N	1257000	5305	288	441	36	c
+17435	\N	1258000	5167	288	474	37	c
+17436	\N	1261000	3437	288	442	38	c
+17437	\N	1261000	4934	288	492	39	c
+17438	\N	1261000	6634	288	461	40	c
+17439	\N	1262000	3388	288	381	41	c
+17440	\N	1263000	4937	288	492	42	c
+17441	\N	1263000	6625	288	387	43	c
+17442	\N	1265000	5719	288	481	44	c
+17443	\N	1268000	4102	288	497	45	c
+17444	\N	1268000	6635	288	385	46	c
+17445	\N	1268000	4142	288	387	47	c
+17446	\N	1275000	5710	288	492	48	c
+17447	\N	1276000	5228	288	376	49	c
+17448	\N	1277000	5307	288	441	50	c
+17449	\N	1278000	4120	288	387	51	c
+17450	\N	1281000	5673	288	497	52	c
+17451	\N	1281000	5517	288	497	53	c
+17452	\N	1283000	5783	288	447	54	c
+17453	\N	1284000	6626	288	474	55	c
+17454	\N	1287000	4113	288	376	56	c
+17455	\N	1287000	6636	288	389	57	c
+17456	\N	1288000	3355	288	384	58	c
+17457	\N	1291000	5721	288	492	59	c
+17458	\N	1292000	4139	288	387	60	c
+17459	\N	1293000	6637	288	474	61	c
+17460	\N	1295000	4190	288	389	62	c
+17461	\N	1300000	5708	288	481	63	c
+17462	\N	1302000	4192	288	389	64	c
+17463	\N	1303000	5711	288	492	65	c
+17464	\N	1304000	6638	288	474	66	c
+17465	\N	1305000	3079	288	447	67	c
+17466	\N	1307000	4236	288	385	68	c
+17467	\N	1308000	5722	288	481	69	c
+17468	\N	1308000	3113	288	492	70	c
+17469	\N	1313000	6627	288	474	71	c
+17470	\N	1314000	3387	288	381	72	c
+17471	\N	1317000	4218	288	384	73	c
+17472	\N	1317000	6639	288	474	74	c
+17473	\N	1318000	4965	288	441	75	c
+17474	\N	1325000	5018	288	481	76	c
+17475	\N	1328000	5844	288	497	77	c
+17476	\N	1331000	5656	288	442	78	c
+17477	\N	1332000	5010	288	481	79	c
+17478	\N	1334000	6640	288	385	80	c
+17479	\N	1336000	5782	288	447	81	c
+17480	\N	1336000	6641	288	461	82	c
+17481	\N	1336000	6642	288	389	83	c
+17482	\N	1339000	5679	288	497	84	c
+17483	\N	1341000	5677	288	497	85	c
+17484	\N	1341000	5728	288	492	86	c
+17485	\N	1342000	5012	288	481	87	c
+17486	\N	1343000	5017	288	481	88	c
+17487	\N	1348000	4998	288	461	89	c
+17488	\N	1351000	6623	288	474	90	c
+17489	\N	1353000	5833	288	441	91	c
+17490	\N	1359000	5792	288	442	92	c
+17491	\N	1362000	5746	288	384	93	c
+17492	\N	1368000	6643	288	461	94	c
+17493	\N	1370000	5755	288	441	95	c
+17494	\N	1373000	5756	288	441	96	c
+17495	\N	1381000	6367	288	384	97	c
+17496	\N	1381000	6644	288	474	98	c
+17497	\N	1386000	4237	288	385	99	c
+17498	\N	1391000	4141	288	387	100	c
+17499	\N	1391000	5727	288	481	101	c
+17500	\N	1403000	5842	288	442	102	c
+17501	\N	1419000	5699	288	492	103	c
+17502	\N	1422000	4967	288	441	104	c
+17503	\N	1422000	5657	288	442	105	c
+17504	\N	1423000	6645	288	474	106	c
+17505	\N	1424000	5839	288	441	107	c
+17506	\N	1434000	4231	288	385	108	c
+17507	\N	1444000	5841	288	442	109	c
+17508	\N	1448000	3294	288	441	110	c
+17509	\N	1457000	5747	288	384	111	c
+17510	\N	1458000	5725	288	481	112	c
+17511	\N	1471000	6628	288	389	113	c
+17512	\N	1479000	5405	288	441	114	c
+17513	\N	1495000	6629	288	481	115	c
+17514	\N	1495000	5389	288	447	116	c
+17515	\N	1516000	6646	288	389	117	c
+17516	\N	1519000	5843	288	442	118	c
+17517	\N	1533000	5757	288	441	119	c
+17518	\N	1547000	5838	288	497	120	c
+17519	\N	1562000	5793	288	442	121	c
+17520	\N	1574000	5011	288	481	122	c
+17521	\N	1599000	5317	288	442	123	c
+17522	\N	1636000	6647	288	395	124	c
+17523	\N	1666000	6648	288	389	125	c
+17524	\N	1681000	4952	288	389	126	c
+17525	\N	1683000	6649	288	481	127	c
+17526	\N	1698000	4983	288	442	128	c
+17527	\N	1876000	5779	288	442	129	c
+17528	\N	1966000	4315	288	395	130	c
+17529	\N	2087000	6650	288	395	131	c
+17530	\N	1345000	6652	289	388	1	c
+17531	\N	1362000	4994	289	443	2	c
+17532	\N	1372000	4947	289	491	3	c
+17533	\N	1417000	4995	289	443	4	c
+17534	\N	1429000	6653	289	388	5	c
+17535	\N	1436000	5320	289	443	6	c
+17536	\N	1449000	6347	289	491	7	c
+17537	\N	1454000	4125	289	388	8	c
+17538	\N	1461000	6323	289	443	9	c
+17539	\N	1482000	6656	289	388	10	c
+17540	\N	1485000	3140	289	491	11	c
+17541	\N	1492000	3456	289	443	12	c
+17542	\N	1492000	6348	289	491	13	c
+17543	\N	1503000	6657	289	482	14	c
+17544	\N	1504000	6658	289	388	15	c
+17545	\N	1513000	3368	289	383	16	c
+17546	\N	1515000	6349	289	491	17	c
+17547	\N	1530000	3137	289	491	18	c
+17548	\N	1538000	6359	289	496	19	c
+17549	\N	1542000	4104	289	496	20	c
+17550	\N	1547000	4327	289	421	21	c
+17551	\N	1557000	4131	289	388	22	c
+17552	\N	1561000	5500	289	383	23	c
+17553	\N	1566000	5359	289	383	24	c
+17554	\N	1585000	5510	289	496	25	c
+17555	\N	1590000	6659	289	475	26	c
+17556	\N	1597000	6327	289	383	27	c
+17557	\N	1602000	4127	289	388	28	c
+17558	\N	1603000	6326	289	383	29	c
+17559	\N	1624000	6660	289	482	30	c
+17560	\N	1629000	5199	289	440	31	c
+17561	\N	1632000	4321	289	421	32	c
+17562	\N	1636000	6651	289	475	33	c
+17563	\N	1645000	4922	289	421	34	c
+17564	\N	1646000	6338	289	380	35	c
+17565	\N	1662000	6342	289	440	36	c
+17566	\N	1666000	5270	289	380	37	c
+17567	\N	1675000	4991	289	443	38	c
+17568	\N	1684000	6325	289	443	39	c
+17569	\N	1705000	6335	289	380	40	c
+17570	\N	1706000	5273	289	380	41	c
+17571	\N	1709000	6339	289	380	42	c
+17572	\N	1724000	4148	289	388	43	c
+17573	\N	1727000	5028	289	482	44	c
+17574	\N	1737000	5030	289	482	45	c
+17575	\N	1753000	5368	289	383	46	c
+17576	\N	1758000	6343	289	440	47	c
+17577	\N	1762000	6654	289	421	48	c
+17578	\N	1762000	3373	289	383	49	c
+17579	\N	1763000	6344	289	491	50	c
+17580	\N	1764000	6661	289	388	51	c
+17581	\N	1767000	3989	289	380	52	c
+17582	\N	1769000	6662	289	482	53	c
+17583	\N	1773000	6345	289	491	54	c
+17584	\N	1775000	5806	289	440	55	c
+17585	\N	1789000	3170	289	496	56	c
+17586	\N	1804000	6663	289	482	57	c
+17587	\N	1805000	3346	289	380	58	c
+17588	\N	1834000	6664	289	390	59	c
+17589	\N	1847000	6655	289	475	60	c
+17590	\N	1853000	6665	289	421	61	c
+17591	\N	1973000	5026	289	482	62	c
+17592	\N	1984000	6350	289	491	63	c
+17593	\N	2026000	6337	289	380	64	c
+17594	\N	2183000	6351	289	491	65	c
+17595	\N	1120000	5156	290	438	1	c
+17596	\N	1137000	5088	290	486	2	c
+17597	\N	1166000	6318	290	378	3	c
+17598	\N	1171000	5125	290	453	4	c
+17599	\N	1222000	4694	290	463	5	c
+17600	\N	1231000	4799	290	464	6	c
+17601	\N	1232000	6669	290	459	7	c
+17602	\N	1255000	6670	290	466	8	c
+17603	\N	1261000	6319	290	378	9	c
+17604	\N	1265000	6671	290	427	10	c
+17605	\N	1275000	5179	290	464	11	c
+17606	\N	1279000	4555	290	449	12	c
+17607	\N	1279000	4511	290	456	13	c
+17608	\N	1282000	4569	290	449	14	c
+17609	\N	1284000	6299	290	375	15	c
+17610	\N	1286000	4517	290	456	16	c
+17611	\N	1288000	5142	290	476	17	c
+17612	\N	1289000	6672	290	427	18	c
+17613	\N	1290000	6303	290	438	19	c
+17614	\N	1297000	4739	290	484	20	c
+17615	\N	1298000	4738	290	484	21	c
+17616	\N	1299000	6673	290	429	22	c
+17617	\N	1303000	4623	290	454	23	c
+17618	\N	1304000	4763	290	459	24	c
+17619	\N	1306000	4771	290	425	25	c
+17620	\N	1306000	6674	290	469	26	c
+17621	\N	1313000	4769	290	425	27	c
+17622	\N	1316000	5299	290	427	28	c
+17623	\N	1318000	5346	290	467	29	c
+17624	\N	1322000	6310	290	494	30	c
+17625	\N	1324000	4482	290	488	31	c
+17626	\N	1328000	6675	290	427	32	c
+17627	\N	1332000	4509	290	456	33	c
+17628	\N	1337000	5126	290	453	34	c
+17629	\N	1342000	4659	290	486	35	c
+17630	\N	1346000	4741	290	484	36	c
+17631	\N	1349000	5137	290	476	37	c
+17632	\N	1362000	4770	290	425	38	c
+17633	\N	1364000	4802	290	464	39	c
+17634	\N	1365000	5193	290	378	40	c
+17635	\N	1366000	6371	290	476	41	c
+17636	\N	1368000	4794	290	464	42	c
+17637	\N	1372000	5078	290	469	43	c
+17638	\N	1380000	4801	290	464	44	c
+17639	\N	1388000	6666	290	488	45	c
+17640	\N	1394000	3417	290	378	46	c
+17641	\N	1398000	6676	290	466	47	c
+17642	\N	1398000	6677	290	438	48	c
+17643	\N	1400000	4805	290	464	49	c
+17644	\N	1400000	4764	290	459	50	c
+17645	\N	1401000	4478	290	488	51	c
+17646	\N	1403000	3421	290	378	52	c
+17647	\N	1405000	6678	290	449	53	c
+17648	\N	1409000	6679	290	466	54	c
+17649	\N	1413000	6300	290	375	55	c
+17650	\N	1415000	5127	290	453	56	c
+17651	\N	1417000	4530	290	375	57	c
+17652	\N	1418000	6680	290	484	58	c
+17653	\N	1418000	6681	290	427	59	c
+17654	\N	1423000	3284	290	438	60	c
+17655	\N	1427000	6682	290	425	61	c
+17656	\N	1430000	4850	290	427	62	c
+17657	\N	1439000	6370	290	476	63	c
+17658	\N	1451000	5140	290	476	64	c
+17659	\N	1455000	3280	290	438	65	c
+17660	\N	1463000	6683	290	456	66	c
+17661	\N	1464000	6297	290	375	67	c
+17662	\N	1464000	4664	290	486	68	c
+17663	\N	1467000	6684	290	427	69	c
+17664	\N	1471000	6685	290	463	70	c
+17665	\N	1472000	4640	290	479	71	c
+17666	\N	1472000	6686	290	449	72	c
+17667	\N	1475000	6304	290	438	73	c
+17668	\N	1475000	4532	290	375	74	c
+17669	\N	1476000	6687	290	484	75	c
+17670	\N	1477000	4708	290	463	76	c
+17671	\N	1477000	6688	290	469	77	c
+17672	\N	1477000	6356	290	378	78	c
+17673	\N	1477000	6689	290	429	79	c
+17674	\N	1478000	4531	290	375	80	c
+17675	\N	1479000	5077	290	469	81	c
+17676	\N	1481000	4783	290	425	82	c
+17677	\N	1481000	5219	290	429	83	c
+17678	\N	1489000	4773	290	425	84	c
+17679	\N	1491000	4695	290	463	85	c
+17680	\N	1497000	6690	290	476	86	c
+17681	\N	1501000	4484	290	488	87	c
+17682	\N	1502000	6691	290	453	88	c
+17683	\N	1503000	4571	290	449	89	c
+17684	\N	1506000	4782	290	425	90	c
+17685	\N	1506000	6692	290	429	91	c
+17686	\N	1508000	4557	290	449	92	c
+17687	\N	1511000	6693	290	476	93	c
+17688	\N	1513000	6694	290	451	94	c
+17689	\N	1525000	6667	290	464	95	c
+17690	\N	1526000	5344	290	467	96	c
+17691	\N	1527000	6312	290	494	97	c
+17692	\N	1528000	6313	290	494	98	c
+17693	\N	1530000	5221	290	429	99	c
+17694	\N	1535000	6668	290	488	100	c
+17695	\N	1541000	6695	290	484	101	c
+17696	\N	1547000	5347	290	467	102	c
+17697	\N	1557000	5089	290	486	103	c
+17698	\N	1559000	6696	290	454	104	c
+17699	\N	1559000	6697	290	479	105	c
+17700	\N	1563000	4720	290	466	106	c
+17701	\N	1566000	6698	290	488	107	c
+17702	\N	1569000	4836	290	467	108	c
+17703	\N	1575000	3428	290	378	109	c
+17704	\N	1578000	4698	290	463	110	c
+17705	\N	1579000	6298	290	375	111	c
+17706	\N	1586000	6699	290	466	112	c
+17707	\N	1588000	4697	290	463	113	c
+17708	\N	1592000	6700	290	463	114	c
+17709	\N	1594000	6701	290	479	115	c
+17710	\N	1602000	6702	290	479	116	c
+17711	\N	1609000	6703	290	467	117	c
+17712	\N	1612000	6311	290	494	118	c
+17713	\N	1615000	4624	290	454	119	c
+17714	\N	1621000	6704	290	459	120	c
+17715	\N	1622000	5100	290	479	121	c
+17716	\N	1629000	6705	290	473	122	c
+17717	\N	1638000	6706	290	479	123	c
+17718	\N	1655000	6707	290	454	124	c
+17719	\N	1666000	6362	290	438	125	c
+17720	\N	1701000	6708	290	456	126	c
+17721	\N	1705000	6709	290	469	127	c
+17723	\N	1728000	6711	290	449	129	c
+17724	\N	1750000	6712	290	486	130	c
+17725	\N	1751000	6713	290	486	131	c
+17726	\N	1752000	6714	290	467	132	c
+17727	\N	1755000	5090	290	486	133	c
+17728	\N	1783000	4480	290	488	134	c
+17729	\N	1835000	4790	290	451	135	c
+17730	\N	1870000	6715	290	451	136	c
+17731	\N	1889000	6716	290	456	137	c
+17732	\N	1909000	6717	290	469	138	c
+17733	\N	1950000	4791	290	451	139	c
+17734	\N	1998000	6314	290	494	140	c
+17735	\N	1998000	5158	290	429	141	c
+17736	\N	2001000	6718	290	467	142	c
+17737	\N	2280000	6719	290	451	143	c
+17738	\N	2410000	4740	290	484	144	c
+17739	\N	984000	5263	291	377	1	c
+17740	\N	1007000	1543	291	493	2	c
+17741	\N	1018000	3224	291	493	3	c
+17742	\N	1018000	4545	291	448	4	c
+17743	\N	1041000	4446	291	397	5	c
+17744	\N	1047000	4715	291	465	6	c
+17745	\N	1052000	3214	291	493	7	c
+17746	\N	1058000	4585	291	439	8	c
+17747	\N	1060000	4522	291	374	9	c
+17748	\N	1061000	5064	291	468	10	c
+17749	\N	1064000	4574	291	495	11	c
+17750	\N	1071000	3255	291	374	12	c
+17751	\N	1073000	4686	291	462	13	c
+17752	\N	1074000	5094	291	478	14	c
+17753	\N	1077000	6727	291	426	15	c
+17754	\N	1081000	3249	291	374	16	c
+17755	\N	1092000	4472	291	487	17	c
+17756	\N	1093000	4424	291	426	18	c
+17757	\N	1094000	5086	291	485	19	c
+17758	\N	1098000	4576	291	495	20	c
+17759	\N	1099000	4543	291	448	21	c
+17760	\N	1101000	6728	291	478	22	c
+17761	\N	1107000	6720	291	452	23	c
+17762	\N	1108000	5132	291	477	24	c
+17763	\N	1110000	6365	291	377	25	c
+17764	\N	1115000	5218	291	428	26	c
+17765	\N	1117000	4507	291	457	27	c
+17766	\N	1120000	5085	291	485	28	c
+17767	\N	1128000	6287	291	377	29	c
+17768	\N	1129000	6286	291	377	30	c
+17769	\N	1131000	5069	291	468	31	c
+17770	\N	1132000	4745	291	472	32	c
+17771	\N	1134000	6729	291	426	33	c
+17772	\N	1135000	3409	291	377	34	c
+17773	\N	1135000	6730	291	472	35	c
+17774	\N	1138000	5148	291	397	36	c
+17775	\N	1139000	4388	291	428	37	c
+17776	\N	1143000	5775	291	493	38	c
+17777	\N	1143000	5351	291	493	39	c
+17778	\N	1145000	5058	291	468	40	c
+17779	\N	1145000	5349	291	478	41	c
+17780	\N	1151000	5343	291	487	42	c
+17781	\N	1151000	6721	291	448	43	c
+17782	\N	1153000	5428	291	477	44	c
+17783	\N	1158000	5683	291	493	45	c
+17784	\N	1158000	4360	291	428	46	c
+17785	\N	1162000	4586	291	439	47	c
+17786	\N	1162000	4651	291	485	48	c
+17787	\N	1165000	4520	291	374	49	c
+17788	\N	1166000	4448	291	397	50	c
+17789	\N	1166000	5098	291	478	51	c
+17790	\N	1167000	5133	291	477	52	c
+17791	\N	1168000	4475	291	487	53	c
+17792	\N	1168000	6731	291	428	54	c
+17793	\N	1170000	4711	291	465	55	c
+17794	\N	1173000	5186	291	428	56	c
+17795	\N	1173000	6732	291	472	57	c
+17796	\N	1174000	4417	291	426	58	c
+17797	\N	1176000	4746	291	472	59	c
+17798	\N	1180000	4368	291	428	60	c
+17799	\N	1180000	4559	291	448	61	c
+17800	\N	1184000	3218	291	493	62	c
+17801	\N	1184000	6733	291	468	63	c
+17802	\N	1185000	6734	291	487	64	c
+17803	\N	1186000	4474	291	487	65	c
+17804	\N	1187000	6735	291	428	66	c
+17805	\N	1189000	5097	291	478	67	c
+17806	\N	1191000	4629	291	478	68	c
+17807	\N	1192000	6736	291	424	69	c
+17808	\N	1194000	5665	291	439	70	c
+17809	\N	1195000	6737	291	462	71	c
+17810	\N	1201000	4476	291	487	72	c
+17811	\N	1204000	4840	291	426	73	c
+17812	\N	1205000	5404	291	377	74	c
+17813	\N	1208000	4593	291	455	75	c
+17814	\N	1211000	5663	291	439	76	c
+17815	\N	1213000	6722	291	483	77	c
+17816	\N	1213000	4786	291	450	78	c
+17817	\N	1213000	4488	291	487	79	c
+17818	\N	1213000	6723	291	452	80	c
+17819	\N	1218000	6738	291	478	81	c
+17820	\N	1218000	4736	291	483	82	c
+17821	\N	1219000	5105	291	377	83	c
+17822	\N	1220000	6739	291	448	84	c
+17823	\N	1221000	6724	291	452	85	c
+17824	\N	1225000	6740	291	465	86	c
+17825	\N	1228000	5290	291	397	87	c
+17826	\N	1230000	6741	291	458	88	c
+17827	\N	1231000	6742	291	397	89	c
+17828	\N	1231000	4582	291	439	90	c
+17829	\N	1235000	6743	291	448	91	c
+17830	\N	1236000	6744	291	477	92	c
+17831	\N	1237000	5121	291	452	93	c
+17832	\N	1240000	5056	291	468	94	c
+17833	\N	1241000	4455	291	397	95	c
+17834	\N	1244000	6745	291	424	96	c
+17835	\N	1245000	5070	291	468	97	c
+17836	\N	1247000	6746	291	424	98	c
+17837	\N	1249000	5065	291	468	99	c
+17838	\N	1250000	6725	291	452	100	c
+17839	\N	1250000	6747	291	485	101	c
+17840	\N	1256000	6748	291	450	102	c
+17841	\N	1256000	4452	291	397	103	c
+17842	\N	1259000	4716	291	465	104	c
+17843	\N	1260000	5797	291	374	105	c
+17844	\N	1260000	6749	291	457	106	c
+17845	\N	1261000	4564	291	448	107	c
+17846	\N	1264000	3266	291	439	108	c
+17847	\N	1266000	4419	291	426	109	c
+17848	\N	1267000	6750	291	450	110	c
+17849	\N	1267000	4578	291	495	111	c
+17850	\N	1268000	4508	291	457	112	c
+17851	\N	1268000	4605	291	455	113	c
+17852	\N	1272000	6751	291	457	114	c
+17853	\N	1276000	4654	291	485	115	c
+17854	\N	1278000	5214	291	439	116	c
+17855	\N	1280000	4756	291	472	117	c
+17856	\N	1280000	4420	291	426	118	c
+17857	\N	1285000	5120	291	452	119	c
+17858	\N	1292000	5079	291	485	120	c
+17859	\N	1298000	5229	291	452	121	c
+17860	\N	1300000	6752	291	465	122	c
+17861	\N	1305000	4516	291	457	123	c
+17862	\N	1314000	6753	291	455	124	c
+17863	\N	1316000	3237	291	495	125	c
+17864	\N	1320000	4681	291	462	126	c
+17865	\N	1324000	6754	291	450	127	c
+17866	\N	1324000	6755	291	458	128	c
+17867	\N	1325000	4787	291	450	129	c
+17868	\N	1325000	4785	291	450	130	c
+17869	\N	1327000	3229	291	495	131	c
+17870	\N	1328000	5401	291	495	132	c
+17871	\N	1334000	4622	291	455	133	c
+17872	\N	1343000	6756	291	462	134	c
+17873	\N	1344000	6757	291	472	135	c
+17874	\N	1349000	5082	291	485	136	c
+17875	\N	1350000	5233	291	495	137	c
+17876	\N	1352000	6758	291	458	138	c
+17877	\N	1360000	6759	291	483	139	c
+17878	\N	1366000	6760	291	458	140	c
+17879	\N	1378000	6761	291	450	141	c
+17880	\N	1388000	4680	291	462	142	c
+17881	\N	1430000	4514	291	457	143	c
+17882	\N	1484000	6762	291	455	144	c
+17883	\N	1489000	6763	291	483	145	c
+17884	\N	1497000	4766	291	424	146	c
+17885	\N	1527000	6726	291	477	147	c
+17886	\N	1529000	6764	291	457	148	c
+17887	\N	1537000	4703	291	462	149	c
+17888	\N	1557000	6765	291	455	150	c
+17889	\N	1558000	6766	291	424	151	c
+17890	\N	1581000	4683	291	462	152	c
+17891	\N	1600000	4617	291	455	153	c
+17892	\N	1940000	5128	291	477	154	c
+17893	\N	1410000	4806	292	464	1	c
+17894	\N	1418000	6320	292	378	2	c
+17895	\N	1461000	6773	292	464	3	c
+17896	\N	1470000	6769	292	464	4	c
+17897	\N	1472000	3422	292	378	5	c
+17898	\N	1478000	6774	292	484	6	c
+17899	\N	1494000	6357	292	378	7	c
+17900	\N	1495000	6775	292	484	8	c
+17901	\N	1507000	6358	292	378	9	c
+17902	\N	1529000	6360	292	378	10	c
+17903	\N	1541000	6776	292	476	11	c
+17904	\N	1550000	6777	292	464	12	c
+17905	\N	1552000	6778	292	484	13	c
+17906	\N	1559000	6779	292	425	14	c
+17907	\N	1581000	5109	292	378	15	c
+17908	\N	1584000	4807	292	464	16	c
+17909	\N	1607000	6305	292	438	17	c
+17910	\N	1610000	6780	292	464	18	c
+17911	\N	1615000	6781	292	429	19	c
+17912	\N	1619000	6767	292	463	20	c
+17913	\N	1640000	4781	292	425	21	c
+17914	\N	1644000	6782	292	449	22	c
+17915	\N	1650000	6783	292	449	23	c
+17916	\N	1670000	6363	292	438	24	c
+17917	\N	1670000	6784	292	425	25	c
+17918	\N	1674000	5259	292	375	26	c
+17919	\N	1675000	6785	292	486	27	c
+17920	\N	1678000	4778	292	425	28	c
+17921	\N	1681000	6306	292	438	29	c
+17922	\N	1683000	6786	292	464	30	c
+17923	\N	1690000	4733	292	484	31	c
+17924	\N	1691000	6787	292	484	32	c
+17925	\N	1692000	6770	292	484	33	c
+17926	\N	1701000	6771	292	476	34	c
+17927	\N	1710000	4692	292	463	35	c
+17928	\N	1715000	6788	292	484	36	c
+17929	\N	1718000	6789	292	484	37	c
+17930	\N	1746000	6790	292	484	38	c
+17931	\N	1752000	6791	292	464	39	c
+17932	\N	1752000	6772	292	488	40	c
+17933	\N	1757000	6341	292	375	41	c
+17934	\N	1758000	4482	292	488	42	c
+17935	\N	1760000	6792	292	484	43	c
+17936	\N	1765000	6793	292	429	44	c
+17937	\N	1768000	4767	292	425	45	c
+17938	\N	1769000	4780	292	425	46	c
+17939	\N	1788000	4524	292	375	47	c
+17940	\N	1790000	6794	292	486	48	c
+17941	\N	1798000	6768	292	484	49	c
+17942	\N	1799000	6795	292	375	50	c
+17943	\N	1807000	6796	292	484	51	c
+17944	\N	1816000	6797	292	429	52	c
+17945	\N	1842000	4693	292	463	53	c
+17946	\N	1892000	6798	292	463	54	c
+17947	\N	2002000	6799	292	429	55	c
+17948	\N	2101000	6800	292	476	56	c
+17949	\N	2158000	6801	292	473	57	c
+17950	\N	2215000	6364	292	438	58	c
+17951	\N	1175000	5184	293	428	1	c
+17952	\N	1191000	5223	293	428	2	c
+17953	\N	1202000	5057	293	468	3	c
+17954	\N	1204000	5169	293	377	4	c
+17955	\N	1208000	5753	293	439	5	c
+17956	\N	1213000	5264	293	377	6	c
+17957	\N	1221000	5694	293	493	7	c
+17958	\N	1224000	4558	293	448	8	c
+17959	\N	1228000	4589	293	439	9	c
+17960	\N	1228000	5055	293	468	10	c
+17961	\N	1231000	5835	293	377	11	c
+17962	\N	1233000	5381	293	493	12	c
+17963	\N	1234000	6817	293	428	13	c
+17964	\N	1239000	6818	293	468	14	c
+17965	\N	1243000	6819	293	428	15	c
+17966	\N	1251000	5693	293	493	16	c
+17967	\N	1251000	3217	293	493	17	c
+17968	\N	1261000	6820	293	428	18	c
+17969	\N	1265000	6803	293	426	19	c
+17970	\N	1266000	4847	293	426	20	c
+17971	\N	1274000	6807	293	426	21	c
+17972	\N	1276000	6804	293	426	22	c
+17973	\N	1277000	4490	293	487	23	c
+17974	\N	1279000	6821	293	428	24	c
+17975	\N	1281000	4844	293	426	25	c
+17976	\N	1285000	6822	293	426	26	c
+17977	\N	1286000	6823	293	426	27	c
+17978	\N	1286000	5054	293	468	28	c
+17979	\N	1288000	4392	293	428	29	c
+17980	\N	1288000	5342	293	485	30	c
+17981	\N	1291000	6808	293	428	31	c
+17982	\N	1298000	5670	293	439	32	c
+17983	\N	1306000	6809	293	485	33	c
+17984	\N	1308000	6824	293	468	34	c
+17985	\N	1313000	6802	293	452	35	c
+17986	\N	1315000	6810	293	468	36	c
+17987	\N	1322000	5836	293	377	37	c
+17988	\N	1328000	4581	293	439	38	c
+17989	\N	1330000	4458	293	397	39	c
+17990	\N	1332000	5117	293	452	40	c
+17991	\N	1335000	4645	293	485	41	c
+17992	\N	1337000	5081	293	485	42	c
+17993	\N	1339000	6825	293	472	43	c
+17994	\N	1342000	6826	293	397	44	c
+17995	\N	1343000	6827	293	478	45	c
+17996	\N	1346000	6828	293	428	46	c
+17997	\N	1348000	6811	293	448	47	c
+17998	\N	1348000	6829	293	397	48	c
+17999	\N	1349000	6830	293	428	49	c
+18000	\N	1357000	6831	293	478	50	c
+18001	\N	1363000	5799	293	495	51	c
+18002	\N	1366000	6812	293	428	52	c
+18003	\N	1370000	5800	293	495	53	c
+18004	\N	1375000	5669	293	439	54	c
+18005	\N	1378000	6805	293	397	55	c
+18006	\N	1380000	4535	293	448	56	c
+18007	\N	1383000	4493	293	487	57	c
+18008	\N	1384000	6832	293	448	58	c
+18009	\N	1389000	4561	293	448	59	c
+18010	\N	1397000	5798	293	495	60	c
+18011	\N	1403000	6833	293	448	61	c
+18012	\N	1408000	6834	293	448	62	c
+18013	\N	1412000	6813	293	485	63	c
+18014	\N	1414000	6835	293	428	64	c
+18015	\N	1416000	4648	293	485	65	c
+18016	\N	1417000	5103	293	377	66	c
+18017	\N	1424000	6836	293	468	67	c
+18018	\N	1434000	5116	293	452	68	c
+18019	\N	1443000	4467	293	487	69	c
+18020	\N	1453000	6837	293	452	70	c
+18021	\N	1480000	3269	293	439	71	c
+18022	\N	1480000	5671	293	439	72	c
+18023	\N	1496000	5845	293	495	73	c
+18024	\N	1520000	5676	293	493	74	c
+18025	\N	1525000	6838	293	468	75	c
+18026	\N	1538000	5407	293	439	76	c
+18027	\N	1553000	5802	293	495	77	c
+18028	\N	1554000	5478	293	397	78	c
+18029	\N	1555000	6839	293	478	79	c
+18030	\N	1572000	6840	293	468	80	c
+18031	\N	1576000	4466	293	487	81	c
+18032	\N	1617000	5672	293	439	82	c
+18033	\N	1620000	6814	293	465	83	c
+18034	\N	1634000	5084	293	485	84	c
+18035	\N	1649000	6841	293	448	85	c
+18036	\N	1653000	5752	293	439	86	c
+18037	\N	1662000	4848	293	426	87	c
+18038	\N	1665000	6815	293	478	88	c
+18039	\N	1688000	6842	293	487	89	c
+18040	\N	1706000	6816	293	457	90	c
+18041	\N	1752000	6806	293	397	91	c
+18042	\N	1016000	1500	294	53	1	c
+18043	\N	1021000	1513	294	53	2	c
+18044	\N	1025000	5638	294	53	3	c
+18045	\N	1026000	1509	294	53	4	c
+18046	\N	1049000	1506	294	43	5	c
+18047	\N	1058000	1515	294	53	6	c
+18048	\N	1075000	1569	294	46	7	c
+18049	\N	1078000	1537	294	45	8	c
+18050	\N	1080000	1530	294	43	9	c
+18051	\N	1091000	1525	294	53	10	c
+18052	\N	1093000	1535	294	53	11	c
+18053	\N	1103000	1585	294	45	12	c
+18054	\N	1112000	1573	294	43	13	c
+18055	\N	1117000	1626	294	53	14	c
+18056	\N	1127000	1594	294	45	15	c
+18057	\N	1127000	1562	294	45	16	c
+18058	\N	1128000	1618	294	53	17	c
+18059	\N	1131000	1602	294	43	18	c
+18060	\N	1134000	1621	294	53	19	c
+18061	\N	1139000	1576	294	45	20	c
+18062	\N	1142000	1579	294	46	21	c
+18063	\N	1153000	1557	294	43	22	c
+18064	\N	1154000	1600	294	46	23	c
+18065	\N	1169000	5306	294	45	24	c
+18066	\N	1170000	5227	294	45	25	c
+18067	\N	1179000	1558	294	43	26	c
+18068	\N	1188000	1671	294	43	27	c
+18069	\N	1199000	1596	294	46	28	c
+18070	\N	1204000	1734	294	43	29	c
+18071	\N	1217000	1665	294	43	30	c
+18072	\N	1228000	1650	294	43	31	c
+18073	\N	1234000	1589	294	46	32	c
+18074	\N	1254000	1593	294	46	33	c
+18075	\N	1290000	1717	294	43	34	c
+18076	\N	1336000	1745	294	46	35	c
+18077	\N	1221000	1686	295	45	1	c
+18078	\N	1227000	1677	295	43	2	c
+18079	\N	1233000	1656	295	53	3	c
+18080	\N	1239000	1702	295	43	4	c
+18081	\N	1239000	1700	295	43	5	c
+18082	\N	1240000	1737	295	43	6	c
+18083	\N	1250000	1726	295	43	7	c
+18084	\N	1255000	1720	295	45	8	c
+18085	\N	1258000	1662	295	43	9	c
+18086	\N	1270000	1760	295	45	10	c
+18087	\N	1272000	2998	295	53	11	c
+18088	\N	1283000	1723	295	45	12	c
+18089	\N	1285000	2982	295	53	13	c
+18090	\N	1286000	1791	295	45	14	c
+18091	\N	1287000	1714	295	53	15	c
+18092	\N	1289000	1731	295	43	16	c
+18093	\N	1297000	1664	295	53	17	c
+18094	\N	1317000	1724	295	45	18	c
+18095	\N	1343000	1786	295	45	19	c
+18096	\N	1372000	1733	295	45	20	c
+18097	\N	1394000	1781	295	43	21	c
+18098	\N	1404000	1792	295	45	22	c
+18099	\N	1410000	5318	295	46	23	c
+18100	\N	1448000	1828	295	45	24	c
+18101	\N	1451000	1818	295	43	25	c
+18102	\N	1459000	1833	295	46	26	c
+18103	\N	1464000	5262	295	53	27	c
+18104	\N	1470000	6843	295	45	28	c
+18105	\N	1474000	1844	295	45	29	c
+18106	\N	1483000	1808	295	43	30	c
+18107	\N	1525000	1777	295	45	31	c
+18108	\N	1534000	1847	295	43	32	c
+18109	\N	1539000	6844	295	45	33	c
+18110	\N	1564000	1790	295	46	34	c
+18111	\N	1568000	1811	295	46	35	c
+18112	\N	1581000	1848	295	45	36	c
+18113	\N	1621000	1835	295	45	37	c
+18114	\N	1634000	6845	295	45	38	c
+18115	\N	1688000	1840	295	46	39	c
+18116	\N	1049000	1501	296	48	1	c
+18117	\N	1079000	1510	296	49	2	c
+18118	\N	1082000	1508	296	49	3	c
+18119	\N	1090000	1516	296	49	4	c
+18120	\N	1099000	1522	296	49	5	c
+18121	\N	1100000	1512	296	49	6	c
+18122	\N	1119000	1617	296	49	7	c
+18123	\N	1128000	1619	296	49	8	c
+18124	\N	1132000	1554	296	48	9	c
+18125	\N	1163000	1520	296	49	10	c
+18126	\N	1167000	6846	296	48	11	c
+18127	\N	1176000	1613	296	49	12	c
+18128	\N	1201000	1615	296	49	13	c
+18129	\N	1223000	1641	296	49	14	c
+18130	\N	1240000	1561	296	48	15	c
+18131	\N	1245000	1574	296	48	16	c
+18132	\N	1249000	1669	296	49	17	c
+18133	\N	1322000	1614	296	49	18	c
+18134	\N	1325000	1633	296	49	19	c
+18135	\N	1328000	1608	296	48	20	c
+18136	\N	1344000	1703	296	49	21	c
+18137	\N	1354000	1715	296	49	22	c
+18138	\N	1365000	1827	296	48	23	c
+18139	\N	1392000	1611	296	48	24	c
+18140	\N	1412000	1741	296	49	25	c
+18141	\N	1413000	1598	296	48	26	c
+18142	\N	1465000	1765	296	49	27	c
+18143	\N	1465000	1736	296	49	28	c
+18144	\N	1465000	1748	296	49	29	c
+18145	\N	1473000	1799	296	48	30	c
+18146	\N	1494000	1778	296	48	31	c
+18147	\N	1497000	1756	296	49	32	c
+18148	\N	1523000	1770	296	48	33	c
+18149	\N	1534000	3118	296	49	34	c
+18150	\N	1602000	1784	296	49	35	c
+18151	\N	1622000	1755	296	49	36	c
+18152	\N	1635000	1825	296	49	37	c
+18153	\N	1645000	1817	296	49	38	c
+18154	\N	1656000	5594	296	49	39	c
+18155	\N	1671000	5190	296	49	40	c
+18156	\N	1671000	1804	296	49	41	c
+18157	\N	1677000	1841	296	49	42	c
+18158	\N	1678000	6847	296	49	43	c
+18159	\N	1737000	1837	296	48	44	c
+18160	\N	1767000	1832	296	49	45	c
+18161	\N	1785000	6848	296	49	46	c
+18162	\N	1852000	1860	296	48	47	c
+18163	\N	1044000	5925	297	520	1	c
+18164	\N	1068000	5932	297	520	2	c
+18165	\N	1131000	5898	297	520	3	c
+18166	\N	1141000	1526	297	47	4	c
+18167	\N	1158000	5947	297	520	5	c
+18168	\N	1173000	5945	297	520	6	c
+18169	\N	1179000	6849	297	47	7	c
+18170	\N	1179000	1624	297	47	8	c
+18171	\N	1194000	1592	297	44	9	c
+18172	\N	1196000	1523	297	44	10	c
+18173	\N	1198000	1527	297	47	11	c
+18174	\N	1198000	5333	297	47	12	c
+18175	\N	1211000	1622	297	47	13	c
+18176	\N	1221000	1560	297	47	14	c
+18177	\N	1225000	3641	297	520	15	c
+18178	\N	1225000	3648	297	520	16	c
+18179	\N	1261000	1660	297	47	17	c
+18180	\N	1271000	1599	297	44	18	c
+18181	\N	1277000	1625	297	47	19	c
+18182	\N	1291000	1657	297	47	20	c
+18183	\N	1296000	3272	297	44	21	c
+18184	\N	1310000	1597	297	44	22	c
+18185	\N	1318000	1680	297	47	23	c
+18186	\N	1351000	1604	297	44	24	c
+18187	\N	1351000	3637	297	520	25	c
+18188	\N	1396000	6850	297	44	26	c
+18189	\N	1429000	1769	297	44	27	c
+18190	\N	1553000	1795	297	44	28	c
+18191	\N	1625000	1801	297	44	29	c
+18192	\N	1626000	1851	297	44	30	c
+18193	\N	1068000	1504	298	58	1	c
+18194	\N	1142000	1519	298	51	2	c
+18195	\N	1166000	1536	298	51	3	c
+18196	\N	1200000	1545	298	51	4	c
+18197	\N	1203000	1590	298	51	5	c
+18198	\N	1210000	1563	298	51	6	c
+18199	\N	1221000	1577	298	51	7	c
+18200	\N	1234000	1636	298	51	8	c
+18201	\N	1243000	1672	298	51	9	c
+18202	\N	1247000	3075	298	51	10	c
+18203	\N	1255000	1553	298	51	11	c
+18204	\N	1270000	1571	298	58	12	c
+18205	\N	1277000	1705	298	51	13	c
+18206	\N	1282000	2889	298	58	14	c
+18207	\N	1292000	1681	298	51	15	c
+18208	\N	1303000	1647	298	51	16	c
+18209	\N	1328000	1635	298	51	17	c
+18210	\N	1336000	6851	298	58	18	c
+18211	\N	1337000	1690	298	51	19	c
+18212	\N	1349000	1661	298	51	20	c
+18213	\N	1351000	1663	298	51	21	c
+18214	\N	1372000	1675	298	51	22	c
+18215	\N	1391000	1789	298	51	23	c
+18216	\N	1396000	1659	298	51	24	c
+18217	\N	1398000	1797	298	51	25	c
+18218	\N	1401000	1782	298	51	26	c
+18219	\N	1407000	1704	298	51	27	c
+18220	\N	1414000	1767	298	51	28	c
+18221	\N	1425000	1709	298	51	29	c
+18222	\N	1426000	1725	298	51	30	c
+18223	\N	1437000	1678	298	51	31	c
+18224	\N	1449000	1764	298	51	32	c
+18225	\N	1451000	6852	298	51	33	c
+18226	\N	1467000	1793	298	51	34	c
+18227	\N	1480000	1749	298	51	35	c
+18228	\N	1486000	1682	298	58	36	c
+18229	\N	1493000	1810	298	51	37	c
+18230	\N	1497000	1747	298	51	38	c
+18231	\N	1505000	6853	298	51	39	c
+18232	\N	1524000	1776	298	51	40	c
+18233	\N	1560000	1766	298	51	41	c
+18234	\N	1563000	1826	298	51	42	c
+18235	\N	1567000	1800	298	51	43	c
+18236	\N	1614000	1838	298	51	44	c
+18237	\N	1631000	1779	298	58	45	c
+18238	\N	1662000	1768	298	58	46	c
+18239	\N	1799000	1853	298	51	47	c
+18240	\N	1844000	1836	298	58	48	c
+18255	\N	1047000	6205	300	52	1	c
+18256	\N	1067000	1518	300	57	2	c
+18257	\N	1091000	1511	300	52	3	c
+18258	\N	1105000	1550	300	57	4	c
+18259	\N	1108000	1546	300	57	5	c
+18260	\N	1125000	1541	300	57	6	c
+18261	\N	1134000	1567	300	57	7	c
+18262	\N	1135000	6215	300	548	8	c
+18263	\N	1145000	1568	300	52	9	c
+18264	\N	1150000	1540	300	52	10	c
+18265	\N	1159000	5608	300	554	11	c
+18266	\N	1160000	1584	300	52	12	c
+18267	\N	1164000	1528	300	57	13	c
+18268	\N	1184000	6854	300	554	14	c
+18269	\N	1185000	6233	300	548	15	c
+18270	\N	1191000	1648	300	57	16	c
+18271	\N	1193000	6855	300	554	17	c
+18272	\N	1196000	6856	300	554	18	c
+18273	\N	1216000	1639	300	57	19	c
+18274	\N	1221000	5198	300	52	20	c
+18275	\N	1223000	5609	300	554	21	c
+18276	\N	1235000	1645	300	57	22	c
+18277	\N	1249000	6238	300	52	23	c
+18278	\N	1254000	1605	300	52	24	c
+18279	\N	1264000	1668	300	57	25	c
+18280	\N	1279000	1646	300	52	26	c
+18281	\N	1283000	6212	300	548	27	c
+18282	\N	1285000	6250	300	548	28	c
+18283	\N	1307000	6857	300	548	29	c
+18284	\N	1309000	1691	300	52	30	c
+18285	\N	1311000	1729	300	52	31	c
+18286	\N	1313000	4463	300	548	32	c
+18287	\N	1332000	1750	300	57	33	c
+18288	\N	1343000	1676	300	57	34	c
+18289	\N	1368000	6858	300	554	35	c
+18290	\N	1373000	6859	300	548	36	c
+18291	\N	1374000	1751	300	57	37	c
+18292	\N	1380000	1701	300	52	38	c
+18293	\N	1385000	1708	300	52	39	c
+18294	\N	1387000	5159	300	52	40	c
+18295	\N	1393000	6203	300	548	41	c
+18296	\N	1424000	6860	300	554	42	c
+18297	\N	1427000	6861	300	554	43	c
+18241	\N	1054000	1507	299	50	1	c
+18242	\N	1121000	1529	299	56	2	c
+18243	\N	1150000	1538	299	50	3	c
+18244	\N	1154000	1532	299	56	4	c
+18245	\N	1155000	1587	299	50	5	c
+18246	\N	1165000	1531	299	56	6	c
+18247	\N	1178000	1548	299	56	7	c
+18248	\N	1186000	1586	299	50	8	c
+18249	\N	1198000	1556	299	50	9	c
+18250	\N	1207000	1565	299	50	10	c
+18251	\N	1209000	1628	299	50	11	c
+18252	\N	1221000	1547	299	50	12	c
+18253	\N	1243000	1683	299	50	13	c
+18254	\N	1247000	1595	299	56	14	c
+18298	\N	1041000	1503	301	55	1	c
+18299	\N	1078000	1521	301	55	2	c
+18300	\N	1105000	1514	301	55	3	c
+18301	\N	1132000	1533	301	55	4	c
+18302	\N	1139000	1551	301	54	5	c
+18303	\N	1144000	6862	301	55	6	c
+18304	\N	1147000	1549	301	55	7	c
+18305	\N	1154000	6059	301	55	8	c
+18306	\N	1162000	1572	301	54	9	c
+18307	\N	1189000	1637	301	55	10	c
+18308	\N	1190000	1583	301	54	11	c
+18309	\N	1199000	1570	301	54	12	c
+18310	\N	1200000	1640	301	55	13	c
+18311	\N	1203000	1539	301	54	14	c
+18312	\N	1211000	1564	301	55	15	c
+18313	\N	1212000	1627	301	55	16	c
+18314	\N	1241000	1710	301	55	17	c
+18315	\N	1257000	1679	301	55	18	c
+18316	\N	1262000	1666	301	54	19	c
+18317	\N	1263000	1674	301	54	20	c
+18318	\N	1270000	6032	301	55	21	c
+18319	\N	1279000	1631	301	55	22	c
+18320	\N	1308000	1712	301	54	23	c
+18321	\N	1309000	5183	301	55	24	c
+18322	\N	1312000	5151	301	54	25	c
+18323	\N	1315000	1694	301	55	26	c
+18324	\N	1330000	1707	301	55	27	c
+18325	\N	1330000	1653	301	55	28	c
+18326	\N	1362000	1588	301	54	29	c
+18327	\N	1363000	5275	301	55	30	c
+18328	\N	1387000	1754	301	54	31	c
+18329	\N	1392000	6863	301	54	32	c
+18330	\N	1406000	1735	301	54	33	c
+18331	\N	1439000	5618	301	54	34	c
+18332	\N	1446000	3405	301	54	35	c
+18333	\N	1448000	1780	301	54	36	c
+18334	\N	1470000	6864	301	55	37	c
+18335	\N	1510000	1758	301	54	38	c
+18336	\N	1518000	1763	301	54	39	c
+18337	\N	1519000	1743	301	54	40	c
+18338	\N	1543000	5274	301	55	41	c
+18339	\N	1549000	1718	301	55	42	c
+18340	\N	1563000	1798	301	55	43	c
+18341	\N	1638000	1772	301	54	44	c
+18342	\N	1659000	1730	301	55	45	c
+18343	\N	1687000	1839	301	54	46	c
+18344	\N	1688000	1820	301	54	47	c
+18345	\N	1753000	6372	301	54	48	c
+17722	\N	1705000	6865	290	429	128	c
+6008	0	1600000	6865	37	251	18	c
+6058	0	1631000	6865	36	253	17	c
+8147	\N	1640000	6865	70	251	69	c
+18346	\N	1214000	1027	302	13	1	c
+18347	\N	1215000	5564	302	13	2	c
+18348	\N	1296000	1086	302	13	3	c
+18349	\N	1303000	1071	302	13	4	c
+18350	\N	1338000	1056	302	13	5	c
+18351	\N	1365000	1146	302	13	6	c
+18352	\N	1372000	6866	302	13	7	c
+18353	\N	1374000	2610	302	13	8	c
+18354	\N	1374000	1083	302	13	9	c
+18355	\N	1377000	6867	302	14	10	c
+18356	\N	1421000	1066	302	13	11	c
+18357	\N	1452000	2643	302	13	12	c
+18358	\N	1469000	5805	302	13	13	c
+18359	\N	1482000	5200	302	13	14	c
+18360	\N	1496000	1091	302	14	15	c
+18361	\N	1498000	1058	302	14	16	c
+18362	\N	1573000	1102	302	14	17	c
+18363	\N	1574000	1103	302	14	18	c
+18364	\N	1599000	2657	302	13	19	c
+18365	\N	1627000	1061	302	14	20	c
+18366	\N	1645000	1188	302	14	21	c
+18367	\N	1650000	1074	302	14	22	c
+18368	\N	1651000	2714	302	14	23	c
+18369	\N	1738000	2724	302	13	24	c
+18370	\N	1771000	1198	302	14	25	c
+18371	\N	1907000	5322	302	14	26	c
+18372	\N	1916000	1217	302	14	27	c
+18373	\N	1917000	6868	302	13	28	c
+18374	\N	1334000	1004	303	15	1	c
+18375	\N	1347000	5331	303	15	2	c
+18376	\N	1370000	3666	303	509	3	c
+18377	\N	1383000	3670	303	509	4	c
+18378	\N	1395000	5848	303	509	5	c
+18379	\N	1416000	1057	303	15	6	c
+18380	\N	1432000	6869	303	59	7	c
+18381	\N	1433000	2553	303	59	8	c
+18382	\N	1434000	6141	303	59	9	c
+18383	\N	1459000	1104	303	15	10	c
+18384	\N	1467000	5869	303	509	11	c
+18385	\N	1475000	6369	303	59	12	c
+18386	\N	1477000	1090	303	15	13	c
+18387	\N	1480000	6006	303	509	14	c
+18388	\N	1485000	1047	303	15	15	c
+18389	\N	1492000	2544	303	59	16	c
+18390	\N	1500000	5861	303	509	17	c
+18391	\N	1512000	1098	303	15	18	c
+18392	\N	1537000	6872	303	509	19	c
+18393	\N	1548000	3665	303	509	20	c
+18394	\N	1570000	2554	303	59	21	c
+18395	\N	1571000	1141	303	15	22	c
+18396	\N	1573000	5982	303	509	23	c
+18397	\N	1625000	1177	303	15	24	c
+18398	\N	1626000	5960	303	509	25	c
+18399	\N	1640000	5534	303	15	26	c
+18400	\N	1650000	6189	303	59	27	c
+18401	\N	1653000	5332	303	15	28	c
+18402	\N	1664000	6013	303	509	29	c
+18403	\N	1668000	2629	303	15	30	c
+18404	\N	1669000	3654	303	509	31	c
+18405	\N	1673000	5981	303	509	32	c
+18406	\N	1677000	1196	303	15	33	c
+18407	\N	1692000	1144	303	15	34	c
+18408	\N	1698000	3663	303	509	35	c
+18409	\N	1750000	6870	303	59	36	c
+18410	\N	1751000	6871	303	59	37	c
+18411	\N	1775000	1205	303	15	38	c
+18412	\N	1776000	1171	303	15	39	c
+18413	\N	1777000	1172	303	15	40	c
+18414	\N	1800000	1181	303	15	41	c
+18415	\N	2304000	2586	303	59	42	c
+18416	\N	1307000	1010	304	17	1	c
+18417	\N	1378000	2512	304	17	2	c
+18418	\N	1401000	1026	304	17	3	c
+18419	\N	1413000	1037	304	17	4	c
+18420	\N	1419000	1036	304	17	5	c
+18421	\N	1420000	1030	304	17	6	c
+18422	\N	1427000	1033	304	17	7	c
+18423	\N	1447000	2555	304	60	8	c
+18424	\N	1490000	1118	304	17	9	c
+18425	\N	1505000	1025	304	17	10	c
+18426	\N	1519000	6873	304	17	11	c
+18427	\N	1537000	1122	304	17	12	c
+18428	\N	1590000	2572	304	60	13	c
+18429	\N	1594000	2568	304	60	14	c
+18430	\N	1595000	1132	304	17	15	c
+18431	\N	1609000	1136	304	17	16	c
+18432	\N	1623000	1157	304	17	17	c
+18433	\N	1660000	1202	304	17	18	c
+18434	\N	1680000	1163	304	17	19	c
+18435	\N	1694000	3126	304	17	20	c
+18436	\N	1703000	2652	304	17	21	c
+18437	\N	1720000	1147	304	17	22	c
+18438	\N	1723000	6874	304	60	23	c
+18439	\N	1770000	2578	304	60	24	c
+18440	\N	1846000	1175	304	17	25	c
+18441	\N	1859000	1201	304	17	26	c
+18442	\N	1864000	2713	304	60	27	c
+18443	\N	1894000	2682	304	17	28	c
+18444	\N	1935000	2715	304	17	29	c
+18445	\N	2018000	5215	304	17	30	c
+18446	\N	2019000	2703	304	17	31	c
+18447	\N	2416000	2730	304	17	32	c
+18448	\N	2441000	2733	304	17	33	c
+18507	\N	1351000	1043	306	23	1	c
+18508	\N	1360000	5265	306	23	2	c
+18509	\N	1381000	1034	306	23	3	c
+18510	\N	1399000	2535	306	64	4	c
+18511	\N	1422000	5193	306	64	5	c
+18512	\N	1423000	2522	306	64	6	c
+18513	\N	1434000	2547	306	64	7	c
+18514	\N	1434000	1085	306	23	8	c
+18515	\N	1435000	1048	306	23	9	c
+18516	\N	1440000	1094	306	23	10	c
+18517	\N	1517000	2543	306	64	11	c
+18518	\N	1529000	2567	306	64	12	c
+18519	\N	1539000	1153	306	23	13	c
+18520	\N	1551000	2688	306	23	14	c
+18521	\N	1554000	1127	306	23	15	c
+18522	\N	1561000	1145	306	23	16	c
+18523	\N	1567000	1155	306	23	17	c
+18524	\N	1581000	1067	306	23	18	c
+18525	\N	1595000	1160	306	23	19	c
+18526	\N	1622000	6886	306	23	20	c
+18527	\N	1635000	5350	306	64	21	c
+18528	\N	1635000	5112	306	64	22	c
+18529	\N	1647000	2612	306	64	23	c
+18530	\N	1662000	1095	306	23	24	c
+18531	\N	1696000	2678	306	64	25	c
+18532	\N	1721000	5269	306	23	26	c
+18533	\N	1721000	1138	306	23	27	c
+18534	\N	1736000	2679	306	64	28	c
+18535	\N	1751000	1159	306	23	29	c
+18536	\N	1756000	2704	306	23	30	c
+18537	\N	1763000	1180	306	23	31	c
+18538	\N	1766000	1156	306	23	32	c
+18539	\N	1770000	6887	306	23	33	c
+18540	\N	1771000	2699	306	23	34	c
+18541	\N	1772000	2671	306	64	35	c
+18542	\N	1806000	5235	306	23	36	c
+18543	\N	1901000	2705	306	23	37	c
+18544	\N	1909000	2708	306	23	38	c
+18545	\N	1918000	1194	306	23	39	c
+18546	\N	1934000	2712	306	23	40	c
+18547	\N	1955000	2729	306	23	41	c
+18548	\N	2035000	2732	306	23	42	c
+18549	\N	2073000	6888	306	23	43	c
+18550	\N	2169000	2707	306	23	44	c
+18551	\N	2366000	2726	306	23	45	c
+18552	\N	2536000	2731	306	23	46	c
+18449	\N	1270000	1003	305	26	1	c
+18450	\N	1276000	1005	305	26	2	c
+18451	\N	1307000	2509	305	62	3	c
+18452	\N	1308000	2519	305	62	4	c
+18453	\N	1308000	2504	305	62	5	c
+18454	\N	1333000	2510	305	62	6	c
+18455	\N	1335000	2508	305	62	7	c
+18456	\N	1386000	1013	305	26	8	c
+18457	\N	1390000	5283	305	26	9	c
+18458	\N	1397000	5282	305	26	10	c
+18459	\N	1454000	2517	305	62	11	c
+18460	\N	1468000	2618	305	62	12	c
+18461	\N	1469000	1012	305	26	13	c
+18462	\N	1476000	2591	305	62	14	c
+18463	\N	1500000	3367	305	26	15	c
+18464	\N	1523000	1119	305	26	16	c
+18465	\N	1536000	2630	305	62	17	c
+18466	\N	1565000	2654	305	62	18	c
+18467	\N	1569000	2613	305	62	19	c
+18468	\N	1581000	2617	305	62	20	c
+18469	\N	1585000	3092	305	62	21	c
+18470	\N	1610000	2594	305	62	22	c
+18471	\N	1613000	1128	305	26	23	c
+18472	\N	1626000	2609	305	62	24	c
+18473	\N	1630000	2603	305	62	25	c
+18474	\N	1635000	2627	305	62	26	c
+18475	\N	1638000	1142	305	26	27	c
+18476	\N	1638000	5337	305	62	28	c
+18477	\N	1676000	2606	305	62	29	c
+18478	\N	1684000	2622	305	62	30	c
+18479	\N	1735000	1185	305	26	31	c
+18480	\N	1738000	2651	305	62	32	c
+18481	\N	1742000	1168	305	26	33	c
+18482	\N	1748000	2662	305	62	34	c
+18483	\N	1749000	6875	305	62	35	c
+18484	\N	1755000	2673	305	62	36	c
+18485	\N	1764000	6884	305	62	37	c
+18486	\N	1770000	1140	305	26	38	c
+18487	\N	1781000	1173	305	26	39	c
+18488	\N	1791000	1151	305	26	40	c
+18489	\N	1796000	6876	305	26	41	c
+18490	\N	1808000	2641	305	26	42	c
+18491	\N	1810000	6877	305	62	43	c
+18492	\N	1818000	6878	305	62	44	c
+18493	\N	1851000	6885	305	62	45	c
+18494	\N	1859000	6879	305	26	46	c
+18495	\N	1882000	2710	305	62	47	c
+18496	\N	1889000	2711	305	62	48	c
+18497	\N	1899000	2716	305	62	49	c
+18498	\N	1951000	2619	305	62	50	c
+18499	\N	1965000	6880	305	62	51	c
+18500	\N	1970000	6881	305	62	52	c
+18501	\N	2011000	1204	305	26	53	c
+18502	\N	2021000	2722	305	26	54	c
+18503	\N	2029000	2725	305	62	55	c
+18504	\N	2039000	6882	305	62	56	c
+18505	\N	2637000	6883	305	62	57	c
+18506	\N	2640000	2728	305	62	58	c
+18553	\N	1167000	2500	307	63	1	c
+18554	\N	1263000	5811	307	555	2	c
+18555	\N	1304000	6907	307	555	3	c
+18556	\N	1308000	1024	307	25	4	c
+18557	\N	1350000	1076	307	25	5	c
+18558	\N	1388000	6889	307	555	6	c
+18559	\N	1398000	6890	307	555	7	c
+18560	\N	1402000	6891	307	555	8	c
+18561	\N	1419000	6892	307	555	9	c
+18562	\N	1437000	6893	307	555	10	c
+18563	\N	1490000	4481	307	534	11	c
+18564	\N	1505000	2558	307	63	12	c
+18565	\N	1507000	6894	307	555	13	c
+18566	\N	1519000	6895	307	555	14	c
+18567	\N	1527000	6906	307	555	15	c
+18568	\N	1549000	5141	307	555	16	c
+18569	\N	1574000	2564	307	63	17	c
+18570	\N	1591000	1111	307	25	18	c
+18571	\N	1595000	6181	307	534	19	c
+18572	\N	1608000	6180	307	534	20	c
+18573	\N	1614000	6147	307	534	21	c
+18574	\N	1618000	6896	307	555	22	c
+18575	\N	1623000	2576	307	25	23	c
+18576	\N	1650000	6121	307	534	24	c
+18577	\N	1682000	6897	307	534	25	c
+18578	\N	1694000	6898	307	25	26	c
+18579	\N	1732000	4485	307	534	27	c
+18580	\N	1738000	1114	307	25	28	c
+18581	\N	1750000	6899	307	534	29	c
+18582	\N	1794000	6900	307	534	30	c
+18583	\N	1799000	4487	307	534	31	c
+18584	\N	1833000	2584	307	63	32	c
+18585	\N	1860000	5135	307	555	33	c
+18586	\N	1862000	6905	307	555	34	c
+18587	\N	1878000	6901	307	25	35	c
+18588	\N	1908000	1212	307	25	36	c
+18589	\N	1921000	6902	307	25	37	c
+18590	\N	1960000	2727	307	25	38	c
+18591	\N	2006000	1211	307	25	39	c
+18592	\N	2008000	6903	307	555	40	c
+18593	\N	2015000	4479	307	534	41	c
+18594	\N	2051000	6904	307	25	42	c
+18595	\N	1141000	1569	308	46	1	c
+18596	\N	1181000	1572	308	54	2	c
+18597	\N	1193000	1551	308	54	3	c
+18598	\N	1195000	1583	308	54	4	c
+18599	\N	1207000	1570	308	54	5	c
+18600	\N	1209000	1539	308	54	6	c
+18601	\N	1215000	1579	308	46	7	c
+18602	\N	1222000	1591	308	54	8	c
+18603	\N	1264000	1600	308	46	9	c
+18604	\N	1274000	1596	308	46	10	c
+18605	\N	1280000	1674	308	54	11	c
+18606	\N	1286000	1666	308	54	12	c
+18607	\N	1325000	5151	308	54	13	c
+18608	\N	1343000	1754	308	54	14	c
+18609	\N	1352000	1589	308	46	15	c
+18610	\N	1355000	5321	308	46	16	c
+18611	\N	1374000	5618	308	54	17	c
+18612	\N	1396000	1712	308	54	18	c
+18613	\N	1425000	1745	308	46	19	c
+18614	\N	1440000	1735	308	54	20	c
+18615	\N	1442000	1758	308	54	21	c
+18616	\N	1473000	1772	308	54	22	c
+18617	\N	1474000	1743	308	54	23	c
+18618	\N	1490000	1588	308	54	24	c
+18619	\N	1503000	1763	308	54	25	c
+18620	\N	1528000	5318	308	46	26	c
+18621	\N	1579000	1780	308	54	27	c
+18622	\N	1592000	1833	308	46	28	c
+18623	\N	1691000	1811	308	46	29	c
+18624	\N	1700000	1790	308	46	30	c
+18625	\N	1729000	1839	308	54	31	c
+18626	\N	1732000	1820	308	54	32	c
+18627	\N	1790000	6372	308	54	33	c
+18628	\N	1994000	1840	308	46	34	c
+18629	\N	2085000	5327	308	46	35	c
+18630	\N	1151000	1500	309	53	1	c
+18631	\N	1155000	1513	309	53	2	c
+18632	\N	1167000	1509	309	53	3	c
+18633	\N	1167000	5638	309	53	4	c
+18634	\N	1172000	1515	309	53	5	c
+18635	\N	1174000	1529	309	56	6	c
+18636	\N	1227000	1532	309	56	7	c
+18637	\N	1228000	1531	309	56	8	c
+18638	\N	1231000	1525	309	53	9	c
+18639	\N	1250000	1535	309	53	10	c
+18640	\N	1252000	5202	309	53	11	c
+18641	\N	1263000	5216	309	53	12	c
+18642	\N	1279000	1548	309	56	13	c
+18643	\N	1292000	1626	309	53	14	c
+18644	\N	1305000	1621	309	53	15	c
+18645	\N	1380000	1656	309	53	16	c
+18646	\N	1389000	1610	309	56	17	c
+18647	\N	1434000	2998	309	53	18	c
+18648	\N	1468000	1742	309	53	19	c
+18649	\N	1469000	1714	309	53	20	c
+18650	\N	1493000	1664	309	53	21	c
+18651	\N	1635000	1757	309	56	22	c
+18652	\N	1717000	5262	309	53	23	c
+18653	\N	1773000	5277	309	56	24	c
+18654	\N	1859000	1783	309	56	25	c
+18655	\N	1937000	1829	309	56	26	c
+18656	\N	988000	1507	310	50	1	c
+18657	\N	1088000	1537	310	45	2	c
+18658	\N	1092000	1524	310	45	3	c
+18659	\N	1102000	1587	310	50	4	c
+18660	\N	1111000	1538	310	50	5	c
+18661	\N	1132000	1585	310	45	6	c
+18662	\N	1133000	1562	310	45	7	c
+18663	\N	1135000	1556	310	50	8	c
+18664	\N	1142000	1594	310	45	9	c
+18665	\N	1166000	1565	310	50	11	c
+18666	\N	1179000	1586	310	50	12	c
+18667	\N	1188000	1628	310	50	13	c
+18668	\N	1194000	5227	310	45	14	c
+18669	\N	1204000	5306	310	45	15	c
+18670	\N	1209000	1576	310	45	16	c
+18671	\N	1212000	1686	310	45	17	c
+18672	\N	1215000	1683	310	50	18	c
+18673	\N	1222000	5335	310	50	20	c
+18674	\N	1225000	1652	310	50	21	c
+18675	\N	1228000	1654	310	50	22	c
+18676	\N	1229000	5226	310	50	23	c
+18677	\N	1250000	1667	310	50	24	c
+18678	\N	1259000	1689	310	50	25	c
+18679	\N	1274000	6910	310	50	26	c
+18680	\N	1278000	1723	310	45	27	c
+18681	\N	1280000	1720	310	45	28	c
+18682	\N	1280000	1722	310	50	29	c
+18683	\N	1287000	6909	310	50	30	c
+18684	\N	1289000	1733	310	45	31	c
+18685	\N	1302000	1724	310	45	32	c
+18686	\N	1324000	1844	310	45	35	c
+18687	\N	1332000	1760	310	45	36	c
+18688	\N	1343000	1719	310	50	37	c
+18689	\N	1345000	5640	310	45	38	c
+18690	\N	1347000	1796	310	50	39	c
+18691	\N	1350000	1786	310	45	40	c
+18692	\N	1444000	1777	310	45	42	c
+18693	\N	1453000	1771	310	50	43	c
+18694	\N	1458000	1828	310	45	44	c
+18695	\N	1474000	1816	310	50	45	c
+18696	\N	1499000	1830	310	50	46	c
+18697	\N	1516000	1848	310	45	47	c
+18698	\N	1518000	1831	310	45	48	c
+18699	\N	1531000	6908	310	45	49	c
+18700	\N	1583000	1775	310	50	50	c
+18701	\N	1609000	6845	310	45	51	c
+18702	\N	1633000	1835	310	45	52	c
+18703	\N	1045000	1510	311	49	1	c
+18704	\N	1052000	1508	311	49	2	c
+18705	\N	1071000	1516	311	49	3	c
+18706	\N	1088000	1512	311	49	4	c
+18707	\N	1108000	1522	311	49	5	c
+18708	\N	1111000	1617	311	49	6	c
+18709	\N	1124000	1619	311	49	7	c
+18710	\N	1164000	1520	311	49	8	c
+18711	\N	1181000	1613	311	49	9	c
+18712	\N	1190000	1615	311	49	10	c
+18713	\N	1223000	1592	311	44	11	c
+18714	\N	1223000	1641	311	49	12	c
+18715	\N	1223000	1523	311	44	13	c
+18716	\N	1234000	1614	311	49	14	c
+18717	\N	1265000	1634	311	49	15	c
+18718	\N	1279000	1599	311	44	16	c
+18719	\N	1284000	3272	311	44	17	c
+18720	\N	1368000	1597	311	44	18	c
+18721	\N	1370000	1703	311	49	19	c
+18722	\N	1382000	1715	311	49	20	c
+18723	\N	1388000	5197	311	44	21	c
+18724	\N	1392000	6850	311	44	22	c
+18725	\N	1403000	1604	311	44	23	c
+18726	\N	1427000	1769	311	44	24	c
+18727	\N	1448000	6911	311	44	25	c
+18728	\N	1450000	1795	311	44	26	c
+18729	\N	1502000	1736	311	49	27	c
+18730	\N	1512000	1756	311	49	28	c
+18731	\N	1513000	1741	311	49	29	c
+18732	\N	1552000	1755	311	49	30	c
+18733	\N	1580000	1814	311	44	31	c
+18734	\N	1591000	6847	311	49	32	c
+18735	\N	1604000	1841	311	49	33	c
+18736	\N	1613000	1804	311	49	34	c
+18737	\N	1645000	1817	311	49	35	c
+18738	\N	1650000	6848	311	49	36	c
+18739	\N	1745000	3118	311	49	37	c
+18740	\N	1747000	1832	311	49	38	c
+18741	\N	1779000	1825	311	49	39	c
+18742	\N	1788000	1822	311	44	40	c
+18743	\N	1795000	1834	311	44	41	c
+18744	\N	1799000	5334	311	49	42	c
+18745	\N	2126000	1857	311	44	43	c
+18746	\N	2128000	1807	311	44	44	c
+18747	\N	1017000	1501	312	48	1	c
+18748	\N	1103000	1517	312	47	2	c
+18749	\N	1121000	1526	312	47	3	c
+18750	\N	1122000	6849	312	47	4	c
+18751	\N	1129000	5333	312	47	5	c
+18752	\N	1142000	1527	312	47	6	c
+18753	\N	1149000	1622	312	47	7	c
+18754	\N	1153000	1624	312	47	8	c
+18755	\N	1156000	1555	312	47	9	c
+18756	\N	1172000	1620	312	47	10	c
+18757	\N	1179000	1561	312	48	11	c
+18758	\N	1196000	1552	312	47	12	c
+18759	\N	1228000	1623	312	47	13	c
+18760	\N	1235000	1649	312	47	14	c
+18761	\N	1243000	1660	312	47	15	c
+18762	\N	1258000	1574	312	48	16	c
+18763	\N	1276000	1657	312	47	17	c
+18764	\N	1280000	1625	312	47	18	c
+18765	\N	1294000	1611	312	48	19	c
+18766	\N	1317000	1698	312	47	20	c
+18767	\N	1318000	1598	312	48	21	c
+18768	\N	1319000	1697	312	47	22	c
+18769	\N	1320000	1827	312	48	23	c
+18770	\N	1325000	1739	312	47	24	c
+18771	\N	1366000	1695	312	47	25	c
+18772	\N	1383000	1753	312	47	26	c
+18773	\N	1405000	1685	312	47	27	c
+18774	\N	1411000	1727	312	47	28	c
+18775	\N	1419000	1716	312	47	29	c
+18776	\N	1434000	1799	312	48	30	c
+18777	\N	1464000	5174	312	47	31	c
+18778	\N	1481000	1778	312	48	32	c
+18779	\N	1530000	1821	312	47	33	c
+18780	\N	1548000	1809	312	47	34	c
+18781	\N	1612000	1770	312	48	35	c
+18782	\N	1659000	1837	312	48	36	c
+18783	\N	1667000	1852	312	48	37	c
+18784	\N	1910000	1858	312	47	38	c
+18785	\N	981000	1504	313	58	1	c
+18786	\N	1057000	1511	313	52	2	c
+18787	\N	1125000	1540	313	52	3	c
+18788	\N	1157000	1568	313	52	4	c
+18789	\N	1167000	1544	313	58	5	c
+18790	\N	1175000	1584	313	52	6	c
+18791	\N	1204000	2889	313	58	7	c
+18792	\N	1210000	5198	313	52	8	c
+18793	\N	1216000	1571	313	58	9	c
+18794	\N	1236000	1580	313	58	10	c
+18795	\N	1252000	5188	313	58	11	c
+18796	\N	1261000	6851	313	58	12	c
+18797	\N	1262000	1605	313	52	13	c
+18798	\N	1274000	1646	313	52	14	c
+18799	\N	1288000	6238	313	52	15	c
+18800	\N	1292000	1682	313	58	16	c
+18801	\N	1293000	1729	313	52	17	c
+18802	\N	1343000	1701	313	52	18	c
+18804	\N	1362000	5159	313	52	20	c
+18805	\N	1369000	1779	313	58	21	c
+18806	\N	1376000	5261	313	52	22	c
+18807	\N	1379000	1691	313	52	23	c
+18808	\N	1389000	1708	313	52	24	c
+18809	\N	1393000	1687	313	52	25	c
+18810	\N	1397000	3250	313	52	26	c
+18811	\N	1512000	1768	313	58	27	c
+18812	\N	1650000	1774	313	58	28	c
+18803	\N	1358000	1606	313	52	19	c
+18856	\N	1017000	5925	315	520	1	c
+18857	\N	1037000	1503	315	55	2	c
+18858	\N	1054000	5932	315	520	3	c
+18859	\N	1069000	1506	315	43	4	c
+18860	\N	1083000	1521	315	55	5	c
+18861	\N	1092000	5898	315	520	6	c
+18862	\N	1095000	5937	315	520	7	c
+18863	\N	1106000	1514	315	55	8	c
+18864	\N	1121000	1533	315	55	9	c
+18865	\N	1125000	5945	315	520	10	c
+18866	\N	1132000	1573	315	43	11	c
+18867	\N	1135000	5947	315	520	12	c
+18868	\N	1141000	1530	315	43	13	c
+18869	\N	1162000	1549	315	55	14	c
+18870	\N	1169000	1557	315	43	15	c
+18871	\N	1179000	6043	315	520	16	c
+18872	\N	1186000	6059	315	55	17	c
+18873	\N	1192000	6096	315	520	18	c
+18874	\N	1197000	1602	315	43	19	c
+18875	\N	1221000	1558	315	43	20	c
+18876	\N	1283000	1665	315	43	21	c
+18813	\N	1135000	1518	314	57	1	c
+18814	\N	1146000	1546	314	57	2	c
+18815	\N	1158000	1550	314	57	3	c
+18816	\N	1163000	1519	314	51	4	c
+18817	\N	1169000	1541	314	57	5	c
+18818	\N	1182000	1536	314	51	6	c
+18819	\N	1225000	1528	314	57	7	c
+18820	\N	1229000	1567	314	57	8	c
+18821	\N	1237000	1590	314	51	9	c
+18822	\N	1244000	1563	314	51	10	c
+18823	\N	1248000	1577	314	51	11	c
+18824	\N	1254000	1545	314	51	12	c
+18825	\N	1256000	1672	314	51	13	c
+18826	\N	1280000	3075	314	51	14	c
+18827	\N	1313000	1648	314	57	15	c
+18828	\N	1315000	1635	314	51	16	c
+18829	\N	1319000	1681	314	51	17	c
+18830	\N	1340000	1553	314	51	18	c
+18831	\N	1349000	1645	314	57	19	c
+18832	\N	1353000	1676	314	57	20	c
+18833	\N	1366000	1673	314	51	21	c
+18834	\N	1367000	1675	314	51	22	c
+18835	\N	1388000	1661	314	51	23	c
+18836	\N	1391000	1690	314	51	24	c
+18837	\N	1398000	1659	314	51	25	c
+18838	\N	1410000	1750	314	57	26	c
+18839	\N	1411000	1647	314	51	27	c
+18840	\N	1413000	1725	314	51	28	c
+18841	\N	1415000	1639	314	57	29	c
+18842	\N	1418000	1668	314	57	30	c
+18843	\N	1436000	1797	314	51	31	c
+18844	\N	1447000	1767	314	51	32	c
+18845	\N	1466000	1740	314	51	33	c
+18846	\N	1471000	6853	314	51	34	c
+18847	\N	1472000	1764	314	51	35	c
+18848	\N	1493000	1751	314	57	36	c
+18849	\N	1497000	1749	314	51	37	c
+18850	\N	1524000	1776	314	51	38	c
+18851	\N	1536000	1788	314	57	39	c
+18852	\N	1590000	1766	314	51	40	c
+18853	\N	1603000	1709	314	51	41	c
+18854	\N	1674000	1813	314	57	42	c
+18855	\N	1815000	1838	314	51	43	c
+18877	\N	1178000	1534	316	55	1	c
+18878	\N	1183000	1564	316	55	2	c
+18879	\N	1197000	1637	316	55	3	c
+18880	\N	1199000	1640	316	55	4	c
+18881	\N	1209000	3647	316	520	5	c
+18882	\N	1210000	3648	316	520	6	c
+18883	\N	1220000	6032	316	55	7	c
+18884	\N	1251000	1710	316	55	9	c
+18885	\N	1261000	1679	316	55	10	c
+18886	\N	1264000	1631	316	55	11	c
+18887	\N	1271000	1627	316	55	12	c
+18888	\N	1289000	1650	316	43	13	c
+18889	\N	1290000	6031	316	520	14	c
+18890	\N	1300000	3653	316	520	15	c
+18891	\N	1301000	5183	316	55	16	c
+18892	\N	1310000	1653	316	55	17	c
+18893	\N	1313000	1717	316	43	18	c
+18894	\N	1317000	1662	316	43	19	c
+18895	\N	1323000	6081	316	520	20	c
+18896	\N	1325000	6098	316	520	21	c
+18897	\N	1327000	1702	316	43	22	c
+18898	\N	1337000	1677	316	43	23	c
+18899	\N	1339000	5275	316	55	24	c
+18900	\N	1340000	1694	316	55	25	c
+18901	\N	1411000	1726	316	43	26	c
+18903	\N	1440000	1731	316	43	28	c
+18904	\N	1452000	3641	316	520	29	c
+18905	\N	1456000	6912	316	55	30	c
+18906	\N	1460000	1700	316	43	31	c
+18907	\N	1466000	1781	316	43	32	c
+18908	\N	1502000	5274	316	55	33	c
+18909	\N	1543000	1718	316	55	34	c
+18910	\N	1575000	3642	316	520	35	c
+18911	\N	1590000	1847	316	43	36	c
+18912	\N	1619000	1730	316	55	37	c
+18913	\N	1663000	1818	316	43	38	c
+18914	\N	1665000	1808	316	43	39	c
+18915	\N	1720000	1823	316	55	40	c
+18916	\N	1774000	1842	316	55	41	c
+18902	\N	1421000	6913	316	520	27	c
+\.
+
+
+--
+-- Data for Name: runners; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+COPY public.runners (id, first_name, last_name, grad_year, seed_time) FROM stdin;
+82	Sophia	Lopez	2023	1645335
+58	Juliana	Kwon	2020	1351297
+115	Charlotte	Jones	2024	1545164
+7	Vivian	van Stolk	2022	1932750
+56	Abby	Souza	2023	1285387
+5	Anika	Sukthankar	2023	1741395
+114	Isabella	Sibble	2020	1501177
+28	Jessica	Du	2023	1500954
+91	Avery	Korzeniowski	2021	1510192
+63	Megan	Farinacci	2022	1454833
+65	Ana	Batten	2021	1551862
+99	Marron	Gibbons	2022	1792723
+220	Benji	Otting	2021	1172839
+69	Sarah	Blake	2022	1714856
+29	Anna	Wright	2021	1418409
+32	Emily	Hinman	2020	1539287
+31	Micah	Long	2020	1457262
+60	Maya	de Luis	2021	1415847
+33	Sunny	Shi	2023	1546433
+59	Julia	Cressotti	2023	1376994
+112	Ryan	Fantasia	2024	1454000
+61	Kate	Busby	2023	1412982
+213	Matthew	Gainsboro	2020	1121435
+62	Hannah	Curran	2020	1494166
+64	Miranda	Fisher	2020	1482343
+67	Deirdre	Glynn	2020	1597465
+68	Lizzy	Glynn	2020	1673399
+81	Una	Carroll	2021	1511727
+2	Page	Cassidy	2020	1710773
+3	Riley	Bishop	2021	1712815
+4	Lucy	Barnard	2021	1717918
+66	Thalia	Mourmoutis	2022	1546000
+227	Nick	Mitchell	2021	1173754
+6	Isabella	Hauser	2021	1825097
+8	Hattie	Wagner	2021	1395362
+9	Hannah	Van Zandt-Ro	2021	1465794
+10	Penny	Robinson	2021	1471918
+11	Kaia	Buensuceso	2023	1604615
+12	Hope	Robb	2020	1667902
+13	Olivia	Kallay	2021	1678109
+14	Alyssa	Jackson	2021	1696483
+217	Harry	Connelly	2020	1130166
+211	Malcolm	Thornton	2023	1126894
+21	Altea	Thompson	2021	1572971
+23	Sophia	Pasalis	2020	1587263
+87	Lilly	Blake	2020	1784267
+34	Claire	Kenney	2023	1689135
+36	Regina	Aranda Diaz	2022	1685254
+37	Catherine	Zhao	2021	1712815
+38	Cici	Liu	2021	1715877
+39	Demi	Leng	2022	1735271
+40	Maya	Mohant	2023	1766914
+41	Sangavi	Muthuswamy	2020	1812848
+42	Caddy	Zhou	2021	1823055
+44	Nina	Forrest	2021	2053744
+26	Elaina	Hawkins	2020	1329725
+216	Ian	Alsop	2020	1141196
+45	Maeve	O'Brien	2020	1273893
+46	Olivia	Wang	2020	1556640
+47	Greta	Risgin	2020	1559702
+27	Skylar	Gilfeather	2020	1359235
+51	Amy	Palmer	2020	1671985
+52	Carlie	Lafauci	2021	1742416
+53	Lydia	Wu	2022	1763852
+57	Avery	Woolbert	2021	1270019
+89	Meghan	Farnham	2021	1479760
+73	Charlotte	Maravelis	2021	1408052
+18	Sara	McKenna	2021	1487299
+15	Ava	Glazier	2020	1446399
+76	Colleen	Mackey	2021	1424466
+78	Sam	Jones	2023	1442316
+79	Carolyn	Kennedy	2021	1448441
+80	Lara	Roelofs	2021	1493354
+75	Avery	Robillard	2022	1427005
+83	Lily	Connors	2020	1688317
+84	Ally	Hass	2021	1699545
+85	Grace	Finnegan	2020	1767935
+86	Valerie	Fajardo	2022	1782225
+55	Lynn	Pan	2023	2002707
+92	Kaely	McCarthy	2021	1539754
+88	Margot	Appleton	2021	1083625
+20	Lilly	Remondi	2023	1544803
+24	Libby	Stott	2021	1957794
+208	Dominic	Paolini	2020	1096338
+93	Ava	Park	2021	1588535
+95	Yingle	Selena Liu	2023	1598491
+97	Eloise	Abbate	2020	1794474
+98	Elizabeth	McBreen	2020	1960856
+100	Ivana	Rasch	2020	2159902
+104	Anahita	von Andrian	2020	1299412
+106	Indi	Aufranc	2020	1296289
+107	Avery	Gardner	2021	1390088
+108	Ashley	Browne	2021	1399254
+109	Kate	McCurley	2021	1424868
+113	Ivy	Eastland	2023	1493969
+25	Allison	Sibold	2020	1271623
+117	Maggie	Furlong	2020	1597714
+118	Ellen	O'Hare	2020	1659736
+35	Megan	Duckworth	2020	1610740
+103	Winnie	Wang	2020	1253312
+110	Jane	Kelley	2023	1515000
+49	Miriam	Thomas	2023	1584200
+105	Eve	Lesburg	2021	1284258
+204	Kaleb	Habtegebriel	2020	1075514
+221	Sam	Remondi	2021	1158973
+222	Henry	O'Shaughnessy	2020	1177943
+210	Ezekiel	Reilly	2020	1110819
+228	Diego	Hernandez	2021	1181281
+226	Owen	Cootey	2021	1180206
+209	Alec	Dempster	2021	1110609
+223	Kaz	Borowicz	2023	1181955
+212	Naiqian (Sonny)	Tan	2022	1126905
+201	Reza	Eshghi	2020	1032997
+203	David	Appleton	2020	1030204
+202	Ryan	Shea	2020	1035635
+72	Marah	Goldman	2023	1408188
+102	Meg	Madison	2024	1126000
+116	Raina	Sohur	2023	1416000
+101	Ashley	Breyer	2020	2161943
+225	Patrick	McGucken	2022	1145465
+214	Peter	Laird	2021	1110655
+224	Joe	Azar	2022	1178964
+206	Jonathan	Fascetti	2021	1098324
+218	David	Horcher	2020	1150383
+120	Delaney	Woolbert	2023	1402696
+30	Mercedes	McLaughlin	2023	1557102
+48	Sarah	Godfrey	2023	1693913
+50	Megan	Fish	2023	1590190
+119	Lillian	Gibson	2021	1727355
+90	Lucia	McLaughlin	2021	1459744
+306	Leo	Huang	2021	1470897
+263	Payton	Foley	2022	1131982
+305	Ryland	Mattoon	2020	1462731
+1056	Corrine	Waters	2022	1440816
+319	Eamonn	Prendergast	2022	1501957
+1031	Delaney	McDonough	2023	1364316
+1041	Kaitlin	Forman	2020	1317000
+229	Ben	Haber	2021	1185088
+1005	Meg	Dugan	2022	1326000
+1004	Amy	Sharma	2023	1226531
+1015	Ava	MacCaro	2024	1281000
+264	Luis	Lopez	2023	1307578
+270	Sam	Stout	2023	1298167
+1006	Abigail	Touhey	2022	1209000
+1054	Ingrid	Slattery	2023	1446000
+1011	Jenna	Daly	2021	1233000
+265	Dane	Morazzi	2021	1318806
+327	Nate	Gonzalez	2022	1291246
+325	Henry	Stiles-Hall	2023	1486521
+261	Carl	Ji	2021	1293118
+329	Quin	Renier	2023	1973105
+1020	Ava	Lillis	2024	1313694
+1027	Olivia	Knight	2020	1283000
+1032	Meghan	Webb	2020	1337755
+1058	Hollen	Knoell	2021	1448980
+1047	Katie	Reveno	2020	1368367
+1007	Annabelle	Smith	2021	1211000
+1050	Hannah	Szabo	2021	1341000
+1029	Jordyn	Meunier	2021	1292000
+1033	Nina	Douge	2020	1371429
+1025	Josie	Silk	2022	1279698
+1030	Meena	Menon	2021	1334694
+1059	Chloe	Prouty	2020	1360000
+1003	Lilly	Bradley	2021	1219616
+1038	Nana	Dondorful-Amos	2022	1309000
+232	Teddy	Macri	2021	1193254
+1049	Lexi	Roberts	2020	1337000
+1057	Aisling	O'Connell	2021	1397959
+1024	Aidan	Jackivicz	2021	1312014
+1043	Judy	Xie	2023	1521429
+1023	Laura	Mittelman	2020	1263000
+1036	Jillian	Robertson	2021	1379592
+1008	Gabby	Gaval	2020	1212000
+1037	Alene	Fernandes	2020	1382653
+1009	Anna	Richardson	2021	1214000
+1012	Katie	Wipf	2023	1366700
+1014	Miranda	Douglass	2021	1250000
+1051	Paige	Lane	2021	1344000
+1052	Molly	Garrahy	2020	1345000
+1048	Lindsay	Davis	2021	1404082
+1040	Madison	Hamilton	2021	1313000
+1010	Gabby	Walsh	2020	1270408
+1042	Bethany	Winters	2020	1326000
+1044	Emma	Krasemann	2021	1329000
+1045	Olivia	Goldstuck	2021	1329000
+239	Xavier	Yepez	2022	1222581
+330	Owen	Young	2021	1978209
+252	Davis	Lee	2022	1241602
+1035	Ines	Levy	2021	1353520
+1055	Aimi	Sekiguchi	2020	1350000
+256	John	Perik	2020	1253613
+247	Matthew	Walter	2020	1229427
+271	Gavin	Gibbons	2020	1327993
+245	Dante	Mulcahy	2023	1255989
+234	Jack	Keller	2020	1200399
+266	Steven	Zhou	2020	1321868
+235	Thomas	Ysrael	2023	1209586
+262	Everett	Dalton	2023	1305536
+320	Fitch	Perkins	2022	1534852
+321	Frank	Xia	2022	1681171
+238	Blake	Gondella	2021	1212648
+241	Carter	Fairweather	2020	1230001
+237	Quinn	Hart	2022	1211409
+243	Andrew	Dully	2020	1237146
+242	Joshua	Appelstein	2021	1232042
+248	Myles	Berg	2022	1195255
+244	Will	Chappell	2022	1244291
+257	Malcolm	Barnard	2024	1171085
+249	Ryan	Lynch	2020	1246522
+240	Nick	Lamy	2021	1222856
+290	Jossian	Garcia	2020	1382092
+258	Zhichen	Li	2023	1286142
+323	Ryan	Thai-Do	2023	1747520
+260	Michael	Bryan	2020	1300432
+259	Nevan	Hughlett	2022	1294308
+267	Josh	Klee	2022	1321868
+273	Jason	Zhao	2020	1334117
+268	Anders	Landgren	2021	1326972
+281	Flynn	O'Connell	2022	1361677
+272	Andreas	Schaedle	2020	1329013
+251	Jack	Botein	2023	1260623
+286	Marcus	Navarro	2021	1375968
+280	Nathan	Bolan	2023	1391138
+274	George	Hurd	2023	1330807
+282	Kyle	Rosensweig	2020	1363719
+289	Jake	Gouveia	2021	1380051
+276	Finn	Garside	2022	1311283
+301	Cortez	Sanchez	2020	1438233
+291	Sam	Weitzman-Kurker	2022	1387196
+311	Griffin	Seidel	2021	1502541
+285	Kyle	Yung	2021	1370864
+284	Justin	Osafo	2023	1364740
+292	Corey	Predella	2022	1389238
+278	Evan	Bocchino	2023	1349428
+297	Ben	Dennehy	2022	1418839
+283	Ronald	Dardeno	2022	1337095
+303	Dajun (Davis)	Yuan	2023	1443337
+295	Richard	Murphy	2022	1413735
+312	Yulin	Jiang	2023	1504582
+302	Alex	Cracraft	2021	1440275
+300	Sam	Maurer	2021	1429047
+299	Kyle	Weldon	2023	1442360
+298	Jackson	Belanger	2023	1418839
+308	Alex	Rickards	2021	1494375
+287	William	Boyd	2020	1375968
+326	Nathan	Shore	2023	1562128
+316	Rafael	Borromeo	2020	1538267
+310	Jonah	Smith	2023	1502541
+318	Nathaniel	Landers	2020	1572972
+324	Hyunjae (Hayden)	Kim	2021	1747520
+317	Galen	Xuan	2023	1579047
+315	Jack	Masiello	2023	1511984
+293	Ian	Mutie	2023	1396383
+328	Seamus	Henry	2023	1924109
+322	Silas	Cash	2023	1687296
+307	Drew	Ege	2021	1474980
+309	Rohan	Patel	2021	1495395
+255	Sam	Budish	2021	1270831
+269	Darren	Belanger	2022	1269592
+279	Aaron	Cooley	2021	1350449
+1026	Annabelle	Rogers	2022	1267839
+246	August	Reid	2020	1245312
+1102	Isabelle	Stewart	2021	1546939
+1123	Hadley	Stanton	2023	1441296
+1181	Sarah	Hastings	2023	1606122
+1071	Danielle	Brennan	2023	1429901
+1184	Hannah	Roche	2023	1494000
+1066	Julia	Maimones	2021	1473469
+1217	Jana	Choe	2023	1784694
+1141	Caroline	Locke	2020	1553061
+1060	Elena	Brennan	2020	1362000
+1108	Gabby	Todd	2022	1498000
+1179	Brooke	Manfredi	2024	1565199
+1155	Helena	Xie	2022	1380000
+1142	Samantha	Noonan	2023	1521008
+1160	Andria	Bao	2023	1443600
+1505	Justin	O'Toole	2020	1002745
+1173	Kylie	Bogar	2023	1613140
+1193	Linnea	Saxton	2023	1676500
+1208	Emelie	Engstrom	2024	1710214
+1151	Virginia	Thompson	2023	1418139
+1104	Brianna	Zhang	2023	1548900
+1085	Kendall	Sommers	2022	1463265
+1074	Aleah	Ghiasuddin	2022	1341000
+1188	Katie	Riley	2022	1638776
+1090	Sophia	Wu	2021	1477000
+1146	Caroline	Garvey	2021	1450783
+1145	Lily	Walsh	2022	1493878
+1116	Naomi	Dyer	2020	1942000
+1133	Kaley	Le Blanc	2021	1493418
+1080	Annika	Von Schoeler-Ames	2022	1428500
+1084	Kiro	Manoharan	2022	1411000
+1100	Noemi	Baessler	2021	1462000
+1177	Amy	Ma	2023	1625000
+1120	Isabel	Clare	2023	1451153
+1135	Ellie	Berman	2021	1477561
+1114	Alex	Szynal	2020	1653061
+1500	Will	Cote	2021	1004082
+1092	Sarah	Kurbanov	2021	1431000
+1136	Megan	Ding	2021	1526531
+1096	Lily	Harris	2020	1450000
+1195	Abigail	Rabieh	2021	1823510
+1105	Rachel	D'Alessandro	2022	1484000
+1157	Phoebe	Lu	2020	1574490
+1113	Simone	Routledge	2023	1589000
+1106	Grace	Xie	2022	1587500
+1107	Caroline	Walsh	2020	1510000
+1110	Amy	Belliveau	2021	1539000
+1091	Talia	Jachimowicz	2021	1487755
+1126	Avery	Rubins	2023	1461031
+1202	Shreya	Jain	2021	1653000
+1148	Ann	Wichern	2021	1516051
+1205	Phoebe	Lynch	2022	1731633
+1172	Lang	Burgess	2023	1572013
+1194	Charlie	Poulin	2023	1604082
+1162	Cameron	Walker	2020	1540286
+1138	Ingrid	Yeung	2023	1606561
+1147	Rosie	Qin	2023	1578571
+1140	Lindsay	Tucker	2021	1504082
+1163	Maanasi	Chintamani	2020	1571429
+1156	Ashley	Battiata	2020	1630612
+1168	Grace	Stanton	2022	1520000
+1149	Ava	Larkin	2022	1499000
+1150	Rylie	Tirrell	2022	1556500
+1144	Lucy	Anderson	2020	1563265
+1095	Naila	Strong	2020	1530612
+1072	Ceci	Duncan	2021	1390000
+1067	Daniela	Ortiz	2021	1485714
+1132	Grace	Luettgen	2021	1535714
+1167	Laila	Samuel	2023	1499796
+1171	Elizabeth	Girian	2020	1615306
+1094	Eve	Elkins	2021	1469388
+1175	Mia	Peng	2023	1630612
+1204	Gigi	Gillard	2022	1680612
+1098	Cara	Chang	2020	1455000
+1081	Anna	Liu	2021	1404000
+1130	Anya	Rozario	2020	1440000
+1128	Alena	Mulhern	2023	1488776
+1121	Cordelia	Loomis	2023	1426531
+1119	Maddie	Stearns	2023	1418941
+1111	Lily	Manley	2020	1595883
+1159	Princess	Alexander	2022	1588000
+1506	James	Donahue	2022	936000
+1211	Aila	McEnroe	2023	1712000
+1127	Emily	Taylor	2020	1540816
+1061	Olivia	Crisafi	2022	1417000
+1215	Sophia	Molander	2022	1762000
+1198	Jessica	Choe	2022	1642857
+1065	Olivia	Berkery	2022	1382000
+1203	Jay	Leung	2023	1658000
+1073	Elisa	Howard	2020	1392000
+1112	Selina	Liu	2022	1594020
+1103	Lucy	Rainer	2021	1609184
+1082	Clara	Mollerus	2022	1459000
+1154	Grace	Theobald-Williams	2020	1494000
+1196	Yeabsira	Gugssa	2022	1641837
+1097	Marie	Wei	2021	1451000
+1504	Tommy	Gaffey	2020	1013040
+1209	Sasha	Kracauer	2023	1701000
+1183	Yasmin	Bergemann	2020	1562000
+1501	Enock	Musyoka	2021	1008163
+1068	Kira	McCreesh	2023	1423714
+1115	Cynthia	Jia	2022	1865000
+1124	Julia	Sotelo-Emery	2021	1407000
+1125	Margaux	Selfors	2023	1413000
+1101	Krissy	Borowiak	2020	1463000
+1180	Paula	Hornbostel	2020	1684694
+1185	Ally	Gilbert	2022	1597959
+1143	Mei	Han	2020	1469000
+1083	Anna	Garvey	2021	1435972
+1152	Jenna	Perry	2021	1487000
+1174	Mikaella	Tortusa	2021	1541000
+1165	Lily	Meyers	2020	1510000
+1166	Sofia	Schaffer	2023	1510000
+1170	Izabella	Lopez-Kalapir	2020	1530000
+1075	Ursula	Vollmer	2021	1395000
+1131	Pippa	Berry	2023	1716000
+1182	Anne	Henderer	2023	1552000
+1086	Katie	Chen	2022	1413000
+1186	Greta	Saxe	2023	1565000
+1189	Katherine	Takoudes	2020	1569000
+1190	Grace	Annino	2020	1569000
+1191	Ciara	Tapanes	2020	1572000
+1192	Lisa	Zhai	2020	1585000
+1197	Nora	Schmitt	2021	1614000
+1200	Caroline	Haack	2020	1627000
+1122	Maya	Sidhu	2020	1466327
+1076	Izzy	Cheney	2020	1397000
+1210	Zoe	Werner	2022	1703000
+1503	Joshua	Bergers	2022	1014286
+1212	Maggie	Xu	2023	1791238
+1577	Andrew	Kasparyan	2021	1191837
+1628	Zach	Neri	2021	1200000
+1610	William	Hansen	2023	1162301
+1557	Christiaan	Eikeboom	2021	1165306
+1648	Zach	Rogers	2021	1232653
+1550	Mahiro	Yamikawa	2020	1112059
+1613	Peter	Favero	2023	1063750
+1586	Peter	Leitzes	2024	1155435
+1662	Sreetej	Digumarthi	2021	1248980
+1524	Sam	Rabieh	2021	1110204
+1570	William	Wilson	2021	1183673
+1652	Margo	Becker	2020	1237755
+1592	Nate	Wirth	2021	1226531
+1545	Max	Gomez	2022	1151020
+1646	Cole	Zaleski	2021	1282925
+1653	Ben	Bundy	2023	1239796
+1527	Andrew	Mazza	2020	1117347
+1558	John	Weldon	2020	1167347
+1626	Liam	O'Connor	2020	1192857
+1634	Sean	McLaughlin	2021	1211224
+1620	Joey	O'Brien	2020	1166327
+1542	Aroon	Sankoh	2021	1146929
+1623	Lwazi	Bululu	2020	1180612
+1565	Aston	Chan	2022	1104994
+1534	James	Lammert	2021	1131633
+1507	Aj	Strang	2022	1154000
+1532	Thomas	Flatley	2020	1154000
+1621	John	Harrington	2020	1185147
+1567	Nathan	Anderson	2021	1177551
+1584	Max	Meyerhardt	2021	1203061
+1636	Ethan	Anderson	2022	1114940
+1528	Ethan	Sweeney	2020	1119388
+1511	Mark	Ryan	2020	1061290
+1656	Armando	Walters	2022	1241837
+1589	Alex	Hallstrom	2021	1214286
+1566	Thomas	Romney	2022	1078000
+1606	Grant	Reagan-Loomis	2022	1341482
+1650	Luke	Hogan	2022	1235714
+1525	Nolan	McKenna	2021	1113265
+1640	Austin	Hunt	2023	1223469
+1641	Gavin	Cassidy	2021	1208548
+1580	Ryan	Chiari	2022	1114143
+1593	Jack	Gilbert	2021	1240000
+1600	Cole	Bourgeois	2023	1249702
+1595	Mark	Wilson	2021	1249010
+1615	Zan	Danoff	2021	1146939
+1553	Patrick	Denning	2020	1160204
+1635	Ryan	Swords	2021	1217347
+1512	Mac	Hadden	2021	1067347
+1522	Andrew	Harris	2021	1094907
+1619	Cannon	Caspar	2021	1110718
+1543	Jack	Connors	2024	1007000
+1588	Aristo	Wang	2020	1214286
+1637	Ben	Croft	2023	1218367
+1590	Chris	Millay	2020	1187925
+1585	Ryan	Loughran	2020	1183057
+1605	Joshua	Rocha	2021	1278571
+1663	Khalid	Abdulle	2022	1113000
+1521	Blake	Gattuso	2020	1105102
+1627	Mateo	MacRi	2021	1196939
+1541	Jack	Hutchison	2020	1122623
+1614	Caleb	Krueger	2021	1138776
+1539	Henry	Welch	2021	1140816
+1633	Stone	Shen	2022	1209184
+1659	Arnav	Harve	2023	1138857
+1631	Andrew	Zhou	2022	1289796
+1552	Alan	Du	2020	1159184
+1547	Ryan	Wei	2022	1083300
+1538	Max	Litvak	2020	1139796
+1568	George	Reinhardt	2020	1179592
+1591	Nick	Doan	2020	1208177
+1571	Grant	Coldren	2021	1184694
+1540	Calvin	Smith	2021	1142857
+1575	Gabby	Guerrero	2024	1162398
+1604	Tanay	Kommareddi	2021	1279570
+1514	Adytia	Mynampaty	2020	1072449
+1551	Charlie	Sorenson	2020	1159184
+1529	Patrick	McDonald	2020	1121000
+1569	Eric	Berard	2021	1146000
+1546	Ross	Stewart	2021	1104000
+1536	Justin	Qin	2021	1138776
+1510	Caleb	Gartner	2021	1032652
+1533	Nick	Haugen	2021	1130612
+1625	Vivan	Das	2023	1123283
+1611	Owen	Wang	2023	1306122
+1555	Tyler	Weisberg	2022	1162245
+1583	Luke	Roosa	2020	1181482
+1561	Brandon	Christ	2022	1157195
+1657	Noah	Bay	2021	1241837
+1523	Alex	Tobias	2022	1028914
+1616	Jack	Starobin	2020	1118469
+1520	Matt	Wing	2023	995044
+1599	Nashr	El Auliya	2020	1263887
+1618	Michael	Thomas	2023	1131340
+1601	Luke	Desmaison	2022	1231413
+1649	John	Michaud	2020	1235714
+1587	Pedro	Mateo	2021	1207143
+1608	Arjun	Girish	2022	1331700
+1660	Lawrence	Li	2023	1242229
+1537	Alex	Wu	2021	1137073
+1644	Christian	Westphal	2021	1249786
+1509	Quinn	Donovan	2021	1052041
+1573	Charles	Donahue	2020	1155102
+1594	Jake	Elkins	2020	1211000
+1544	Garner	Thompson	2020	1144898
+1617	Connor	Cross	2021	1097872
+1661	Austin	Qu	2021	1247959
+1554	Chris	Davis	2020	1118624
+1639	Abdel	Barakat	2022	1195658
+1526	Derek	Chang	2020	1115306
+1556	Jehan	Boer	2021	1163265
+1508	Cooper	Austen	2022	1003994
+1519	Finn	Crawford	2020	1095918
+1574	Ethan	Paek	2021	1188776
+1562	Julian	Li	2020	1168367
+1549	Nick	Sparrow	2022	1157143
+1535	David	Sullivan	2022	1106122
+1518	Andrew	Mottur	2021	1089972
+1651	Charles	Mullaney	2020	1219378
+1560	Joshua	Guo	2020	1168367
+1576	Mathew	Hong	2021	1191837
+1654	Jack	Burton	2022	1172588
+1559	Drew	Kirk	2020	1137673
+1664	Cameron	Estrada	2020	1251020
+1572	Jg	Hill-Edgar	2021	1176344
+1563	Max	Hall	2022	1187925
+1515	Javi	Werner	2021	1075510
+1624	Ian	Bayliss	2022	1168000
+1531	Samuel	Hinman	2023	1064637
+1516	David	Latham	2021	1058344
+1596	Alex	Hass	2021	1252041
+1598	Daichi	Seki	2023	1259184
+1602	Abraham	Tolkoff	2021	1221429
+1696	John	Curtin	2020	1268541
+1754	Naji	Karam	2020	1396939
+1764	Liam	Nawara	2020	1406122
+1749	Sam	Millay	2022	1125504
+1779	Conor	Mannion	2023	1309206
+1756	Michael	Cheng	2022	1421285
+1750	Richard	Shum	2020	1354062
+1695	Aidan	Armaly	2022	1242229
+1701	Eli	Helzberg	2023	1240223
+1704	Emmanuel	Felleke	2021	1334774
+1807	Adam	Jin	2023	1565000
+1816	Andrew	Rodriguez	2023	1342000
+1768	Jonah	Rothman	2022	1387000
+1684	Victor	Xu	2023	1542113
+1730	Martin	Ma	2023	1608040
+1769	Adam	Jac	2022	1417347
+1809	Tyler	Santana	2023	1540895
+1709	Sam	Jankey	2020	1323469
+1680	Jack	Wang	2022	1108044
+1744	Gavin	Swartz	2023	1374490
+1767	Justin	Power	2022	1411681
+1708	Andrew	Correia	2023	1225861
+1703	Adam	Ewing	2022	1318367
+1717	Stephen	Warming	2022	1216200
+1723	Andrew	Monsalve	2020	1335642
+1739	Robert	Hong	2023	1353002
+1789	Chris	Athanasia	2022	1563413
+1681	Carter	Bartel	2023	1079900
+1719	Elliot	Smith	2022	1201100
+1685	Sam	Harris	2022	1289796
+1667	Alex	Rodriguez	2020	1255102
+1737	Liam	Peterson	2020	1330107
+1712	Preston	Spaan	2021	1334694
+1679	Will	Osborne	2020	1278571
+1670	Yaman	Habip	2023	1097000
+1751	Peter	Iascone	2020	1391837
+1727	Teddy	Deng	2020	1393199
+1797	Sammy	Guerrero	2020	1379030
+1774	Eli	Kream	2023	1422449
+1689	Seb	Park	2021	1292857
+1810	Philip	Spyrou	2021	1471987
+1724	Lucas	Liu	2023	1271709
+1813	Dung	Pham	2022	1513265
+1745	Leo	Lin	2021	1396258
+1697	Michael	Lu	2024	1226462
+1692	Griffin	Callaghan	2021	1295918
+1798	David	Ma	2022	1476531
+1729	Cam	Dailey	2021	1335230
+1740	Rhodes	Martinez	2022	1315649
+1731	Nicholas	Hebard	2021	1355102
+1799	Patrick	Riley	2023	1457739
+1760	Theo	Goldman	2022	1336687
+1715	Vedant	Deokar	2023	1033562
+1668	Calvin	Cochran	2020	1259184
+1796	Justin	Lin	2020	1438571
+1678	Niki	Apostolicas	2021	1276531
+1776	Luke	Hotra	2023	1255000
+1781	Aidan	McCormick	2021	1456874
+1716	Andrew	Porter	2020	1388082
+1690	Om	Paithankar	2023	1313000
+1772	Allen	Xia	2022	1366781
+1791	Oscar	Caprano	2022	1399553
+1694	Ben	Pestana	2021	1300000
+1693	Evan	Zhang	2023	1260356
+1725	Wyatt	Ellison	2020	1356943
+1720	Louis	Levy	2022	1337732
+1805	Daniel	Reyes	2023	1308906
+1800	Daniel	Wang	2022	1486735
+1675	Shawn	Wu	2020	1270408
+1738	Oliver	Ye	2020	1365306
+1673	David	Hermanson	2023	1131070
+1665	Tyler	Forg	2021	1252041
+1808	Charles	Stevenson	2020	1549888
+1758	Andy	Zeng	2023	1346593
+1818	Charles	Wells	2021	1529592
+1753	Kaiden	Thomas	2023	1400396
+1698	Griffin	Johnson	2022	1322462
+1757	Ryan	Albertson	2022	1464286
+1726	Gabriel	Klug	2022	1408035
+1671	Gianluca	Foschi Walko	2020	1260000
+1718	Tony	Wei	2021	1342000
+1700	Harvey	Rupp	2021	1312245
+1682	Griffin	Gibbs	2022	1281633
+1763	Ethan	Choung	2022	1485998
+1705	Rishi	Khanna	2020	1226338
+1748	Richard (Ricky)	Li	2021	1386735
+1793	Harrison	Theriault	2020	1432461
+1702	Daniel	Bittner	2022	1317347
+1783	Daniel	Ko	2021	1626188
+1771	Ryan	Shue	2023	1288760
+1811	Grigory	Menshikov	2021	1512245
+1788	Thompson	Zhou	2023	1378571
+1765	Otis	Hutcheson	2021	1430477
+1784	Julian	Dai	2022	1513984
+1786	Zane	Davis	2022	1410890
+1743	Nathan	An	2021	1457326
+1804	Tim	Cassidy	2023	1164162
+1741	Ben	Luo	2023	1204596
+1707	Kartik	Donepudi	2022	1322449
+1792	Sam	Modur	2023	1267920
+1814	Joe	Zhao	2022	1538318
+1817	Xander	Starobin	2023	1625562
+1761	Henry	Gennari	2021	1461531
+1691	Sawyer	Helzberg	2021	1313017
+1669	Henry	Horvath	2023	1127650
+1677	Howard	Huang	2022	1356636
+1672	Rohan	Meier	2022	1227299
+1742	Oliver	Wyner	2022	1370408
+1643	Eric	Diop	2024	1052226
+1676	Tony	Guo	2020	1272449
+1782	Charles	Wang	2023	1391077
+1806	Yavuz	Shazad	2022	1503061
+1775	Myles	Ndiritu	2022	1325587
+1790	Ryan	King	2022	1455102
+1819	Ben	Serra	2022	1533673
+1815	Andrew	Young	2023	1199190
+1735	Jason	Lee	2021	1423711
+1755	Hyuntae	Choi	2020	1533661
+1801	Edo	Spadaccini	2022	1393000
+1714	Alex	Yin	2022	1345048
+1795	Gabriel	Barreto-D'silva	2020	1461224
+1734	Jake	Pappo	2020	1309254
+1747	Sam	Soukas	2023	1217000
+1759	Desman	Ward	2023	1401020
+1674	Oscar	King	2022	1081992
+1683	Jack	Sullivan	2020	1269801
+1766	Jacob	Casper	2022	1364000
+1762	Gabriel	Yu	2022	1403000
+1722	Tim	Fan	2021	1337732
+1770	Kiet	Nguyen	2022	1505003
+1803	Max	Aleksandrovics	2023	1417989
+1778	Arhant	Ghanta	2021	1476346
+2544	Tori	Duckworth	2022	1395000
+2564	Hanna	Lapides	2022	1721429
+2597	Camryn	Flessel	2022	1360657
+2534	Natalie	Williamson	2023	1248620
+2653	Laura	Hoffmann	2023	1586735
+1833	Zach	Lonberg	2020	1573992
+2522	Liliana	Froehner	2020	1343878
+2699	Hope	Xayaveth	2023	1785714
+2512	Grace	Hu	2021	1330858
+2507	Ellie	Mraz	2021	1269286
+2620	\N	\N	0	1521429
+2505	Victoria	Fawcett	2022	1150000
+2643	Tess	Holland	2023	1598294
+2654	Rebecca	Janfaza	2022	1546000
+1831	Tim	Guan	2023	1577927
+1820	Ray	Ottiano	2022	1712408
+1794	Bart	Lojanarungsiri	2023	1186029
+1839	John	O'Brien	2023	1709442
+1852	Jack	Carolan	2023	1688625
+2583	Crystal	Xia	2022	1661872
+1838	Xavier	Welch	2021	1588776
+2687	Charlotte	Wolford	2023	1734352
+2542	Tara	O'Malley	2020	1412153
+2508	Anya	Cheng	2021	1282653
+1857	Tri	Nguyen	2022	1954010
+1822	Sam	Kim	2020	1656395
+1825	Oliver	Mitchell	2022	1615680
+1840	Eric	Lin	2022	1596939
+1853	Gabby	Rayev	2021	1718406
+1849	Harvey	Yuen	2021	1633673
+1858	Jonathan	Lai	2024	1671215
+2610	Arden	Conine	2022	1470537
+1854	Ricky	Bansal	2022	1748980
+1843	Jerry	Sang	2023	1573551
+1845	Yaro	Mikhaylov	2021	1609184
+1834	Oliver	Kim	2022	1677711
+1821	Jack	Bolton	2021	1548072
+1826	Kevin	Chen	2020	1525496
+2682	Justine	Lam	2023	1672994
+1832	Ty	Wilschut	2021	1726356
+1836	Tommy	Bi	2023	1356149
+1830	Ameen	Sheikh	2022	1567489
+1847	Ryan	Cannistraro	2021	1622449
+2630	Ella	Brown	2022	1697859
+1856	Shankar	Chennattu	2022	1803061
+2510	Emily	Orscheln	2020	1284000
+1827	Sebastian	Sepulveda	2021	1348870
+1863	Tabor	Wilson	2022	2060204
+1855	Arthur	Gao	2022	1639796
+1837	Gavin	Shan	2022	1686464
+2598	Lila	Miller	2022	1464112
+2690	Kaia	Eckton	2022	1715306
+1861	Kevin	Takayama	2021	1830612
+2618	Lily	Roche Vanoot	2021	1495000
+2605	Devon	Tyrie	2020	1471949
+2554	Ashley	Picard	2020	1460204
+1851	Hugh	Park	2022	1231000
+2563	Tegan	Young	2023	1437371
+2504	Celia	Cheng	2022	1223000
+2539	Evita	Thadhani	2020	1386000
+2543	Grace	Tatirosian	2022	1420408
+2547	Sophia	Petrovas	2021	1437755
+2567	Corinne	O'Loughlin	2020	1537245
+2685	Shu	Ke	2022	1691837
+2584	Natalie	Kloman	2023	1675238
+2614	Samantha	Cody	2020	1487122
+2581	Hannah	Gidlewski	2023	1771494
+2629	Christina	Chen	2023	1457154
+2578	Jess	Fatzinger	2020	1643878
+2537	Julia	Torrey	2023	1395068
+1848	Owen	Dowden	2023	1626531
+2515	Alexa	Burton	2024	1266200
+2688	Paige	La Malva	2020	1646429
+2652	Elizabeth	Gatto	2020	1634295
+2671	Juliana	Di Napoli	2021	1725510
+2593	Jeanette	Hitt	2021	1434694
+2572	Shaniece	Nugent	2022	1550000
+2582	Jacquelyn	Li	2020	1716327
+2500	Addy	Vettel	2020	1191413
+1859	Andrew	Hung	2022	1263000
+2568	Sophia	Lando	2020	1519388
+2599	Jeanna	Shaw	2020	1462245
+2591	Caroline	Finnerty	2021	1417443
+2594	Kajsa	Harrington	2023	1499000
+2615	Elizabeth	Waterfall	2022	1487133
+2579	Mollet	Otieno	2023	1646939
+2627	Katie	Armstrong	2020	1530612
+2670	Shiloh	Liu	2022	1979000
+2621	Anna	Hamblet	2022	1514666
+2609	Jane	Saltzman	2021	1505102
+2603	Claire	Mao	2022	1445000
+2651	Caroline	Fai	2021	1626872
+2644	Elizabeth	Strang	2020	1571735
+2645	Catherine	Anderson	2022	1575235
+2613	Mari	Capone	2020	1506754
+2536	Margo	Lewis	2021	1370084
+2612	Maya	Daly	2023	1719329
+2662	Mary	Connors	2022	1647490
+2697	Caitlin	Hayes	2021	1747959
+2676	Charlotte	Torrey	2022	1677571
+2555	Tiffany	Chiang	2022	1450155
+2616	Constance	Legrand	2021	1537643
+2673	Maeve	Connolly	2020	1666157
+2526	Ana	Lial	2023	1328517
+2657	Priya	Devavaeam	2021	1635050
+2664	Olivia	Cheung	2021	1462558
+2694	Emma	Zuccotti	2022	1764296
+2641	Emily	English	2021	1653340
+2678	Zuriel	Jimenez	2023	1695408
+2674	Jennifer	Do-Dai	2021	1652041
+1841	Ethan	Chang	2022	1601020
+2683	Nancy	Jiang	2022	1683673
+2689	Jessica	Ding	2022	1712245
+2704	Jiayi	Yu	2023	1796939
+2707	Isabella	Murray	2023	2019388
+2558	Amanda	Gary	2022	1392300
+2696	Elizabeth	Hartnick	2021	1732653
+2553	Vanessa	Shipley	2020	1433000
+1842	Liam	Mulvihill	2022	1721429
+2535	Zoe	Petrovas	2020	1389796
+2517	Molly	Epker	2022	1364000
+2519	Olivia	Hayward	2021	1292850
+2619	Sophia	Lowry	2020	1528000
+2586	Clara	Choi	2021	2171429
+2703	Amy	Li	2022	1896041
+2691	Chloe	Zheng	2023	1716327
+2655	Nika	Farokhzad	2023	1595918
+1828	Daniel	Wang	2022	1446000
+1850	David	Lafond	2020	1643878
+2705	Elisabeth	Marota	2020	1875000
+1860	Forrest	Feist	2023	1822201
+2576	Kayla	Clifford	2022	1626746
+2954	Jackson	Abreu	2021	1184000
+2722	Erin	Farmer	2021	1941840
+2732	Padma	Mynampaty	2022	2139286
+2936	Nate	Morrin	2023	1168000
+2948	Henry	Foster	2023	1200000
+2908	Jay	Henry	2023	1289000
+2715	Linda	Qin	2022	1892292
+2622	Lindsay	Saunders	2023	1510110
+2719	Kirsten	Ting	2022	1836000
+3040	Jakub	McKinney	2023	1338000
+2717	Lauren	Kelley	2020	1885714
+2712	Laura	Sabino	2020	1906633
+2677	Nina	Shah	2023	1595460
+2882	Utah	Bryant	2021	1152000
+2724	Hillary	Galle	2022	1880134
+2718	Michelle	Chen	2022	1894898
+2731	Fiona	Tran	2023	2375510
+2727	Harper	Weng	2023	1987089
+2733	Eliza	Hirsch	2021	2509139
+3005	Sam	Bradley	2023	1294000
+3044	Oliver	Olson	2023	1463265
+2708	Sunny	Li	2022	1826000
+2720	Megan	Shi	2023	1607774
+2728	Skylar	Stadhard	2023	2203952
+2713	Sophia	Ronchetti	2021	1841974
+2807	Nicolas	Burtson	2020	1001000
+2860	Jim	Hou	2021	1125000
+2837	Jack	Adiletta	2021	1100000
+2883	Asher	Sedlin	2021	1153000
+2853	Caleb	Torres	2021	1113000
+2855	Nick	Briones	2020	1114000
+2869	Garrett	Mastella	2021	1140000
+2880	Basil	Shillingford	2021	1150000
+2817	Harrison	Chapin	2020	1046000
+2884	Anamu	Uenishi	2022	1194000
+2963	Christopher	Takoudes	2022	1238500
+2982	Ian	Richardson	2020	1290479
+2874	Robert	Luo	2020	1144000
+2897	Yixin	Huang	2022	1218000
+2725	Lily	Stevenson	2020	1949252
+2878	Jonas	Schemm	2020	1145000
+3001	Brandon	Faunce	2022	1273500
+2996	Isaac	Chen	2022	1340000
+3035	Frankie	Pisco	2022	1384000
+3010	Danil	Colin	2022	1341000
+3016	Sander	Abell	2022	1351000
+2729	Lillian	Shay-Duran	2021	2026531
+2983	Zach	Burelle	2020	1243000
+2952	Nati	Tesfaye	2022	1157500
+2841	Ford	Cousin	2021	1104000
+2848	Christopher	MacLean	2021	1109000
+2849	William	Warlick	2020	1110000
+2850	Paul	Ling	2022	1111000
+2730	Lily	Weinstein	2023	2238624
+2854	Max	Lampe	2022	1090500
+2856	Luke	Brennan	2023	1117000
+2857	Bobby	Wittman	2021	1117000
+2858	Dewie	Egan	2022	1133000
+2716	Vivian	Li	2021	1850096
+2862	Evan	Migdole	2022	1148000
+2863	Zeno	Dancanet	2022	1197000
+2829	Lucas	Pfeifer	2020	1078000
+3008	Graham	Hynes	2022	1300500
+2875	John	Keegan	2021	1144000
+2957	Logan	Pronovost	2022	1186500
+3003	Harry	Song	2022	1269000
+2885	Charlie	Vachet	2023	1156000
+2887	Cooper	Dutton	2021	1158000
+2888	Daniel	Ennis	2021	1159000
+2890	Chris	Branch	2020	1169000
+2891	Connor	Touhey	2020	1170000
+2894	Nick	Maggi	2021	1200000
+2896	Tyler	Krasusky	2020	1217000
+2926	Felix	King	2023	1143000
+2900	Josh	Mason	2023	1226000
+2904	James	Beit	2022	1247000
+2950	Calvin	Klumpp	2024	1202041
+2906	Spencer	Kwan	2022	1238000
+2966	Peter	Lu	2020	1202000
+2909	Alvin	Jiang	2022	1313000
+3020	Jack	Horgan	2023	1317000
+3011	Zach	Davidson	2023	1304000
+2805	Jack	Lynam	2022	1023000
+2808	Nat	Markey	2020	1005000
+2812	David	Judd	2020	1028000
+2905	Cooper	Kistler	2022	1261000
+2828	William	Cooper	2022	1076000
+2852	Emmet	McDonnell	2020	1113000
+2927	Alejandro	Ruiz	2025	1145000
+2941	Kirk	Garner	2022	1173000
+2942	Fin	MacDonald	2020	1174000
+2831	Adam	Hagens	2023	1084694
+3037	Jackson	Gladowsky	2021	1403000
+2968	Nick	Selvitelli	2020	1204000
+2969	Michael	Sabin	2021	1207000
+2971	Jason	Holler	2021	1212000
+2972	Matthew	Vasseur	2022	1217000
+2974	Steven	Wang	2020	1220000
+2975	Youssef	Elsobaihy	2021	1222000
+2976	Nathan	Meyers	2022	1222000
+2979	Ellis	Wu	2020	1233000
+2980	Max	Sabalos	2021	1233000
+2981	James	Hayakawa	2021	1236000
+2826	Oscar	Defrancis	2020	1075000
+3021	Jae	Park	2022	1489500
+2986	Andrew	Patty	2020	1248000
+2988	Tyler	Dusek	2022	1256000
+2991	Milo	Sobel-Lewin	2022	1257000
+2994	Matthew	Seltzer	2020	1270000
+3004	Danny	Probst	2020	1291000
+3006	Rex	Flinn	2021	1299000
+2868	Jackson	Chapin	2020	1136000
+2998	Theo	Teng	2022	1390964
+3009	Benjamin	Cooper	2022	1303000
+2899	Nicholas	Manz	2020	1224000
+3012	Eli	Li	2021	1305000
+3014	Luke	Po	2020	1312000
+3019	James	Scullin	2022	1316000
+3038	Samuel	Levinson	2020	1403000
+3027	Darran	Shen	2020	1333000
+3032	Owen	Huang	2023	1369000
+3033	William	Gunn	2020	1369000
+3041	Forest	Ma	2021	1443000
+3047	Carlos	Goden	2020	1500000
+2714	Lucie	Abenante	2021	1786202
+3039	Will	Warner	2022	1425000
+2710	Alexis	Nawara	2022	1819485
+3043	Alex	Shao	2022	1452000
+2711	Elena	Guerra	2022	1822846
+3049	Ian	Gachunga	2021	1502000
+3007	Nathan	Ahn	2020	1301000
+2833	Jerry	Landman	2022	1181000
+3119	Teddy	Stevens	2024	1624400
+3221	John	Barrette	2025	1469900
+3078	Chris	Tillen	2024	1216000
+3075	Nick	Rodriguez	2022	1213000
+3103	Lindsay	Popeo	2022	1370000
+3217	Liam	Gavin	2024	1251000
+3214	Sebastain	Culleton	2026	1052000
+3081	Colin	Anderson	2024	1197260
+3076	Zach	Green	2024	1317000
+3141	Akshay (Avish)	Kumar	2026	1595374
+3194	Teddy	Ellis	2022	1073000
+3105	Luisfe	Medina	2023	1172000
+3088	Josie	Kelleher	2025	1377000
+3147	Matt	O'Connor	2023	1449606
+3086	Ben	Guenther	2024	1039878
+3125	Sophia	Bueno	2022	1492000
+3174	Ruby	Fehm	2024	1276531
+3132	Mila	Chow	2025	1811696
+3107	Joey	Caspar	2024	1135423
+3164	Rufus	Knuppel	2022	1155000
+3168	Liv	Ding	2026	1482100
+3232	Leo	Xu	2024	1754518
+3224	John	Joyce	2027	1018000
+3190	Immy	Serifovic	2024	1428007
+3161	Anders	Caspersen	2025	1234249
+3226	Brian	Luppy	2022	1200643
+3146	Kevin	Wang	2023	1389630
+3131	Neha	Kommineni	2022	1582082
+3093	Sofia	Samuels	2022	1507000
+3123	Mitchell	Ladd	2024	1365306
+3095	Lara	Poole	2023	1583810
+3187	Omar	Hamoda	2024	1297000
+3080	Ethan	Burack	2025	1431848
+3136	Sadie	Millett	2024	1184606
+3094	Kate	Wei	2024	1361100
+3087	Noah	Douglas	2025	1053404
+3056	Jackson	Pagan	2024	1130000
+3229	Anthony	Coston	2024	1327000
+3072	Matthew	Loose	2024	1142751
+3181	Brian	Xi	2025	1189000
+3120	Will	Jevon	2022	1171986
+3100	Gemma	Soukas	2025	1767963
+3089	Angie	Feng	2024	1484000
+3101	Shivani	Gulati	2024	1822000
+3126	Charlotte	Bain	2022	1616668
+3144	Mathias	Why	2023	1168059
+3053	Davis	Woolbert	2025	1091000
+3218	Jonathan	Demosthene	2024	1184000
+3092	Emma	Skelly	2022	1435690
+3083	Thomas	Xue	2025	1308000
+3052	Kevin	Cheng	2023	1628571
+3170	Margaret	Kaneb	2025	1606400
+3106	Nick	Costantino	2024	1041519
+3173	Joy	Cao	2025	1787102
+3138	Grace	Millett	2022	1281674
+3230	Andrew	Huang	2022	1537410
+3172	Holly	Bradsher	2026	1650884
+3116	Luke	Zhang	2025	1319300
+3098	Caroline	Jennings	2024	1686335
+3166	Tori	Reece	2025	1430872
+3064	Miles	Sandoski	2024	1025000
+3066	Nathaniel	Voss	2024	1030000
+3160	Bryan	Bin	2025	1287974
+3115	Eric	Nie	2024	1459698
+3140	Catherine	Bain	2025	1326158
+3085	Will	McLane	2023	1071694
+3065	William	Trautz	2027	982000
+3227	Colin	Soukup	2024	1233857
+3060	Jeremy	Eaton	2023	1198030
+3057	Michael	Bobo	2023	1284000
+3206	Sonya	Martin	2024	1738308
+3193	Sam	Dunn	2022	1057000
+3102	Charlotte	Hayward	2024	1255000
+3091	Ella	Berger	2024	1477000
+3222	Jack	Faggiano	2023	1635480
+3090	Allison	Park	2025	1365100
+3111	Antonio	Ometeotl	2023	1245545
+3155	Andres	Palacios	2024	1200643
+3099	Hayley	O'Connor	2022	1684000
+3189	Jack	Bradner	2025	1310847
+3133	Grace	O'Malley	2022	1934974
+3058	Angus	Harrison	2024	1116000
+3176	Penelope	Tregoe	2025	1506980
+3073	Tim	Churchill	2024	1005390
+3175	Caroline	Creasy	2025	1379283
+3215	James	Joyce	2024	1234241
+3212	Molly	Sheehan	2025	1356600
+3059	David	Carter	2022	1197501
+3061	Andrew	Bittner	2024	1321042
+3130	Jenny	Phan	2022	1552436
+3223	Hans	Vigener	2022	1123283
+3050	Anthony	Xin	2022	1516000
+3128	Abigail	Riordan	2022	1547495
+3191	Robinson	Noble	2025	1343885
+3156	Eric	Ge	2024	1100896
+3201	Ruby	Tsai	2024	1448000
+3104	Sophia	Lee	2024	1458000
+3134	Andrea	Flores	2025	1969526
+3121	Lucas	Mylon	2023	1169037
+3054	Paris	Liston	2022	1215485
+3097	Sofia	Branco	2024	1699000
+3216	Thomas	Devlin	2023	1265960
+3157	Trip	Wight	2025	1254690
+3113	Leighton	Glass	2025	1273184
+3158	Damien	West	2026	1117193
+3117	Jerry	Li	2025	1675959
+3237	Matthew	Smith	2025	1316000
+3108	Andrew	Yang	2024	1621000
+3169	Chloe	Farel	2024	1554311
+3177	Lindy	Zhang	2025	1359815
+3082	William	Xing	2025	1200100
+3074	Ethan	Train	2025	1155405
+3231	Bryant	Huang	2024	1519113
+3071	Charlie	Hall	2024	1154432
+3114	Harrison	Huang	2025	1623585
+3070	Patrick	Albers	2024	1091300
+3079	Jerry	Qin	2024	1212320
+3159	Walden	Capen	2022	1231512
+3188	James	Good	2022	1267632
+3118	Justin	Li	2023	1305370
+3084	John	Henr Lotz-McMillen	2022	1369427
+3220	Eddie	Ryan	2023	1393000
+3124	Sophia	Yang	2025	1525755
+3225	Thomas	Scordino	2022	1208548
+3208	Stephanie	Park	2024	2027009
+3233	Kinh	Kieu	2024	1745980
+3127	Emma	Caffrey	2022	1509944
+3110	Ethan	Yuan	2025	1427242
+3051	Alan	Wang	2022	1460254
+3067	Arec	Keomurjian	2022	1119000
+3055	Duncan	Kilbride	2024	1277400
+3167	Sheena	Bakare	2024	1473701
+3474	Patrick	Snyder	2025	1115000
+3479	Garrett	Paik	2022	1136000
+3480	Erik	Nystedt	2022	1139000
+3481	Toby	Chan	2022	1151000
+3401	Lizzie	Cochran	2023	1466800
+3171	Paopao	Zhang	2024	1758260
+3350	Veronika	Kitsul	2022	1537000
+3471	Alex	Kermath	2022	1037500
+3250	Michael	Wu	2023	1407805
+3271	Andy	Seals	2024	1161611
+3290	Jasper	Hawk	2024	1357633
+3412	Winston	Yeung	2025	1549091
+3326	Hayden	Gobron	2025	984000
+3375	Mia	McLean	2022	1417077
+3384	Henry	Yan	2024	1420431
+3249	Justin	Jang	2025	1081000
+3139	Florence	Morlock	2024	1378310
+3381	Victor	Xu	2023	1333000
+3342	Coco	Chen	2024	1797000
+3366	Colleen	Leary	2024	1420546
+3339	Jackie	Huang	2024	1685000
+3353	John	Brice	2025	1181236
+3388	Eric	Liu	2025	1228409
+3456	Erin	Crisafi	2024	1452287
+3245	Emma	Zhou	2024	1612781
+3367	Emily	Williams	2022	1429000
+3349	Sooah (Sua)	Yoo	2024	1481488
+3292	Douglas	Zhang	2025	1345048
+3309	Hannah	Bernstein	2024	1376500
+3281	Taylor	Armstead	2022	2100699
+3420	Rachel	Wang	2024	1734200
+3355	Evan	Schneider	2025	1253717
+3207	Akshaya	Sundraraj	2024	2286310
+3142	Akhilsai	Damera	2024	1147618
+3385	Jack	Xie	2024	1441363
+3368	Megan	Corry	2024	1472728
+3377	Chloe	Clifford	2022	1216454
+3291	Shane	McCauley	2024	1276892
+3269	David	Jiang	2024	1480000
+3210	Zoe	Campbell	2024	1218000
+3416	Brianna	Boucher	2023	1328080
+3482	Malcolm	Courchesne	2024	1152000
+3382	Joseph	Huang	2023	1320751
+3311	Naomi	Hammerschlag	2025	1305306
+3371	Lindsey	Bennett	2024	1410431
+3203	Torey	Mathews	2025	1434000
+3423	Cate	O'Connor	2022	1482275
+3354	Chris	Barrett	2022	1426000
+3473	Pearce	Covert	2025	1052000
+3273	Evan	Wirth	2023	1155000
+3485	Bradley	St Laurent	2022	998000
+3260	Leah	Jin	2025	1506624
+3346	Diya	Bhaireddy	2025	1756955
+3286	Zoe	Wilmerding	2023	1393884
+3251	Aaron	Weiner	2023	1920655
+3340	Diana	Oh	2024	1750000
+3403	Bric	Ridder	2024	1343304
+3477	Rex	Bedwick	2024	1098000
+3297	Gil	Cavalieros	2025	1381600
+3484	Kamran	Murray	2022	955000
+3300	Cole	Gaynor	2022	1256000
+3394	Anthony	Kim	2024	1375208
+3345	Maddie	Bazinet	2024	1844898
+3211	Kailin	Shi	2025	1355848
+3396	Siena	Adduci	2023	2122565
+3266	Cheng	Zhuang	2025	1266600
+3254	Griffin	Jones	2022	1093813
+3370	Ella	Richards	2024	1434850
+3359	Jaden	Smith	2024	1118416
+3369	Aly	Mantville	2024	1506000
+3364	Brooke	Hansen	2024	1380900
+3294	Sebastian	Southworth	2025	1359680
+3357	Ross	Tejeda	2022	1033836
+3386	Jace	Lee	2025	1485000
+3437	Brian	Zheng	2024	1258700
+3272	Evan	Salhanick	2023	1181000
+3242	Nathalie	Westpfahl	2024	1443337
+3301	David	Rome	2022	1278709
+3400	Shawna	Liu	2023	1462776
+3397	Catherine	Terelak	2022	2198807
+3421	Skye	Connell	2024	1403000
+3129	Jade	Xiao	2023	1547535
+3372	Alexa	Adams	2025	1433792
+3310	Sylvia	Brennan	2024	1309199
+3323	Jacob	Cifuentes	2024	1343929
+3360	Tom	Gaynor	2025	1217000
+3209	Claire	Choe	2024	1281000
+3483	Byron	Grevious	2024	927000
+3399	Evi	Robb	2025	1459100
+3278	Cali	Bernier	2023	1576034
+3255	Alex	Young	2025	1071000
+3344	Yolanda	Zhou	2024	1925000
+3428	Kate	Pickford	2024	1301842
+3243	Audrey	Marshman	2024	1576166
+3475	Aidan	Ting	2024	1140000
+3402	Caroline	Quirk	2023	1676931
+3195	Connor	Steele	2024	1140800
+3476	Advay	Nomula	2024	1106000
+3478	Michael	Zhu	2024	1070000
+3331	Condy	Bao	2025	1259000
+3259	Katherine	Buckhout	2022	1379030
+3263	Cailyn	Kim	2025	1843829
+3204	Alitza	Soiffer	2024	1398000
+3391	Tristan	Parmentier	2025	1172087
+3137	Kate	McBride	2024	1483673
+3393	Ken	Suzuki	2024	1251000
+3265	Peyton	Dahmen	2025	1341200
+3398	Bradley	Weldon	2023	1179810
+3319	Liam	Childs	2025	1312000
+3343	Andrea	Xu	2025	1800000
+3302	Kitso	Paulson	2025	1289579
+3387	Noah	Divon	2025	1279025
+3246	Nathalie	Pierpont	2022	1507644
+3313	Maddie	Gaynor	2024	1560000
+3145	Michael	Allen	2023	1272449
+3299	Keenan	Billings	2025	1155884
+3244	Chen-An	Lin	2025	1578076
+3280	Adyson	Duval	2025	1455000
+3284	Lauren	Puglia	2025	1423000
+3363	Steven	Silvers	2025	1157352
+3358	James	Pener	2023	1091000
+3268	Alexander	Delacruz	2025	1443337
+3199	Sofia	Mraz	2023	1488354
+3374	Abby	Cherry	2025	1631491
+3248	Nadine	Abuhamdeh	2022	2351803
+3252	Henry	Buckley-Jones	2025	1025600
+3405	Lucas	Lu	2023	1353811
+3185	Louis	Chiasson	2023	1231769
+3472	Thomas	Seidel	2022	1093000
+3495	Audrey	Aslani-Far	2022	1386000
+3497	Montana	Dickerson	2023	1412000
+3528	Jason	Zhang	2023	1109000
+3531	Bryan	Chyu	2023	1157000
+3533	Manny	Deangelis	2024	1162000
+3534	Max	Gomez	2023	1178000
+3550	Emily	Ryan	2025	1452000
+3553	Emily	Turnbull	2024	1539000
+3555	Tiffany	Tang	2022	1229000
+3577	Tiger	Cao	2023	1090000
+3582	Andrew	Park	2022	1199000
+3583	Christian	Aljian	2024	1237000
+3584	Will	Natcharian	2022	1387000
+3598	Angela	Ye	2024	1524000
+3599	Amy	He	2025	1534000
+3602	Helen	Shen	2023	1627000
+3607	Brooke	Barry	2022	1228000
+3540	Matthew	Ottenbreit	2022	1109000
+3552	Chloe	Kindangen	2023	1457000
+3574	Chloe	Song	2026	1279500
+3572	Emily	Wu	2025	1558500
+3605	Lexi	Barry	2025	1199000
+3573	Kendall	Toth	2024	1286000
+3610	Logan	Elie	2024	1286000
+3575	Tasha	Bohorad	2026	1394000
+3576	Naima	Reid	2025	1398000
+3521	Elizabeth	Flynn	2026	1495000
+3623	Erik	Lamphere	2025	1073000
+3563	Avin	Ramratnam	2024	1087500
+3536	Ethan	Qi	2023	1189500
+3530	Nigel	Savage	2023	1163000
+3624	Miles	Gackstetter	2026	1075500
+3526	Rohan	Kapoor	2023	1076000
+3519	Leta	Griffith	2024	1285000
+3548	Vanessa	Fan	2023	1434500
+3500	Helena	Kline	2024	1490000
+3556	Caroline	Empey	2022	1307500
+3417	Mae	Lial	2024	1394000
+3591	Lucas	Hanley	2025	1102000
+3547	Edy	Leach	2025	1341000
+3544	Claire	De Saint Phalle	2022	1322000
+3508	Andy	Seals	2024	1122000
+3503	Tenley	Nelson	2024	1176000
+3613	Brennan	Kelly	2026	1208000
+3597	Rachael	Lantner	2025	1480000
+3501	Kaitlyn	Flowers	2022	1205500
+3493	Caroline	Ciaschini	2024	1378500
+3492	Annika	Finelli	2024	1281000
+3518	Tiffany	Sun	2026	1356500
+3506	Sophia	Green	2023	1291500
+3566	Siiso	Daauud	2023	1010000
+3538	Aidan	Lin	2023	1060000
+3529	Sebastian	Lemberger	2025	1077000
+3511	Ethan	Benenson	2026	1088000
+3509	Daniel	Connelly	2025	1122000
+3513	Jinmin	Lee	2026	1110000
+3562	Nathan	Neu	2026	1085500
+3512	Paul	Kiesling	2025	1154000
+3565	Vance	Fabrizio	2024	1114000
+3578	Sandro	Mocciolo	2023	1158000
+3422	Lauren	Phillips	2024	1472000
+3516	Hawley	Dick	2025	1334000
+3600	Anuva	Kolli	2024	1499000
+3504	Melani	Dowling	2025	1221000
+3520	Willow	Foregger	2026	1479000
+3502	Daria	Ivanova	2024	1193000
+3522	Phil	Avilov	2023	1504000
+3604	Natalie	Crocker	2025	1175500
+3510	Edward	Paul	2026	1087500
+3581	Edward	Zhao	2022	1153500
+3564	Max	Boesch-Powers	2024	1136000
+3535	Magnus	Julin	2025	1128000
+3579	Zac	Kurian	2025	1161000
+3622	Alex	Fisher	2026	964000
+3614	Toby	Bushley	2023	1242000
+3569	Yasmine	Tazi	2024	1499000
+3549	Amelia	Vinton	2023	1415000
+3551	Lily	Williamson	2025	1467000
+3571	Carolina	Gomez Recio	2023	1513000
+3537	Tam	Gavenas	2025	931500
+3560	Arun	Kapoor	2025	1050500
+3609	Sylvia	Barresi	2024	1246000
+3557	Emma	Hagstrom	2025	1239000
+3626	Malia	Alabre	2025	1363000
+3580	Gautham	Narendar	2023	1192000
+3611	Jake	Paasch	2026	1180000
+3612	George	Mirgorodskiy	2026	1200000
+3619	Jason	Chen	2024	1314500
+3499	Andrea	Nystedt	2024	1399000
+3615	Calvin	Pan	2023	1288000
+3617	Michael	Liu	2026	1355000
+3618	Ethan	Lee	2025	1372000
+3505	Kayla	Hyett	2025	1290000
+3620	Wyeth	Andrews	2026	1439000
+3525	Luke	Francis	2025	1087000
+3489	Owen	Dudley	2023	1058500
+3621	Ethan	Wood	2023	1007000
+3567	Max	Huang	2024	987000
+3625	Jess	Roy	2024	1348000
+3491	Anneliese	Conine	2025	1344000
+3507	Anika	Tsai	2022	1321000
+3542	Nolan	Goldthwaite	2022	1110000
+3532	John	Wang	2022	1155000
+3543	Glen	Cahilly	2023	1117000
+3559	Elizabeth	Zhang	2022	1344000
+3586	Shunsuke	Matsubayashi	2023	1049000
+3588	Nick	Turcotte	2022	1079000
+3585	Sam	Kurian	2023	1023000
+3515	Jack	Hutchins	2024	1005500
+3589	Matt	Aljian	2022	1138000
+3594	Karishma	Lawrence	2022	1377000
+3541	Isaac	Heitmann	2022	1102500
+3558	Isabella	Alvarez Martinez	2023	1280500
+3514	Max	Lacombe	2024	965500
+3592	Julia	Lantner	2022	1378000
+3545	Ashley	Song	2023	1346000
+3546	Maya	Tang	2023	1366000
+3587	Jack	Muhlhauser	2025	1025000
+3494	Lindsay	MacHado	2022	1385500
+3596	Avery	Martin	2023	1728500
+3590	Andrew	Frisbie	2022	1134500
+3601	Pilar	Wingle	2022	1562000
+3595	Maddie	Van Norman	2025	1439500
+3603	Jane	Smagulova	2023	1694000
+3418	Coco	Liu	2025	1676731
+3490	Lassiter	Foregger	2023	1302000
+3608	Maeve	Dowd	2023	1261000
+3570	Alison	Schneider	2026	1477500
+3524	Sophie	Zhu	2026	1317000
+3561	Robert	Budzinski	2026	1053500
+3627	Maleah	Cogle	2026	1306500
+3488	David	Goodall	2024	1052000
+3639	Ciaran	Henry	2022	1147000
+3655	Annabelle	Brown	2022	1431000
+3660	Yeonwoo	Sung	2025	1627000
+3689	Nolan	Jennings	2024	1114000
+3692	Thomas	Hutson-Wiley	2023	1169000
+3696	Driseth	Anderson	2025	1222000
+3698	Jerry	Liu	2024	1286000
+3699	Haruto	Nonaka	2025	1291000
+3709	Sadie	Salter	2025	1526000
+3710	Sarah	Wells	2022	1533000
+3711	Emily	Bukowski	2022	1552000
+3713	Daphne	Barrett	2024	1262000
+3718	Alessandra	Griffin	2025	1433000
+3743	Djassi	Flowers	2023	1211000
+3747	Richard	Li	2022	1280000
+3758	Xiaotong	Shen	2024	1704000
+3761	Elizabeth	Zhang	2024	1756000
+3764	Adelaide	Howell	2022	1497000
+3678	Sihan	Ma	2026	1481358
+3647	Lon	Walton	2023	1032000
+3750	Joseph	Bullock	2022	1022000
+3777	Sophie	Cohen	2025	1591000
+3688	Skylar	Christoffersen	2024	1486371
+3659	Arabella	Caryl-Klika	2025	1554000
+3716	Darina	Huang	2023	1397000
+3641	Mario	Ferro	2022	1183000
+3628	Hayden	Garside	2023	1391000
+3632	Amelia	Rinaldi	2023	1609000
+3740	Gus	Geremia	2023	1197500
+3675	Anfeng (Wilson)	Xie	2026	1327699
+3767	Nielsen	Kasser	2025	1070000
+3753	Tomoki	Narukawa	2023	1042000
+3673	Tyler	Wang	2025	1218000
+3707	Oliver	Johnson	2025	1174000
+3654	Adelaide	Selch	2022	1540000
+3630	Frieda	Bilezikian	2026	1339500
+3686	Alexandra	Cabot	2025	1362500
+3754	John	Hanscom	2023	1059000
+3742	Kei	Kiribuchi	2023	1183000
+3744	Nate	Wood	2023	1230500
+3745	Jason	Sang	2023	1282500
+3693	Elliot	Marken	2024	1197000
+3674	Ben	Anderson	2026	1247000
+3650	Cub	Scott	2022	1083972
+3665	Katherine	Taylor	2023	1360000
+3668	Serena	Cody	2022	1421652
+3691	Phil	Warren	2023	1155000
+3726	Isaiah	Stephens	2025	1209500
+3759	Ashley	Li	2023	1663500
+3684	Katherine	Allen	2023	1368000
+3669	Katharine	Barker	2022	1456354
+3685	Phoebe	Opler	2023	1368000
+3778	Liesl	Barry	2026	1323000
+3656	Jean	Gurali	2025	1556564
+3638	Sam	Barnard	2022	1194016
+3705	Axel	Nzi	2024	1085000
+3725	Bastien	Sever	2026	1114000
+3672	Henry	Sloss	2025	1212749
+3633	Cece	Johnson	2025	1500000
+3681	Katheine	Lam	2025	1658000
+3666	Caroline	Light	2022	1338000
+3670	Georgia	Alessio	2023	1460000
+3690	Chase	Dobson	2023	1079000
+3772	Henry	Titterton	2025	1161000
+3727	Ella	Mohanram	2023	1463000
+3695	Evan	Huang	2025	1229000
+3631	Maya	Bell	2025	1387500
+3629	Bea	Bilezikian	2024	1368500
+3766	Skylar	Tian	2025	1535000
+3634	Madeline	Shani	2025	1588000
+3757	Eunbean	Lee	2023	1702500
+3648	James	Campbell	2023	1054000
+3741	Zach	Lotze	2024	1156000
+3720	Mark	Zhu	2026	1250500
+3739	Daniyar	Aliev	2022	1162000
+3636	Delaney	Pece	2025	1254000
+3733	Eva	Serebrova	2024	1348000
+3736	Juniper	Rogers	2026	1492000
+3658	Lidia	Zur Muhlen	2024	1474000
+3763	Aviva	Barry	2023	1424000
+3737	Jami	Huang	2025	1490000
+3746	Kenny	Teeraphantuvat	2025	1232000
+3721	River	Schmidt-Eder	2023	1320000
+3723	Andrew	Xie	2025	1469000
+3643	Shaoquin (Sam)	Du	2025	1178186
+3775	Elle	Zaiden-Jones	2025	1526500
+3728	Minnie	Li	2026	1528000
+3703	Owen	Zinn-Keane	2022	1070000
+3702	Huck	Whittemore	2022	1027000
+3683	Aedyn	Kourakos	2026	1210000
+3731	Arielle	Sibley-Grice	2026	1833000
+3644	Thad	Lucentini	2025	1166056
+3687	MacKenzie	Barrette	2026	1347000
+3751	Elliot	Detjens	2022	1024000
+3704	John	Coffin	2024	1069500
+3714	Kayla	Uzwiak	2022	1336500
+3724	Copey	Rollins	2026	1054500
+3769	Leo	Dawson	2023	1146000
+3663	Elizabeth	Painter	2022	1718000
+3779	Bryanna	May	2026	1363000
+3770	Spencer	Empey	2024	1144000
+3773	Bruce	Li	2023	1316000
+3661	Miya	Zhang	2025	1587500
+3774	Campbell	MacDonald	2023	1001000
+3676	Ravin (Vin)	Chutijirawong	2025	1314000
+3729	Natalie	Bushell	2024	1490500
+3735	Sawyer	Eaton	2025	1375000
+3749	Botai	Li	2024	1245000
+3771	Greyson	Casey	2025	1225500
+3701	Ciaran	Groom	2024	999000
+3717	Christa	Prasertsintanah	2023	1450500
+3706	Ben	Johnson	2022	1140000
+3680	Ian	Chang	2025	1109730
+3756	Michael	Stanley	2023	1188000
+3752	Jacob	Nevins	2023	1031000
+3697	Billy	Meneses	2022	1242000
+3694	Marston	Lufkin	2023	1197000
+3765	Cynthia	Zhang	2023	1534000
+3649	Cam	Perry	2024	1098000
+3755	Aaron	Burstein	2023	1186000
+3708	Zoe	London	2022	1539500
+3657	Madeline	Mitchell	2022	1537000
+3748	Trent	Kim	2023	1363000
+3768	John	Murphy	2025	1111500
+3738	Alex	Choi	2022	1169500
+3662	Ava	Price	2024	1684500
+3667	Allyson	Martiniello	2024	1381956
+3637	Corsa	Decenzo	2022	1275437
+3671	Jack	Rubiralta Kunze	2025	1261918
+3646	Jerry	Fu	2024	1339000
+3653	William	Mao	2023	1184286
+3784	Alex	Aronov	2022	1153000
+3785	Ty	Holloway	2025	1179000
+3786	Samuel	Thompson	2023	1217000
+3787	Brooks	Roach	2023	1233000
+3789	Michael	Gutierrez	2022	1245000
+3791	Brandon	Zhuo	2024	1309000
+3804	Heidi	Small	2023	1453000
+3806	Ria	Tyagi	2024	1513000
+3812	Tatum	Kent	2024	1357000
+3836	George	Fauver	2022	1210000
+3841	Granger	Savage	2022	1278000
+3844	Angel	Paez	2025	1398000
+3857	Abby	Fernald	2022	1307000
+3858	Aerin	Lo	2022	1330000
+3907	Rafe	Van Wegenen	2022	1189000
+3908	Nick	Shaker	2024	1192000
+3909	Jin	Min	2022	1220000
+3910	Serafym	Rybachkivskyi	2023	1239000
+3922	Clara	Piasecki	2023	1414000
+3926	Alayna	Mariani	2024	1532000
+3935	Charlie	Brodhead	2023	1299000
+3794	Henry	He	2025	1317500
+3914	Ali	Griswold	2024	1086000
+3825	Nathan	Nicholas	2023	1111000
+3877	Teagan	Farley	2026	1568500
+3859	Larrabee	Pollack	2023	1396500
+3861	Victoria	Lee	2025	1438500
+3880	Alexis	Miller	2024	1257000
+3881	Lillian	Auth	2024	1387000
+3921	Leyla	Zhaksybek	2023	1422500
+3934	Rina	Kurihara	2024	1238000
+3917	Huck	Griswold	2025	1118000
+3796	Wes	Bischoff	2023	1118000
+3839	Holden	Woodward	2022	1336500
+3855	Taz	Hancock	2024	1468000
+3843	Jeffery	Han	2023	1304500
+3811	Sarah	Markley	2023	1306000
+3869	J.T.	Gally	2026	1096000
+3799	Ryan	Yang	2023	1142500
+3913	Oliver	Dreyfuss	2024	1086000
+3837	Finn	Broder	2023	1244000
+3853	Kaitlyn	Xia	2024	1484000
+3925	Tatsha	Kumthampinij	2025	1526000
+3782	Pilar	Dugard	2023	1632000
+3848	Trey	Souder	2022	1079000
+3863	Alice	Zhang	2024	1538500
+3850	Blix	Salz	2024	1136000
+3912	Augi	Booth	2024	1114000
+3800	John	Reach	2024	1161000
+3938	Stella	Oldakowski	2022	1346000
+3801	Mac	Cady	2023	1175000
+3911	Trevor	Stellmach	2024	1195000
+3923	Brooke	Wilcox	2024	1423000
+3818	David	Wang	2024	1187500
+3822	Forrester	Larsen	2026	1276500
+3819	Dylan	Hsueh	2024	1294000
+3918	Yura	Stasiuk	2022	1133000
+3820	Malcolm	Mahaney	2025	1318000
+3846	Max	Wang	2025	1016000
+3809	Gabrielle	White	2024	1390000
+3852	Lillian	Regal	2024	1446500
+3829	Akari	Kamigaki	2026	1577500
+3803	Megan	Mitchell	2023	1432000
+3802	Serina	Fernandez-Grinshpun	2025	1469000
+3832	Ella	McNeil	2026	1259000
+3866	Gus	Mallory	2026	1126500
+3915	Rory	McNamara	2025	1096000
+3827	Sophia	Liao	2026	1581500
+3932	Charlotte	Murphy	2025	1187000
+3835	Aiden	Van Epps	2025	1192000
+3781	Grace	Huang	2026	1495000
+3817	Luciano	Morizio	2024	1242000
+3905	Tate	Celebi	2025	1088000
+3816	Ryan	Chapman	2024	1154000
+3927	Haley	Sharpe	2023	1571000
+3845	Quinn	Hampson	2022	975000
+3838	Billy	Tang	2025	1233000
+3823	Joe	Yan	2026	1305500
+3821	Roshan	Desai	2026	1290000
+3847	Carson	Bynum	2023	1043000
+3826	Noelle	Brighton	2026	1526000
+3780	Wilder	Pritham	2026	1442000
+3828	Grace	Liu	2023	1605000
+3834	Jackson	Collins	2023	1183000
+3874	Haley	Hickman	2026	1535500
+3831	Anya	Mobarak	2023	1683000
+3810	Kara	Wang	2024	1274000
+3849	Robbie	Hua	2024	1084000
+3865	Zavi	Salomon-Fernandez	2025	1154000
+3870	Alex	Ayres	2024	1110500
+3868	John	Woo	2026	1176500
+3888	Hudson	Li	2026	1164000
+3872	Ava	Lennon	2024	1455000
+3873	Jenny	Jin	2024	1533000
+3893	Haotong (HT)	Xue	2026	1183100
+3886	Leo	Demissie	2025	1180000
+3930	Molly	Wynne	2025	1526000
+3792	Elton	Zheng	2022	1321000
+3876	Jing	Wang	2024	1610000
+3830	Rafia	Pasha	2026	1560000
+3878	Nainika	Lebaka	2024	1767000
+3879	Jennifer	Luiru	2025	1807000
+3842	Ethan	Li	2025	1284000
+3807	Analy	Vega	2025	1469000
+3936	Sydney	Grogean	2024	1331000
+3790	Johnny	Reilly	2025	1241500
+3919	Will	Roberts	2022	1212000
+3916	Jude	Celebi	2023	1119000
+3867	Martin	Liu	2026	1153500
+3833	Chas	Arnold	2025	1119500
+3875	Fiona	Howes	2023	1510000
+3862	Lila	Nottage	2022	1500000
+3788	Deven	Huang	2023	1237000
+3928	Emma	Jacobi	2022	1542000
+3906	Nate	Dexter	2022	1166000
+3814	Emma	Hermacinski	2022	1344000
+3860	Jean	Jin	2022	1363000
+3920	Annabel	Pick	2022	1375500
+3813	Livia	Fingerson	2022	1409000
+3795	Harry	Chen	2022	1078000
+3929	Julia	Pellegrini	2023	1528500
+3805	Linda	Phan	2022	1502500
+3924	Lilly	Izmirlian	2022	1506000
+3864	Isaac	Bakare	2024	1074500
+3808	Zara	Pasha	2022	1697000
+3798	Ethan	Chapman	2022	1138500
+3884	Jason	Louie	2025	1133000
+3931	Elle	Carter	2025	1562000
+3815	Emily	Mito	2024	1422000
+3937	Annabell	Sorensen	2023	1321000
+3856	Aurelia	Bolton	2022	1556500
+3892	Theodore	Choe	2026	1109898
+3793	Sid	Rao	2023	1343000
+3854	Tatum	Lowe	2025	1508000
+3959	Barry	Hua	2024	1235000
+3960	Cam	Kinnear	2024	1239000
+3961	Cheng	Li	2024	1262000
+3964	David	Park	2024	1334000
+3998	Freddie	Parkin	2025	1190000
+4001	Walter	Scott	2022	1289000
+4003	Ethan	Yoo	2024	1456000
+4015	Joey	Bento	2023	1303000
+4017	Michael	Pellitteri	2022	1370000
+4018	Troy	Ashkinos	2024	1398000
+4019	Gianni	Fidanza	2025	1432000
+4020	Tony	Gao	2022	1444000
+4075	Katie	McIntyre	2024	1346000
+4076	Poppy	Huffman	2025	1415000
+4039	Emilio	Manz	2025	1264875
+3969	Jack	Oneglia	2023	1121500
+4022	John	Berbano	2024	1093000
+3895	Meredith	Monnich	2023	1404000
+4044	Alex	Cheng	2026	1054173
+4048	Nicole	Hwang	2023	1590000
+3896	Isabelle	Ocko	2023	1452000
+3999	Hunter	Wu	2023	1259000
+3897	Emilia	Raviola	2026	1307000
+3962	Roy	Sun	2024	1336500
+3963	Luke	Adelsbach	2024	1347500
+3967	Ryan	Choi	2024	1333500
+4023	Harry	Clark	2023	1109000
+4009	Caleb	Boateng	2022	1168000
+4010	Carter	Bagaria	2024	1178000
+3894	Michaela	Ocko	2023	1398610
+4065	Julia	Oh	2026	1729557
+3899	Sarah	Wiemeyer	2023	1469191
+4049	Iris	Shen	2026	1517000
+4029	Brenna	Thomas	2026	1495000
+3898	Elizabeth	Pener	2024	1440470
+3948	Henry	Ramanathan	2026	1192009
+3955	Alexander	Behn	2024	1100000
+3978	Ian	Choe	2025	1473000
+4038	Natalia	Calvillo	2026	1371500
+4024	Robbie	Accomando	2022	1114000
+3977	Ray	Gao	2026	1529708
+3957	Andrew	Foster	2024	1215000
+3945	Farren	Camp	2026	1588500
+4012	Patrick	Duncan	2024	1218000
+4051	Nora	Furlong	2025	1868924
+3900	Emma Rose	Zilla	2026	1522000
+3947	Gabriel	Simmons	2024	1223500
+4085	Kinley	Simmons	2025	1603000
+4007	Nathan	Lee	2026	1050000
+3981	Jacob	Snell	2025	1129000
+3939	Eli	Arroyo	2026	1220500
+4064	Julia	Reynolds	2025	1707270
+4061	Amber	Bai	2025	1601219
+4081	Penny	Lazar	2025	1499000
+3904	Masan	Porter	2026	1268000
+3970	Peter	Mok	2025	1105000
+3965	Yoan	Zhao	2023	1391500
+3951	Tobias	Jonas	2024	1475254
+3966	Logan	Glass	2025	1273000
+4057	Anne	Kelley	2027	1480299
+4058	Alicia	Wu	2024	1472881
+4056	Christina	Mayer	2028	1462000
+3979	Arjun	Yerabothu	2023	1700818
+4082	Teagan	Quinlan	2022	1354000
+4091	Lauren	Wallace	2024	1326500
+3902	Jennifer	Li	2026	1516000
+4042	Max	Daniello	2024	1180713
+4066	Angeliki	Agape Vola	2028	1996259
+4059	Carmel	Harrison	2027	1468000
+4094	Elizabeth	Zee	2025	1588000
+3903	Dion	Cheung	2025	1492000
+4040	Will	Grimes	2023	1194340
+3996	Sita	Warner	2026	1414325
+4090	Tiqa	Lee	2025	1796000
+3956	Wes	Legere	2022	1217000
+4079	Grace	Sullivan	2024	1323500
+4052	Brenna	Thomas	2026	1314000
+4084	Milla	Perlman	2025	1351000
+4070	Scarlet	Fishkind	2023	1677500
+4071	Maddy	Lee	2024	1196000
+4030	Ava	Kocher	2023	1518477
+4069	Grace	Crookenden	2023	1571000
+3946	Olena	Rukkas	2024	1455000
+3941	Michael	Ren	2024	1424000
+4016	Christopher	Pellitteri	2022	1269500
+3949	Luca	Mezzanotte	2023	1219240
+3942	Steven	Zhang	2026	1470000
+3976	Jeff	Lei	2026	1396000
+3944	Paige	Bannon	2025	1413000
+4080	Priya	Marsh	2026	1516000
+4036	Lia	Gavin	2026	1376000
+4013	Luke	Brooks	2025	1385000
+4068	Casey	Duval	2025	1470000
+4046	Zoe	Lewis	2022	1437000
+4078	Victoria	Batres	2026	1585000
+4074	Emily	Greenhaw	2022	1303500
+4063	Emily	Zhang	2025	1408000
+3953	Daniel	Xie	2024	1289462
+4093	Su	Li	2023	1480500
+3952	Jack	Kastner	2025	1333079
+3995	Emma	Schillinger	2026	1547959
+3972	Griffin	Williams	2023	1195000
+4035	Maya	Vernazza	2024	1306300
+3973	Bungo	Hayashi	2024	1176000
+4092	Leeah	Han	2024	1429000
+4011	Charlie	Stemerman	2023	1186000
+4021	Tyler	Olsen	2024	1100000
+4008	Luke	Dougherty	2024	1081000
+4025	Joe	Porto	2022	1178000
+4026	Brandon	Koo	2023	1179000
+4077	Isabel	Pombo	2026	1468500
+4067	Chloe	Casturo-Burnette	2023	1526000
+4014	Arjun	Kolluri	2026	1231000
+4027	Sean	Wyman	2024	1247000
+4050	Caroline	Shin	2023	1892987
+4055	Claire	Ackerman	2022	1435000
+4073	Emily	Goodman	2023	1355000
+4095	Jaya	Magavi	2023	1554500
+4002	Niki	Sulkowski	2023	1269000
+4072	Ava	Butz	2022	1234000
+4006	Lucas	Pombo	2022	1021500
+4083	Ava	Robertson	2023	1343000
+4004	Parakram	Karnik	2023	1530500
+4000	Seth	Yoo	2022	1391500
+4005	Michael	Deltoro	2023	2001500
+4087	Zoe	Devries	2024	1698000
+3943	Gavin	Poon	2026	1457500
+4088	Angel	Shi	2024	1721000
+3968	Robert	Riccobon	2025	1183000
+4043	Eric	Zhou	2023	1231329
+4037	Clare	Struzziery	2025	1382000
+3958	Linhao	Jiang	2022	1242000
+3994	Jasmine	Zhang	2026	1459749
+4128	Kennedy	Anastas	2025	1631000
+4155	Luke	Green	2026	1275000
+4167	Laura	Porter	2022	1455000
+4195	Padraig	McNamara	2022	1173000
+4197	Lucas	Peacock	2024	1333000
+4198	Julia	Zhang	2022	1676000
+4201	Ivy	Hillman	2023	1476000
+4229	Tristan	Bryan	2025	1391000
+4232	Leo	Cann	2025	1545000
+4238	Abrie	Howe	2023	1392000
+4241	Catherine	Yan	2024	1877000
+4246	Owen	Tully	2025	1388000
+4250	Sean	Wilson	2024	1330000
+4253	Theodore	Marino	2024	1479000
+3984	Anouk	Shin	2026	1578571
+4242	Ridgely	Dunne	2026	1133973
+4028	Riley	Gordon	2026	1528700
+4171	Jackson	Estes	2024	1164287
+4112	Thomas	Savage	2023	1226531
+4117	Ezra	Klauber	2025	1027892
+4100	Owen	Cronan	2026	1262477
+4235	Max	Dai	2024	1257000
+4114	Calvin	Reid	2025	1209914
+4119	Vedant	Aryan	2024	1218755
+4139	Gabriel	Mena	2024	1268601
+4111	Eric	Zhu	2024	1142751
+4147	Riley	Foushee	2023	1191837
+4116	Levi	Harrison	2025	1097975
+4104	Sarah	Ku	2026	1500956
+4148	Yuki	Heeger	2025	1658954
+4186	Sarah	Martini	2026	1495656
+3985	Jaime	Li	2025	1484408
+4101	Eric	Liang	2026	1407928
+4047	Jacey	Jiang	2025	1472881
+4178	Taline	Lichocki	2026	1594052
+4138	Amir	McFerren	2024	1214068
+4136	Marlon	McFerren	2026	1238776
+4098	Liam	Warren	2025	1158325
+4054	Suzanne	Pogorelec	2024	1382643
+4151	Saki	Tomita	2025	1277909
+4237	Billy	Adkins	2025	1349108
+4192	Thomas	Parlatore	2024	1325510
+4176	Jeffrey	Warner	2024	1119702
+4231	Andrew	Starczewski	2025	1468915
+4120	Liam	Lochridge	2024	1229991
+4143	Nick	Lee	2023	1368367
+4144	Rohan	Carey	2024	1478571
+4168	Jonah	Barry Brown	2024	1111820
+4244	Gabe	Dahari	2025	1211517
+4239	Augusta	Gulden	2024	1389796
+4149	Riya	Rao	2026	1640816
+4150	Sofia	Llovera	2023	1680612
+4134	Vivian	Huang	2026	1340348
+4153	Ryan	Brooks	2025	1244908
+4154	Ben	Werder	2025	1238531
+4219	Charlie	Gavin	2024	1069415
+4191	Jimmy	Wu	2023	1357602
+4160	Chance	Thorne-Begland	2023	1188357
+4165	Ellis	Von Schoeler-Ames	2026	1469673
+4123	Logan	Matthews	2025	1143000
+4159	Jeremy	Dube	2024	1186000
+4156	Brody	Richardson	2026	1094898
+4169	Alex	Hall-Witt	2023	1196939
+4145	Lucas	Llovera	2025	1078366
+4174	Jake	St. Marie	2023	1251020
+4175	Will	Vachet	2025	1293878
+4193	Jacob	Garcia	2023	1513959
+4179	Zoe	Simon	2026	1619388
+4180	Katy	Guo	2024	1619388
+4181	Katya	Krasnovskaya	2024	1680612
+4182	Esther	Glazer	2025	1760204
+4110	Eric	Archerman	2027	1118000
+4183	Ava	Smith	2023	1805102
+4163	Sophie	Chou	2024	1667000
+4184	Cici	Cao	2025	1925510
+4185	Coraly	Siegel	2023	1537755
+4107	Sydney	Nelson	2026	1440606
+4188	Patrick	Luo	2025	1295918
+4220	Ryan	Noreke	2024	1234249
+4189	Howard	Hua	2023	1380704
+4243	Finn	Gibbons	2026	1249848
+4236	Toby	Huang	2025	1296105
+4130	Layla	Kenkare	2025	1324000
+4200	Phoebe	Foley	2023	1521194
+4202	Carrie	McGuinness	2023	1582633
+4218	Jake	Devries	2025	1313388
+4247	Colin	Walsh	2024	1181000
+4099	Chase	Bellamy	2026	1174873
+4102	Aryan	Mago	2024	1234249
+4118	Zach	Heaton	2025	1195314
+4234	Trevor	Sullivan Weinstein	2025	1254000
+4216	Maisy	Holch	2023	1564487
+4166	Lucy	Hoyt	2025	1404082
+4131	Sarah	Galvani-Townsend	2025	1440778
+4034	Mara	Dubois	2024	1572000
+4240	Georgia	Soudant	2023	1563296
+4140	Lucas	Scheps	2025	1249140
+4060	Lily-Rose	Pepin	2027	1507000
+4252	James	O'Connell	2025	1273184
+4137	James	Maroney	2024	1193204
+4227	Breanna	Kunkel	2025	1465914
+4126	Kainda	Nzinga	2025	1582000
+4187	Gabi	Bobiak	2025	1590041
+4158	Carter	Cleary	2025	1167347
+4124	Silas	Resch	2024	1183673
+4206	Leon	Stanley	2025	1292655
+4115	Quinn	Thomson	2025	1356122
+4196	Ozzie	Abaza	2024	1239796
+4053	Serena	Toscani	2025	1310000
+4032	Mathilde	Senter	2026	1535000
+4215	Ashley	Sink	2023	1356651
+4103	Ava	Bridges	2024	1734100
+4031	Annie	Lopez	2025	1471000
+4097	Paul	McLaughlin	2025	1242229
+4142	Kyle	Zhang	2025	1270696
+4135	Sarvin	Bhagwagar	2024	1219706
+4121	Preston	Parker	2024	1196939
+4033	Emilie	Andrews	2025	1441000
+4045	Caitlin	Wang	2025	1460000
+4133	Assata	Dawson	2023	1443000
+4164	Annika	Yeung	2023	1621000
+4199	Isabella	Tang	2022	1423000
+4230	Junichi	Ro	2025	1540000
+4233	Will	Onubogu	2022	1242000
+4141	Christopher	Hwa	2024	1329539
+4113	Brendan	Reichard	2025	1252743
+4109	Liam	Walsh	2026	1084348
+4125	Claire	Billings	2025	1451000
+4127	Swarna	Navaratnam-Tomayko	2024	1559359
+4105	Lena	Aloise	2027	1833673
+4224	Lily	Heaton	2025	1583144
+4108	Natalie	Sun	2025	1460074
+4254	Oliver	Fenner	2022	1223000
+4255	Jackson	Davies	2022	1365000
+4256	Hugh	Olson	2025	1414000
+4258	Grace	Tyler	2024	1771000
+4259	Mira	Hugabonne	2025	1771000
+4261	Janessa	Yan	2022	1589000
+4278	Paul	Ferragu	2022	1153000
+4279	Aidan	Duffy	2024	1155000
+4283	Clarence	Nurse	2022	1295000
+4290	Vaughn	Shannonhouse	2022	1206000
+4291	Harrison	Cole	2022	1249000
+4294	Reid	Rodgers	2025	1439000
+4323	Lily	Kennedy	2023	1417000
+4328	Elsa	Latrille	2023	1654000
+4332	Claire	Miller	2022	1492000
+4334	Jessica	Thompson	2022	1625000
+4339	Aina	Seja	2024	1510000
+4281	Taylor	Taran	2025	1321888
+4203	Camden	Jeppsen	2025	1157530
+4274	Elise	Park	2025	1692051
+4272	Ava	O'Connell	2026	1661224
+4273	Jen	Weber	2026	1662245
+4208	Jerry	Yin	2023	1410560
+4223	Cate	Devaney	2024	1446446
+4282	Griffin	Fitzpatrick	2023	1259000
+4319	Meredith	Huber	2025	1635000
+4277	Hayden	Schneider	2025	1660204
+4213	Luke	Peabody	2025	1129124
+4286	Nathaniel	Duffy	2023	1220408
+4287	Christian	Bazarian	2023	1351020
+4288	Li	Leo	2023	1379592
+4289	Al	Nickerson	2023	1095010
+4311	Aiden	Gafford	2026	1365607
+4302	Ella	Budzinski	2025	1367347
+4338	Hannah	Hill	2025	1478896
+4295	Wylie	Dell'olio	2023	1354959
+4296	Natalie	Simpson	2025	1406367
+4284	Thomas	Blair	2023	1122449
+4304	Renee	Coutinho	2023	1702041
+4257	Taylor	Hill	2022	1717000
+4317	Teah	Maalouli	2026	1942410
+4326	Saydee	Straub	2024	1447814
+4431	Julia	Fitzgerald	2022	1809786
+4335	Katie	May	2023	1555102
+4336	Emily	Shull	2025	1585714
+4285	Brian	Lawson	2024	1150817
+4260	Emma	Mason	2023	1561398
+4262	Chiamaka	Kanu	2023	1585653
+4327	Emma	Ansteth	2024	1502960
+4303	Ellianna	Gelardi	2022	1576500
+4313	William	Eisenstock	2026	1490257
+4270	Steven	Chun	2025	1457143
+4263	Alice	Liu	2023	1641643
+4275	Madison	Khuu	2024	1484988
+4318	Lillian	Terino	2025	1592076
+4320	Natalie	Pearl	2024	1614070
+4271	Sophie	Grace Stevenson	2025	1548052
+4324	Wheatley	Evarts	2025	1401312
+4325	Bea	Bilezikian	2024	1401302
+4353	N.	Wells	2022	1228856
+4419	Chris	Chau	2024	1371475
+4342	Evelyn	Fine	2026	1537176
+4306	Ulia	Zhou	2023	2031088
+4292	Landon	Ristau	2025	1269000
+4391	Jason	Mao	2024	1465514
+4340	Maddie	McGill	2025	1550000
+4341	Ella	Foard	2024	1566000
+4269	Rhys	Marshke	2024	1315761
+4347	Eleanor	Pederson	2026	1737578
+4349	Sara	Li	2024	1876945
+4352	Bolin	Miao	2025	1996259
+4355	D.	Poulton	2025	1216432
+4204	Pablo	Paxtor	2024	1199671
+4361	L.	Owen	2025	1315559
+4362	H.	Tyler	2024	1313654
+4424	Sean	Brennan	2024	1119951
+4378	K.	Tran	2023	1991882
+4360	Inigo	Hare	2024	1307578
+4390	Calvin	Johnson	2025	1402696
+4394	William	Frabizio	2026	1627305
+4422	Aidan	Duffy	2023	1407709
+4393	Leo	Cunningham	2025	1663382
+4389	Andrii	Vedmid	2026	1289004
+4214	Charles	Jackivicz	2026	1081428
+4400	Victor	Wong	2024	1550585
+4401	Brooks	Largay	2025	1902011
+4432	Charlotte	Hudson	2023	1461851
+4426	Jack	Kelley	2023	1149455
+4415	Liam	Barry	2023	1165602
+4416	Truman	Curtis	2023	1226231
+4421	Ed	Manning	2024	1482907
+4217	Erika	Goji	2023	1674323
+4392	Ryan	Zhao	2026	1402696
+4417	John	Blake	2025	1249395
+4209	Benjamin	Hebbel	2025	1037626
+4427	Quinn	Brighton	2023	1167621
+4428	Gage	Polgar	2025	1179926
+4212	Benjamin	Kuo	2025	1095552
+4316	Melanie	Rosenthal	2025	1756955
+4433	Sofia	Riojas	2023	1519010
+4265	Saskia	Mattiko	2023	1605367
+4266	Will	Henry	2026	1436735
+4364	J.	Rhee	2022	1418160
+4330	Maggie	Finn	2025	1336454
+4383	T.	Mooney	2022	1498794
+4301	Roman	Fechner	2025	1376000
+4429	Thomas	Belcastro	2022	1218126
+4226	Madeline	Pike	2026	1443878
+4264	Carolyn	Cheng	2024	1621000
+4343	Hadley	Brown	2026	1428534
+4305	Anastasia	Novikova	2022	1686000
+4299	Aiden	Warner	2022	1324000
+4315	Caleb	Zhou	2026	1703061
+4344	Julia	Dow	2026	1646839
+4346	Cecilia	Wang	2025	1659873
+4348	Emily	Nauen	2023	1785203
+4350	Cassie	Sophocles	2026	1911035
+4351	Olivia	Julian	2024	1933594
+4411	Shea	Salcedo	2023	1705126
+4368	B.	Bartlett	2024	1152424
+4293	Alex	Van Neikerk	2023	1360000
+4297	Carolina	Deus	2023	1637000
+4345	Eloise	Finley	2026	1651085
+4322	Suzanne	Pearl	2022	1742000
+4321	Julia	Connolly	2025	1588560
+4329	Caitlyn	Rivera	2022	1796000
+4359	W	Tran	2024	1289204
+4379	I.	Cabre-Jockovich	2022	2236458
+4418	Duke	Fagan	2022	1318474
+4398	Money	Peng	2026	1237312
+4267	Miguel	De La Fe	2025	1546939
+4371	Sonny	Tang	2022	1130980
+4268	Harvey	Demovick	2024	1559184
+4473	Luke	Corrigan	2025	1207988
+4588	Philip	Choi	2024	1230190
+4462	Artem	Nazarov	2023	1293087
+4460	Michael	Jenkins	2025	2285020
+4464	Eason	Zhao	2025	1434973
+4521	Heng	Leong	2026	1241213
+4446	Brady	Yutkins	2025	1104911
+4494	Jack	Heroux	2023	1070739
+4487	Alba	Samu	2022	1610740
+4576	Lucas	Miller	2026	1098000
+4564	Michael	Lynn	2026	1346008
+4507	Quinn	Reynolds	2024	1187804
+4557	Juliana	Loesche	2025	1525879
+4547	Paul	Hu	2023	1220833
+4435	Avery	Holz	2024	1610740
+4502	Sam	MacDonald	2023	1164516
+4582	Eben	Dooling	2024	1231000
+4531	Juliana	Lynch	2025	1478000
+4515	Devin	Agah	2024	1132299
+4482	Simiao	Li	2024	1448173
+4528	Ava	Palazzolo	2023	1316134
+4527	Maggie	Crowley	2025	1304850
+4586	Lorenzo	Johnson	2026	1162000
+4476	Joshua	Long	2024	1224135
+4511	Jordan	Moss	2025	1393677
+4530	Elizabeth	Lapides	2025	1417000
+4583	Quinn	Mullaney	2023	1549625
+4516	Jakob	Zapanta	2024	1373559
+4481	Bella	Canavan	2022	1453763
+4541	Jacob	Li	2023	1499685
+4440	Luca	Athanasiou	2025	1322889
+4538	Steven	Song	2024	1477092
+4542	Tommy	Lapham	2023	1104594
+4448	Liam	Doran	2025	1166000
+4474	Alfredo	Peniche	2024	1206980
+4544	Thomas	Prendergast	2023	1318933
+4525	Valentina	Joseph	2024	1664740
+4558	Kevin	Chen	2026	1323472
+4574	Alexander	Colangelo	2025	1059333
+4549	Stephanie	Tejada	2025	1744215
+4550	Catherine	Zeng	2025	1634846
+4551	Ginny	Zapletal	2024	1289044
+4578	Myles	McCusker	2026	1278400
+4552	Maya	Lileika	2025	1458202
+4517	Hadley	Rosow	2026	1311581
+4484	Delia	Bousquet	2024	1501000
+4520	Sam	Blank	2026	1165000
+4505	Jonty	Hammer	2022	1189809
+4479	Gabi	Lemery	2023	2021184
+4589	Armaun	Dehpanah	2026	1236800
+4546	Cullen	Mulheren	2022	1164486
+4579	Amber	Banks	2023	1443127
+4523	Mairin	Anderson	2025	1572100
+4555	Chloe	Herr	2024	1384594
+4508	Benny	Lubinsky	2026	1268000
+4543	Ryan	Oemcke	2024	1099000
+4533	Anya	Carroll	2026	1576338
+4452	Ermiyas	Johnson	2026	1256000
+4449	Myles	Moreira	2022	1286622
+4486	Elsa	Engesser	2022	1557513
+4483	Liza	Shchetinina	2022	1496944
+4526	Taylor	Ehler	2025	1863100
+4503	Brendan	Howard	2023	1149455
+4477	Ana	Mendez	2025	1648783
+4572	Max	Nunzio	2026	1295000
+4509	Grace	Horton	2024	1332000
+4585	Forrester	Clark	2025	1058000
+4436	Jillian	Muglia	2025	1613250
+4470	Carson	Ames	2025	1149395
+4461	Jack	Ventresca	2023	1251383
+4559	Grayson	Mengold	2026	1304499
+4489	Kevin	Si	2025	1351291
+4535	Martin	Zhang	2024	1335138
+4491	Mike	Wu	2024	1421934
+4492	Ian	Wang	2023	1512760
+4467	Tyler	Bousquet	2025	1443000
+4495	Dolan	Pols	2023	1074776
+4500	Matt	Olins	2023	1337705
+4497	Carlota	Bou	2025	1575329
+4498	Jenna	Vertefeuille	2026	1722669
+4472	Adam	Tillinghast	2024	1155511
+4561	Miguel	Garcia	2026	1453403
+4518	Claire	Woodbury	2026	1552118
+4519	Fiona	Reynolds	2023	1576338
+4490	Aiden	McAvoy	2026	1334329
+4488	William	Leary	2026	1267513
+4560	Clarence	Wu	2026	1513769
+4524	Marina	Joseph	2024	1766300
+4466	Adam	Lee	2025	1576000
+4562	Alexi	Christidis	2026	1573311
+4563	Bobby	Chen	2026	1749917
+4510	Georgia	Palmgren	2023	1330343
+4565	Raven	Reaves	2026	1725697
+4566	Charlotte	Harris	2026	1766064
+4567	Angel	Lin	2026	1887166
+4568	Park	Sujean	2026	1897257
+4570	Eva	Choi	2025	1491567
+4480	Alex	Oh	2024	1832670
+4485	Jacqueline	Zhou	2022	1737315
+4512	Paige	Parisi	2023	1465353
+4458	Chris	Kasabula	2026	1506718
+4584	Joel	Effah-Boadi	2026	1547798
+4548	Hanyan	Cai	2022	1238267
+4463	Cole	Hecker	2022	1345161
+4456	Josh	Soto	2026	1393672
+4493	Edward	King'oo	2026	1492789
+4571	Kylee	Henderson	2025	1516963
+4459	Colin	Holmes	2026	1736575
+4465	Chase	Parent	2025	1455586
+4532	Reagan	Whitaker	2025	1475000
+4468	Justin	Zeng	2024	1792433
+4469	Herry	Wang	2024	1875113
+4455	Alex	Saville	2024	1493586
+4499	Chris	Noland	2022	1247354
+4501	Dylan	Cofsky	2023	1541329
+4504	Luke	Laferriere	2023	1132009
+4506	Barrett	Bachner	2025	1183047
+4513	Dana	Cofsky	2022	1716898
+4534	Logan	Sanford	2022	1281038
+4536	Alastair	Ostrowski	2022	1392300
+4537	Mike	Wu	2023	1447420
+4539	Andrew	Ji	2023	1464773
+4540	Jack	Wang	2023	1521935
+4554	Berkovich	Eva	2024	1467835
+4592	Miles	Perez	2025	1353511
+4594	Noah	Ram	2023	1374947
+4437	Will	Schurman	2024	1237112
+4441	Ben	Andrew	2024	1320271
+4442	Will	Filosa	2024	1407606
+4556	Lisa	Weng	2023	1560215
+4443	Hayden	Lord	2025	1506462
+4638	Ava	Aguiar	2023	1295419
+4695	Sarah	Eagen	2024	1438233
+4716	Noah	Taylor	2026	1282439
+4686	Jack	Evans	2024	1152424
+4632	Ty	Cosenzi	2023	1230802
+4683	Danny	Bergin	2024	1637898
+4746	Will	Brown	2025	1333096
+4640	Han	Do	2024	1575014
+4648	Sruthan	Tokala	2025	1426980
+4694	Juliet	Drury	2024	1246333
+4745	Ian	Brown	2025	1189171
+4684	Josh	Ritter	2025	1797872
+4690	Rogan	Fauci	2023	1422148
+4595	Ricky	Zhang	2023	1386175
+4704	Jake	Newman	2026	1218080
+4738	Georgea	Fisher-Smith	2026	1272673
+4697	Aiden	Corbin	2024	1575014
+4662	Ashleigh	Stepnowski	2022	1421606
+4740	Anika	Laroche	2026	1904866
+4693	Tracy	Yin	2024	1842000
+4645	Charlie	Simons	2024	1335000
+4712	Niko	Cole-Johnson	2025	1257818
+4713	Dante	Mori	2024	1361582
+4711	William	Green	2024	1287163
+4714	Logan	Thorne-Begland	2023	1391973
+4725	Johnny	Zhang	2023	1554947
+4735	Sam	Turner	2026	1326062
+4731	Delia	Cooper	2023	1613607
+4681	Marvin	Sun	2025	1445145
+4660	Olivia	Reynolds	2022	1395744
+4596	Owen	Sullivan	2023	1460679
+4615	Spencer	Pasquariello	2024	1395695
+4618	Chensu	Wang	2026	1858909
+4696	Hannah	Coon	2023	1608602
+4741	Marlena	Maleska	2026	1401123
+4701	Daniel	Yang	2025	1465329
+4609	Jennifer	MacLer	2023	1378037
+4733	Henniyah	Rivers	2025	1691200
+4705	Rocco	Boland	2023	1297805
+4706	Charlie	Kaye	2023	1364411
+4707	Marcos	Wiscovitch	2026	1411842
+4605	Colin	Hall	2024	1297370
+4720	Amey	Reynolds	2024	1636780
+4703	Roy	Ahn	2025	1552128
+4717	Hieu	Nguyen	2023	1968909
+4718	Phuc	Phan	2023	2082947
+4724	Ethan	Ford	2023	1430750
+4719	Phoenix	Verite	2023	1444136
+4624	Curry	Nye	2026	1612825
+4737	Kevin	Wang	2023	1435053
+4629	Mark	Tobias	2025	1345236
+4659	Kami	Tarantino	2024	1342000
+4623	Blake	Baumgartner	2026	1312008
+4651	Sam	Auclair	2024	1213034
+4708	Jaicee	Downs	2026	1493871
+4742	Lillian	Howard	2026	1516797
+4743	Amelie	Whittaker	2025	1610651
+4669	Davis	Gillies-Holt	2022	1256445
+4729	Coco	Diemar	2022	1356365
+4610	Vivian	Boucher	2023	1382576
+4650	Sam	Merkatz	2022	1205202
+4654	Ted	Simons	2024	1276000
+4721	Natan	Driker	2022	1094168
+4606	Sean	Hall	2022	1291988
+4710	Colin	Shaver	2022	1094713
+4631	Spark	Xiong	2023	1141196
+4652	Sam	Bromberg	2023	1295329
+4663	Stella	Risinger	2022	1451605
+4739	Rio	Gladchun	2025	1315063
+4597	Patrick	Boucher	2023	1407611
+4598	Tommy	Li	2023	1434150
+4600	Lucas	Yin	2023	1505603
+4601	Alex	Guo	2022	1582159
+4602	Serdar	Kaltalioglu	2022	1100366
+4603	Leo	Vitarelli	2025	1246333
+4607	Paul	Clement	2022	1342283
+4608	Tim	Yu	2022	1396383
+4611	Iris	Hubbard	2022	1499478
+4612	Jenny	Shen	2023	1562765
+4614	Jade	Vu	2025	2237479
+4625	Sam	Jasmin	2022	1348408
+4626	Gabe	Cruz	2025	1353511
+4627	Marcello	Zelasco	2023	1361677
+4630	Arzum	Li	2023	1727105
+4633	Nago	Yoshitake	2023	1302474
+4634	Jerry	Huang	2023	1309619
+4635	Bu	Patanakijpaibul	2022	1310640
+4636	Luke	Lonbard	2022	1315744
+4637	Baistow	Wang	2024	1322889
+4639	Giulia	Cecchetti	2022	1534184
+4641	Aja	Marcer	2023	1778142
+4642	Stephanie	Essien	2024	1781205
+4643	Aitana	Varas Rubio	2024	2103761
+4644	Sveva	Fiore	2022	2104782
+4646	Justin	Rios	2022	1461711
+4649	Amogh	Peddapothla	2024	1584200
+4653	Eli	Johansen	2022	1324930
+4656	Tom	Vumback	2024	1392300
+4657	Sanyu	Liu	2022	1643404
+4658	Elsa	June Ciscel	2022	1741395
+4661	Regina	Miller	2022	1389238
+4665	Jordan	Dimauro	2023	1521935
+4666	Jerry	Vo	2022	1401487
+4667	Hongtao	Chen	2022	1704649
+4668	Deandre	Maxwell	2022	1719960
+4670	Brandon	Rich	2022	1344325
+4671	Kaitao	Luo	2022	1389238
+4672	Vincent	Pan	2022	1402507
+4675	Tony	Zhang	2022	1762831
+4676	Silvia	Zaragoza	2023	1472939
+4677	Alix	Baccardax	2023	1590325
+4678	Rachel	Adegoke	2024	2167047
+4682	Frank	Hong	2025	1779163
+4685	Matt	Dale	2022	1074847
+4688	Hugh	McLaughlin	2022	1251437
+4689	Liam	Blayney	2025	1411694
+4691	Stewart	Corona	2023	1558682
+4722	Zach	Musi	2025	1299412
+4723	Max	Landis	2022	1424964
+4726	J.J.	Werner	2025	1710773
+4727	Terry	Kim	2023	1725064
+4730	Ruby	Cole	2024	1486209
+4732	Lily	Strohecker	2022	1649528
+4734	Wells	Gillette	2022	1745478
+4744	Marcus	Goodbody	2022	1139154
+4747	Kai	Perks	2024	1427005
+4748	Will	Myers	2024	1537246
+4692	Hailey	Mesard	2025	1710000
+4619	Hezekiah	Benson	2026	1310924
+4699	Tracy	He	2022	1659192
+4680	Niklas	Gradin	2025	1442316
+4679	Carmela	Vontobel	2023	2424276
+4715	Maximilian	Preuss	2026	1101255
+4800	Caroline	Piorkowski	2022	1349099
+4844	Slade	Crouse	2024	1336154
+4778	Ani	Lukasiewicz	2024	1678000
+4790	Margo	Weske	2025	1867138
+4782	Kasey	Schena	2024	1348553
+4851	Lilly	Coward	2025	1558105
+4855	Sienna	Chin Gerding	2025	1622274
+4805	Hana	Shinzawa	2024	1492577
+4773	Ava	Broderick	2024	1489000
+4826	Coughlin	Kyla	2022	1378790
+4850	Mary	Davidson	2024	1481904
+4817	Claire	Furia	2027	1508561
+4842	Coleman	Hayes	2023	1266956
+4843	Jack	Conway	2024	1336865
+4840	Nate	Lee	2024	1216204
+4845	Jonny	Miller	2024	1353415
+4755	Ethan	Sewall	2023	1179731
+4846	Morty	Jiang	2023	1553092
+4857	Regan	Landers	2024	1949135
+4766	Felix	Wiberg	2025	1515810
+4769	Helen	Coughlin	2024	1313000
+4794	Genevieve	Nohrden	2027	1483494
+4860	Steven	Stants	2024	1118447
+4862	William	Fandry	2024	1182616
+4867	Gabriel	Krakauer	2025	1476390
+4871	Sadie	Davis	2024	1549081
+4872	Zoe	Kalish	2026	1645335
+4874	Jaden	Johnston	2025	1703989
+4875	Zarin	Gasasu	2026	1880956
+4877	Michael	Eddy	2024	1099898
+4878	Nicholas	Simonds	2024	1156547
+4879	Owen	McGowan	2024	1222220
+4880	Rahul	Sundar	2024	1258817
+4881	William	Shipley	2023	1224225
+4882	Dominik	Sarantis	2024	1239265
+4885	Asher	Sawka	2025	1465361
+4892	Maya	Learner	2024	1640322
+4899	Mae	Freeborn	2024	1578158
+4894	Alex	Stefani	2024	1229239
+4896	Steven	Xiang	2024	1325994
+4898	Soren	Gaisford	2024	1465862
+4902	William	Hanley	2024	1219212
+4903	Noah	Torres	2024	1255809
+4905	Christopher	Rhee	2025	1413725
+4906	Elijah	Maurer	2024	1502458
+4907	Owen	Croak	2025	1622775
+4836	Gloria	Chu	2024	1567119
+4761	Marek	Girard	2026	1267529
+4762	Spencer	Hutchinson	2026	1386613
+4775	Cody	Hiltz	2026	1558325
+4770	Emily	Haas	2025	1345545
+4783	Kiki	Gable	2026	1421746
+4847	Thomas	Chamberlain	2026	1438623
+4788	Matias	Diaz	2026	1663128
+4785	Leo	Ehrenfels	2024	1315778
+4789	Sienna	Barhorst	2026	1551109
+4787	Luca	Gianelli	2026	1340164
+4801	Kate	Ladino	2025	1390233
+4807	Kate	Regan	2025	1583197
+4781	Jay	Medina	2025	1814505
+4809	Arena	Daniela	2027	1369457
+4810	Anna	Hvidsten	2023	1631843
+4833	Sina	Renner	2024	1397714
+4791	Monica	Ehrenfels	2025	1930693
+4751	Samantha	Ellis	2023	1412255
+4771	Simone	Brooks	2025	1340190
+4749	Matthew	Eggert	2023	1537246
+4780	Riley	McLoy	2024	1721660
+4820	Hailey	Nims	2022	1531246
+4852	Lucy	Wang	2026	1578158
+4853	Rebecca	Healey	2024	1592195
+4854	Caroline	McLaughlin	2023	1595872
+4856	Mary	Adams	2024	1684438
+4858	Avery	Wilson	2026	2472514
+4870	Alexandra	Herman	2023	1248289
+4873	Stella	Ahlberg	2024	1570638
+4876	Lily	Chorev	2026	2007288
+4888	Ella	Smith	2026	1304437
+4889	Gracie	Smith	2027	1372616
+4890	Haley	Ritter	2023	1539556
+4900	Michelle	Grenier	2026	1667393
+4901	Helen	Taylor	2026	1804755
+4792	Tess	Farr	2022	1521401
+4763	Eliza	Connors	2024	1334710
+4752	Hannah	Grohman	2024	1434150
+4753	Peyton	Meader	2022	1606657
+4754	Jelena	Perovic	2022	1661777
+4757	Ben	Conway	2022	1187129
+4758	Mic	Pichitkarn	2022	1385155
+4759	Lizie	Connors	2024	1359636
+4760	Chloe	Yoon	2025	1557661
+4756	Levi	Shutty	2024	1313123
+4774	Ray	Borawski	2024	1307445
+4806	Ava	Menasha	2026	1447252
+4793	Erica	Brown	2022	1531121
+4796	Alanna	Hyatt	2022	1683213
+4797	Josefina	Lopez	2023	1714856
+4798	Raphaelle	Benoist	2025	1755686
+4764	Ella	Cheong	2026	1442756
+4803	Kasey	Corra	2022	1447420
+4811	Katherine	Tang	2022	1550516
+4812	Cecilia	Li	2025	1575014
+4813	Ayesha	Lee	2025	1631155
+4814	Kate	Samson	2023	1701586
+4815	Elizabeth	Cao	2022	1712815
+4816	Lucy	Oneglia	2025	1716898
+4818	Lucia	Morales	2025	1522955
+4821	Clara	Ehren	2024	1637279
+4822	Li	Jasmine	2022	1800599
+4823	Rao	Becca	2022	1867968
+4825	Bei	Jessica	2023	1885321
+4830	Tracy	Chu	2024	1573993
+4848	Jack	Smith	2026	1669208
+4786	Phil	Warren	2024	1246320
+4865	Alexander	Chang	2025	1379635
+4866	Calder	Kropp	2026	1410717
+4868	Evan	Seymour	2024	1638316
+4869	Samuel	Harris	2023	1644332
+4883	Nathan	Simonds	2026	1287392
+4884	Derek	Degenaars	2026	1409714
+4886	Samuel	Langlois	2024	1437788
+4887	Garrett	Kelley	2023	1620269
+4895	Nathaniel	Segura	2024	1281376
+4897	Nolan	Byron	2023	1380637
+4908	Joshua	Gard	2024	1674411
+4909	Andy	Zhu	2025	1705493
+4777	Anabella	Zullo	2026	1585928
+4767	Kere	Falconer	2024	1755625
+4841	Jonathan	Kamdani	2023	1240792
+4799	Madeline	Kerr	2025	1270557
+4776	Tess	McLafferty	2023	1492260
+4912	Bethany	Rose	2025	1441799
+4978	Max	Rochford	2026	1453325
+4982	Bobby	Liu	2026	1674797
+4983	Theodore (Theo)	Andersen	2026	1709700
+4931	A.J.	Ursini	2026	1162000
+4910	Nathan	Maina	2026	1843858
+5008	Thomas	Casale	2026	1242036
+4956	Brooke	Cesarski	2025	1991837
+5019	Magdalena	Tenreiro	2027	1406539
+4957	Ellie	Grahn	2025	1517347
+4958	Wendy	Cui	2023	1546939
+5022	Norah	Wright	2025	1578953
+4960	Amenaide	Brown	2024	1782653
+4961	Bella	Ferrell	2023	1790816
+5028	Keira	Gagne	2026	1921128
+4913	Maggie	Mirembe	2024	1519002
+4944	Gaby	Alonso	2025	1808163
+4941	E.J.	Hemingway	2025	1633673
+4937	Martin	Erath	2025	1229382
+4954	Gabriel	Costales	2026	1229592
+4963	Walker	Cox	2025	1288613
+4932	Isaac	Scribner	2023	1168977
+4968	Gabe	Cooper	2026	1159299
+5000	Eli	Rosen	2025	1170408
+4947	Katie	Tantillo	2026	1336100
+4940	Sawyer	Rogers	2024	1485244
+5004	MacY	Putka	2026	1298515
+4942	Katie	Chen	2026	1697140
+5014	Kendryk	Aquino	2025	1206021
+4966	Christian	Hernandez	2026	1447080
+4973	Elizabeth	Velander	2026	2018000
+4972	Nina	Khera	2023	1620388
+5001	Riley	Hart	2026	1260204
+4977	Josh	Taylor	2026	1251770
+4945	Cassidy	Bruno	2026	1242036
+5018	Patrick	Callahan	2025	1375988
+4994	Skylar	Bedard	2026	1340900
+4996	Miguel	Dominguez	2025	1388776
+4950	Jack	Zimmerman	2023	1392857
+4962	George	Scanlon	2025	1252743
+5015	Brady	Ihrig	2027	1371429
+5032	Victoria	Tenreiro	2025	1329107
+4997	Luke	Dixon	2026	1423469
+4967	Alexander	Cohen	2026	1384150
+4969	David	Xiong	2026	1156378
+4936	David	Yang	2026	1357764
+4979	Mason	Peng	2025	1528260
+5003	Harrison	Pascarella	2026	1365306
+5017	William	Iudice	2026	1307253
+5012	Benjamin	Bradshaw	2025	1290568
+5035	Colleen	Simmons	2025	1339977
+4974	Caroline	Kovacs	2026	1175846
+5007	Dev	Chandorkar	2026	1436735
+5009	Jaxson	Graham	2027	1197678
+5010	Ariel	Aguilo	2027	1418043
+4952	Owen	Zhao	2025	1686495
+5042	Soren	Nelson	2026	1374051
+4924	Joaquin	Acuna	2024	1198500
+5057	Miles	Harrison	2026	1255958
+4998	Chris	Suy	2026	1371366
+4948	Edward	Lilly	2025	1254501
+4934	Vincent	Gilbert	2026	1227435
+5040	Yaroslav	Spytskyi	2024	1313265
+5025	Evelyn	Surowiec	2025	1549103
+5005	Sarah	Goldstein	2026	1579985
+5021	Caroline	Kelly	2023	1502041
+4933	Anton	Balyuk	2024	1145305
+5023	Kayla	Scouten	2026	1579592
+5024	Michelle	Laferriere	2023	1591837
+5044	Ava	Carroll	2026	1586289
+4993	Sophia	Mikelinich	2024	1251770
+5027	Grace	Ditchfield	2026	1913265
+5026	Victoria	Liwanag	2025	1890854
+5029	Anya	Budzinski	2026	1294339
+5031	Sophia	Dinanno	2023	1321218
+4919	Nora	Joyce	2025	1324490
+5033	Sydney	Pilla	2023	1364854
+4959	Sara	Oakley	2024	1631335
+5020	Vera	Masciarelli	2025	1436298
+5037	James	Li	2026	1737755
+4946	Anika	Ata	2026	1268317
+5039	Naoya	Kobayashi	2025	1261489
+4922	Ludo	Melodia	2025	1580612
+5043	Laura	Bachmann	2025	1469388
+4955	Arthur	Illidge	2025	1243488
+5045	Allie	Zeytoonjian	2024	1644898
+5046	Noreen	Flanagan	2025	1902041
+5047	Jenny	Okon	2023	1397959
+5048	Mary	Kate Callanan	2024	1497959
+5049	Lindsey	Mulvoy	2023	1538776
+5050	Elizabeth	Denning	2023	1638776
+5051	Olivia	Smith	2023	1726531
+5052	Maggie	Spring	2025	1757143
+5053	Colleen	Flynn	2024	1769388
+4921	Hadley	Stanton	2024	1573871
+4923	Mya	Kwenda	2026	2314097
+4980	Adrian	Chen	2025	1584868
+4976	Aditya	Shrivastava	2026	1233276
+4986	Dylan	Uttam	2026	1242036
+4939	Maggie	Cabot	2025	1407607
+4995	Katelyn	Pereira	2026	1379283
+4951	Jeffrey	Song	2023	1719388
+5011	Zachary	Fleming	2028	1518603
+5013	Elliott	Tinkler	2024	1178903
+4935	Terry	Qi	2026	1306378
+4926	Jonathan	Renger	2023	1304000
+4929	Michael	Mounsey	2026	1363000
+4927	Markus	Cheng	2024	1404000
+4975	Audra	Soni	2024	1386916
+5056	Peter	Morocco	2024	1259315
+5058	Zach	Crowthers	2026	1247137
+4938	Luke	Taylor	2024	1077120
+4928	Brady	Tollis	2026	1509000
+4925	Liam	Boone	2026	1271000
+5054	Jaiden	Dash	2024	1259609
+5055	Odysseas	Pavlides	2026	1248774
+5059	Griffin	Imbier-Maher	2026	1361383
+5060	Pete	Promrat	2025	1400741
+5061	Ben	Aaron	2025	1446154
+5062	Nikita	Young	2023	1458264
+5002	Zafran	Kocyba	2026	1180879
+4914	Sophia	Zhang	2026	1615256
+4915	Gretchen	Magill	2023	1815784
+4918	Joy	Daly	2026	2244915
+5034	Cailin	Fennessy	2024	1395918
+4984	Matthew	Mariani	2026	1224188
+4911	Joshua	Chung	2025	1933093
+4916	Hannah	Rose	2023	1862908
+4917	Wendy	Shen	2026	2186761
+4965	Charlie	Zhang	2026	1282918
+4992	Lissy	Portorreal	2025	1910204
+5183	Bennett	Jones	2023	1129434
+5110	Clara	Williams	2026	1693169
+5194	Charlotte	Lokere	2023	1534586
+5111	Lilley	Fiedler	2023	1764725
+5098	Miles	Hu	2026	1270251
+5204	Jacquelyn	Monahan	2024	1512636
+5132	Pierce	McCormac	2026	1179731
+5167	Christopher	Doubleday	2025	1235714
+5160	Cameron	Cote	2024	1329000
+5172	Samantha	Flibbert	2025	1638000
+5169	Riley	Eyman	2024	1204000
+5117	Ryan	Liu	2026	1425408
+5201	Tyler	McGarry	2022	1065808
+5121	Star	Pan	2024	1289100
+5127	Felicity	Liao	2026	1469935
+5173	Ben	Franco	2022	1376989
+5104	Henry	Liu	2026	1849600
+5102	Austin	Boardo	2023	1434044
+4987	Amina	Cifric	2025	1257610
+5155	Grace	Chen	2023	1312943
+5182	Asia	Jaycobs	2023	1276612
+5152	Anna	Capelle	2025	1388000
+5171	Anne	Finn	2023	1403000
+4988	Willow	Dixon	2026	1463265
+5166	Vinh	Do	2024	1445918
+5161	Thomas	Covey	2023	1327497
+5147	Peter	Boehm	2023	1292405
+5141	Charlotte	Deveikas	2024	1609641
+5131	Richard	Federico	2026	1102762
+5065	Yiuhon	Chan	2024	1227989
+4990	Lila	Graves	2024	1713476
+5192	Damon	Li	2024	1243235
+5157	Sarah	Collier	2023	1469877
+4991	Ashley	Robertson	2024	1630416
+5150	Ashley	Brzezenski	2023	1608698
+5206	Lucy	Newman	2025	1618906
+5199	Kathryn	Martin	2025	1585640
+5088	Claire	Palmer	2025	1269375
+5136	Anne	Moser	2026	1357346
+4989	Grace	Maloney	2024	1341321
+5164	Jonathan	Dase	2024	1042533
+5202	Alexander	Messier	2022	1213000
+5089	Sophie	Chen	2025	1546990
+5203	Braeden	Moitoso	2025	1170648
+5193	Parker	Lial	2024	1365000
+5205	Benjamin	Morris	2023	1150030
+5085	Oskar	Ruser	2024	1168031
+5208	Liam	O'Brien	2023	1186125
+5209	Enzo	Orlowski	2025	1394179
+5135	Kiera	McKeown	2023	1943547
+5200	Gabrielle	Martin	2023	1443336
+5185	Alexander	Kirby	2024	1230190
+5187	Leo	Koerner	2022	1120953
+5163	Nicholas	Danforth	2023	1318143
+5084	Ishaan	Bafna	2026	1643013
+5176	AJ	Gorman	2023	1055574
+5118	Eric	Zhou	2026	1146428
+5086	Leo	Ladewig	2026	1168150
+5078	Zoey	Frank	2026	1485270
+5197	James	Lyman	2022	1275776
+5130	Luke	Walsh	2023	1031980
+5190	Raymond	Li	2023	1229300
+5149	Camilla	Breckon	2023	1635238
+5125	Candace	Maple	2026	1205641
+5159	Tyler	Cornetta	2023	1208422
+5196	Theodore	Luchars	2023	1207180
+5177	Sasha	Green	2022	1585176
+5179	Alison	Hamel	2027	1335144
+5129	George	Rand	2023	1035628
+5063	Jack	Himelfarb	2026	1650009
+5188	Benjamin	Koper	2022	1268827
+5145	Lucy	Baker	2023	1523861
+5181	Nicolas	Huaco	2025	1046386
+5066	Eliot	Wemple	2023	1210006
+5067	Seb	Orth	2023	1219089
+5068	Ian	Dyer	2023	1227162
+5097	John	Crocker	2025	1231292
+5128	Isaiah	Kiamba	2025	1789039
+5133	Nicholas	Contos	2025	1261765
+5071	Alina	Vallejo	2026	1555146
+5072	Audrey	Lee	2023	1327071
+5073	Lola	Baill	2027	1329089
+5075	Ada	Alden	2023	1453219
+5076	Clara	Bruno	2023	1457255
+5100	Lily	Meier	2026	1637518
+5140	Lulu	Dematteo	2025	1474111
+5184	Axel	Kapoor	2025	1206979
+5080	Leo	Kollen	2026	1393677
+5109	Katherine	Clovis	2026	1537400
+5083	Daniel	Petruzella	2026	1566247
+5094	Kayden	Chhoun	2024	1109709
+5148	Jackson	Booker	2025	1237254
+5103	Jaiden	Zhu	2024	1417000
+5069	Evan	Atwood	2025	1180595
+5142	Amelia	Sousa	2025	1399226
+5158	Caroline	Comjean	2025	1680427
+5091	Olivia	Pilecki	2026	1655054
+5092	Meagan	Rose	2026	1847808
+5093	Ryan	Cooley	2026	1515788
+5095	Thomas	Hutcheson	2028	1235236
+5079	Dorian	Ciscel	2026	1310040
+5070	Daniel	Rogers	2024	1240622
+5107	Leo	Gu	2026	1293810
+5099	Kinaya	Bowe	2028	1590467
+5101	Ashley	Li	2025	1877074
+5113	Lila	Jette	2026	1365366
+5115	Danny	Lee	2026	1454228
+5064	Reid	Wemple	2026	1111283
+5116	Hugo	Zhang	2026	1475398
+5119	Sam	Spiegel	2024	1202942
+5082	Alex	Gumkowski	2026	1450054
+5123	Roy	Yan	2023	1418906
+5124	Myles	Campbell	2024	1465329
+5168	Theodore	Dowd	2025	1209700
+5126	Tara	Kolonic	2024	1363320
+5077	Pepper	Travers	2024	1486797
+5134	Gabby	Jackson	2025	1931570
+5151	Jonathan	Cajamarca	2023	1193244
+5195	Tongda	Lou	2023	1609184
+5137	Frances	Tucker	2026	1349000
+5165	William	Davitt	2025	1166327
+5198	Samuel	Lyons	2023	1074039
+5081	Dominic	Brunalli	2026	1427403
+5174	Jeremy	Gall	2024	1133017
+5154	William	Chalfant	2023	1093878
+5180	Nicholas	Hoerle	2025	1312000
+5276	Steven	Zhang	2024	1125200
+5316	Jacqueline	Thabit	2022	1487000
+5175	Cameron	Gonzalez	2024	1086014
+5249	Zidan	Graham	2025	1410616
+5306	Konstantin	Lukin-Yelin	2022	1143328
+5219	Natalie	Samulka	2024	1540057
+5352	Ayur	Vallecha	2027	1128150
+5337	Macy	Lindberg	2022	1665208
+5317	Jason	Zhu	2024	1556439
+5335	Jacob (Coby)	Mulliken	2023	1183000
+5329	Cora	Knoell	2024	1378700
+5277	Matthew	Choumenkovitch	2023	1412000
+5346	Jenna	Nahas	2024	1379030
+5320	Bruin	Brayshaw	2024	1397777
+5332	Sophia	Deng	2022	1417077
+5238	Ezra	Lee	2025	1208941
+5248	Logan	Eldaief	2026	1401790
+5256	Jeremiah	Mathis	2026	1494340
+5251	Brady	Payne	2025	1193347
+5178	Gabriel (Gabby)	Guerrero	2024	992000
+5285	Jackson	Ayers	2025	1159184
+5243	Ian	Schmidek	2024	1441410
+5342	Bassil	Chughtai	2024	1288000
+5307	Parker	Lewis-Pierce	2024	1243009
+5268	David	Xie	2025	1447000
+5216	Thomas	Reichard	2023	1145000
+5331	Wren	Fortunoff	2022	1298140
+5246	Archer	Coy	2026	1341000
+5242	David	Roy	2024	1390400
+5322	Lakshmi	Bogelli	2023	1836000
+5318	Aiden	English	2022	1346000
+5237	Joshua	Houston-Davis	2023	1361046
+5286	Olin	Rose-Bardawill	2025	1224490
+5258	Ching Hei (Andre)	Leung	2025	1357000
+5227	Nicholas	Tao	2021	1247854
+5235	Jaclyn	Zatsiorsky	2022	1647000
+5234	Kevin	Yu	2023	1436357
+5302	Joshua	Curhan	2025	1176000
+5143	Matthew	Abati	2024	1149000
+5230	Charlie	Van Beuren	2022	1145500
+5291	Nik	Guthrie	2022	1055453
+5280	Clare	LaMattina	2024	1434088
+5323	Peter	Abenante	2025	1248850
+5333	Ryder	Cavanagh	2024	1140574
+5213	John (Jake)	Popeo	2024	1146645
+5261	Walt	Reagan-Loomis	2022	1245312
+5215	Eliot	Ragosa	2023	1977355
+5281	Peter	Chen	2023	1284330
+5305	Beckett	Dubovik	2025	1223542
+5239	Wesley	Lindstrom-Chalpin	2025	1486000
+5348	Elizabeth	Schretzenmayer	2023	1520914
+5310	John	Wallace	2025	1396000
+5311	Amalka	Stuck	2023	1815019
+5274	James	Nichols-Worley	2023	1239197
+5214	Thomas	Pyle	2025	1278000
+5262	David (Hershie)	Liebowitz	2022	1308163
+5266	Eric	Zhang	2024	1209000
+5245	Jack	Butterworth	2026	1174000
+5340	Violet	McCann-Anthony	2024	1737488
+5297	Sophia	Comporato	2023	1425984
+5303	Alana	Kramer-Gomez	2023	1343831
+5299	Alessandra	Cristiani	2024	1363402
+5220	Reuben	Siegel	2023	1439233
+5170	Kevin	Farmer	2025	1116000
+5153	Alexander	Cesaretti	2024	1137000
+5344	Zoe	Goldman	2025	1526000
+5334	Andy	Chefetz	2023	1206692
+5267	Henry	Wang	2025	1124000
+5355	Ella	Ogden	2025	1700383
+5232	Natalie	Welling	2024	1464000
+5339	Yuchen (Jack)	Liu	2025	1355899
+5255	Serhii	Malevych	2024	1391758
+5300	Isabella-Marie	Selden	2023	1870840
+5229	Tom	Tran	2025	1347255
+5257	Adrian	Tan	2025	1688165
+5263	James	McCarron III	2024	984000
+5295	Sofia	Rincon	2024	1217000
+5212	Aidan	Pesce	2023	1404388
+5354	Anna	Mulliken	2026	1624870
+5330	Andy	Jiang	2024	1483000
+5226	Thomas	Strong	2023	1201000
+5350	Catherine (Cate)	Wacholz	2022	1479063
+5312	Amelia	Barlow	2023	1375500
+5321	Benzo	Zhou	2023	1283173
+5259	Camille	Destefano	2024	1590467
+5325	Sophia	Matherly	2023	1488171
+5254	Gratian	Ting	2025	1211200
+5250	Paul	Nowosielski	2025	1385550
+5308	Bear	Brooks	2023	1000817
+5282	Eloise	Daniello	2022	1395729
+5301	Angelina	Liberman	2023	1566848
+5336	Kai On (Jason)	Yu	2025	1190200
+5313	Olivia	Pasquale	2022	1839027
+5247	Jaiden	Delva	2024	1527000
+5225	Zebediah	Stewart	2023	1196287
+5296	Maeve	Gadippati	2023	1705546
+5292	Rayeef	Rahman	2024	1315000
+5284	Brynn	Bergin	2022	1295500
+5244	Eli	Berk	2026	1252000
+5207	Collette	Noordzij	2023	1436062
+5293	Nicole	Ocampo-Montoya	2023	1459500
+5265	Natalie	Zaterka	2022	1291837
+5223	Bobby	Skrivanek	2024	1245328
+5353	Christina	Hall	2026	1610000
+5351	Chris	Thompson	2027	1143000
+5271	Cooper	Wang	2025	1442500
+5338	Wenzan (Frank)	Fan	2023	1471013
+5241	Maksim	Roman	2025	1106000
+5294	Grace	Gordon	2024	1352000
+5218	Harris	Roebuck	2025	1249364
+5341	Eliza	Withers-Clark	2023	1805058
+5314	Nicholas	Reimer	2024	1150538
+5347	Lucy	Li	2025	1580117
+5345	Shreny	Shrestha	2023	1764785
+5221	Willow	Simon	2024	1396680
+5349	Eoin	Cavanaugh	2027	1257438
+5327	Teddy	Hwang	2022	1682587
+5328	Victoria	Liu	2024	1976642
+5283	Caitlin	Fitzgerald	2022	1346934
+5298	Ruoxing (David)	Yang	2022	1440796
+5343	Jobie-Lewis	Rogers	2024	1157528
+5233	Joshua	White	2024	1350000
+5222	Matt	Simon	2024	1313702
+5290	Nathaniel	Stanley	2025	1329503
+5228	John (Jack)	Tompros	2024	1242036
+5275	Will	Ryckman	2023	1254082
+5403	Maxwell	Rothman	2027	1491285
+5380	Dar	Daniel	2023	1466280
+5409	Daniel	Tang	2025	1691586
+5414	Brendan	Brosnan	2025	1117443
+5402	Ben	Nissenbaum	2027	1444570
+5366	Jameso	Flaherty-Clapham	2024	1697193
+5398	Jimmy	Zhong	2025	1430000
+5270	Seunghyeon (Karry)	Kim	2025	1621655
+5377	Charlie	Brand	2027	1291752
+5378	Kevin	Li	2027	1555995
+5436	Angela	Huffer	2026	1321201
+5269	Aitong (Ivy)	Li	2023	1420768
+5391	Max	Domilici	2027	1302930
+5435	Alexandra	Nicholas	2024	1519580
+5363	Kathaiana	Ifill	2026	1640000
+5379	Willy	Connors	2025	1413351
+5442	Ashley	Xu	2026	1671778
+5482	Carlos	Mathiss	2026	1799757
+5426	Alex	Skulte	2026	1704762
+5387	Devin	Gray	2024	1160272
+5393	Nathan	Zhang	2025	1424433
+5382	Abdirizak	Abdulle	2025	1324340
+5372	Tienming	Shao	2026	2160959
+5357	Riya	Jain	2026	1705890
+5359	Annabel	McNamara	2025	1524317
+5425	David	Porter	2024	1590799
+5433	Emily	Bunn	2025	1342458
+5385	Max	Kim	2025	1656800
+3992	Yaqi ((Amy)	Zhan	2026	1969388
+5360	Emma	Edgar	2026	1665457
+5410	Stealla	Curwin-Amfitheatrof	2026	1268317
+4308	Weidong (Alex)	Bao	2023	1767347
+4307	Zexuan (Anthony)	Lin	2025	1710204
+5370	Catherine	Curran	2026	1793100
+5423	n	samson	2027	1470954
+5392	Krishna	Balasubramanian	2027	1311840
+5384	Jeffrey	Liu	2025	1433882
+5369	Chloe	Jeppson	2026	1725200
+5264	James (JJ)	Oldershaw	2025	1213000
+5437	Kiara	Panarello	2027	2248717
+5371	Ava	Springsteel	2024	1917507
+5389	Ben	Owusu-Amo	2024	1373580
+3986	Sakura (Sara)	Hatsu	2026	1624490
+5419	Raymond	Hildreth	2025	1200824
+5395	Noah	Peters	2025	1364682
+5376	Justin	Lee	2026	1181686
+5362	Erin	Green	2025	1622120
+5399	Sixing	Wang	2026	1400256
+5356	Julia	Wang	2027	1589891
+5397	Jonathan	Andreoli	2026	1464878
+5383	Charles	Zhang	2027	1450459
+5401	Quentin	DeFreitas	2026	1328000
+5405	Ben	Kaplan	2026	1439633
+5365	Gray	Simanson	2024	1770617
+5278	Juan	José Torres Lara	2024	1166569
+5429	Darian	Estrada	2025	1588560
+5358	Mia	Sung	2026	1464690
+5413	Reka	Horvat	2027	1988000
+5404	Van	Crocker	2024	1205000
+5386	Alex	Chen	2025	1351000
+5396	Josh	Levine	2024	1414025
+5406	Ziad	Shawaf	2025	1503061
+5430	Apollo	Fung	2028	1519428
+3991	Adaline (Addy)	Zhang	2025	1942270
+3989	Yichen (Anna)	Xing	2024	1719967
+5408	Matthew	Sennelius	2025	1673849
+5439	Mary Jane (MJ)	Fisher	2026	1980425
+5381	Eddie	Zhang	2024	1238000
+5400	Husayn	Ladha	2024	1387070
+5390	Nik	Rizvi	2025	1356800
+5407	Leo	Charlamb	2027	1538000
+5273	Isabella (Izzy)	Mundel	2025	1660590
+5388	Michael	Timmins	2024	1221595
+5368	Alyssa	McGuirl	2026	1706339
+5309	Laruen	McMahon	2025	1522104
+5367	Lilly	Maki	2024	1698396
+5440	Chloe	Duran	2026	1950000
+5411	Bryn	Feeney	2023	1382329
+5415	Trevor	Coughlin	2027	1180879
+5412	Brooke	Georges	2023	1777296
+5416	Dugan	John	2027	1229300
+5420	g	blake	2027	1243246
+5374	Jeff	Wang	2026	1536200
+5427	John	Li	2028	1237681
+5424	p	ding	2027	1521782
+5373	Jonathan	Tillen	2025	1106736
+5443	Katherine	Leon	2026	1789715
+5444	Alessandra	Dardeno	2026	1963172
+5445	Tanya	Clemens	2026	1501957
+5446	Ayelen	Herrera	2026	1545071
+5279	Thomas	Valderrama	2024	1228500
+5364	Sunehri	Verma	2026	1639460
+5447	Annie	Slattery	2026	1568131
+5448	Natalie	Drago	2026	1592195
+5449	Erika	Yang	2026	1635308
+5450	Leshly	Martinez	2026	1717525
+5451	Ginna	Allen	2026	1756628
+5452	Alexa	Doherty	2026	1964175
+5453	Ella	Tian	2026	1996259
+5454	Emma	Lindborg	2026	2015310
+5455	Dani	Jiminez Alvare	2026	2063436
+5456	Carlota	Lauria Caba	2026	2063436
+5457	Esmee	Decola	2026	2146656
+5458	Andrew	Byron	2026	1391667
+5459	R.	He	2026	1412722
+5460	Stephen	Huang	2026	1475888
+5461	Steven	Wang	2026	1582168
+5462	G.	Wang	2026	1793726
+5463	Justus	Gonsalves	2026	1132985
+5464	Tiger	Li	2026	1198157
+5465	Luc	Alonzo	2026	1285387
+5466	Jesaiah	Burgos	2026	1333513
+5467	Parker	Douglas	2026	1337524
+5468	Caleb	Griffiths	2026	1413725
+5469	Mcqueen	Hu	2026	1427762
+5470	B.	Xie	2026	1431772
+5471	Kevin	Xu	2026	1452828
+5472	Brian	Zhu	2026	1472881
+5473	Aidan	McEachern	2026	1489925
+5475	Rithik	Kundu	2026	1565124
+5476	Jonah	Howes	2026	1565124
+5477	John	Hannsen	2026	1602221
+4617	Khang (Jim)	Nguyen	2025	1578077
+5479	Martin	Guan	2026	1645335
+5480	Shawn	Wang	2026	1647340
+5481	Arthur	Wang	2026	1697472
+5478	Cam	Minster	2025	1591145
+5421	Bobby	Brady	2024	1413010
+5417	Oliver	Burstein	2025	1342538
+5289	Abhiram (Abhi)	Singh	2023	1401020
+5394	Merrick	Brannigan	2026	1353742
+5483	Gabe	Cooper	2027	1200000
+5500	Alexa	Meekins	2026	1519450
+3306	Aparajita	Srivastava	2025	1577141
+1733	Augustus	Hawk	2023	1359184
+3409	Ryan	Growney	2024	1135000
+5490	Owen	Barry	2027	1209536
+3496	Tristen	Crotty	2023	1418000
+3018	Hewitt	Shelton	2023	1404082
+4041	Jonas	Wilderman	2026	1145671
+4522	Jason	Minicozzi	2026	1060000
+4337	Madeleine	Reinhardt	2024	1256310
+5485	Olessia	Zhevago	2027	1686754
+3642	Austin	Evans	2023	1197000
+5491	Kaya	Surmeli	2027	1287799
+3154	Carter	Lightburn	2025	1161245
+5484	Nina	DeMarco	2026	1669894
+5521	Tommy	Li	2027	1428259
+4062	Helena	Nguyen	2023	1399000
+2726	Madison	Hoang	2023	1961224
+5499	Ella	Coffin	2024	1461618
+4170	Connor	Queenin	2023	1208163
+1207	Olivia	Fayemi	2023	1720571
+3783	Payton	Garcia	2023	1165500
+3982	Dylan	Zaterka	2025	1218200
+3539	Luke	Williamson	2025	1060000
+5522	Duke	Garvin	2027	1134694
+4276	Catie	McGuigan	2023	1561224
+4225	Kenzie	Murphy	2025	1260530
+5186	Emerson	Koch	2024	1228236
+4999	Jeffrey	Piper	2026	1126891
+1686	Christian	Batemen	2023	1266665
+5211	Torin	Pelton-Flavin	2023	1098895
+5503	Rohan	Shah	2026	1668400
+4434	Mary	Powell	2023	1518815
+1139	Natziri	Martinez	2023	1520000
+5438	Aurora (Rory)	Hutchins	2025	1883663
+3712	Kavya	Ramasamy	2024	1537000
+5509	Mei-Ling	Bielagus	2025	1262900
+1666	Chase	Farrick	2023	1271453
+3373	Rileigh	Murphy-Morris	2025	1638100
+5520	L.	Connors	2027	1432332
+3486	Mateo	Bango	2023	993000
+5272	Weixin (Wendy)	Wu	2024	1579800
+3997	Hei Tung (Joanna)	Ng	2026	1454233
+4971	Diego	Abadie	2026	1093500
+3427	Bennett	Walker	2023	1418906
+3285	Eliza	Barker	2023	1563252
+3840	Paul	De Bruyn Kops	2024	1241000
+5511	Gabriela	Gill	2025	1345215
+3148	Kofi	Fordjour	2023	979223
+5488	Lucy	Lack	2024	2184012
+5526	Shay	Kellin	2026	1666105
+1829	Michael	Kalinichenko	2023	1498808
+5523	Tina	Wang	2027	1905869
+5530	Carolyn	Thompson	2027	1677698
+3062	Carver	Porter	2024	1148000
+5505	Charlotte	Jones	2025	1588594
+4581	Kamron	Bradley	2024	1328000
+5162	Christina	Crowley	2023	1753954
+1777	Charles	Chen	2023	1426531
+5524	Brianna	Penterson	2027	1944466
+3974	Josh	Vazquez	2023	1218000
+1	Bridgette	Cassidy	2023	1331119
+5288	Luman (Steven)	Zhang	2023	1436735
+5495	Andreu	Beltran	2025	1225906
+5510	Stephanie	Mo	2026	1542811
+5517	Sahovan	Modi	2027	1276400
+3593	Madison	Bromberg	2024	1374000
+5531	Veronika	Zheleznek	2027	1694197
+5030	Madison	Valade	2025	1320213
+5494	Christopher	Hovet	2025	1014521
+3891	Samuel	Degrappo	2024	1160880
+5493	Arjun	Ray	2024	1436819
+5016	Colten	Landen	2026	1352308
+3797	Michael	Korvyakov	2023	1105000
+5528	Jeremy	Yu	2027	1214000
+4420	Aidan	Sainte	2025	1323487
+230	Henrik	Ehlers	2023	1191650
+4545	Bradley	Bozzuto	2025	1097987
+3296	Alex	Chterental	2025	1375300
+1013	Sophia	Hansen	2023	1333781
+1823	Sebastian	Rome	2023	1315108
+3202	Ellie	Sullivan	2024	1545000
+4864	Alexander	Gough-Sch	2023	1251798
+5508	Finley	Long	2026	1215800
+5534	Charlotte	Maturo	2023	1518373
+5492	Marcus	Douge	2027	1302204
+3109	Cameron	Baylor	2024	1529708
+3361	Luke	Driscoll	2025	1137884
+4096	Kogo	Bennsion	2024	1177793
+4981	Alex	Chen	2026	1680612
+3261	Izzy	O'Brien	2025	1563000
+3651	Andrew	Carroll	2025	1055183
+5156	Katalin (Kata)	Clark	2025	1120000
+5519	Rhia	Patel	2026	1596939
+2617	Sophie	Majernik	2023	1427952
+4953	Luna	Peacock	2024	1144128
+3068	Aaron	Stanger	2024	1094300
+4388	Drew	Michaeli	2025	1270557
+3077	Maxwell	Huang	2024	1085862
+3760	Mohavi	Thakur	2024	1674000
+4475	Sean	Rhatigan	2025	1229181
+5501	Elizabeth	De Ramel	2026	1396000
+4750	Nyla	Scott	2024	1370160
+4190	Leo	Huang	2024	1349000
+5504	Pelle	Russo	2024	1702555
+5036	Eric	Bao	2026	1539796
+5527	Dean	Liang	2027	1343831
+5518	Jacquelyn	Gao	2026	1758966
+4664	Sasha	Dausey	2025	1464000
+54	Catherine	Mao	2023	1941210
+5532	Nadalie	Pearl	2027	1855621
+5533	Adul	Bharath	2027	1889465
+1109	Ellie	Gable	2023	1460000
+5144	Elijah	Anderson	2023	1193254
+5529	Carter	Hudson	2025	1651579
+5507	Lucia	Zinny	2023	1478070
+4893	James	Sutherland	2023	1239766
+5112	Jasmine	Kennedy	2023	1298814
+1517	Jack	Lionette	2023	1013291
+4622	Xinyu) (Rocky)	Tian	2025	1440536
+4445	Gaven	Sullivan	2024	1078805
+4768	Charlotte	Lee	2024	1775452
+4802	Catalina	Perdomo	2027	1364411
+4309	Harrison	Martel	2025	1226056
+4698	Angelina	Huang	2024	1579366
+1645	Sam	Poulin	2023	1154733
+5506	Ella	Moran	2024	2162211
+5547	Max	Leibson	2026	1359680
+3954	Fitz	Courtney	2026	1069000
+1752	Alessandro	Barbiellini	2021	1393878
+70	Kelly	Cloonan	2020	1779727
+5559	xu	yanyi	2026	1519650
+5562	Stefania	Bielkin	2023	1687842
+5544	Evan	Ning	2026	1420324
+5572	n	fourie	2026	1786086
+1780	James	Antone	2020	1477551
+5578	N.	Hwang	2026	1719000
+5554	Jameson	Callaghan	2025	1335000
+5570	Maria Alejandra	Montero	2025	1880625
+5571	Kit	Knuppel	2024	1791169
+5582	Jojo	Goyette	2023	1595743
+1187	Poojaa	Prakash Babu	2021	1566000
+1153	Marianne	Lyons	2022	2033673
+5583	Dom	Genovesse	2023	1879533
+5565	Victoria	Nassikas	2025	1877528
+5574	gretta	white	2026	1474634
+5585	Arina	Sinogeikina	2026	2107448
+5579	E.	Wang	2026	1978000
+1118	Mariam	Craig	2022	1328118
+5566	Lilli	Boeser	2024	1415197
+2637	Josephine	Vogel	2021	1557143
+1034	Nashua	Poreda	2022	1333673
+5567	Lily	Comander	2025	2006307
+3235	Aidan	Berger	2022	1186965
+5560	Sarya	Refai	2025	1918951
+96	Xinyao	Sophia Zhang	2022	1711871
+5540	W	Will	2027	1385123
+1597	Gardner	Brown	2021	1255102
+5535	D.	Coray	2027	1328667
+5545	Charles	Hinman	2025	1237347
+3239	Pedro	Almoguera Martinez	2024	1363665
+5552	Altan	Marvi	2025	1342000
+5555	Rohin	Pinisetti	2025	1333895
+5564	Annie	Stockwell	2022	1494498
+3950	Juan-Pablo	Fernandez Del Castillo	2025	1232700
+5551	Ryan	Sanghavi	2022	1326000
+5553	Sparsh	Verma	2022	1343000
+4569	Chloe	Carroll	2025	1315637
+5105	Grant	Vensel	2026	1219000
+1622	Stanislas	Robert	2022	1070432
+1564	Jack	Griffin	2020	1171429
+2551	Gabriela	Alfaro Pitman	2021	1427123
+1647	Charlie	Guerra	2020	1232653
+5428	Quinn	Desimone	2028	1262485
+2721	Bronwyn	Jensen	2020	1940816
+1687	Oliver	Carswell	2022	1276955
+3517	Emerson	Seymour	2026	1286000
+1530	Aidan	McGaugh	2020	1121429
+2606	Alex	Janower	2022	1593000
+1844	Carlos	Panayiotopoulos	2022	1540482
+5550	William	Chen	2024	1350977
+1710	Taat	Chanshanwut	2021	1276531
+2889	Aidan	Humphreys	2022	1180000
+5587	B	Barber	2026	2431633
+5537	HARRISON	YEOMANS	2027	1516170
+5538	JACKY	SONG	2027	1828020
+5539	Lucy	Zilla	2027	1532088
+5580	Casey	Shapiro	2023	1626744
+5588	cally	garth	2026	1613703
+3882	Kyla	Wagstaff	2024	1412500
+1134	Rachel	Goodman	2020	1448000
+5542	Charles	Geddes	2022	1328033
+1087	Grace	Martin	2021	1450367
+2955	David	Thompson	2025	1185000
+5575	tattie	gibbs	2026	1698971
+5576	c	loker	2026	1987129
+5577	izzy	mundel	2026	1988096
+5573	Laura	Xia	2025	2576016
+5569	Kayla	Zheng	2026	1741470
+5568	Valeria	Yepes-Restrepo	2025	2275213
+4736	Calvin	Sweeney	2025	1288178
+3640	Chris	Butulis	2022	1218219
+5549	Kevin	Cai	2026	1629537
+3419	Clare	Thompson	2024	1748541
+5489	Xavier	Smith	2027	1529708
+4514	Oliver	Rohrbasser	2026	1466334
+2864	Daniel	Simpson	2020	1129000
+4478	Sarah	Pothel	2024	1512760
+2814	Daniel	Pinckney	2020	1039000
+3527	Constantine	Krenteras	2024	1147000
+1513	George	Madison	2022	986058
+5556	Nico	Brown	2025	1311000
+1548	Joseph	Pandit	2021	1178000
+4425	Blake	Rossiter	2022	1151033
+5548	Ryder	Woodworth	2026	1328797
+2679	Meredith	Broadus	2021	1721939
+2509	Grace	Hayward	2021	1287755
+3933	Kate	Cicchetti	2024	1236000
+4930	Donovan	Crowley	2024	995000
+1835	Asher	Parker-Sartori	2023	1346093
+313	Jonah	Keates	2022	1433722
+3200	Alec	Hamblet	2022	1436000
+2893	Dashiell	Hall	2022	1174000
+1579	Quinn	Anderson-Song	2020	1196939
+5561	Jia	Mittal	2025	2208304
+1201	Ruby	Massengale	2022	1727551
+3730	Symphony	Shi	2026	1809000
+5557	Nico	Badia	2024	1346379
+5090	Ava	Bonsignore	2026	1668192
+5546	Eva	Helie	2024	1838337
+4702	Paul	Boorady	2025	1497622
+3568	Jakob	Kuelps	2025	1028000
+3824	Halvor	Suter	2023	1096000
+2989	Tyler	Forman	2021	1256000
+3031	Alejandro	Lopez	2021	1367000
+3682	Rebecca	Barnard	2024	1665000
+3616	Shane	Lischin	2026	1350000
+5536	Max	Kesselheim	2026	1181800
+4765	Sienna	Belaire	2025	1662119
+3776	Jane	Namusisi	2026	1674000
+5074	Anna	Marston	2023	1395695
+5120	Haruki	Omori	2024	1280301
+5525	Carla	Granizo	2024	2033681
+5584	Sofia	Cornwell	2025	1481533
+1079	Bella	Tawney	2022	1402000
+1736	Sebastian	Canizares	2021	1447689
+5586	lucy	wang	2026	1857785
+3871	Joe	Brown	2023	1171000
+5589	audrey	born	2026	1699139
+5592	Eliott	Johnson	2022	1457919
+5650	lauren	kim	2026	1642640
+5733	Oliver	Colbert	2026	1332507
+5691	Grant	Lebar	2027	1345918
+5702	Alexandre	White	2025	1341103
+5630	r	saha	2026	1300173
+5706	Vincent	Mezzanotte	2025	1229100
+5621	d	jaime	2026	1474004
+5604	m	gherrelui	2026	1987049
+5606	a	weiner	2026	1980629
+5720	Jamey	Bergeron	2028	1232167
+5722	Tyler	Mathew	2028	1308557
+5658	Jeffrey	Liu	2028	1845749
+5704	Timothy	Snail	2026	1156831
+5615	Lu	Lu	2026	1739796
+5612	zimo	liu	2026	1451394
+5224	Brandon	Spector-Townsend	2023	1244318
+5726	Rhett	Curtis	2026	1349128
+5632	a	Todorov	2026	1328571
+5659	Christian	MacCallum	2025	1181400
+5633	placeholder	runner	2026	1500000
+5618	Peter	Yu	2022	1404926
+5634	a	Wood	2026	1607143
+5628	Angelina	Hammerschlag	2027	1398200
+5631	a	Huang	2026	1773469
+5636	Devila		2026	1125510
+5638	Mark	Henshon	2022	1040000
+5676	Cesar	Hernandez	2026	1471222
+5723	Kevin	Weldon	2024	1345116
+5617	Michael	Scully	2025	1324490
+5693	Luis	Sosa Espinal	2025	1251000
+5642	Derek	Days	2026	1405919
+5590	Oliver	Sin	2025	1791307
+5619	a	moshakeagh	2026	1254000
+5641	Arav	Santhanam	2026	1570135
+5610	D	Yah	2026	1273891
+5611	Maxiam	Maxiam	2026	1254690
+5721	Dylan	Fu	2027	1256637
+5707	Logan	Hoffman	2027	1215755
+5620	John	Fu	2026	1795000
+5595	Will	Emery	2024	1403039
+5597	Yisen	Gu	2024	1480345
+5609	W	Cronin	2026	1226753
+5596	Chris	Xue	2024	1618152
+5696	jeffrey	wu	2028	1352017
+5711	Sunny	Qian	2027	1268317
+5598	b	carswell	2026	1336454
+5599	m	yu	2026	1386097
+5600	j	mccarthy	2026	1862741
+5701	Ethan	Xie	2026	1236000
+5692	Enzo Agis	Leventis-Cox	2025	1293467
+5627	Isabel	Pavloniss	2022	1615000
+5705	Henry	Orraca-Cecil	2027	1138387
+5608	S	Lappin	2026	1170408
+5688	Thaddaeus	Flatz-Ehrfeld	2027	1200181
+5700	George	Carroll	2025	1196000
+5661	Tony	Yin	2028	1488227
+5678	Owen	Spring	2027	1510600
+5681	Linus	Krenkel	2027	1082163
+5677	David	Yu	2028	1317900
+5663	Thomas	Lacoste	2025	1211000
+5683	Taylor	Holmes	2027	1158000
+5698	Luca	Bocresion	2026	1424990
+5657	Janciel	Martinez	2027	1384150
+5679	Mateo	Garciarramos-Petrici	2026	1303359
+5668	Ollie	Seed	2025	1209000
+5680	Owen	Gorenc	2027	1046486
+5715	Yamin	Ibrahim	2027	1115000
+5697	Hansen	Zheng	2028	1485186
+5725	Nico	Fenn	2028	1420594
+5662	Delin	Liu	2024	1245900
+5671	Kevin	Xie	2027	1480000
+5686	Kyle	Gump	2026	1222280
+5682	Horace (Harry)	Moyer	2027	1197678
+5689	Philip	Holland	2027	1204074
+5675	Xingguo (Steve)	Din	2026	1472987
+5690	Jiarun (Ryan)	Su	2026	1344901
+5669	Dhruva	Tailam	2027	1375000
+5629	Kevin	Yao	2024	1208941
+5695	Yuchen (Ryan)	Wu	2027	1435375
+5685	Alexander	Wasynczuk	2028	1242165
+5684	Diego	Gonzalez	2025	1233253
+5665	Drake	Tarlow	2025	1196900
+5703	Jackson	Hurd	2026	1480744
+5728	Tran	Jax	2028	1440606
+5730	John	Park	2026	1632000
+5708	Liam	Burke	2028	1288358
+5674	Ethan	Yan	2027	1749490
+5687	Edward (Teddy)	Madara	2025	1238545
+5712	John	Pena	2026	1374205
+5732	Richard	Federico	2026	1054173
+5714	Lucas	Hahn	2028	1067660
+5710	Thomas	Ireland	2027	1241063
+5670	Samson	Oblak	2027	1298000
+5667	Isaiah	Raore	2027	1229000
+5729	Samuel	Joseph	2028	1753037
+5694	Abner	Machuca Diaz	2027	1221000
+5699	Ray	Tie	2026	1381230
+5731	Austin	Reid	2026	1314740
+5594	Andrew	Cao	2023	1554770
+5673	Nolan	Chong	2027	1246903
+5649	J	lin	2026	1605358
+5735	James	Kerr	2027	1020105
+5724	Tanglertsumphun	Time	2028	1372348
+5655	Austin	Corbett	2027	1067801
+5672	A	Udvarhelyi	2028	1689668
+5603	Nathan	Pappas	2026	1282891
+5613	Yiran	Hu	2025	1283500
+5644	W	Fortunoff	2026	1335714
+5727	Michael	Caruso	2028	1413184
+5645	L	Zhang	2026	1441837
+5646	S	Nelson	2026	1441837
+5709	William	Achtmeyer	2026	1197000
+5719	Mario	Tomic	2028	1254525
+5607	J	Devers	2026	1124257
+5605	Hayden	Emery	2023	1111185
+5716	Sebastien	Aubourg	2027	1123565
+5602	b	kwan	2026	1389796
+5640	Ford	Legg	2023	1210474
+5718	Andrew	Skeirik	2028	1253404
+5647	P	Tregoe	2026	1535714
+5648	S	Deng	2026	1536735
+5624	Ryan	Nepal	2026	1518116
+5601	Ryan	Hung	2025	1209030
+5643	R	Fehm	2026	1314286
+5581	Elizabeth	Elkinson	2023	1555800
+5616	Jeremy	Hwang	2022	1406709
+5637	Riordan		2026	1050000
+5652	anabelle	bernard	2026	1780433
+5750	Mark	Price	2024	1486548
+5822	Ernesto	Ortiz	2027	1192600
+5765	E	BURGHARDT	2028	1332561
+5777	Ryan	Sullivan	2028	1232100
+5813	A	Keely	2025	1480612
+5736	Lincoln	Hyatt	2026	1108683
+5742	t	wang	2028	1704922
+5770	Anthony	Wu	2027	1282000
+5806	Mikayla	Higgins	2024	1634694
+5737	Colin	Bradley	2026	1157352
+5656	Martin	Beaumont-Mill	2028	1347665
+5825	Owen	Harrington	2025	1442400
+5781	Tomas	Hernandez	2028	1254124
+5766	Jason	Wu	2028	1295921
+5767	Zarak	Ahmad	2027	1510000
+5784	Nate	Madden	2025	1257259
+5801	Alex	Luehine	2028	1726984
+5756	Jacob	Moon	2027	1336454
+5789	Raphael	Klauber	2028	1101496
+5776	Will	Grace	2027	1135937
+5739	Grayson	Lee	2026	1258305
+5816	A	Griffin	2025	1695918
+5783	Jayden	Leung	2027	1248850
+5775	Joseph	Koh	2026	1143000
+5786	Emery	Nordahl	2026	1361770
+5799	Sanjay	Ravindran	2027	1364300
+5741	Tom	Pogorelec	2026	1297519
+5834	Hayden	Ebbrell	2027	1927100
+5798	Peter	Gnazzo	2027	1397000
+5778	Charlie	Young	2027	1311605
+5791	Ken	MacDougall	2028	1371348
+5794	Harry	Gesing	2028	1850551
+5774	Edward	Qiu	2028	1542499
+5747	Charlie	Gilman	2025	1418218
+5831	Aydin	Alsan	2025	1156378
+5807	n	rozo	2026	1763000
+5832	Nayan 	Seetharam	2026	1494270
+5785	Anray	Sheng	2027	1365950
+5821	Grant	Morishita	2026	1418000
+5749	Lev	Tolkoff	2024	1365613
+5757	Andreas	Bai	2027	1492195
+5780	Henry	McLane	2027	1081073
+5746	Quinn	Bartling	2027	1325747
+5787	Harrison	Abber	2026	1419084
+5838	Jasper	Clark	2027	1582775
+5771	Hunter	Caggiano	2027	1194000
+5788	George	Pinkas	2027	1505992
+5763	Jace	Livingi	2027	1118000
+5762	Thatcher	Brown	2024	1212000
+5768	William	Nass	2026	1154000
+5820	Alex	Ning	2027	1155000
+5754	Quinn	Conine	2027	1271891
+5792	Rider	Smith-Pallotta	2026	1322827
+5800	Rinto	Nakazawa	2026	1465900
+5833	Justin	Hildebrandt	2027	1397959
+5802	George	Yerid	2027	1553000
+5734	Jeremy	Bullock	2025	1019604
+5779	Jerry	Zhang	2027	1826066
+5752	Samson	Nwobi	2028	1742000
+5803	Fin	Reichard	2026	1158325
+5830	t	braun	2028	1202000
+5797	Nolan	McNeil	2027	1260000
+5804	Martin	Li	2024	1392000
+5817	A	O'Neill	2025	1825510
+5818	A	Stock	2025	1873469
+5819	A	McGowan	2025	1984694
+5755	Michael	Qiao	2027	1329372
+5759	a	udu	2028	1769360
+5772	Joe	Jia	2027	1478000
+5824	Nate	Winslow	2027	1181000
+5836	a	lontoc	2027	1322000
+5753	Marcus	Magura	2027	1352300
+5769	G	LEE	2028	1289693
+5810	M	McConnaughey	2022	1662066
+5773	Jeff	Song	2027	1400000
+5748	Calvin	Pagan	2024	1363171
+5760	Alex	Sherman	2027	1171000
+5823	Liam	Kralik	2024	1356000
+5826	Nnamdi	Achebe	2027	1389988
+5758	Nathan	Ma	2027	1561330
+5812	A	Goulding	2025	1475510
+5764	Emlyn	Joseph	2027	1139000
+5805	Flynn	Coyne	2023	1378709
+5811	A	Calderone	2025	1279867
+5835	Andy	Chen	2027	1231000
+5793	Declan	McGowan	2027	1528400
+5782	James	Fair	2027	1250052
+5740	Chatfield		2028	1366682
+5808	C	Cloonan	2026	1687755
+5809	J	Brown	2026	1778571
+5744	Machias	Poreda	2025	1243135
+5751	Amory	Forman	2027	1238143
+5790	Emmett	Chen	2027	1275101
+5839	Matthew	Ding	2027	1386097
+5902	Jayden	Khuu	2021	1224000
+5842	Arav	Kochar	2027	1365656
+5924	Alex	Fleury	2020	1002000
+5840	Max	Linton	2025	1534649
+5932	Alex	Taylor	2021	1068000
+5844	Henry	Sielheimer	2027	1334597
+5848	Ariane	Bretl	2020	1404000
+5938	Tilden	Jackson	2021	1088000
+5939	Joe	Zarif	2020	1096000
+5940	Matty	Goodman	2020	1118000
+5941	Mason	Conto	2021	1119000
+5944	Jonny	Citron	2021	1127000
+5846	Suthi	Navaratnam-Tomayko	2022	1281500
+5948	Ryan	Heinzerling	2020	1137000
+5949	Jake	Meier	2020	1162000
+5950	Devon	Seli	2020	1188000
+5929	Jinwoo	Kang	2020	1039000
+5847	Sophie	Cohen	2022	1226000
+5849	Michelle	Lian	2020	1479000
+5850	Gia	Pisano	2021	1226000
+5851	Lulu	Calame	2023	1274000
+5852	Ali	Thomas	2021	1314000
+5854	Abigail	Ryan	2021	1356000
+5855	Erin	Howe	2020	1410000
+5856	Amelia	Cronin	2023	1484000
+5857	Jean	Shin	2020	1498000
+5858	Victoria	Patterson	2020	1167000
+5859	Neala	Sweeney	2020	1215000
+5860	Maddie	MacHado	2020	1251000
+5862	Matilda	Damon	2023	1282000
+5863	Olivia	Lazorik	2022	1290000
+5864	Tessa	Conrardy	2020	1297000
+5867	Jennifer	Li	2023	1390000
+5870	Mare	Gandarela	2021	1430000
+5872	Anika	Ahilan	2023	1571000
+5873	Natasha	Muromcew	2022	1222000
+5874	Alexandra	Poole	2020	1223000
+5876	Isabel	May	2020	1248000
+5877	Betsy	Overstrum	2020	1255000
+5878	Noelle	Abeyta	2021	1259000
+5879	Emma	Tishler	2020	1292000
+5881	Caroline	Bergin	2023	1328000
+5883	Katie	Bootsma	2020	1390000
+5884	Savannah	Byrne	2021	1394000
+5886	Courtney	Contiguglia	2021	1410000
+5887	Annika	Lotze	2021	1415000
+5888	Annie	Woodward	2023	1468000
+5889	Jillian	Cudney	2020	1468000
+5890	Yoon	Jin Lim	2020	1469000
+5894	Amy	Wang	2021	1511000
+5895	Mitali	Vedula	2021	1558000
+5896	Sydney	Pittignano	2020	1638000
+3762	Hollin	Keyser-Parker	2022	1397000
+5897	Ben	Yoon	2020	1241000
+5899	Aiden	Shea	2023	1329000
+5900	Toby	Berner	2021	1177000
+5901	Jack	Frisbie	2020	1215000
+5904	Alex	Ehrenthal	2020	945000
+5905	Alejandro	Rincon	2021	991000
+5907	Connor	Chen	2021	1014000
+5908	Jake	Lotreck	2021	1062000
+5909	Harrison	Wilson	2020	1086000
+5911	Joey	Nihill	2021	1104000
+5912	William	Herring	2021	1108000
+5913	Nick	Hope	2022	1108000
+5914	Charlie	Garland	2021	1111000
+5915	Hudson	McGuinness	2023	1115000
+5916	Chris	Ramos	2020	1130000
+5917	Charlie	Lewis	2021	1133000
+5918	Rory	Latham	2021	1171000
+5919	Yuk	Sum Chan	2021	1189000
+5920	Collin	Anderson	2020	1223000
+5921	Mark	Schadt	2020	1238000
+5922	William	Coogan	2020	944000
+5923	Chris	Ratcliffe	2020	985000
+5926	Kostia	Howard	2020	1028000
+5927	Andrew	Luke	2021	1028000
+5928	Varun	Oberai	2021	1035000
+5930	Sam	Capobianco	2021	1056000
+5931	Will	Sheehy	2022	1062000
+5933	Thomas	Lyons	2021	1067000
+5934	Garrett	Weil	2020	1070000
+5935	Ellerman	Mateo	2021	1076000
+5936	Bronson	Dubey	2023	1081000
+5951	James	Chapman	2020	1195000
+5952	Michael	Turner	2020	1205000
+5953	Ali	Hindy	2021	1207000
+5954	Alex	Kovitch	2021	1207000
+5955	Chris	Thagard	2020	1220000
+5956	Tyler	Unruh	2021	1257000
+5957	Jonathan	Twadwll	2023	1339000
+3971	Tommy	Baldini	2023	1167000
+3851	Chase	Cherewatti	2022	1155500
+5958	Hannah	Adler	2021	1534000
+5959	Anna	MacLean	2020	1644000
+5961	Buket	Aktas	2021	1568000
+5964	Emma	Chen	2022	1428000
+5965	Carolina	Weatherall	2021	1485000
+5966	Milli	Lydon	2023	1498000
+5967	Sinead	Connolly	2021	1544000
+5841	Jason	Li	2027	1412700
+16	Lilia	Kasdon	2022	1458065
+5898	Charlie	Anderson	2021	1114286
+5713	Eita	Fuse	2026	1054100
+5875	Leila	Herman	2021	1243000
+5968	Emily	Cha	2021	1576000
+5891	Grace	Russell	2021	1500000
+5947	Garrison	Famiglio	2021	1158000
+5937	Finn	Sias	2020	1101173
+5885	Olivia	Torchen	2022	1401000
+5866	Sarah	McAndrew	2020	1364000
+5892	Ruth	Torrence	2021	1501000
+5880	Elena	Tan	2021	1321000
+5893	Sofia	Olivares	2020	1501000
+5865	Autumn	Twillie	2020	1322000
+5910	Blaise	Fleury	2021	1093000
+5906	Ian	Staines	2020	1009000
+5946	Mark	Naguib	2020	1134000
+5903	Matt	Farrell	2020	940000
+5942	Brennan	Connell	2020	1124000
+5943	Jimmy	Nolan	2021	1124000
+5853	Charlotte	Brodhead	2023	1318000
+5868	Jane	Mallach	2020	1404000
+5962	Aisha	Pasha	2020	1620000
+77	Phoebe	Kellogg	2021	1470648
+5969	Larissa	Wolfberg	2020	1612000
+5882	Ava	Sullivan	2023	1343000
+5837	Benjamin	Jiang	2027	1397291
+5845	Caleb	Stokes	2027	1507200
+5843	Peter	Feng	2027	1478568
+5945	Luke	Dieterle	2020	1147959
+5925	Clemens	Herfarth	2022	1037755
+43	Nicole	Tseng	2022	1866947
+5869	Josephine	Fales-Hill	2021	1438500
+5861	Margaret	MacMillan	2021	1389500
+5960	Isabella	Pargiolas	2021	1564000
+5972	Claire	Fu	2023	1365000
+5973	Charlotte	Lisa	2022	1380000
+5975	Charlotte	Bausha	2020	1386000
+5976	Helen	Lieberman	2022	1407000
+5978	Althea	Tierney	2020	1445000
+5980	Abby	Powell	2021	1513000
+5984	Jaidyn	Hurst	2023	1566000
+5985	Maria	Zabara	2020	1573000
+5986	Serena	Kim	2023	1585000
+5988	Sarah	Spence	2020	1817000
+5989	Julia	Ferrante	2020	2043000
+5992	Bianca	Lee	2022	1394000
+5993	Kathryn	Pfister	2021	1412000
+5994	Niya	Harris	2021	1427000
+5995	Riley	Henshaw	2020	1427000
+5997	Coco	Kawaguchi	2021	1438000
+6000	Marguerite	Montagner	2021	1444000
+6003	Katie	Gendrich	2022	1497000
+6004	Hannah	Justicz	2022	1505000
+6007	Lucy	Haswell	2020	1528000
+6008	Joi	Griffin	2020	1552000
+6010	Maggie	Robertshaw	2020	1555000
+6012	Nicole	Bausha	2022	1584000
+6014	Ania	Joszczyk	2023	1611000
+6015	Kathryn	Packard	2020	1645000
+6016	Steph	Chen	2023	1669000
+6017	Alicia	Magg	2021	1674000
+6018	Alice	Kim	2023	1692000
+6020	Margot	Korites	2021	1829000
+5990	Rosemary	Millett	2020	1345000
+5991	Gwenivere	Robinson	2020	1353000
+6009	Christina	Li	2021	1553000
+5996	Dylan	Allen	2021	1436000
+5999	Lisa	Ji	2023	1443000
+5983	Esther	An	2022	1542000
+5998	Hailey	Harmen	2022	1441000
+5977	Nalinda	Wanikpun	2021	1441000
+6001	Joy	Liu	2021	1459000
+5987	Emily	Khym	2023	1640000
+5970	Ella	Xue	2023	1871000
+6021	Priya	Rajaram	2021	1879000
+6019	Julia	Gardow	2021	1827000
+6002	Daniella	Weldon	2020	1459000
+5971	Madeline	Huh	2022	1353000
+5974	Caroline	Luff	2021	1384000
+6011	Anna	Smith-Moser	2021	1578000
+5979	Bojana	Drca	2020	1463000
+6005	Logan	Clew-Bachrach	2020	1518000
+6006	Ashley	Davidson	2020	1502500
+5982	Eleanor	La Voie	2021	1556000
+6013	Yiwen	Xiong	2020	1634500
+5981	Adelaide	Hocking	2020	1604500
+6022	Samson	Zhang	2020	1127000
+6023	Mateo	Connelly	2023	1133000
+6026	Brad	Li	2023	1298000
+6028	Erik	Porras	2020	1122000
+6029	Nicholas	Chen	2022	1168000
+6030	Harry	Margolis	2022	1188000
+6033	Doug	Yang	2020	1197000
+6034	Okasha	Bari	2021	1216000
+6035	Hongquan	Chen	2022	1246000
+6036	Ayden	Gauthier	2021	1334000
+6037	Jack	Glaspey	2021	1437000
+6038	Philip	Horrigan	2021	1058000
+6039	Samuel	Kim	2020	1095000
+6040	Jack	Liu	2020	1096000
+6042	Danny	Cui	2020	1109000
+6044	William	Morris	2022	1169000
+6045	Alex	Coletti	2020	1173000
+6047	Will	Jackson	2022	1180000
+6048	William	Burns	2020	1181000
+6049	Ben	Fu	2021	1187000
+6050	Luis	Soto Moyers	2022	1195000
+6051	Kush	Banker	2021	1198000
+6052	Dejean	Sypher	2022	1204000
+6053	Oscar	Yan	2022	1217000
+6054	Janus	Yuen	2021	1223000
+6055	Reece	Yang	2021	1233000
+6056	Jacob	Walker	2022	1236000
+6057	Austin	Powell	2022	1241000
+6058	Eric	Han	2023	1249000
+6060	Winston	Hofley	2020	1270000
+6061	Melvin	Weaver	2023	1272000
+6062	Chris	Buchetto	2023	1278000
+6063	Sam	Frushone	2023	1282000
+6065	Tommy	Li	2021	1307000
+6066	Edward	Liu	2022	1314000
+6067	Ryan	Kane	2021	1390000
+6068	Zane	Bhatti	2021	1427000
+6069	Kevin	Liu	2023	1431000
+6070	Gavin	Pitt	2021	1103000
+6071	James	Long	2020	1126000
+6072	Brandon	Yep	2021	1140000
+6073	Jack	Wilcox	2022	1151000
+6074	Pedro	Arellano	2021	1156000
+6075	Felix	Bao	2021	1157000
+6076	Isaac	Roth	2023	1158000
+6077	Sam	Lasater	2021	1174000
+6079	Sam	Baxter-Bray	2020	1199000
+6080	Stefan	Kim	2020	1200000
+6082	Ryan	Jones	2020	1206000
+6083	Eli	Levesque	2023	1209000
+6084	Giles	Gordon	2022	1210000
+6085	Rocky	Ji	2023	1211000
+6086	Sebastian	Jimenez	2021	1214000
+6088	Tucker	Briglin	2020	1226000
+6089	Riku	Tanaka	2020	1232000
+6090	Mitchell	Yu	2021	1235000
+6091	Adam	Pomerantz	2022	1235000
+6094	Theo	Curtis	2021	1246000
+6095	Ben	Lam	2022	1247000
+6097	Peter	Dinatale	2021	1263000
+6099	Ryan	Lee	2020	1263000
+6100	Matthew	Letourneau	2023	1268000
+6101	Khal	Bashawaty	2021	1268000
+6102	Gabe	Zaccheo	2022	1275000
+6103	Philips	He	2021	1280000
+6104	Brant	Hadzima	2020	1285000
+6106	Jack	Johnson	2023	1295000
+6107	Morgan	Haisman	2023	1300000
+6109	Henry	Sterrett	2022	1349000
+6110	Tiger	Peng	2022	1365000
+6112	Gavin	Smith	2023	1387000
+6113	Francis	Cai	2022	1424000
+6114	Henry	Daniel	2020	1428000
+6115	Bob	Wang	2023	1575000
+6105	Oliver	Shao	2022	1293000
+6043	Lucas	Spiro	2021	1173031
+6025	Daniel	Kang	2022	1242000
+6111	Bo	Hopkins	2021	1376000
+6092	Luke	Louchheim	2022	1243000
+6024	Eric	Zhang	2021	1152000
+6046	Andrii	Torchylo	2021	1175000
+6027	Will	Hetherington	2020	1102000
+6108	Chris	Devanney	2021	1342000
+6140	Lucy	Lopardo	2023	1455914
+6087	Hughson	Wong	2022	1219000
+6122	Pauline	Tews	2023	1558065
+6130	Ksenia	Korobov	2023	1367742
+6116	Isabel	Cole	2023	1454839
+6143	Kailee	Skinner	2023	1458065
+6159	Joyce	Gao	2023	1535484
+6141	Molly	Madigan	2023	1445495
+6134	Maggie	Dwyer	2023	1405376
+6117	Eujin	Shin	2023	1273118
+6139	Katie	Gabriele	2023	1455914
+6150	Emmy	Vitali	2023	1490323
+6129	Eleanor	Page	2023	1344086
+6148	Anna	Imrie	2023	1481720
+6118	Abigail	Cole	2023	1354839
+6131	MacKenzie	Teper	2023	1374194
+6160	Ellie	McManus	2023	1541935
+6144	Laura	Wilson	2023	1458065
+6135	Emma	Henry	2023	1407527
+6145	Mallory	Krasusky	2023	1461290
+6123	Gianna	Russillo	2023	1251613
+6151	Maria	Ueda	2023	1496774
+6133	Lily	Wei	2023	1400000
+6157	Eowyn	Young	2023	1529032
+6153	Lexy	Gray	2023	1505376
+6128	Abby	Omana	2023	1325806
+111	Anjali	Palepu	2021	1454106
+6155	Meg	Patrick	2023	1513978
+6146	Eliza	Skillings	2023	1463441
+6121	Dava	Dudek	2023	1587209
+6163	Lyla	Thompson	2023	1566667
+6096	Ery	Kehaya	2020	1238663
+6120	Maliyah	Perkins	2023	1498925
+6161	Youbin	Kim	2023	1543011
+6152	Melah	Lazarus	2023	1502151
+6125	Madi	Knapp	2023	1289247
+6156	Kyleigh	Holt	2023	1522581
+6154	Anna	Wilson	2023	1508602
+6138	Ariadna	Alemany	2023	1449462
+6137	Olivia	Raisbeck	2023	1417204
+6132	Sophie	Laurence	2023	1377419
+6162	Aili	Lamarca	2023	1552688
+6136	Shirley	Shi	2023	1411828
+6124	Caroline	McCall	2023	1261290
+6126	Charlotte	Whitcomb	2023	1294624
+6119	Ada	Gardner	2023	1359140
+6149	Katie	Johnson	2023	1488172
+6147	Josephine	Myung	2023	1547649
+6098	Brook	Xiao	2022	1307520
+6093	Egor	Gagushin	2022	1244000
+6041	Arya	Nistane	2022	1101000
+6064	Nick	Wolanske	2020	1284000
+6031	Nat	Chapman	2022	1252163
+6081	Rocco	Burdge	2023	1277500
+6032	Ryder	Henry	2020	1244898
+6059	Nolan	Willoughby	2021	1210204
+6166	Kayla	Wai	2023	1575269
+253	Michael	Loftus	2022	1251735
+3487	Oliver	Brandes	2023	993000
+6238	Noah	Naddaff-Slocum	2023	1252833
+6283	Brian	Dong	2027	1784771
+6291	Denmark	Chriunga	2026	1801200
+6280	Harry	Shin	2026	1500000
+6281	Harry	Shin	2026	1500000
+6279	Charles	Carroll	2027	1066971
+6282	Harry	Shin	2027	1830000
+6177	Amelia	Spillane	2023	1637634
+6179	Ester	Luo	2023	1652688
+6187	Kaitlin	Reed	2023	1681720
+6288	Ezra	Chen	2027	1244500
+6173	Emily	Varga	2023	1608602
+6289	Gordon	Yu	2027	1356200
+6290	Nick	Glaeser	2026	1557000
+6287	CJ	Briere	2026	1139050
+6293	Leah	Farb	2026	1456300
+6286	Peter	Duhamel	2027	1129000
+6182	Charlotte	Eberle	2023	1663441
+6186	Ariatnny	(Ari) Castillo Montero	2023	1675269
+6200	Cara	Liang	2023	2235484
+6192	Kate	Saidy	2023	1748387
+6183	Alex	Williams	2023	1665591
+6164	Joy	Pan	2023	1573118
+6176	Sophie	Ekelund	2023	1630108
+6178	Isabelle	Wang	2023	1644086
+6184	Lexie	Knowles	2023	1667742
+4819	Susannah	Potts	2022	1546634
+6185	Sue	Tang	2023	1672043
+6204	Jack	McCluskey	2023	1043011
+6190	Claudia	Caliandro	2023	1722581
+6175	Rin	Sakakibara	2023	1612903
+6197	Sue	Kim	2023	2092473
+6191	Juanshu(	Alice) Pan	2023	1747312
+6170	Ruilin	(Ellen) Hu	2023	1600000
+6165	Aubrey	Ashby	2023	1574194
+94	Catalina	Seoane-Pam	2020	1590106
+6174	Brigida	Caruso	2023	1610753
+6195	Liqi	(Aretta) Xin	2023	2045161
+6171	Christine	Mo	2023	1602151
+6169	Sydney	Smith	2023	1597849
+6196	Nutnicha	(Manow) Paisanvit	2023	2053763
+6199	Meng	(Kate) Gao	2023	2136559
+6167	Yolanda	Wang	2023	1577419
+6188	Anna	Metzger	2023	1703226
+6193	Abby	Palmer	2023	1808602
+6250	Kellen	Horst	2023	1267052
+6213	Andrew	Wolfe	2023	1303226
+6198	Margaux	Van Inwegen	2023	2100000
+4920	Izzy	Lucibello	2026	1561113
+6222	James	Morice	2023	1133333
+6233	Blake	Zahansky	2023	1179265
+4687	Forrest	Schmitt	2023	1249395
+6243	Adam	McNabney	2023	1212903
+6244	Brady	Gouin	2023	1216129
+6256	Isaias	Wooden	2023	1265591
+6255	Cambell	Thomas	2023	1263441
+6212	Cooper	Ames	2023	1276264
+6265	Qi	Chang	2023	1358065
+6245	Sean	Slick	2023	1219355
+6201	Cam	Adams	2023	1192473
+6228	Kevin	Graziosi	2023	1155914
+6234	Owen	Minson	2023	1170968
+6225	John	Blair	2023	1151613
+6220	Noah	McIntire	2023	1118280
+6207	Tyler	Boes	2023	1144086
+6208	Sam	Essien	2023	1187097
+6223	John	Bagg	2023	1139785
+6229	Jasper	Sun	2023	1156989
+6242	Buckley	Huffstetler	2023	1212903
+6231	Logan	Schiciano	2023	1167742
+6232	Utah	Bean	2023	1168817
+6235	Matthew	Bzowyckyj	2023	1173118
+6241	Logan	Shvartsman	2023	1208602
+6236	Owen	McBride	2023	1188172
+6237	Jack	Borwick	2023	1191398
+6264	Brodie	Goclowski	2023	1358065
+6181	Christina	Mark	2023	1630593
+6248	Win	Courtemanche	2023	1230108
+6210	William	Burstein	2023	1224731
+6252	Max	Chisholm	2023	1250538
+6240	Mac	Alexander	2023	1204301
+6203	Ian	Wolanin	2023	1341111
+6257	Michael	Vandemark	2023	1289247
+6259	Tony	Wang	2023	1305376
+6249	Will	Brodhead	2023	1241935
+6260	Garrison	Gagnon	2023	1311828
+6262	Javier	Herrera	2023	1317204
+6266	Josh	Reed	2023	1377419
+6247	Bobby	Nabozny	2023	1224731
+6251	Tenka	Abe	2023	1248387
+6230	Gabe	Laszewski	2023	1165591
+6253	Josh	Novick	2023	1258065
+6189	Eleanor	Mayer	2023	1683602
+6202	Hirokazu	Yano	2023	1275269
+6263	Declan	Clark	2023	1354839
+6217	Larson	Palmgren	2023	1073118
+6258	Elijah	Grant	2023	1305376
+6226	Aidan	Lothian	2023	1152688
+6215	Jeffrey	Gibbs	2023	1091285
+6214	Marshall	Evans	2023	1318280
+6267	Angel	Mazzetti	2023	1379570
+6261	Jobe	Gemmell-Huges	2023	1313978
+6216	Ethan	Pinkes	2023	1066667
+6219	Greyson	Heinzer	2023	1116129
+6270	James	Chen	2023	1447312
+6268	Jake	Plummer	2023	1398925
+6218	Harry	Harwood	2023	1108602
+6272	Connor	Langan	2023	1453763
+6269	Evan	Li	2023	1403226
+6273	Jack	Zhou	2023	1526882
+6275	John	Auchterlonie	2023	1590323
+6274	Zilyu	(Brad) Ji	2023	1549462
+6227	Nathan	Livingood	2023	1155914
+6276	Johnny	Zhang	2023	1621505
+6206	Charlie	Weisberg	2023	1096774
+6277	Keith	Hsu	2023	1673118
+6278	James	Yao	2023	1909677
+6246	Shoo	Yonekawa	2023	1222581
+6221	Giovanni	Biondo	2023	1122581
+6211	Peter	Lyon	2023	1254839
+4430	Nessa	McDermott	2024	1759636
+6168	Olivia	Moran	2023	1595699
+6284	Paul	Tompros	2027	1272936
+219	Will	O'Brien	2020	1144566
+6172	Abby	Grimaldi	2023	1606452
+6205	Cam	Stathos	2023	1071881
+4891	Julia	Michaud	2023	1632301
+6299	Emme	Salyer	2027	1281900
+6303	Phoebe	Cogan	2026	1267450
+6310	Meri	Rainford	2025	1311550
+6297	Angelina	Ha	2026	1473150
+6351	Morgan	Kim	2027	2090897
+6324	Tessa	Borgatti	2026	1323947
+6304	Tatum	Glynn	2027	1474350
+6316	Scarlett	Hawkins	2027	1135099
+6314	Hayley	Augusta	2026	1744600
+6309	Jillian	Bergeron	2027	1190137
+6320	Kylee	Bolding	2025	1411300
+6306	Sienna	Steeves	2027	1664800
+6315	Alice	Wang	2027	1462748
+6302	Ellie	Tesoro	2026	1509819
+6321	Luciana	Castillo Barcena	2025	1465583
+6311	Mya	Lambert	2026	1546500
+6340	Quinn	Taylor	2027	1495300
+6334	Raquel	Frankel	2025	1547600
+6347	Allison	Luo	2027	1363816
+6323	Sophie	Kelly	2026	1381456
+6349	Grace	Fundaro	2027	1419787
+6327	Chloe	Catalano	2025	1522896
+6338	Vanessa	Leung	2025	1557394
+6335	Alice	Wang	2026	1633259
+6339	Feifei	Cao	2027	1640755
+6343	Elsbeth	Kasparian	2027	1646253
+6344	Iliana	Tassev	2024	1654737
+6337	Meghan	Barrett	2025	1864136
+6346	Addie	Creelman	2025	1675700
+6352	Maya	Hindawi	2026	2019700
+6295	Kira	Morales	2027	1307250
+6296	Blakeny	Johnston	2026	1348000
+6333	Phoebe	Triant	2027	1327150
+6329	Tyler	Case	2027	1350900
+6307	Esme	Campbell	2026	1214800
+6294	Olivia	Golhar	2025	1275900
+6355	Adair	Johnson	2027	1427800
+6332	Lauren	Peloquin	2027	1485100
+6328	Lauren	Yoon	2024	1502350
+6361	Juwon	Lee	2027	1494200
+6353	Georgia	Barrett	2024	1319500
+6330	Emma	Finkelstein	2026	1414550
+6319	Somers	Estwanik	2027	1244650
+6300	Alex	Spindt	2027	1399050
+6356	Annie	Husband	2025	1436750
+6313	Nicole	Fallon	2027	1503900
+6362	Maanya	Tailam	2025	1613650
+6357	Samantha	Brooks	2025	1449650
+6358	South	Fulwiler	2025	1456250
+6360	Mia	Fiore	2024	1503950
+6363	Ava	Marinaro	2027	1636350
+6364	Alder	Hurley	2027	2224450
+6359	Kristin	Qin	2027	1477781
+6342	Violet	Zhang	2027	1588381
+6345	Julia	Blake	2025	1700754
+6350	Kit	Vernon	2024	1839545
+6341	Alison	Leiva	2027	1759900
+6308	Ella	McDonald	2027	1275796
+6301	Amme	Khamis	2025	1515409
+6322	Chloe	Sperry	2027	1603098
+6298	Pepper	Taylor	2025	1547200
+6317	Cailan	MacDonald	2027	1362375
+6292	Mia	Kim	2024	1236200
+250	Samuel	Hoffman	2020	1258582
+6420	Skye	Georgiadis	2025	1250000
+6285	Toby	Harrison	2027	1174984
+6421	Taylor	Wilburn	2027	1254000
+6331	Yiling	Ding	2027	1377200
+6354	Pati	Pogorzelska	2026	1426000
+6348	Pipsa	Palatsi	2027	1406793
+6180	Mattie	Lewis	2023	1636037
+6336	Ria	Banis	2027	2180900
+6366	Alex	Wang	2027	1511000
+3940	Tonchok	Dhanasarnsilp	2025	1358000
+6371	Liana	Flood	2024	1414613
+6365	Owen	Richer	2027	1110000
+6370	Nathalie	Frem	2025	1440259
+6445	Kian	Crowley	2027	1302000
+6368	Daghan	Konur	2026	1208300
+6312	Same	Pellerin	2025	1436800
+6426	Ashbrook	Boyd	2027	1324000
+6429	Penelope	Thornton	2027	1341000
+6373	Michael	Bergin	2026	1500000
+6374	Siddharth	Ghosh	2027	1500000
+6375	Aaron	Kimiri	2027	1500000
+6376	Jiaze	Su	2026	1500000
+3889	Po-Tao	Hsueh	2024	1285000
+6430	Xela	Nestel	2027	1343000
+6400	Mikey	Malachi	2026	1247000
+6385	Austin	Desisto	2024	982000
+6386	Teddy	Hojlo	2027	986000
+6380	Owen	Welch	2026	999000
+6425	Ginger	Bernstein	2025	1309000
+6427	Maeve	O'Connell	2024	1330000
+6428	Vi	Lapham	2027	1338000
+6432	Lara	Dorosario	2026	1365000
+6433	Isabelle	Gryczka	2024	1373000
+6434	Sienna	Barhorst	2027	1409000
+6367	Sebastian	Keleher	2024	1344241
+6403	Elise	Pinkham	2026	1344000
+6431	Emma	Zeng	2027	1363000
+6387	Cooper	Grace	2027	1011000
+6435	Gage	Calhoun	2027	1420000
+6389	Malin	Adams	2025	1049000
+6381	Zhou	Eric	2026	1060000
+6382	Evan	Gackstetter	2024	1062000
+6390	Philip	Fauver	2026	1064000
+6391	Joseph	Hurd	2026	1068000
+6392	Oliver	Peruzzi	2026	1082000
+6383	Henry	Thompson	2027	1091000
+6393	Jimmy	McCaffrey	2027	1104000
+6394	Armaan	Lakhani	2027	1120000
+6379	Oliver	Denaro	2027	1123000
+6395	Kino	Liu	2026	1127000
+6378	Andrew	Chou	2027	1149000
+6396	Cam	Thomas	2027	1170000
+6397	Liam	Norton	2027	1195000
+6384	A.J.	Halpy	2025	1206000
+6436	Aya	Ragab	2027	1423000
+6305	Grace	Pilkington	2026	1623850
+6401	Gracie	Zhou	2026	1203000
+6402	Olivia	Blanchard	2025	1280000
+6404	Lily	Lyons	2026	1095000
+6405	Kankan	Adekoya	2027	1176000
+6406	Amina	Wang	2027	1296000
+6407	Aimee	Qi	2027	1308000
+6408	Maya	Woodhall	2027	1320000
+6409	Jane	Bannon	2026	1370000
+6411	Storrie	Kulynych-Irvin	2024	1112000
+6412	Anya	Budzinski	2026	1166000
+6413	Caleigh	Lane	2027	1170000
+6415	Ani	Tzonev	2026	1197000
+6416	Julia	Malysa	2026	1218000
+6417	Savannah	Cox	2024	1238000
+6418	Bella	McLaughlin	2027	1239000
+6419	Nicole	Lefavour	2027	1248000
+6410	Dahlyla	Belanger	2027	1480000
+6414	Tara	Menon	2026	1183000
+6422	Rose	Wu	2025	1283000
+6423	Sophia	Seraile Yam	2027	1294000
+6424	Kathryn	Scott	2024	1294000
+6442	Adrian	Werner	2025	1134000
+6453	A.J.	Chen	2027	1234000
+6454	Jason	Ko	2027	1234000
+6457	Owen	Caligiuri	2024	1260000
+6438	Stan	Cho	2025	1247000
+6439	Ray	Wang	2027	1272000
+6440	Van	Epps Aaron	2027	1100000
+6443	Aidan	Song	2027	1179000
+6444	Deyi	Meng	2026	1266000
+6446	Jake	Delcampe	2025	1310000
+6448	Michael	Xu	2025	1087000
+6449	Jack	Gonzalez	2027	1105000
+6450	Will	Agnes	2026	1153000
+6451	Andrew	Roraback	2027	1199000
+6452	Levi	Didomenico	2027	1206000
+6455	Hammond	Justice	2026	1238000
+6456	David	Massaro	2025	1240000
+6458	Jayden	Oon	2027	1272000
+6377	Tsz Kui	Zhuang	2027	1261000
+6437	Rich	Ezra	2027	1376000
+6399	Jojo	Ren	2026	1242000
+6398	Alex	Mastellone	2026	1234000
+314	Will	Gladstone	2023	1532142
+5738	Nick	Proudlove	2028	1296442
+296	Anthony	Barren	2023	1414756
+71	Emily	Norton	2023	1396704
+6318	Peyton	Lubeck	2027	1157250
+5871	Taylor	Mitchell	2021	1478000
+4553	Aragones	Catalina	2024	1436192
+4613	Lila	Lovejoy	2025	2094574
+4647	Cameron	Hart	2025	1486209
+4673	Maxwell	Schwinn	2022	1474980
+4728	Elsa	Granholm	2023	1263686
+4795	Montse	Gomez	2025	1657694
+4824	Gomez	Andrea	2024	1868989
+4904	Adrian	Jimeno	2026	1337524
+5474	Matt	Merrikin	2026	1561113
+5963	Kerstin	Hyer	2022	1318000
+6078	Harry	Chanpaiboonrat	2021	1184000
+6127	Lorelai	Lee Swanek	2023	1312903
+6158	Gabby	Medeiros	2023	1531183
+6372	Christopher	Lawrence	2022	1627072
+6194	Katie	Lapolla	2023	1812903
+6254	Robin	Wright	2023	1260215
+6142	Yukina	Hiwaki	2023	1456989
+6271	Elijah	Sochaczevski	2023	1451613
+6369	Monica	Mukherjee	2022	1323910
+6224	Conor	Minson	2023	1148387
+6239	Jack	Swanson	2023	1195699
+6326	Alaina	Millian	2026	1515366
+275	Gannon	Ritter	2021	1335138
+6325	Emily	Geist	2027	1607888
+6388	Ismail	Zidik	2024	1019000
+6459	Max	Aitken	2026	1279000
+6460	Jack	Talbot	2026	1281000
+6461	Jude	Halpy	2027	1298000
+6462	Gavin	Hida	2027	1299000
+6463	Vitrano	Emery	2026	1375000
+6464	Ben	Cunningham	2026	1417000
+6466	Charley	Massaro	2027	1475000
+6468	Charlie	Gillick	2027	1044000
+6470	Henry	Zimmerman	2027	1081000
+6471	Nico	Pfeifler	2025	1091000
+6472	Elliot	Weir	2026	1115000
+6473	Lorax	Reed	2026	1116000
+6474	Dylan	Torizzo	2027	1128000
+6475	Reid	McCoy	2026	1137000
+6476	Amani	Odenigbo	2027	1156000
+6477	Dylan	Shi	2027	1156000
+6478	Oliver	Zhang	2025	1161000
+6479	Beza	Adriel	2027	1162000
+6480	Eamin	Ahmed	2024	1162000
+6481	Jed	Spencer	2025	1169000
+6482	Kabir	Sheth	2025	1177000
+6483	Ethan	Li-Kato	2027	1177000
+6484	Fred	Chrysler	2024	1194000
+6488	Will	Post	2026	1230000
+6492	Kai	Wilson	2026	1246000
+6493	Jose	Jimenez	2026	1251000
+6494	Artem	Gagushin	2025	1256000
+6496	Bartels-Thiel	Julian	2025	1263000
+6497	Lee	Josh	2024	1289000
+6498	Darren	Lin	2026	1291000
+6499	Carson	Chen	2027	1303000
+6500	Jake	Glazer	2027	1313000
+6501	Jay	Rich	2027	1325000
+6503	You	Evan	2024	1371000
+6504	Ben	Johnson	2027	1372000
+6505	Keven	Luiru	2027	1408000
+6487	Aarav	Dodhia	2026	1224000
+6489	William	Zhao	2027	1234000
+6490	Dylan	Muellers	2027	1242000
+6491	Thomas	Bodson	2027	1244000
+6495	Wesley	Huyhn	2025	1260000
+6502	Cheung	Kelvin	2025	1360000
+6465	Bryson	Carter	2027	1422000
+6526	Charlotte	Preuss	2026	1261000
+6510	Jessica	Luo	2024	1344000
+6511	Gisle	Yeung	2027	1345000
+6515	Berit	Morissey	2027	1419000
+6506	Shirley	Yang	2027	1476000
+6508	Helen	Lu	2027	1374000
+6509	Michelle	Tang	2026	1511000
+6512	Zixiang	Zhang	2027	1397000
+6513	Harper	Evans	2027	1405000
+6514	Charlotte	Torres	2027	1416000
+6516	Tori	Vollero	2027	1425000
+6517	Caitlyn	Chow	2025	1429000
+6519	Grace	Bird	2025	1448000
+6521	Annie	McGraw	2026	1486000
+6523	Louisa	Prentice	2026	1528000
+6524	Sunny	Hebert	2026	1532000
+6527	Lucia	Rosen	2026	1308000
+6528	Patalie	Viprakasit	2027	1310000
+6529	Ellen	Chen	2025	1338000
+6530	Katie	O'Meara	2027	1352000
+6531	Julica	Hatabu	2028	1368000
+6532	Madeline	Chang	2024	1375000
+6533	Elizabeth	Kelly	2025	1388000
+6534	Katie	Fullerton	2024	1412000
+6538	Aurora	Ye	2029	1424000
+6539	Serafina	Shin-Von Nordenflycht	2025	1434000
+6542	Mia	Senturk	2024	1456000
+6543	Stella	Liao	2027	1479000
+6545	Fiona	Reilly	2027	1486000
+6546	Emily	Demme	2026	1488000
+6547	Nausicaa	Chu	2025	1488000
+6548	Maeve	Tholen	2025	1490000
+6550	Victoria	Blohm	2026	1496000
+6551	Eleanor	Lemon	2027	1509000
+6552	Giorgi	Moore	2026	1510000
+6553	Olivia	Paterniti	2026	1528000
+6554	Andrea	Poon	2027	1529000
+6555	Meredith	Habstritt	2025	1530000
+6560	Yulisa	Ma	2026	1598000
+6561	Dallena	Shelton	2026	1608000
+6563	Lily	Campbell	2026	1683000
+6564	Bernice	Zhang	2027	1693000
+6535	Lily	Muhlhauser	2027	1420000
+6536	Anna	Morrissey	2024	1420000
+6537	Miu	Yatsuka	2024	1422000
+6518	Olivia	MacEachern	2026	1440000
+6540	Kate	Gilchrist	2027	1441000
+6541	Sofie	Fleischmann	2025	1441000
+6507	Anna	Oh	2028	1443000
+6520	Leela	Portny	2025	1463000
+6544	Paula	Zanol	2027	1480000
+6549	Olivia	Martucci	2025	1494000
+6522	Lexi	Watson	2024	1521000
+6525	Nina	Carvalho	2024	1536000
+6556	Sally	Higgins	2026	1553000
+6557	Cami	Lopez	2025	1561000
+6558	Yuxin	Chu	2027	1578000
+6559	Ariadna	Rubiralta Kunze	2027	1579000
+6562	Maggie	Considine	2026	1618000
+6571	Daven	Kaphar	2027	1135937
+6567	Sebastian	Yu	2027	1143724
+6572	Bobby	Jones	2025	1163192
+6573	Johnson	Ye	2026	1163192
+6574	Luke	Lacilla	2027	1173899
+6568	Sam	Hyde	2025	1190447
+6569	John	Piper	2027	1199207
+6575	Olly	Cherry	2025	1215755
+6576	Zac	Snyder	2024	1226462
+6577	Oliver	Kim-Diaz	2026	1236196
+6565	Aidan	Milone	2027	1248850
+6578	Will	Pierce	2025	1275131
+6579	Owen	Reilly	2024	1278051
+6580	Tyler	Daley	2024	1279025
+6581	Jamie	Armstrong	2024	1295572
+6582	Nicholas	Ramsumair	2027	1304333
+6583	Henry	Cheng	2027	1321853
+6584	Alton	Yan	2024	1324774
+6585	Adrien	Dellaert	2025	1331587
+6586	Junho	(Martin) Jeon	2024	1361762
+6587	Owen	Irish	2025	1485382
+6588	Kewei	(Kevin) Lyu	2025	1487328
+6592	Giselle	Putka	2028	1248850
+6447	Dash	Seals	2027	1020000
+6594	Fiona	Lawson	2026	1451313
+6589	Anna	Hoyle	2027	1483435
+6595	Emilia	Oliva	2027	1489275
+6570	Seamus	Cleary	2026	1048333
+6566	Cavan	Gardner	2027	1092135
+6593	Anoa	Dawson	2028	1360789
+6467	Jonny	Chen	2024	1034000
+6469	Emmet	McEvilley	2024	1075000
+6485	Ciaran	Bruce	2025	1201000
+6441	Owen	Cosgrove	2027	1102000
+6486	Chidi	Moemeka	2026	1224000
+6674	Ashton	Carson	2027	1306000
+6675	Sadie	Polgar	2024	1328000
+6676	Sophia	German	2024	1398000
+6677	Arden	Sartori	2027	1398000
+6678	Pilar	Diamantopoulous Jerez	2025	1405000
+6679	Natalie	Hadnot	2027	1409000
+6682	Camryn	Rafuse	2025	1427000
+6684	Kasey	Bernat	2026	1467000
+6685	Selina	Hung	2027	1471000
+6686	Audrey	Greenleaf	2025	1472000
+6687	Lily	Wong	2024	1476000
+6690	Dongying	Han	2027	1497000
+6692	Flora	Xu	2027	1506000
+6693	Varya	Zvereva	2027	1511000
+6694	Syanne	Moncrief	2027	1513000
+6698	Mimi	Nguyen	2026	1566000
+6699	Emily	Alexander	2027	1586000
+6700	Ingrid	Schmitt	2026	1592000
+6624	Evan	Yan	2025	1212835
+6634	Zainn	Amin	2024	1227435
+6625	Alexander	Monin	2027	1229382
+6635	Sam	Wang	2027	1234249
+6626	Jason	Park	2025	1249823
+6636	Pokman	Deng	2026	1252743
+6637	Kamal	Sergeev	2027	1258584
+6638	Shiv	Patel	2025	1269291
+6627	Richard	Zhang	2027	1278051
+6639	Emmett	Gould	2026	1281945
+6640	Sherlock	Dong	2027	1298492
+6641	Tommy	Roach	2026	1300439
+6642	Andrew	Liu	2027	1300439
+6623	Will	Cleary	2029	1315040
+6643	Kyle	Kelly	2027	1331587
+6644	Izzy	Smith	2028	1344241
+6645	Max	Kellogg	2027	1385123
+6628	Mike	Zhu	2024	1431846
+6629	Brady	McLaren	2026	1455207
+6646	Joshua	Benjamin	2025	1475648
+6647	Yiming	(Alvin) Mou	2025	1592454
+6648	Michael	Shin	2027	1621655
+6649	Emilio	Liwanag	2027	1638203
+6650	Ky	Nguyen	2025	2031449
+6652	Madeleine	Blank	2028	1309199
+6653	Laila	Goodman	2029	1390964
+6656	Emilia	Adams	2026	1442553
+6657	Gabriella	McLaughlin	2027	1462994
+6658	Josephine	Schiff	2028	1463967
+6659	Lea	Rubin-Esposito	2029	1547678
+6660	Kathy	Pham	2026	1580773
+6651	Sepha	Schumacher	2026	1592454
+6654	May	Sullivan	2027	1715100
+6661	Audrey	(Mae) Williams	2026	1717047
+6662	Emily	Desrochers	2025	1721914
+6663	Julia	Beaumier	2026	1755982
+6664	Sofia	Graeff	2025	1785183
+6655	Maya	Zesiger	2025	1797837
+6665	Caroline	Hauser	2027	1803678
+6599	Charley	Bacigalupo	2025	1245930
+6600	Sophia	Lazor	2027	1260530
+6601	Ksenia	Podoltseva	2027	1331587
+6602	Ava	Butterfield	2026	1343268
+6603	Annie	Noble	2027	1355922
+6604	Addie	Eakin	2027	1357869
+6605	Alexandra	Warner	2027	1364682
+6606	Rima	Ferrer	2024	1415298
+6607	Makenna	Mudd	2026	1432819
+6608	Chloe	Coviello	2026	1464941
+6609	Francesca	Gionfriddo	2026	1483435
+6610	Sophia	Beaver	2025	1485382
+6611	Helena	Randolph	2024	1496089
+6612	Caitlin	Cunjak	2027	1502903
+6613	Anna	Klapman	2026	1524317
+6614	Maggie	Crowley	2025	1529184
+6615	Ella	Callagy	2025	1535024
+6616	Mimi	Miller	2026	1541838
+6617	Alyssa	Ho	2025	1564226
+6618	Kayla	Otoo	2026	1575906
+6590	Annalise	Peters	2026	1581747
+6596	Lily	Makepeace	2026	1592454
+6619	Avery	Gray	2026	1604134
+6620	Pippa	Whitely	2027	1610948
+6621	Julie	Ahn	2026	1627495
+6622	Kendry	Navas Perez	2025	1743328
+6597	Junyu	(Tina) Fang	2027	1811465
+6598	Natalia	Gillaspie	2027	1828986
+6680	Kate	Miele	2024	1418000
+6681	Eva	Madden	2026	1418000
+6683	Anna	Moss	2024	1463000
+6688	Diya	Kinikar	2025	1477000
+6689	Eliza	Lodge	2025	1477000
+6666	Carley	Crosby	2027	1388000
+6667	Rosie	Reale	2024	1525000
+6668	Mele	Appleton	2027	1535000
+6669	Isabelle	Lebreton	2027	1232000
+6670	Niko	Cole-Johnson	2025	1255000
+6671	Brooke	Marston	2027	1265000
+6672	Tilly	Holling	2026	1289000
+6673	Ellie	Adams	2027	1299000
+6701	Emma	Landry	2025	1594000
+6703	Anna	MacCarrone	2024	1609000
+6705	Laura	Perret	2025	1629000
+6706	Charlotte	Young	2027	1638000
+6709	Kiara	Jin	2027	1705000
+6711	Montserrat	Espinosa Garcia	2025	1728000
+6713	Abigail	Craig	2025	1751000
+6714	Xiaoyan	Tang	2026	1752000
+6715	Betty	Weske	2025	1870000
+6716	Sophia	Luft	2025	1889000
+6718	Grace	Vitarelli	2025	2001000
+6719	Eve	Raymond	2027	2280000
+6691	Julie	Chan	2027	1502000
+6695	Mabel	Casey	2027	1541000
+6696	Samuell	Blackwood	2027	1559000
+6697	Judith	Klemann	2025	1559000
+6702	Phoebe	Zhang	2027	1602000
+6704	Grace	Weinstein	2027	1621000
+6707	Mabel	Rude	2025	1655000
+6708	Olivia	Wellen	2027	1701000
+6712	Leilani	Moyano	2026	1750000
+6717	Charlotte	Marr	2027	1909000
+6591	Cate	Corbett	2026	1230355
+6630	Benjamin	Porosofff	2025	1179740
+6631	Nicholas	Takoudes	2025	1181686
+6632	Jacob	Vandenpol	2027	1191420
+6720	Stephen	Spiegel	2024	1107000
+6721	Ryan	Ma	2027	1151000
+6722	Eddie	Winner	2027	1213000
+6723	Kevin	Zhour	2027	1213000
+6724	Tom	Zhuo	2027	1221000
+6725	Jayden	Lee	2024	1250000
+6726	William	Young	2027	1527000
+6727	Kyle	Reinecke	2024	1077000
+6633	Casey	Muscato	2026	1208941
+6731	Paul	Marmot	2027	1168000
+6732	Lucas	Barstow	2025	1173000
+6735	Daniel	Xu	2025	1187000
+6736	Will	Coughlin	2027	1192000
+6737	Luke	Sosnow	2024	1195000
+6738	Patrick	Healley	2024	1218000
+6739	Max	Wolff	2026	1220000
+6741	Dylan	Love	2027	1230000
+6742	Hollis	McBride	2026	1231000
+6743	Jack	Greenberg	2024	1235000
+6744	Robert	Nichols	2026	1236000
+6746	Gavin	Marsella	2027	1247000
+6747	Matthew	Habeeb	2027	1250000
+6748	Andrew	Yang	2026	1256000
+6750	Quince	Hamilton	2025	1267000
+6751	Jack	Pegler	2024	1272000
+6752	Charlie	Fenton	2027	1300000
+6753	Joseph	Shaker	2024	1314000
+6758	An-Ren	michael Ho	2027	1352000
+6760	Emmett	Smyth	2026	1366000
+6762	Maxwell	Hall	2025	1484000
+6763	Jerry	Tantikul	2024	1489000
+6764	En	Qiao	2027	1529000
+6765	Rick	Park	2024	1557000
+6766	Teddy	Kinch	2026	1558000
+6815	David	Silva	2027	1665000
+6816	Charlie	Rosen	2027	1706000
+6818	Amelio	Karampetsos	2027	1239000
+6821	Jimmy	Xu	2027	1279000
+6822	Daniel	Kim	2027	1285000
+6823	Yikai	Huang	2027	1286000
+6824	Joseph	MacEk	2026	1308000
+6825	Simon	Neubauer	2025	1339000
+6827	Sebastian	Medina	2027	1343000
+6805	Liam	Symmes	2027	1378000
+6832	Beau	McArthur	2026	1384000
+6833	Chase	Sukow	2027	1403000
+6814	William	Sommer	2027	1620000
+6728	David	Zhou	2026	1101000
+6729	Joseph	Levreault	2026	1134000
+6773	Maggie	Feeney	2030	1461000
+6774	Jade	Wiggins	2025	1478000
+6775	Reid	Donovan	2025	1495000
+6776	Emma	Joyce	2024	1541000
+6769	Lilly	Nohrden	2029	1470000
+6770	Lila	Wheelock	2025	1692000
+6772	Angelin	Ma	2026	1752000
+6777	Rocio	Duro	2029	1550000
+6778	Meghan	Stodden	2025	1552000
+6780	Elisabeth	Kheir	2026	1610000
+6781	Isabella	Suarez	2027	1615000
+6782	Ella	De Marval	2025	1644000
+6784	Meredith	Kennedy	2026	1670000
+6786	Grace	Garvey	2029	1683000
+6788	Izzy	Johnson	2025	1715000
+6789	Sammy	Edwards	2024	1718000
+6790	Martha	Yam	2024	1746000
+6791	Vera	Vittelo	2029	1752000
+6793	Cece	Gu	2027	1765000
+6794	Shreya	Adlakha	2026	1790000
+6796	Ella	Thornton	2025	1807000
+6798	Nga	Ho	2026	1892000
+6800	Helen	Yang	2025	2101000
+6801	Given	Malyango	2024	2158000
+6779	Amelia	Griffin	2026	1559000
+6767	Linna	Du	2026	1619000
+6783	Patrice	Masterson	2025	1650000
+6785	Maddie	Agrafojo	2027	1675000
+6787	Eliza	Mellon	2025	1691000
+6771	Cassidy	Stock	2024	1701000
+6792	Lucy	Lamoureux	2024	1760000
+6768	Kate	Cassidy	2024	1798000
+6795	Keira	McNeil	2027	1799000
+6797	Corrine	Chen	2027	1816000
+6799	Aki	Thangtharnakeat	2026	2002000
+6730	Ellis	Clover	2024	1135000
+6733	Arjun	Dasari	2027	1184000
+6734	Cayden	Auyang	2027	1185000
+6740	Wilkin	Paulino	2025	1225000
+6802	Jayden	Zhour	2027	1313000
+6803	Levi	Maguire	2025	1265000
+6804	Dylan	Dragon	2025	1276000
+6806	Liam	Booker	2027	1752000
+6807	Billy	Jin	2026	1274000
+6808	Cedric	Lin	2027	1291000
+6809	Ian	Cardin	2027	1306000
+6810	Myles	Chang	2024	1315000
+6811	Alex	Liu	2026	1348000
+6812	Dante	Kippenberger	2027	1366000
+6813	Daniel	Gao	2025	1412000
+6828	Vasawat	Rawangwong	2024	1346000
+6829	Gregory	Bowman	2026	1348000
+6830	Lucas	Bailey	2027	1349000
+6831	Victor	Schmidt	2025	1357000
+6834	Liam	Cameron	2027	1408000
+6835	Ishan	Loonkar	2027	1414000
+6836	Edan	Davis	2025	1424000
+6837	Jianjing	Hou	2026	1453000
+6838	Larry	Lee	2027	1525000
+6839	Hillel	Kofsky	2024	1555000
+6840	Sam	Bohlen	2027	1572000
+6841	Kevin	Ortega	2027	1649000
+6842	Xilin	Feng	2027	1688000
+6745	Christian	Marsh	2027	1244000
+6749	Ryan	Jacobson	2027	1260000
+6754	Andy	Chen	2025	1324000
+6755	Patrick	Vollmann	2025	1324000
+6756	George	Wilkins	2024	1343000
+6757	Milo	Thompson Vought	2024	1344000
+6759	Trace	Schroeder	2025	1360000
+6844	Timothy	Wan	2023	1608414
+6850	minho	eune	2023	1385776
+6848	Greg	JV Linton	2023	1697205
+6849	powers	trigg	2023	1159787
+6817	Boris	Liu	2027	1234000
+6854	CONNOR	SUTHERLAND	2023	1187634
+6851	Alec	Borges	2023	1292591
+6852	Vikrum	Singh	2023	1393435
+6863	Troop		2023	1420408
+6855	David	C Rome	2023	1196661
+6856	BENNETT	C COONEY	2023	1199671
+6858	MARCUS	Kankkuen	2023	1372198
+6859	John	(Jack) Terwilliger	2023	1377214
+6860	Owen	Dimock	2023	1428370
+6845	Alex	Avram	2023	1694635
+6861	SPENCER	GEORGE	2023	1431379
+6857	Jacob	Marasco	2023	1311011
+6864	Becht		2023	1500000
+6862	Wittman		2023	1167347
+6843	Dhru	Padmanabhan	2023	1536302
+6761	Kevin	Hu	2027	1378000
+6819	Henrik	Gombos	2025	1243000
+6820	Ezra	Wolfson	2027	1261000
+6826	Zachary	Boesen	2026	1342000
+6846	Hunter	Kadra	2023	1153210
+6847	Cole	JV Stewart	2023	1615186
+6853	David	Pang	2023	1428967
+6865	Elyse	Barry	2024	1705000
+3554	Charlotte	Whitehurst	2022	1175000
+4593	Milo	Corner	2024	1364740
+3664	Gabriella	Martiniello	2024	1305992
+6209	Liam	Kennelly	2023	1208602
+6866	Ali	Roche	2023	1433882
+6867	Cara	(c Nugent	2023	1439107
+6868	Kimia	Monzavi	2023	2003463
+6869	alex	costantio	2023	1432000
+6871	abby	charlamb	2023	1751000
+6872	isabella	parisen	2023	1537000
+6870	ella	dooling	2023	1750000
+6873	Amelia	Stevens	2023	1501051
+6874	Melanie	Eggloff	2023	1702640
+6875	a	lewis	2023	1679613
+6884	n	jankey	2023	1694018
+6876	a	raycroft	2023	1724748
+6877	j	dodai	2023	1738193
+6878	c	walker	2023	1745875
+6885	a	kopfler	2023	1777566
+6879	g	quealy	2023	1785249
+6880	r	dickinson	2023	1887044
+6881	p	duerest	2023	1891845
+6882	c	walkey	2023	1958108
+6883	a	baez	2023	2532384
+6886	K.	LeBlanc	2023	1655102
+6887	J.	Wei	2023	1806122
+6888	Y.	Fan	2023	2115306
+6907	KARA	GOULDING	2023	1308002
+6889	OLIVIA	WEEKS C	2023	1392260
+6890	TAYLA	NARGASSANS	2023	1402290
+6891	HOLLY	LEHR	2023	1406303
+6892	CAROLINE	STASIO	2023	1423355
+6893	MAXIN	S TRESSENGER C	2023	1441410
+6894	EVELYN	KEARNY	2023	1511625
+6895	LILY	C HASE	2023	1523662
+6906	RACHEL	GRIFFIN	2023	1531686
+6896	Alanna	Grealy	2023	1622966
+6897	Yubing	Yang	2023	1687162
+6898	Hopie	Lovell	2023	1699199
+6899	Cindy	Chen	2023	1755371
+6900	Shoshana	Lebo	2023	1799506
+6905	Natalie	Gutterman	2023	1867714
+6901	Ing	Thongchai	2023	1883764
+6902	Anne	le Gassick	2023	1926896
+6903	Rebecca	Murray	2023	2014163
+6904	Lauren	Torres-Rivera	2023	2057295
+6910	Zach	Rahaman	2023	1331462
+6909	Jack	Darling	2023	1345048
+6908	Dhruv	P	2023	1600053
+6911	Daniel	Park	2023	1430890
+6912	Pyne		2023	1485714
+6913	Unknown	Detweiler	2020	1450000
+\.
+
+
+--
+-- Data for Name: school_coaches; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+COPY public.school_coaches (coach_id, school_id) FROM stdin;
+2	11
+\.
+
+
+--
+-- Data for Name: school_locations; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+COPY public.school_locations (school_id, location_id) FROM stdin;
+6	1
+19	2
+23	3
+1	4
+2	5
+55	6
+46	8
+18	9
+12	11
+17	12
+14	13
+24	14
+15	15
+21	16
+16	17
+48	18
+52	19
+37	20
+33	21
+22	22
+13	23
+11	24
+26	25
+25	26
+20	27
+46	29
+57	30
+70	32
+\.
+
+
+--
+-- Data for Name: schools; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+COPY public.schools (id, long_name, short_name, primary_color, secondary_color, text_color, league_id, city, state_abbr) FROM stdin;
+20	Rivers School	Rivers	#c20830	#ffffff	#ffffff	2	Wellesley	MA
+21	Roxbury Latin School	Latin	#991f36	#343333	#ffffff	2	West Roxbury	MA
+22	St. George's School	St. George's	#000000	#c02e36	#e31e1e	2	Middletown	RI
+23	St. Mark's School	St. Mark's	#003057	#ffffff	#ffffff	2	Southborough	MA
+25	Tabor Acadmy	Tabor	#96133b	#ffffff	#ffffff	2	Marion	MA
+26	Thayer Academy	Thayer	#f48020	#000000	#000000	2	Braintree	MA
+27	Berkshire School	Berkshire	#2e5b40	#ffffff	#ffffff	3	Sheffield	MA
+29	Hopkins School	Hopkins	#6e0723	#ffffff	#ffffff	3	New Haven	CT
+30	Kent School	Kent	#143554	#ec0d2e	#ec0d2e	3	Kent	CT
+31	Suffield Academy	Suffield	#f15623	#000000	#000000	3	Suffield	CT
+32	Westminster School	Westminster	#1d1d1d	#ffc430	#ffc430	3	Slimsbury	CT
+34	Worcester Academy	WA	#910533	#ffffff	#ffffff	3	Worcester	MA
+35	Landmark School	Landmark	#14245b	#e8b10d	#e8b10d	1	Beverly	MA
+36	Salisbury School	Salisbury	#820324	#ffffff	#ffffff	3	Salisbury	CT
+37	Phillips Academy Andover	Andover	#00319c	#bbe6fe	#bbe6fe	3	Andover	MA
+39	Brunswick School	Brunswick	#572504	#e3b74f	#e3b74f	3	Greenwich	CT
+40	Choate Rosemary Hall	Choate	#00427a	#ffd42f	#ffd42f	3	Wallingford	CT
+41	Deerfield Academy	Deerfield	#006940	#ffffff	#ffffff	3	Deerfield	MA
+42	Greenwich Academy	GA	#387c27	#fdb92a	#fdb92a	3	Greenwich	CT
+43	Hotchkiss School	Hotchkiss	#0f2b5b	#ffffff	#ffffff	3	Lakeville	CT
+44	Loomis Chaffee School	Loomis	#98252b	#ffffff	#ffffff	3	Windsor	CT
+45	Miss Porter's School	Porter's	#3d6e65	#ffffff	#ffffff	3	Farmington	CT
+46	Northfield Mount Hermon School	NMH	#509dd0	#8e2f44	#8e2f44	3	Gill	MA
+47	Phillips Exeter Academy	Exeter	#a31f34	#ffffff	#ffffff	3	Exeter	NH
+48	St. Paul's School	SPS	#b30934	#ffffff	#ffffff	3	Concord	NH
+49	Taft School	Taft	#650204	#ffffff	#ffffff	3	Watertown	CT
+50	Trinity-Pawling School	T-P	#ffcb2d	#021e41	#021e41	3	Pawling	NY
+1	Newton Country Day School	NCDS	#0c4278	#9999ad	#9999ad	1	Newton	MA
+2	Winsor School	Winsor	#9e0922	#ffffff	#ffffff	1	Boston	MA
+3	Dana Hall School	Dana Hall	#005bba	#ffffff	#ffffff	1	Wellesley	MA
+4	Pingree School	Pingree	#002d61	#0d7935	#0d7935	1	South Hamilton	MA
+5	Portsmouth Abbey School	PA	#000000	#e61c54	#e61c54	1	Portsmouth	RI
+6	Concord Academy	CA	#01704a	#ffffff	#ffffff	1	Concord	MA
+7	Berwick Academy	Berwick	#1c55e7	#303d62	#ffffff	1	South Berwick	ME
+8	Lexington Christian Academy	LCA	#214f85	#ffffff	#ffffff	1	Lexington	MA
+9	Bancroft School	Bancroft	#004c80	#78b6d7	#78b6d7	1	Worcester	MA
+10	Beaver Country Day School	Beaver	#081c2b	#ffffff	#ffffff	1	Chestnut Hill	MA
+12	Brooks School	Brooks	#01462e	#000000	#ffffff	2	North Andover	MA
+13	Buckingham Browne & Nichols School	BB&N	#002e6d	#f7a826	#f7a826	2	Cambridge	MA
+14	Governor's Academy	Governor's	#a30c33	#000000	#ffffff	2	Byfield	MA
+18	Milton Academy	Milton	#004685	#f89924	#f89924	2	Milton	MA
+19	Noble and Greenough School	Nobles	#004990	#ffffff	#ffffff	2	Dedham	MA
+52	Canterbury School	Canterbury	#002144	#B4D3EB	#B4D3EB	3	New Milford	CT
+53	Cheshire Academy	Cheshire	#011B70	#8293DC	#8293DC	3	Cheshire	CT
+54	Cushing Academy	Cushing	#482078	#ffffff	#ffffff	3	Ashburnham	MA
+57	Frederick Gunn School	Gunn	#132837	#D4282E	#D4282E	3	Washington	CT
+59	Greens Farms Academy	GFA	#D4282E	#ffffff	#ffffff	3	Westport	CT
+63	Kimball Union Academy	KU	#ED662B	#000000	#000000	3	Meriden	NH
+60	Greenwich Country Day School	GCDS	#E77723	#ffffff	#ffffff	3	Greenwich	CT
+65	Millbrook School	Millbrook	#103474	#C5D0D5	#C5D0D5	3	Millbrook	NY
+66	Montrose School	Montrose	#D0112B	#ffffff	#ffffff	3	Medfield	MA
+68	Proctor Academy	Proctor	#235C34	#ffffff	#ffffff	3	Andover	NH
+69	Westover School	Westover	#7BA1D5	#ffffff	#ffffff	3	Middlebury	CT
+62	Holy Child	Holy Child	#426BB9	#ffffff	#ffffff	3	Rye	NY
+56	Ethel Walker School	Walker	#491A5E	#FFD301	#FFD301	3	Simsbury	CT
+58	Gould Academy	Gould	#003A70	#ffffff	#ffffff	3	Bethel	ME
+33	Williston Northampton School	WNH	#012f4a	#ffffff	#ffffff	3	Easthampton	MA
+55	Dexter Southfield School	D-S	#A20D33	#012D5B	#ffffff	3	Brookline	MA
+71	Wilbraham & Monson Academy	WMA	#002E5D	#A5192E	#ffffff	3	Wilbraham	MA
+38	Avon Old Farms	Avon	#8c2131	#212945	#ffffff	3	Avon	CT
+51	Austin Prep	Austin	#145F31	#ffffff	#ffffff	3	Reading	MA
+61	Holderness School	Holderness	#0058B8	#ed1550	#ffffff	3	Holderness	NH
+64	Kingswood Oxford School	KO	#A3343A	#000000	#ffffff	3	West Hartford	CT
+67	Pomfret School	Pomfret	#AC1E32	#000000	#ffffff	3	Pomfret Center	CT
+28	Sacred Heart Greenwich	Heart	#016747	#ffffff	#ffffff	3	Greenwich	CT
+11	Belmont Hill School	BH	#012d4f	#6a1010	#ffffff	2	Belmont	MA
+17	Middlesex School	Middlesex	#b21f47	#000000	#ffffff	2	Concord	MA
+24	St. Sebastian's School	Sebs	#000000	#c32033	#ffffff	2	Needham	MA
+16	Lawrence Academy	Lawrence	#013479	#ac1a2f	#ffffff	2	Groton	MA
+15	Groton School	Groton	#000000	#a6093d	#ffffff	2	Groton	MA
+72	The Masters School	Masters	#bb0b2f	#173460	#ffffff	3	West Simsbury	CT
+70	Wheeler School	Wheeler	#3D1A79	#ffffff	#ffffff	1	Providence	RI
+\.
+
+
+--
+-- Data for Name: session_table; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+COPY public.session_table (id, session_id, data, expiry) FROM stdin;
+21	session:1eb3d155-c962-4458-a777-cb6b729dc8ad	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-19 17:38:04.704524
+16	session:4cd027d4-1327-427d-bbed-a8e0a28c13b1	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-19 17:32:46.377841
+3	session:c6cbab69-8865-4896-a031-02d726caee2c	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-19 16:57:58.00916
+10	session:fbd7a13c-9b51-4f9b-b701-656604446186	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-19 17:16:22.599963
+8	session:91059633-e2b6-4ef1-a801-b6f994dcb43c	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-19 17:15:30.263534
+36	session:f5e783bf-4be7-487e-8276-7741b0c5e61f	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-19 17:41:27.25978
+4	session:7c4d75dd-112c-40a8-aadb-01ad951490cf	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-19 17:07:20.794291
+14	session:1ab3c826-e675-407e-8c00-4489a2cda364	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-19 17:23:00.139049
+40	session:382d5e0d-24e4-4c69-b512-2f2e9eba2845	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 15:03:50.164609
+25	session:d01c4280-5e63-4b25-ada3-2689f8a2fe12	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-19 17:39:24.776306
+5	session:2fb7a674-1315-40b2-987a-6500e075b32d	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-19 17:07:23.610244
+11	session:94d068f2-9a6f-40f0-875b-cf2c096f7a26	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-19 17:19:27.752378
+19	session:5488a309-56c4-4e64-b934-c8b47da272e6	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-19 17:35:22.689178
+17	session:efb1b0c7-48e6-45d2-bad2-49c4765621c0	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-19 17:34:36.497005
+6	session:cc170cd1-461e-4b7e-872c-dbb80b3ffe84	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-19 17:07:25.231135
+2	session:5a8da98c-4be5-446a-9ab2-05a6430cd71e	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-19 16:38:56.862184
+15	session:574f1cab-0c33-4496-a870-462f831d9584	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-19 17:23:07.444492
+18	session:a4d1a88d-e0f8-48bf-9062-e9200588d88b	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-19 17:35:16.420856
+12	session:dae2a8d8-eea4-4b7b-98bf-28a42ec159ab	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-19 17:20:41.337796
+28	session:d92ddffa-0ea3-49ae-b85f-d6eb6646f37d	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-19 17:40:15.382091
+9	session:820e7d47-c136-4e8d-92d4-4417bf94753b	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-19 17:16:16.271146
+7	session:2837f9bf-33d6-4082-80fd-1a3f88346c51	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-19 17:15:19.816867
+33	session:ac77ac10-3e7b-4a82-b8f7-227a69bd422a	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-19 17:41:14.242957
+23	session:7a88a8af-1d82-406a-ab5f-50d8374cbd28	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-19 17:39:17.573812
+22	session:50239225-5bf6-4d12-9eac-d2faef56830b	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-19 17:38:49.542824
+31	session:b5aaaf9b-eefa-4caa-acfe-031e58068ba1	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-19 17:40:52.705298
+13	session:af35cee5-1680-4ecd-b01f-5294477dc86c	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-19 17:21:26.972814
+29	session:b1688563-71fb-4a49-99e3-b9e9e4f04652	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-19 17:40:47.282315
+26	session:c15f15b2-4e9e-4a0f-936b-b9fbe722a5f1	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-19 17:39:31.424763
+45	session:9b59a88c-178f-4b64-8e50-7dee73d8dae4	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 15:04:17.970844
+24	session:4dd84a87-7bb6-4acb-92f4-52b594c947d8	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-19 17:39:20.905083
+20	session:62be16aa-ca18-41cc-b827-9fb862c86338	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-19 17:37:58.068711
+27	session:1ce1cc10-32a0-4bd6-989f-e9bdc439407f	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-19 17:40:12.869008
+35	session:b54272ab-4702-45fc-be67-a41123141da5	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-19 17:41:24.384473
+39	session:2a4960cb-f30e-4de2-afdb-9dc1d19aa05f	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 14:09:34.618052
+44	session:2d8fff90-daa7-4a53-a314-0cca198dffff	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 15:04:16.223251
+32	session:2e2fc033-79fb-46a7-833b-a241f70fdd6a	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-19 17:41:11.34838
+30	session:4b49abde-75a3-459f-a7eb-85002c705116	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-19 17:40:49.767232
+37	session:d1b2d584-d22c-48b3-b5f7-dc83b23a88fc	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-19 17:41:37.483215
+34	session:fba58e4a-9431-4994-b2f7-98de58a79a36	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-19 17:41:17.028398
+38	session:a99da508-d729-46bb-824e-2b78c7802d52	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 13:46:06.938637
+43	session:c804c5d6-9d03-42d2-af8c-8b3b9dfb9b05	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 15:04:12.131088
+46	session:c465aa9f-f247-49a5-8779-8ae322fc6b18	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 15:08:28.019636
+41	session:3d6e6eaa-fc70-434e-8b07-2214c7769e7a	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 15:03:59.778409
+42	session:513fd80a-e251-436d-9c9a-e189fec86f61	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 15:04:08.150774
+48	session:01cba584-a4c1-44c3-8e38-9ffccb90bbcc	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 15:10:09.850856
+51	session:9f2b4e72-95dc-4d43-8125-ddc441bacd31	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 15:16:13.332854
+49	session:cd8dd07e-32d9-4d6e-8447-390b711a914d	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 15:14:05.720652
+47	session:d61b4684-ddef-448d-8624-bb2603f2d214	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 15:09:13.952604
+50	session:caf7d5a0-69f2-414f-84be-91a38570cba2	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 15:14:37.117547
+52	session:4b6a0076-f1a8-4c95-b8c3-3b6a7819312e	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 15:17:41.209752
+53	session:abdd224b-26c2-44d6-8526-a0358c864ee6	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 15:17:44.084728
+54	session:8d81e309-7a7e-4829-8524-c9eaf39c1933	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 15:17:46.933452
+55	session:6a248f90-fc8d-44e1-af67-9f4b5582de87	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 15:17:49.487703
+56	session:298636b8-d854-45b9-ad67-ad8f314cb6a4	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 15:18:06.764698
+62	session:a267894e-39fb-4817-bdc0-eb0d4c61c979	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 16:48:54.838422
+57	session:d5211ba8-3258-40cc-ad68-72ec0b0b5398	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 16:45:45.237129
+68	session:d0e68b52-1871-44d6-8a7c-08ddd4bfd9cc	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 17:09:54.996527
+64	session:83d67b64-e88f-47ef-979c-d17300584b15	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 16:50:52.967533
+60	session:011dd682-fbff-419f-9479-cce3530c2ca4	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 16:48:29.96674
+72	session:6eead3b0-afe8-4f23-83cd-c5c111be54da	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 17:11:01.842362
+58	session:cabaf6e7-b2aa-48ee-a5f2-348277c06db2	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 16:47:30.704804
+77	session:bca19d57-930e-4740-870b-bbf55faa5694	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 17:20:04.134335
+66	session:74aa1d43-09a4-4903-b5e7-1c21417f2c49	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 16:52:53.789981
+69	session:2a632b19-662d-442c-8c39-5caf5982ec9c	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 17:09:59.945206
+75	session:b8ccafad-8d3c-4fb5-8147-598b44a56359	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 17:19:47.732587
+88	session:e6643430-3103-4200-8e48-4530063cceb3	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 22:04:44.966628
+61	session:04add2bf-6bee-4d3d-8b1a-7a95279fbc89	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 16:48:43.475311
+63	session:47b0225a-d594-4da7-b9af-afe8506571e8	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 16:49:13.96337
+82	session:418d5e4d-9d25-44bf-af04-d8302e196226	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 19:01:23.311789
+59	session:f540623f-e377-44f4-8129-145cc704e64e	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 16:47:51.105993
+86	session:dcbc1097-ae45-4a6f-bdc1-58f8954a4bca	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 22:04:39.714769
+70	session:eb15c5c0-cb93-4797-b4ed-22575454eadf	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 17:10:21.313231
+65	session:7a2b24ef-3c83-4330-861e-a04f1f91cd6b	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 16:51:32.864328
+76	session:9396941c-2123-4a10-8846-4c8649269996	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 17:19:50.151319
+89	session:ea9a39dc-0fc8-46b2-bac5-d0f99e4c7bfc	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 22:05:21.102698
+67	session:1e1afee6-c8dc-4e50-b2ec-3c8e11101f7a	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 17:07:35.427187
+71	session:c4349379-9368-4234-af33-1d6a3e3ace67	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 17:10:26.540194
+83	session:5df82159-212d-481d-9e47-76e845526ed9	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 21:24:34.053722
+73	session:4b7a5ce9-0b3e-43f1-8b56-d45893e3f409	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 17:19:40.77195
+80	session:645625f7-4629-401b-a899-1c915dcda5e1	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 18:45:59.368352
+95	session:f1289d46-ca42-49c7-995b-e8d19e6745ac	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 22:09:15.577075
+78	session:67f181c7-3f72-482f-9f33-9f5c80cd5976	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 18:45:41.393302
+74	session:3ab75316-40d4-4a9f-a600-d44387fe7fed	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 17:19:44.629707
+90	session:fd7b9cab-e75a-402b-9ab4-376e11c7f02c	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 22:06:13.607224
+87	session:6d44dcd5-95c3-403b-9f3d-096cdb0f4a56	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 22:04:42.646383
+81	session:15bab626-533e-4c06-8f70-2ec4ff282fea	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 18:47:49.894556
+84	session:f81c21bd-4bad-442f-a889-939720a4877f	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 21:25:17.639264
+85	session:d9e9cb5c-568a-470c-88f1-229822230a71	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 22:04:36.69214
+79	session:4ff2c2e8-e386-4886-a727-15857dea93ca	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 18:45:45.289436
+102	session:320dd3f9-c5b0-4629-a7fb-2a7278fa47f4	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 22:11:06.427529
+94	session:38f75d70-86d4-4925-9044-3e5e22c4e156	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 22:09:10.603137
+91	session:35062f97-32b7-472a-af49-b0cfb95615a6	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 22:06:30.320438
+97	session:e8dc598c-bd7d-448a-a400-7c482cbe2ac8	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 22:09:42.291112
+92	session:35d2bd32-6aac-4d9f-8003-b9b51f22bd48	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 22:08:16.135113
+100	session:c334d3c1-8020-4807-b7be-37aaea519360	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 22:10:37.216541
+93	session:68021d8a-4081-48b9-ae71-9ee55c369360	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 22:08:28.313461
+99	session:e68da8be-47d1-4181-a1a6-b996bfb18152	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 22:10:27.938533
+96	session:633ff79a-23df-456b-af5e-e78f84913b50	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 22:09:37.40903
+98	session:4b214327-8b3b-4ef2-b89a-159477565497	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 22:10:10.25421
+106	session:fd238fcc-8de7-4ecf-9745-f6933c5e659a	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 22:15:33.280157
+104	session:3fbc1fb1-b18a-456c-a553-731487c6a139	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 22:15:17.145189
+107	session:a9685122-f1f8-4454-9855-39db99987093	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 22:15:52.26001
+101	session:cb84ccdf-9035-42df-93a0-0b910217a535	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 22:10:46.789303
+103	session:223cc940-9485-4104-b941-45c73c181202	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 22:11:14.801838
+105	session:15e680ca-24e7-4e3f-aeca-e763e1bedc95	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 22:15:25.184415
+108	session:54552a24-80f3-49c1-ade7-f6f575ff8624	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 22:16:17.041876
+109	session:0716acf0-4975-493b-83fd-a67c892fa054	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 22:16:22.832803
+110	session:7d5d15e6-0d26-4275-b85b-f2ccfc0e9a25	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 22:16:35.946713
+121	session:4af807ec-d51a-4b86-8de4-5353806c1908	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 22:48:29.423031
+125	session:c58851a1-d77e-4c24-9957-ecac97a2d293	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 22:48:42.783334
+112	session:c85e96a9-98af-41b3-a84c-8c7aa1183986	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 22:41:16.273664
+133	session:f1133931-3315-4e5c-98fe-f8a2540a25e1	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 22:50:17.152112
+132	session:ef04fdbb-498f-448d-86d2-dbf047d1643f	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 22:49:51.860902
+116	session:caddfdfb-23dc-4c60-8bd5-589c8173a75d	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 22:41:41.459349
+113	session:82290143-ad2b-461f-ae04-31934d5867f7	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 22:41:19.757359
+118	session:e195de8a-8cf9-4d06-95f9-39a5a73c8d50	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 22:42:27.150519
+119	session:f31be5c5-3091-4920-9d81-b559adac814c	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 22:45:45.66684
+122	session:a0cd76a3-a0f8-45c6-b4b2-d4f97ce502d0	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 22:48:32.728211
+114	session:9ace70f7-91d1-4b62-b637-ed1b1c70874e	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 22:41:22.701575
+129	session:e6db0b30-bcc0-43ba-bc0b-54e4c9899eb3	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 22:49:43.006054
+117	session:2f5b5f2b-b2a9-4047-906d-741081e279d2	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 22:41:45.639319
+111	session:6f744aa6-6bc0-4d7c-a77a-bdda38b53bba	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 22:40:05.307468
+127	session:c3ef8ad6-7925-4c55-b7a8-ab3a3f304cb6	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 22:49:09.422986
+115	session:22bd2c91-7e7d-441d-95fa-f1408c8683fa	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 22:41:25.510932
+148	session:86f03848-8000-48ad-8662-2b8c8be28b52	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-21 20:04:14.452468
+120	session:1a4c40b7-32bb-4162-8f24-cbf316e36467	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 22:48:19.015802
+123	session:455a91e6-f2a3-4e7c-b160-712957ad714f	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 22:48:36.814737
+141	session:abd969dc-0957-4b18-8d1a-1dc6c28f3d43	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-21 01:58:12.524727
+137	session:f56021c2-c2bb-473d-adbe-96b07551a9a8	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 22:58:00.861877
+130	session:ae64cff6-c043-4a6a-8348-df05f10d7b1d	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 22:49:47.026075
+124	session:ac5c02e1-f923-4e68-8f1f-c927f8b39eea	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 22:48:40.365841
+126	session:935b481e-e1c7-40d2-8cdd-aa2bf9e3ab34	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 22:49:02.001373
+139	session:088611f9-840c-408a-b7ac-de136d1ed13f	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-21 01:58:06.204797
+128	session:6aa75a28-cb34-435a-a14c-623fbf1e23f0	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 22:49:28.760371
+138	session:950c218d-8740-4f68-b9a8-e2ff70c25dbc	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 22:58:37.921621
+155	session:dea5a751-4c55-423f-9fff-8f0986a2a73a	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-21 20:25:14.814636
+131	session:26077d40-09b7-49fa-9151-71ad20d7a2c4	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 22:49:49.344208
+134	session:709e04d4-3c44-488b-a2f1-8a3f2543c6fb	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 22:52:50.098625
+135	session:90d0ca89-08fe-48f4-9ac2-3789dc5cc3ec	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 22:57:35.333739
+147	session:0cdcf829-6f91-4882-b738-70817e21f45d	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-21 20:04:12.797428
+151	session:76334e70-109a-48af-a758-2657d665aedd	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-21 20:14:23.685788
+136	session:63bdd659-1ddc-4da0-a2d9-1ca19fb7dd25	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-20 22:57:38.205478
+140	session:39190868-da39-4952-88ff-f9272a327434	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-21 01:58:09.897173
+142	session:a398afae-bb8e-4994-8b26-96487e4ee73c	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-21 01:58:14.749082
+146	session:a36dc890-d640-48c6-bf7f-d73511197cb3	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-21 20:04:09.77224
+143	session:82c01235-3797-4f10-ad6f-8c3957b44f7a	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-21 01:58:31.95002
+145	session:91d993c0-1cd2-45cd-abab-e89b83e8e5f3	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-21 01:59:04.589217
+144	session:8c8800ad-5dba-4df2-9836-42a87cc4b920	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-21 01:58:38.434603
+150	session:bb3a9e98-8c69-47d1-8947-bba5ae3995be	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-21 20:04:47.226887
+149	session:cde3c77a-d221-4393-a81d-fc01abe634ab	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-21 20:04:16.027451
+152	session:50d17793-85ef-4040-8fdf-fabafdb32369	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-21 20:15:54.184603
+153	session:e006c0c5-f622-43de-9e9c-578d30a496c3	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-21 20:17:08.208702
+154	session:713a246b-b439-4261-955c-d3f1b279af2c	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-21 20:18:27.448276
+237	session:759df935-6854-4813-8368-ea21368b7bc2	\\x80037d710028580a0000005f7065726d616e656e74710188580a000000637372665f746f6b656e7102582800000062623338613162343739353531333935363636613639633339646664386165383065656438376462710358030000005f696471045880000000633138346231346239626463623434626439306537616465326231346333366536303463383638343464346535343938323234323338333039313839343035353639313465623630636461323335366633333361646132393136646534396463393063656264343137336334386666623364393134396136653565633166393671055807000000757365725f69647106580100000031710758060000005f6672657368710889752e	2024-05-19 12:44:21.491319
+157	session:332a5d77-c157-4e86-bef3-a61ff01c4520	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-21 20:26:13.658289
+170	session:c9593b3e-cb89-49d2-a57c-479837954df6	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-21 20:42:34.702561
+164	session:ef06b2a1-df11-4d92-8eed-f4d57abdbef6	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-21 20:31:51.433019
+172	session:2282268a-101b-4acf-8140-20931262ab38	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-21 20:43:43.555273
+179	session:37e0aff9-c1a9-4f1a-853c-0a2c2b2e919e	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-21 20:48:47.358029
+156	session:d9987957-6d7f-4e6c-8db1-7dcecec949b7	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-21 20:25:28.661547
+158	session:17b2ea80-715a-49ee-9ff5-d6870b7efc6a	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-21 20:30:38.364445
+168	session:5a472289-8097-4569-8a17-352e8411895a	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-21 20:32:19.683586
+165	session:4a9f9c12-bf9e-40ba-b513-e74beff58bda	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-21 20:32:01.080458
+177	session:5c935706-3f86-453b-925e-1bed85d975db	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-21 20:48:30.012442
+159	session:82c52c86-dd8a-4ea3-b195-7cc257b96f8f	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-21 20:30:42.804338
+162	session:96ba9d61-c119-43d1-9a7a-0cf521b78b20	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-21 20:31:18.800771
+171	session:2a2fa655-bbb4-4ddf-86a2-026a4d6c8664	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-21 20:42:41.328398
+169	session:65b4d180-f7c4-4711-b1ba-e94a27cb1b46	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-21 20:41:50.747315
+160	session:59c36795-916f-432b-bac6-b904fd124599	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-21 20:30:45.074726
+166	session:fb5067a4-a59d-4364-b997-631338898de6	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-21 20:32:09.718238
+173	session:8fab53f2-8617-43fc-a2a7-6e3788775096	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-21 20:44:47.684633
+183	session:748ca5b3-dbe6-4848-a39b-7e28230ce78b	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-21 21:39:20.01945
+163	session:8919e850-df38-4cd4-b899-2e6c71d4028c	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-21 20:31:37.41095
+161	session:53e33a14-04d4-4afa-8c82-e6c4fd91f9f7	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-21 20:30:46.869387
+182	session:f72ec547-cd17-4de5-ab50-fff5a4bc96ae	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-21 21:22:37.05989
+184	session:5ffeae1d-c52b-499d-b1ae-e155e9c40241	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-21 21:53:55.302201
+174	session:76b6b347-928e-4954-88d7-ed5dc9e30467	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-21 20:45:15.973663
+178	session:cf00927c-b9c5-467d-a51b-9df570d7bf3e	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-21 20:48:37.849007
+167	session:a285fa93-8242-485e-85a6-d80fa9ed8f6f	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-21 20:32:16.521407
+176	session:3c91a3c2-8018-4c9e-8925-61b8e02eb1c2	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-21 20:48:25.791651
+175	session:a96bff12-7555-4b9a-b269-b118816df845	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-21 20:45:58.468088
+180	session:fe9fa968-09c8-47dd-b1b7-dee435df827a	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-21 20:48:58.183501
+181	session:d5c11640-173d-47d4-9d6e-ae5819f4583e	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-21 21:16:04.962509
+200	session:7dc2857f-6dfe-41b0-9019-77f254e69584	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-24 19:58:55.123865
+185	session:dda18330-634c-4196-8e3c-c6ad3c0df46b	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-24 15:13:40.356525
+212	session:66647779-ac39-41f9-bba3-e7da06436bd7	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-24 20:03:36.998362
+194	session:96856108-f7c3-4805-a14f-9e6aebc4c1f9	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-24 19:53:35.306408
+187	session:d1efe2b0-d8ee-4865-b597-b4b290abaedf	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-24 18:54:49.71263
+214	session:95938d40-f693-4a34-8487-ed3120b65300	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-24 20:05:02.914748
+193	session:b118729d-6ac8-4053-a81a-fd51d083963f	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-24 19:53:23.138376
+189	session:42942983-cef5-47fb-b867-1988bc612bbe	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-24 18:58:45.696314
+205	session:fa24b255-df3b-454d-809b-c8b895d9094b	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-24 20:00:30.244673
+186	session:6e0f2103-437c-481e-949c-8a84c93c1776	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-24 18:54:19.600656
+199	session:e05626bb-290e-4adf-829c-5696035ea46f	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-24 19:58:34.453421
+206	session:5b7caf2d-2f30-43ba-8a55-2f176a54ccd7	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-24 20:01:27.66707
+192	session:e938bd44-c9ea-4300-a7bc-53333d9254d0	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-24 19:52:37.866897
+188	session:53e61d08-48b1-45d0-bbd6-d0541a0280c4	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-24 18:57:17.776803
+190	session:ec15b76a-a5a3-42e6-b074-0787c5736a58	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-24 19:50:23.061816
+198	session:b622da3d-42f2-4d3f-aa8b-9b5345237757	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-24 19:57:23.249947
+197	session:504d4f10-b7b9-4e2e-b9c3-32d929e3115f	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-24 19:57:10.221904
+223	session:6e16b545-b983-4df3-8e67-f1590072c0e1	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-24 20:14:02.895811
+196	session:4d84b510-5c44-4fbd-a686-0c81a88ed2be	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-24 19:57:07.356966
+191	session:fe4d328c-1979-4cde-be6b-9c8440f6ab11	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-24 19:50:29.858309
+213	session:19eb8734-2995-4eb1-a3f9-4ca9dbc9c309	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-24 20:04:13.48823
+207	session:b65c0c90-edf7-4a25-9673-5c48b529d29f	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-24 20:01:38.959596
+203	session:d1535506-d88c-4c53-b5a7-8a67ff31c62f	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-24 19:59:32.832975
+195	session:d3e5c9ed-5b73-4d71-851f-de0519f356ba	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-24 19:53:56.648906
+202	session:b697c19c-d92a-4b85-aab9-22cf6ce91993	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-24 19:59:21.478871
+201	session:1a886d43-6c2d-49e5-bcd4-8afb49a82c42	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-24 19:59:07.919079
+220	session:382d7a2f-6325-42b6-bdf7-be316f2cf337	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-24 20:08:59.60275
+211	session:f5b15834-e3e2-44c3-8857-a0b013f633a9	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-24 20:03:23.373462
+204	session:d21e212b-2289-4c13-ae50-345648003b70	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-24 20:00:17.14818
+208	session:261e8db4-41d4-4f20-9cd0-7c2230457a20	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-24 20:01:59.900902
+215	session:ea16a85e-7686-406d-9ada-4fdfd387a2f5	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-24 20:05:11.362094
+219	session:9b904acc-31f9-4c08-a5b9-5fb05bab3a84	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-24 20:08:01.483686
+224	session:01233f05-5719-4964-88fd-202f37524c6a	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-24 20:15:42.923351
+209	session:9e5b98b3-184a-4016-847f-8b88c3d8660c	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-24 20:02:03.13052
+210	session:398721a1-b2f2-44f8-ade5-11f15c089eb9	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-24 20:02:26.899058
+222	session:6132c28c-8df7-4157-b4d4-92d6553f241e	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-24 20:13:03.169257
+218	session:73bcb837-6de7-4022-a021-9c4d47083daa	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-24 20:07:57.960448
+221	session:01963963-d4b7-4281-8e3c-ff63029b59af	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-24 20:09:31.92248
+216	session:a499087d-641d-42c7-b4fa-60a216570915	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-24 20:06:37.359256
+217	session:b4be3ee9-8301-456b-8d4a-07e38933be39	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-24 20:06:52.903118
+228	session:7a913c14-e34b-4fe5-acbc-0f947db36ed9	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-24 20:22:31.748024
+227	session:92c2cefc-ed4a-4b6f-a8e4-64776d06ef62	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-24 20:18:29.314456
+231	session:c00e9e17-31ef-4a93-87e9-616c4582dcd9	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-26 12:52:31.599248
+226	session:ad7f257f-acc1-486e-82f8-50d86d41c569	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-24 20:17:41.61931
+225	session:68986948-06ea-4eda-9a7f-abc50a62bd6a	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-24 20:16:08.097005
+229	session:5a549419-214a-4dd9-939e-81d60948acaf	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-26 12:11:45.065055
+230	session:adf68fb6-a6ed-4143-addd-5f300430f4b2	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-26 12:52:21.732307
+232	session:0516f1b8-8d4c-4950-9734-55923d9e6a49	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-26 13:05:18.029898
+233	session:4c919452-1915-4a80-b662-15d44885a5e1	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-26 13:05:29.121272
+234	session:3990e641-3e20-4f48-9ed1-a30b9de88c4b	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-26 13:05:45.923572
+235	session:ce60ed26-65b1-4d37-8ba0-eb17d159b091	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f6672657368710289752e	2023-07-26 13:08:19.328679
+1	session:.eJwlj0tqBDEMBe_i9Sz0sUfSXKaRLYmEQALdM6uQu48h2wdV1PttR515fbTH83zlrR2f0R4t4A41lCvBCt2H4ORgJiBbq8oTWaakqhnU8tFpz5poJQpFhgDpFYooBTNiMKjRVlgHFhdYhcp9ziViGjoWBw1idmcobLe2rrOO589Xfu-e6SucfBrfgTj7msoBPbbcSVFNhuIO2dzryvP_BLa_N7OGPtQ.FxrPtA.3gBp8OCzHPDozhWVHbJeECmGEfQ	\\x80037d710028580a0000005f7065726d616e656e7471018858060000005f66726573687102895807000000757365725f696471035801000000317104580a000000637372665f746f6b656e71055828000000623463653430373733653933666563316337333134353133643133373637376339653730373032657106752e	2023-08-30 18:35:28.970084
+236	session:ff7d91bb-e29b-4ca0-981d-f1caa4eeae0e	\\x80037d710028580a0000005f7065726d616e656e74710188580a000000637372665f746f6b656e7102582800000033303934323330396664363361633162386436353636303430643333623066346431613138336130710358030000005f6964710458800000003961646138373530346630323430353237316465636332653966333038613432663731396562366661303336366438353633643562636465323066643734326133346563613830356532346361643839333066343038663637313939643534356334623463323931636638363630373139336561663863363164396137643431710558080000007265735f66696c65710642361c0000800363687378632e636f6e74726f6c6c6572732e726163655f75706c6f61642e75706c6f616465720a52657346696c650a7100298171017d710228580500000066706174687103582600000075706c6f6164735c393231323031395f73745f6d61726b735f626f79735f6a765f312e747874710458080000007261775f6461746171055d7106285d7107285809000000392f32312f32303139710858020000007374710958050000006d61726b73710a5804000000626f7973710b58020000006a76710c655d710d28580300000053742e710e58060000004d61726b2773710f655d711028580100000050711158040000004e616d657112580400000054696d657113580200000053437114655d711528580100000031711658070000004c616d6d6572747117580500000031393a33387118580300000053742e711958060000004d61726b2773711a655d711b28580100000032711c58070000004772696666696e711d580500000031393a3433711e580300000053742e711f58060000004d61726b27737120655d7121285801000000337122580500000043726f66747123580500000031393a35377124580300000053742e712558060000004d61726b27737126655d7127285801000000347128580400000048756e747129580500000031393a3539712a580300000053742e712b58060000004d61726b2773712c655d712d28580100000035712e580600000057616c746f6e712f580500000032303a30397130580300000053742e713158060000005061756c27737132655d7133285801000000367134580800000043616d7062656c6c7135580500000032303a31307136580300000053742e713758060000005061756c27737138655d713928580100000037713a580500000048656e7279713b580500000032303a3230713c580300000053742e713d58060000004d61726b2773713e655d713f285801000000397140580b0000004368616e7368616e7775747141580500000032303a35317142580300000053742e714358060000004d61726b27737144655d71452858020000003130714658070000004f73626f726e657147580500000032313a30317148580300000053742e714958060000004d61726b2773714a655d714b2858020000003131714c58040000005a686f75714d580500000032313a3034714e580300000053742e714f58060000004d61726b27737150655d71512858020000003132715258050000004d616372697153580500000032313a31317154580300000053742e715558060000004d61726b27737156655d7157285802000000313371585805000000486f67616e7159580500000032313a3239715a580700000042656c6d6f6e74715b580400000048696c6c715c655d715d2858020000003134715e5807000000436861706d616e715f580500000032313a33307160580300000053742e716158060000005061756c27737162655d71632858020000003135716458030000004d616f7165580500000032313a34307166580300000053742e716758060000005061756c27737168655d71692858020000003136716a58050000004a6f6e6573716b580500000032313a3431716c580300000053742e716d58060000004d61726b2773716e655d716f28580200000031377170580500000042756e64797171580500000032313a35307172580300000053742e717358060000004d61726b27737174655d71752858020000003138717658070000005761726d696e677177580500000032313a35337178580700000042656c6d6f6e747179580400000048696c6c717a655d717b2858020000003139717c580a000000446967756d6172746869717d580500000032313a3537717e580700000042656c6d6f6e74717f580400000048696c6c7180655d71812858020000003230718258060000004275726467657183580500000032323a30337184580300000053742e718558060000005061756c27737186655d71872858020000003231718858040000005869616f7189580500000032323a3035718a580300000053742e718b58060000005061756c2773718c655d718d2858020000003232718e5807000000426974746e6572718f580500000032323a30377190580700000042656c6d6f6e747191580400000048696c6c7192655d71932858020000003233719458050000004875616e677195580500000032323a31377196580700000042656c6d6f6e747197580400000048696c6c7198655d71992858020000003234719a58070000005279636b6d616e719b580500000032323a3139719c580300000053742e719d58060000004d61726b2773719e655d719f285802000000323571a0580700000050657374616e6171a1580500000032323a323071a2580300000053742e71a358060000004d61726b277371a4655d71a5285802000000323671a658040000004b6c756771a7580500000032333a333171a8580700000042656c6d6f6e7471a9580400000048696c6c71aa655d71ab285802000000323771ac58090000004465747765696c657271ad580500000032333a343171ae580300000053742e71af58060000005061756c277371b0655d71b1285802000000323871b2580600000048656261726471b3580800000032343a30303a303071b4580700000042656c6d6f6e7471b5580400000048696c6c71b6655d71b7285802000000323971b85805000000466572726f71b9580800000032343a31323a303071ba580300000053742e71bb58060000005061756c277371bc655d71bd285802000000333071be580400000050796e6571bf580800000032343a31363a303071c0580300000053742e71c158060000004d61726b277371c2655d71c3285802000000333171c458040000005275707071c5580800000032343a32303a303071c6580700000042656c6d6f6e7471c7580400000048696c6c71c8655d71c9285802000000333271ca58090000004d63436f726d69636b71cb580800000032343a32363a303071cc580700000042656c6d6f6e7471cd580400000048696c6c71ce655d71cf285802000000333371d0580e0000004e6963686f6c732d576f726c657971d1580800000032353a30323a303071d2580300000053742e71d358060000004d61726b277371d4655d71d5285802000000333471d6580300000057656971d7580800000032353a34333a303071d8580300000053742e71d958060000004d61726b277371da655d71db285802000000333571dc58050000004576616e7371dd580800000032363a31353a303071de580300000053742e71df58060000005061756c277371e0655d71e1285802000000333671e2580b00000043616e6e6973747261726f71e3580800000032363a33303a303071e4580700000042656c6d6f6e7471e5580400000048696c6c71e6655d71e7285802000000333771e858020000004d2e71e958020000004d6171ea580800000032363a35393a303071eb580300000053742e71ec58060000004d61726b277371ed655d71ee285802000000333871ef580500000057656c6c7371f0580800000032373a34333a303071f1580700000042656c6d6f6e7471f2580400000048696c6c71f3655d71f4285802000000333971f5580900000053746576656e736f6e71f6580800000032373a34353a303071f7580700000042656c6d6f6e7471f8580400000048696c6c71f9655d71fa285802000000343071fb5804000000526f6d6571fc580800000032383a34303a303071fd580300000053742e71fe58060000004d61726b277371ff655d72000100002858020000003431720101000058090000004d756c766968696c6c7202010000580800000032393a33343a30307203010000580300000053742e720401000058060000004d61726b277372050100006565580600000068656164657272060100005d720701000028581a000000392f32312f32303139207374206d61726b7320626f7973206a767208010000580a00000053742e204d61726b27737209010000580e00000050204e616d652054696d65205343720a01000065580400000064617461720b0100005d720c010000287d720d010000285805000000706c616365720e0100006816580400000074696d65720f0100004a90f91100580a00000066697273745f6e616d657210010000681758090000006c6173745f6e616d657211010000580000000072120100005809000000677261645f7965617272130100004e58060000007363686f6f6c7214010000580a00000053742e204d61726b27737215010000580600000067656e64657272160100004e58070000007465616d5f696472170100004b37757d7218010000286a0e010000681c6a0f0100004a180d12006a10010000681d6a110100006a120100006a130100004e6a14010000580a00000053742e204d61726b277372190100006a160100004e6a170100004b37757d721a010000286a0e01000068226a0f0100004ac84312006a1001000068236a110100006a120100006a130100004e6a14010000580a00000053742e204d61726b2773721b0100006a160100004e6a170100004b37757d721c010000286a0e01000068286a0f0100004a984b12006a1001000068296a110100006a120100006a130100004e6a14010000580a00000053742e204d61726b2773721d0100006a160100004e6a170100004b37757d721e010000286a0e010000682e6a0f0100004aa87212006a10010000682f6a110100006a120100006a130100004e6a14010000580a00000053742e205061756c2773721f0100006a160100004e6a170100004d0802757d7220010000286a0e01000068346a0f0100004a907612006a1001000068356a110100006a120100006a130100004e6a14010000580a00000053742e205061756c277372210100006a160100004e6a170100004d0802757d7222010000286a0e010000683a6a0f0100004aa09d12006a10010000683b6a110100006a120100006a130100004e6a14010000580a00000053742e204d61726b277372230100006a160100004e6a170100004b37757d7224010000286a0e01000068406a0f0100004ab81613006a1001000068416a110100006a120100006a130100004e6a14010000580a00000053742e204d61726b277372250100006a160100004e6a170100004b37757d7226010000286a0e01000068466a0f0100004ac83d13006a1001000068476a110100006a120100006a130100004e6a14010000580a00000053742e204d61726b277372270100006a160100004e6a170100004b37757d7228010000286a0e010000684c6a0f0100004a804913006a10010000684d6a110100006a120100006a130100004e6a14010000580a00000053742e204d61726b277372290100006a160100004e6a170100004b37757d722a010000286a0e01000068526a0f0100004ad86413006a1001000068536a110100006a120100006a130100004e6a14010000580a00000053742e204d61726b2773722b0100006a160100004e6a170100004b37757d722c010000286a0e01000068586a0f0100004a28ab13006a1001000068596a110100006a120100006a130100004e6a14010000580c00000042656c6d6f6e742048696c6c722d0100006a160100004e6a170100004b2b757d722e010000286a0e010000685e6a0f0100004a10af13006a10010000685f6a110100006a120100006a130100004e6a14010000580a00000053742e205061756c2773722f0100006a160100004e6a170100004d0802757d7230010000286a0e01000068646a0f0100004a20d613006a1001000068656a110100006a120100006a130100004e6a14010000580a00000053742e205061756c277372310100006a160100004e6a170100004d0802757d7232010000286a0e010000686a6a0f0100004a08da13006a10010000686b6a110100006a120100006a130100004e6a14010000580a00000053742e204d61726b277372330100006a160100004e6a170100004b37757d7234010000286a0e01000068706a0f0100004a30fd13006a1001000068716a110100006a120100006a130100004e6a14010000580a00000053742e204d61726b277372350100006a160100004e6a170100004b37757d7236010000286a0e01000068766a0f0100004ae80814006a1001000068776a110100006a120100006a130100004e6a14010000580c00000042656c6d6f6e742048696c6c72370100006a160100004e6a170100004b2b757d7238010000286a0e010000687c6a0f0100004a881814006a10010000687d6a110100006a120100006a130100004e6a14010000580c00000042656c6d6f6e742048696c6c72390100006a160100004e6a170100004b2b757d723a010000286a0e01000068826a0f0100004af82f14006a1001000068836a110100006a120100006a130100004e6a14010000580a00000053742e205061756c2773723b0100006a160100004e6a170100004d0802757d723c010000286a0e01000068886a0f0100004ac83714006a1001000068896a110100006a120100006a130100004e6a14010000580a00000053742e205061756c2773723d0100006a160100004e6a170100004d0802757d723e010000286a0e010000688e6a0f0100004a983f14006a10010000688f6a110100006a120100006a130100004e6a14010000580c00000042656c6d6f6e742048696c6c723f0100006a160100004e6a170100004b2b757d7240010000286a0e01000068946a0f0100004aa86614006a1001000068956a110100006a120100006a130100004e6a14010000580c00000042656c6d6f6e742048696c6c72410100006a160100004e6a170100004b2b757d7242010000286a0e010000689a6a0f0100004a786e14006a10010000689b6a110100006a120100006a130100004e6a14010000580a00000053742e204d61726b277372430100006a160100004e6a170100004b37757d7244010000286a0e01000068a06a0f0100004a607214006a1001000068a16a110100006a120100006a130100004e6a14010000580a00000053742e204d61726b277372450100006a160100004e6a170100004b37757d7246010000286a0e01000068a66a0f0100004ab88715006a1001000068a76a110100006a120100006a130100004e6a14010000580c00000042656c6d6f6e742048696c6c72470100006a160100004e6a170100004b2b757d7248010000286a0e01000068ac6a0f0100004ac8ae15006a1001000068ad6a110100006a120100006a130100004e6a14010000580a00000053742e205061756c277372490100006a160100004e6a170100004d0802757d724a010000286a0e01000068b26a0f0100004a00f915006a1001000068b36a110100006a120100006a130100004e6a14010000580c00000042656c6d6f6e742048696c6c724b0100006a160100004e6a170100004b2b757d724c010000286a0e01000068b86a0f0100004ae02716006a1001000068b96a110100006a120100006a130100004e6a14010000580a00000053742e205061756c2773724d0100006a160100004e6a170100004d0802757d724e010000286a0e01000068be6a0f0100004a803716006a1001000068bf6a110100006a120100006a130100004e6a14010000580a00000053742e204d61726b2773724f0100006a160100004e6a170100004b37757d7250010000286a0e01000068c46a0f0100004a204716006a1001000068c56a110100006a120100006a130100004e6a14010000580c00000042656c6d6f6e742048696c6c72510100006a160100004e6a170100004b2b757d7252010000286a0e01000068ca6a0f0100004a905e16006a1001000068cb6a110100006a120100006a130100004e6a14010000580c00000042656c6d6f6e742048696c6c72530100006a160100004e6a170100004b2b757d7254010000286a0e01000068d06a0f0100004a30eb16006a1001000068d16a110100006a120100006a130100004e6a14010000580a00000053742e204d61726b277372550100006a160100004e6a170100004b37757d7256010000286a0e01000068d66a0f0100004a588b17006a1001000068d76a110100006a120100006a130100004e6a14010000580a00000053742e204d61726b277372570100006a160100004e6a170100004b37757d7258010000286a0e01000068dc6a0f0100004a580818006a1001000068dd6a110100006a120100006a130100004e6a14010000580a00000053742e205061756c277372590100006a160100004e6a170100004d0802757d725a010000286a0e01000068e26a0f0100004af04218006a1001000068e36a110100006a120100006a130100004e6a14010000580c00000042656c6d6f6e742048696c6c725b0100006a160100004e6a170100004b2b757d725c010000286a0e01000068e86a0f0100004a38b418006a1001000058020000004d2e725d0100006a1101000058020000004d61725e0100006a130100004e6a14010000580a00000053742e204d61726b2773725f0100006a160100004e6a170100004b37757d7260010000286a0e01000068ef6a0f0100004a186019006a1001000068f06a110100006a120100006a130100004e6a14010000580c00000042656c6d6f6e742048696c6c72610100006a160100004e6a170100004b2b757d7262010000286a0e01000068f56a0f0100004ae86719006a1001000068f66a110100006a120100006a130100004e6a14010000580c00000042656c6d6f6e742048696c6c72630100006a160100004e6a170100004b2b757d7264010000286a0e01000068fb6a0f0100004ac03e1a006a1001000068fc6a110100006a120100006a130100004e6a14010000580a00000053742e204d61726b277372650100006a160100004e6a170100004b37757d7266010000286a0e0100006a010100006a0f0100004ab0111b006a100100006a020100006a110100006a120100006a130100004e6a14010000580a00000053742e204d61726b277372670100006a160100004e6a170100004b377565580a0000007363686f6f6c5f6d6170726801000063636f6c6c656374696f6e730a4f726465726564446963740a72690100002952726a010000286a2d0100004b0b6a150100004b176a1f0100004b3075580a00000072756e6e65725f6d6170726b0100006a690100002952726c010000284b1c4d001b4b194d39174b234dc2064b064d90174b144da6064b004dfe054b014d1c064b024d65064b034d68064b044d3f0e4b054d400e4b074dae064b084d8f064b094d5f064b0a4d5b064b0b4d72064b0c4d8f174b0d4d450e4b0e4d3f144b0f4d75064b104db5064b114d7e064b124dc1174b134dd2174b154d8d064b164d9b144b174d9e064b184dbe064b1a4dc3064b1b4d390e4b1d4da4064b1e4df5064b1f4d9a144b204db6064b214d3a0e4b224d37074b244d1a074b254d10074b264d1f074b274d3207755809000000726163655f64617465726d010000636461746574696d650a6461746574696d650a726e010000430a07e30915100000000000726f0100008572700100005272710100005809000000726163655f6e616d657272010000581500000042482c205350532061742053742e204d61726b27737273010000580b000000726163655f67656e64657272740100005804000000626f79737275010000580f000000726163655f766172736974795f6a76727601000058020000006a7672770100005811000000726163655f73636f72696e675f74797065727801000058040000006475616c72790100005810000000726163655f6c6f636174696f6e5f6964727a0100004b03580e000000726163655f636f757273655f6964727b0100004b035813000000726163655f686f73745f7363686f6f6c5f6964727c0100004e5807000000726163655f6964727d0100004e75622e71075807000000757365725f69647108580100000031710958060000005f6672657368710a89752e	2024-03-17 20:22:27.379963
+\.
+
+
+--
+-- Data for Name: team_roster; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+COPY public.team_roster (team_id, runner_id) FROM stdin;
+1	1190
+1	120
+1	70
+1	69
+1	68
+1	67
+1	66
+1	65
+1	64
+1	63
+1	62
+1	61
+1	60
+1	59
+1	58
+1	57
+1	56
+2	119
+2	118
+2	117
+2	116
+2	115
+2	114
+2	113
+2	112
+2	111
+2	110
+2	109
+2	108
+2	107
+2	106
+2	105
+2	104
+2	103
+2	102
+3	44
+3	43
+3	42
+3	41
+3	40
+3	39
+3	38
+3	37
+3	36
+3	35
+3	34
+3	33
+3	32
+3	31
+3	30
+3	29
+3	28
+3	27
+3	26
+3	25
+4	87
+4	86
+4	85
+4	84
+4	83
+4	82
+4	81
+4	80
+4	79
+4	78
+4	77
+4	76
+4	75
+4	73
+4	72
+4	71
+5	101
+5	100
+5	99
+5	98
+5	97
+5	96
+5	95
+5	94
+5	93
+5	92
+5	91
+5	90
+5	89
+5	88
+6	24
+6	23
+6	21
+6	20
+6	18
+6	16
+6	15
+7	14
+7	13
+7	12
+7	11
+7	10
+7	9
+7	8
+8	55
+8	54
+8	53
+8	52
+8	51
+8	50
+8	49
+8	48
+8	47
+8	46
+8	45
+9	5
+9	4
+9	3
+9	2
+9	1
+10	7
+10	6
+13	2724
+13	2690
+13	2657
+13	2643
+13	2610
+13	1086
+13	1083
+13	1071
+13	1066
+13	1056
+13	1035
+13	1027
+13	1195
+416	6279
+13	1146
+13	1135
+13	1126
+13	1121
+14	2714
+14	1112
+14	1103
+14	1102
+14	1091
+14	1074
+14	1061
+14	1058
+14	1217
+14	1198
+14	1188
+15	2691
+15	2629
+15	1104
+15	1098
+15	1090
+15	1057
+15	1047
+15	1004
+15	1208
+15	1207
+15	1205
+15	1196
+15	1181
+15	1177
+15	1172
+15	1171
+15	1144
+15	1141
+17	2733
+17	2730
+17	2720
+17	2715
+17	2703
+17	2687
+17	2682
+17	2653
+17	2652
+17	2512
+17	1037
+17	1036
+17	1033
+17	1030
+17	1026
+17	1025
+17	1010
+17	1202
+17	1201
+17	1175
+17	1163
+17	1157
+17	1147
+17	1136
+17	1132
+17	1122
+17	1118
+23	2620
+23	2732
+23	2731
+23	2729
+23	2726
+23	2712
+23	2708
+23	2707
+23	2705
+23	2704
+23	2699
+23	2688
+23	1095
+23	1094
+23	1085
+23	1067
+23	1048
+23	1043
+23	1034
+23	1194
+23	1180
+23	1160
+23	1159
+23	1156
+23	1155
+23	1153
+23	1145
+23	1138
+23	1133
+23	1127
+25	2727
+25	2582
+25	2576
+25	1114
+25	1111
+25	1109
+25	1087
+25	1076
+25	1024
+25	1212
+25	1211
+26	2722
+26	2697
+26	2641
+26	1032
+26	1013
+26	1012
+26	1005
+26	1003
+26	1204
+26	1185
+26	1173
+26	1168
+26	1162
+26	1151
+26	1148
+26	1142
+26	1140
+26	1128
+26	1123
+26	1119
+27	1101
+27	1084
+27	1082
+27	1055
+27	1031
+28	1075
+28	1073
+28	1072
+28	1065
+28	1020
+29	1060
+29	1054
+29	1050
+29	1041
+29	1038
+379	6282
+29	1015
+29	1197
+29	1189
+29	1183
+29	1170
+29	1167
+29	1166
+29	1165
+29	1154
+29	1143
+29	1125
+29	1124
+29	1120
+30	1108
+30	1106
+30	1105
+30	1100
+30	1081
+30	1052
+30	1051
+30	1210
+30	1203
+30	1200
+30	1193
+30	1192
+30	1182
+30	1174
+31	1107
+31	1092
+31	1068
+31	1049
+31	1044
+31	1011
+31	1215
+31	1139
+32	1113
+32	1079
+32	1045
+32	1042
+32	1023
+32	1014
+32	1007
+33	1096
+33	1080
+33	1059
+33	1040
+33	1029
+33	1009
+33	1006
+33	1209
+33	1191
+33	1187
+33	1186
+33	1184
+33	1179
+33	1152
+33	1150
+33	1149
+33	1134
+33	1131
+33	1130
+34	1116
+34	1115
+34	1110
+34	1097
+34	1008
+35	330
+35	309
+35	308
+35	298
+35	297
+35	278
+35	272
+35	268
+35	267
+35	259
+35	249
+35	245
+35	239
+35	227
+35	226
+35	209
+35	204
+36	327
+36	324
+36	319
+36	318
+36	316
+36	312
+36	303
+36	301
+36	289
+36	286
+36	281
+36	273
+36	271
+36	263
+36	261
+36	256
+36	253
+36	252
+36	247
+36	217
+36	203
+37	325
+37	320
+37	314
+37	311
+37	291
+37	290
+37	262
+37	250
+37	235
+37	234
+37	232
+37	228
+37	223
+37	221
+37	213
+37	212
+37	201
+38	328
+38	322
+38	315
+38	310
+38	287
+38	276
+38	275
+38	270
+38	266
+38	260
+38	240
+38	222
+39	321
+39	317
+39	306
+39	300
+39	296
+39	283
+39	265
+39	218
+40	323
+40	313
+40	293
+40	284
+40	274
+40	269
+40	264
+40	258
+40	257
+40	255
+40	244
+40	243
+40	237
+40	224
+41	326
+41	305
+41	302
+41	295
+41	292
+41	285
+41	282
+41	280
+41	279
+41	251
+41	248
+41	230
+41	229
+41	225
+41	220
+41	206
+42	329
+42	307
+42	299
+42	246
+42	242
+42	241
+42	238
+42	219
+42	216
+42	214
+42	211
+42	210
+42	208
+42	202
+43	1847
+43	1818
+43	1808
+43	1781
+43	1737
+43	1734
+43	1731
+43	1726
+43	1717
+43	1702
+43	1700
+43	1696
+43	1677
+43	1671
+43	1665
+43	1662
+43	1651
+43	1650
+43	1602
+43	1573
+43	1566
+43	1558
+43	1557
+43	1530
+43	1506
+44	1863
+44	1857
+44	1856
+44	1854
+44	1851
+44	1834
+44	1822
+44	1814
+44	1807
+44	1805
+44	1801
+44	1795
+44	1769
+44	1762
+44	1604
+44	1601
+44	1599
+44	1597
+44	1592
+44	1523
+45	1848
+45	1844
+45	1835
+45	1831
+45	1828
+45	1792
+45	1791
+45	1786
+45	1777
+45	1760
+45	1733
+45	1724
+45	1723
+45	1720
+492	6283
+45	1686
+45	1594
+45	1585
+45	1576
+45	1562
+45	1537
+45	1524
+46	1840
+46	1833
+46	1811
+46	1790
+46	1745
+46	1600
+46	1596
+46	1593
+46	1589
+46	1579
+46	1569
+47	1858
+47	1849
+47	1821
+47	1809
+47	1753
+47	1739
+47	1738
+47	1727
+47	1716
+47	1698
+47	1697
+47	1695
+47	1685
+47	1680
+47	1660
+47	1657
+47	1649
+47	1625
+47	1624
+47	1623
+47	1622
+47	1620
+47	1560
+47	1555
+47	1552
+47	1542
+47	1527
+47	1526
+47	1517
+48	1860
+48	1852
+48	1837
+48	1827
+48	1803
+48	1799
+48	1778
+48	1770
+48	1611
+48	1608
+48	1598
+48	1574
+48	1561
+48	1554
+48	1501
+49	1841
+49	1832
+49	1825
+49	1817
+49	1804
+49	1784
+49	1765
+49	1756
+49	1755
+49	1748
+49	1741
+49	1736
+49	1715
+49	1703
+49	1669
+49	1641
+49	1634
+49	1633
+49	1619
+49	1617
+49	1616
+49	1615
+49	1614
+49	1613
+49	1522
+49	1520
+49	1516
+49	1512
+49	1510
+49	1508
+49	1505
+50	1830
+50	1819
+50	1816
+50	1806
+492	6366
+50	1796
+50	1775
+50	1771
+50	1759
+50	1722
+50	1719
+50	1693
+50	1689
+50	1684
+50	1683
+50	1670
+50	1667
+50	1654
+50	1652
+50	1644
+50	1628
+50	1587
+50	1586
+50	1565
+50	1556
+50	1547
+50	1538
+50	1507
+51	1853
+51	1845
+51	1838
+51	1826
+51	1810
+51	1800
+51	1797
+51	1793
+51	1789
+51	1782
+51	1776
+51	1767
+51	1766
+51	1764
+51	1749
+51	1747
+51	1744
+51	1740
+51	1725
+51	1709
+51	1705
+51	1704
+51	1692
+51	1690
+51	1681
+51	1678
+51	1675
+51	1673
+51	1672
+51	1663
+51	1661
+51	1659
+51	1647
+51	1636
+51	1635
+51	1590
+51	1577
+51	1563
+51	1553
+51	1545
+51	1536
+51	1519
+52	1815
+52	1729
+52	1708
+52	1701
+52	1691
+52	1687
+52	1646
+52	1606
+52	1605
+52	1584
+52	1568
+52	1540
+52	1511
+53	2998
+53	2982
+53	1850
+53	1742
+53	1714
+53	1664
+53	1656
+53	1643
+53	1626
+53	1621
+53	1618
+53	1535
+53	1525
+53	1515
+53	1513
+53	1509
+376	6284
+53	1500
+54	1839
+54	1820
+54	1780
+54	1772
+54	1763
+54	1758
+54	1754
+54	1743
+54	1735
+54	1712
+54	1674
+54	1666
+54	1591
+54	1588
+54	1583
+54	1572
+54	1570
+54	1551
+54	1539
+55	1861
+55	1859
+55	1855
+55	1842
+55	1823
+55	1798
+55	1730
+55	1718
+55	1710
+55	1707
+55	1694
+55	1679
+55	1653
+55	1640
+55	1637
+55	1631
+55	1627
+55	1564
+55	1549
+55	1534
+55	1533
+55	1521
+55	1514
+55	1503
+56	1829
+56	1783
+56	1761
+56	1757
+56	1752
+56	1610
+56	1595
+56	1548
+56	1543
+56	1532
+56	1531
+56	1529
+57	3052
+57	1843
+57	1813
+57	1794
+57	1788
+57	1751
+57	1750
+57	1676
+57	1668
+57	1648
+57	1645
+57	1639
+57	1567
+57	1559
+57	1550
+57	1546
+57	1541
+57	1528
+57	1518
+58	2889
+58	1836
+58	1779
+58	1774
+58	1768
+58	1682
+58	1580
+58	1575
+58	1571
+58	1544
+58	1504
+59	2586
+59	2579
+59	2554
+59	2553
+59	2544
+60	2713
+60	2583
+60	2581
+60	2578
+60	2572
+60	2568
+60	2563
+60	2555
+61	2719
+61	2718
+61	2696
+61	2694
+61	2689
+61	2683
+61	2677
+61	2676
+61	2670
+61	2655
+61	2645
+61	2644
+61	2637
+61	2621
+61	2616
+61	2615
+61	2614
+61	2599
+61	2598
+61	2593
+61	2542
+61	2539
+61	2537
+61	2534
+61	2515
+61	2507
+61	2505
+62	2728
+62	2725
+62	2721
+62	2717
+62	2716
+62	2711
+62	2710
+62	2674
+62	2673
+62	2664
+62	2662
+62	2654
+62	2651
+62	2630
+62	2627
+62	2622
+62	2619
+62	2618
+62	2617
+62	2613
+62	2609
+62	2606
+62	2605
+62	2603
+62	2594
+62	2591
+62	2519
+62	2517
+62	2510
+62	2509
+62	2508
+62	2504
+63	2584
+63	2564
+63	2558
+63	2536
+63	2500
+64	2685
+64	2679
+64	2678
+64	2671
+64	2612
+64	2597
+64	2567
+64	2551
+64	2547
+64	2543
+64	2535
+64	2526
+64	2522
+120	3050
+120	3037
+120	3027
+120	3019
+120	3010
+120	3008
+120	2986
+120	2969
+120	2890
+120	2880
+120	2868
+120	2858
+120	2852
+120	2849
+120	2817
+121	3031
+121	3007
+121	3001
+121	2991
+121	2989
+121	2976
+121	2972
+121	2971
+121	2963
+121	2955
+121	2952
+121	2875
+121	2862
+121	2856
+121	2831
+121	2828
+121	2812
+121	2807
+122	3020
+122	3003
+122	2996
+122	2988
+122	2981
+122	2980
+122	2979
+122	2975
+122	2966
+122	2957
+122	2954
+122	2941
+122	2896
+122	2893
+122	2884
+122	2878
+122	2857
+122	2853
+122	2829
+123	3035
+123	3021
+123	3016
+123	3012
+123	2968
+123	2936
+123	2894
+123	2888
+123	2869
+123	2863
+123	2860
+123	2855
+123	2805
+124	3044
+124	3043
+124	3040
+124	3039
+124	3032
+124	3018
+124	3006
+124	3005
+124	2983
+124	2908
+124	2906
+124	2905
+124	2904
+124	2900
+124	2814
+125	3033
+125	3014
+125	3011
+125	3004
+125	2994
+125	2974
+125	2950
+125	2948
+125	2942
+125	2927
+125	2926
+125	2891
+125	2885
+125	2864
+125	2833
+125	2826
+125	2808
+126	3051
+126	3049
+126	3047
+126	3041
+126	3038
+126	3009
+126	2909
+126	2899
+126	2897
+126	2887
+126	2848
+126	2837
+127	2883
+127	2882
+127	2874
+127	2854
+127	2850
+127	2841
+128	3053
+195	3053
+128	3054
+128	3055
+128	3056
+195	3056
+128	3057
+195	3057
+128	3058
+195	3058
+128	3059
+128	3060
+128	3061
+195	3061
+128	1717
+128	3062
+195	3062
+128	1506
+128	3064
+195	3064
+128	3065
+195	3065
+128	3066
+195	3066
+128	3067
+128	1566
+128	3068
+195	3068
+129	3070
+203	3070
+129	1659
+203	1659
+129	1563
+129	3071
+203	3071
+129	3072
+203	3072
+129	1673
+203	1673
+129	3073
+203	3073
+129	3074
+129	3075
+129	3076
+129	3077
+203	3077
+129	3078
+129	3079
+203	3079
+129	3080
+129	1672
+129	3081
+203	3081
+129	1776
+129	3082
+129	3083
+129	1690
+129	1766
+129	3084
+129	3085
+203	3085
+129	3086
+203	3086
+129	3087
+203	3087
+129	1681
+203	1681
+129	1663
+129	1636
+129	1749
+130	3088
+130	2622
+202	2622
+130	3089
+202	3089
+130	3090
+130	3091
+202	3091
+130	2603
+130	3092
+130	3093
+130	3094
+130	3095
+202	3095
+130	2606
+130	2654
+130	3097
+130	2630
+130	3098
+130	3099
+130	3100
+130	3101
+130	2728
+130	2504
+130	3102
+202	3102
+130	2517
+130	2617
+202	2617
+130	3103
+130	2594
+202	2594
+130	3104
+202	3104
+131	3105
+131	1741
+131	3106
+331	3106
+131	3107
+331	3107
+131	1804
+331	1804
+131	3108
+131	3109
+131	3110
+131	3111
+331	3111
+131	3113
+331	3113
+131	3114
+131	3115
+131	3116
+131	3117
+131	3118
+331	3118
+131	3119
+131	1520
+331	1520
+131	1508
+131	1613
+331	1613
+131	1715
+331	1715
+131	1669
+331	1669
+131	3120
+131	3121
+132	3123
+332	3123
+132	3124
+132	3125
+132	3126
+132	3127
+132	3128
+132	3129
+132	2687
+132	2720
+132	3130
+132	3131
+132	2682
+132	3132
+132	3133
+132	3134
+132	1026
+132	3136
+332	3136
+132	1025
+132	3137
+332	3137
+132	3138
+132	3139
+332	3139
+132	1118
+132	3140
+133	3141
+212	3141
+133	3142
+212	3142
+133	3144
+212	3144
+133	3145
+212	3145
+133	3146
+133	2998
+133	3147
+376	6285
+133	1513
+133	3148
+212	3148
+133	1643
+212	1643
+133	1535
+133	1618
+212	1618
+134	1625
+210	1625
+134	1660
+134	3154
+210	3154
+134	3155
+134	3156
+210	3156
+134	3157
+210	3157
+134	3158
+210	3158
+134	3159
+134	3160
+134	3161
+210	3161
+134	1517
+210	1517
+134	1622
+134	1680
+384	6367
+416	6377
+134	3164
+134	1624
+135	3166
+211	3166
+135	1172
+211	1172
+135	3167
+135	3168
+135	3169
+135	3170
+135	1104
+211	1104
+135	3171
+211	3171
+135	3172
+135	3173
+135	3174
+135	3175
+135	2629
+211	2629
+135	3176
+135	3177
+136	1654
+136	1586
+189	1586
+136	1693
+189	1693
+136	3181
+136	3185
+189	3185
+136	1719
+136	3187
+136	3188
+136	1771
+136	1816
+136	3189
+136	1775
+136	3190
+136	3191
+136	3193
+136	3194
+136	3195
+189	3195
+136	1547
+136	1565
+136	1670
+189	1670
+137	3199
+137	3200
+137	3201
+137	3202
+137	3203
+190	3203
+137	3204
+137	3206
+137	2719
+137	2670
+137	3207
+137	3208
+137	2505
+137	2534
+190	2534
+137	3209
+190	3209
+137	3210
+190	3210
+137	2537
+137	2515
+190	2515
+137	3211
+190	3211
+137	3212
+190	3212
+138	3214
+138	3215
+138	3216
+138	3217
+138	3218
+138	1757
+138	3220
+138	1829
+138	3221
+138	3222
+138	1531
+138	1543
+138	3223
+138	3224
+138	1610
+138	3225
+138	3226
+139	3227
+139	1608
+139	1803
+139	3229
+272	3229
+139	3230
+139	3231
+139	3232
+139	3233
+272	3233
+139	1561
+139	3235
+139	3237
+272	3237
+139	3239
+140	2572
+140	3242
+140	3243
+140	3244
+140	3245
+140	3246
+140	3248
+141	3249
+266	3249
+141	1815
+266	1815
+141	1701
+266	1701
+141	3250
+266	3250
+141	1687
+141	3251
+141	3252
+266	3252
+141	3254
+141	1708
+266	1708
+141	3255
+266	3255
+142	2558
+142	3259
+142	3260
+142	3261
+267	3261
+142	2584
+267	2584
+142	3263
+143	1851
+143	1805
+274	1805
+143	3265
+274	3265
+143	3266
+143	1801
+143	1762
+143	3268
+143	3269
+274	3269
+143	1523
+143	3271
+143	3272
+143	3273
+144	3278
+144	3280
+275	3280
+144	3281
+144	3284
+275	3284
+144	2544
+144	3285
+275	3285
+144	3286
+275	3286
+145	3290
+145	3291
+145	1792
+335	1792
+145	3292
+335	3292
+145	3294
+145	1835
+145	3296
+145	3297
+377	6286
+377	6287
+145	3299
+145	3300
+145	3301
+145	3302
+145	1724
+335	1724
+446	6292
+375	6297
+146	3306
+375	6300
+438	6304
+146	2643
+146	3309
+146	3310
+336	3310
+146	3311
+336	3311
+146	1071
+146	3313
+147	1859
+147	3319
+147	3323
+197	3323
+147	3326
+197	3326
+147	3331
+197	3331
+148	3339
+148	3340
+148	1043
+198	1043
+148	3342
+148	3343
+148	2708
+148	3344
+148	3345
+148	3346
+198	3346
+148	1155
+148	3349
+148	1160
+198	1160
+148	1159
+148	3350
+149	1779
+149	1768
+149	3353
+225	3353
+149	3354
+149	1836
+225	1836
+149	3355
+225	3355
+149	3357
+149	3358
+149	1580
+149	3359
+149	3360
+149	3361
+225	3361
+149	3363
+149	2889
+150	3364
+150	3366
+226	3366
+150	3367
+150	3368
+226	3368
+150	3369
+150	3370
+226	3370
+150	1151
+226	1151
+150	3371
+150	3372
+226	3372
+150	3373
+150	3374
+150	1173
+226	1173
+150	1012
+226	1012
+150	1119
+150	3375
+150	1013
+226	1013
+150	3377
+151	3381
+151	3382
+151	1788
+223	1788
+151	3384
+151	3385
+151	3386
+151	3387
+223	3387
+151	3388
+223	3388
+151	3052
+223	3052
+151	1645
+151	3391
+151	1639
+151	3393
+151	3394
+152	3396
+152	3397
+152	3398
+224	3398
+152	1109
+152	3399
+224	3399
+152	3400
+152	3401
+152	1212
+152	3402
+153	3403
+153	3405
+153	1674
+153	3409
+352	3409
+153	1772
+153	3412
+352	3412
+154	3416
+353	3416
+154	3417
+353	3417
+154	3418
+154	3419
+154	3420
+154	2597
+154	3421
+353	3421
+154	3422
+353	3422
+154	3423
+154	2612
+154	3427
+353	3427
+154	3428
+353	3428
+155	3437
+337	3437
+156	1074
+156	3456
+156	1061
+157	3471
+157	3472
+157	3473
+159	3473
+157	3474
+157	3475
+159	3475
+157	3476
+159	3476
+157	3477
+159	3477
+157	3478
+159	3478
+157	3479
+157	3480
+157	3481
+157	3482
+159	3482
+157	3483
+159	3483
+157	3484
+157	3485
+157	3486
+159	3486
+157	3487
+159	3487
+157	3488
+159	3488
+157	3489
+159	3489
+158	3490
+158	3491
+158	3492
+160	3492
+158	3493
+158	3494
+158	3495
+158	3496
+160	3496
+158	3497
+158	3499
+160	3499
+158	3500
+160	3500
+158	3501
+158	3502
+160	3502
+158	3503
+160	3503
+158	3504
+160	3504
+158	3505
+160	3505
+158	3506
+160	3506
+158	3507
+159	3508
+159	3509
+159	3510
+159	3511
+159	3512
+159	3513
+159	3514
+159	3515
+160	3516
+160	3517
+160	3518
+160	3519
+160	3520
+160	3521
+160	3522
+160	3524
+161	3525
+163	3525
+161	3526
+163	3526
+161	3527
+163	3527
+161	3528
+161	3529
+163	3529
+161	3530
+163	3530
+161	3531
+161	3532
+161	3533
+161	3534
+161	3535
+163	3535
+161	3536
+163	3536
+161	3537
+161	3538
+163	3538
+161	3539
+163	3539
+161	3540
+161	3541
+161	3542
+161	3543
+162	3544
+162	3545
+164	3545
+162	3546
+162	3547
+162	3548
+164	3548
+162	3549
+164	3549
+162	3550
+162	3551
+164	3551
+162	3552
+164	3552
+162	3553
+162	3554
+162	3555
+162	3556
+162	3557
+164	3557
+162	3558
+162	3559
+163	3560
+163	3561
+163	3562
+163	3563
+163	3564
+163	3565
+163	3566
+163	3567
+163	3568
+164	3569
+164	3570
+164	3571
+164	3572
+164	3573
+164	3574
+164	3575
+164	3576
+165	3577
+165	3578
+167	3578
+165	3579
+167	3579
+165	3580
+167	3580
+165	3581
+165	3582
+165	3583
+165	3584
+165	3585
+167	3585
+165	3586
+165	3587
+165	3588
+165	3589
+165	3590
+165	3591
+167	3591
+166	3592
+166	3593
+168	3593
+166	3594
+166	3595
+166	3596
+166	3597
+168	3597
+166	3598
+166	3599
+166	3600
+168	3600
+166	3601
+166	3602
+166	3603
+166	3604
+168	3604
+166	3605
+168	3605
+166	3607
+166	3608
+168	3608
+166	3609
+166	3610
+168	3610
+167	3611
+167	3612
+167	3613
+167	3614
+167	3615
+167	3616
+167	3617
+167	3618
+167	3619
+167	3620
+167	3621
+167	3622
+167	3623
+167	3624
+168	3625
+168	3626
+168	3627
+168	3628
+168	3629
+168	3630
+168	3631
+168	3632
+168	3633
+168	3634
+168	3636
+169	3637
+169	3638
+169	3639
+169	3640
+169	3641
+169	3642
+171	3642
+169	3643
+171	3643
+169	3644
+171	3644
+169	3646
+171	3646
+169	3647
+171	3647
+169	3648
+171	3648
+169	3649
+171	3649
+169	3650
+169	3651
+171	3651
+169	3653
+171	3653
+170	3654
+170	3655
+170	3656
+170	3657
+170	3658
+172	3658
+170	3659
+170	3660
+170	3661
+170	3662
+172	3662
+170	3663
+170	3664
+170	3665
+172	3665
+170	3666
+170	3667
+170	3668
+170	3669
+170	3670
+172	3670
+171	3671
+171	3672
+171	3673
+171	3674
+171	3675
+171	3676
+171	3678
+171	3680
+172	3681
+172	3682
+172	3683
+172	3684
+172	3685
+172	3686
+172	3687
+172	3688
+173	3689
+173	3690
+175	3690
+173	3691
+173	3692
+173	3693
+175	3693
+173	3694
+175	3694
+173	3695
+175	3695
+173	3696
+173	3697
+173	3698
+173	3699
+173	3701
+173	3702
+173	3703
+173	3704
+173	3705
+175	3705
+173	3706
+173	3707
+174	3708
+174	3709
+174	3710
+174	3711
+174	3712
+176	3712
+174	3713
+174	3714
+174	3716
+176	3716
+174	3717
+174	3718
+175	3720
+175	3721
+175	3723
+175	3724
+175	3725
+175	3726
+176	3727
+176	3728
+176	3729
+176	3730
+176	3731
+176	3733
+176	3735
+176	3736
+176	3737
+177	3738
+177	3739
+177	3740
+177	3741
+179	3741
+177	3742
+179	3742
+177	3743
+177	3744
+179	3744
+177	3745
+179	3745
+177	3746
+179	3746
+177	3747
+177	3748
+177	3749
+179	3749
+177	3750
+177	3751
+177	3752
+179	3752
+177	3753
+179	3753
+177	3754
+179	3754
+177	3755
+179	3755
+177	3756
+179	3756
+178	3757
+178	3758
+178	3759
+180	3759
+178	3760
+180	3760
+178	3761
+178	3762
+178	3763
+180	3763
+178	3764
+178	3765
+180	3765
+178	3766
+180	3766
+179	3767
+179	3768
+179	3769
+179	3770
+179	3771
+179	3772
+179	3773
+179	3774
+180	3775
+180	3776
+180	3777
+180	3778
+180	3779
+180	3780
+180	3781
+180	3782
+181	3783
+183	3783
+181	3784
+181	3785
+181	3786
+181	3787
+181	3788
+183	3788
+181	3789
+181	3790
+181	3791
+181	3792
+181	3793
+183	3793
+181	3794
+183	3794
+181	3795
+181	3796
+183	3796
+181	3797
+183	3797
+181	3798
+181	3799
+183	3799
+181	3800
+183	3800
+181	3801
+183	3801
+182	3802
+184	3802
+182	3803
+184	3803
+182	3804
+182	3805
+182	3806
+182	3807
+184	3807
+182	3808
+182	3809
+184	3809
+182	3810
+184	3810
+182	3811
+184	3811
+182	3812
+182	3813
+182	3814
+182	3815
+184	3815
+183	3816
+183	3817
+183	3818
+183	3819
+183	3820
+183	3821
+183	3822
+183	3823
+183	3824
+183	3825
+184	3826
+184	3827
+184	3828
+184	3829
+184	3830
+184	3831
+184	3832
+185	3833
+185	3834
+187	3834
+185	3835
+187	3835
+185	3836
+185	3837
+187	3837
+185	3838
+187	3838
+185	3839
+185	3840
+187	3840
+185	3841
+185	3842
+185	3843
+187	3843
+185	3844
+185	3845
+185	3846
+187	3846
+185	3847
+187	3847
+185	3848
+185	3849
+187	3849
+185	3850
+187	3850
+185	3851
+186	3852
+186	3853
+188	3853
+186	3854
+188	3854
+186	3855
+188	3855
+186	3856
+186	3857
+186	3858
+186	3859
+188	3859
+186	3860
+186	3861
+188	3861
+186	3862
+186	3863
+188	3863
+187	3864
+187	3865
+187	3866
+187	3867
+187	3868
+187	3869
+187	3870
+187	3871
+188	3872
+188	3873
+188	3874
+188	3875
+188	3876
+188	3877
+188	3878
+188	3879
+188	3880
+188	3881
+188	3882
+189	3884
+189	3886
+189	3888
+189	3889
+189	3891
+189	3892
+189	3893
+190	3894
+190	3895
+190	3896
+190	3897
+190	3898
+190	3899
+190	3900
+444	6288
+190	3902
+190	3903
+190	3904
+191	3905
+193	3905
+191	3906
+191	3907
+191	3908
+191	3909
+191	3910
+191	3911
+193	3911
+191	3912
+193	3912
+191	3913
+191	3914
+193	3914
+191	3915
+193	3915
+191	3916
+193	3916
+191	3917
+193	3917
+191	3918
+191	3919
+192	3920
+192	3921
+194	3921
+192	3922
+192	3923
+194	3923
+192	3924
+192	3925
+194	3925
+192	3926
+192	3927
+192	3928
+192	3929
+192	3930
+194	3930
+192	3931
+192	3932
+194	3932
+192	3933
+194	3933
+192	3934
+194	3934
+192	3935
+192	3936
+194	3936
+192	3937
+194	3937
+192	3938
+193	3939
+193	3940
+193	3941
+193	3942
+193	3943
+194	3944
+194	3945
+194	3946
+195	3947
+195	3948
+195	3949
+195	3950
+195	3951
+195	3952
+195	3953
+195	3954
+195	3955
+196	3956
+196	3957
+330	3957
+196	3958
+196	3959
+196	3960
+196	3961
+196	3962
+330	3962
+196	3963
+330	3963
+196	3964
+196	3965
+196	3966
+196	3967
+330	3967
+196	3968
+330	3968
+196	3969
+330	3969
+196	3970
+330	3970
+196	3971
+330	3971
+196	3972
+330	3972
+196	3973
+196	3974
+330	3974
+197	1823
+197	3976
+197	3977
+197	3978
+197	3979
+197	3981
+197	3982
+198	3984
+198	3985
+198	3986
+198	3989
+198	3991
+198	3992
+198	3994
+198	3995
+198	3996
+198	3997
+199	3998
+199	3999
+200	3999
+199	4000
+199	4001
+199	4002
+200	4002
+199	4003
+199	4004
+199	4005
+199	4006
+199	4007
+200	4007
+199	4008
+200	4008
+199	4009
+199	4010
+199	4011
+200	4011
+199	4012
+200	4012
+200	4013
+200	4014
+201	4015
+201	4016
+201	4017
+201	4018
+201	4019
+201	4020
+201	4021
+201	4022
+201	4023
+201	4024
+201	4025
+201	4026
+201	4027
+202	4028
+202	4029
+202	4030
+202	4031
+202	4032
+202	4033
+202	4034
+202	4035
+202	4036
+202	4037
+202	4038
+203	4039
+203	4040
+203	4041
+203	4042
+203	4043
+203	4044
+204	4045
+205	4045
+204	4046
+204	4047
+205	4047
+204	4048
+205	4048
+204	4049
+205	4049
+204	4050
+205	4050
+204	4051
+205	4051
+204	102
+205	102
+204	4052
+204	4053
+205	4053
+204	4054
+205	4054
+204	116
+205	116
+204	4055
+204	112
+205	112
+205	4056
+205	4057
+205	4058
+205	4059
+205	4060
+205	110
+205	4061
+205	4062
+205	4063
+205	4064
+205	4065
+205	4066
+206	4067
+207	4067
+206	4068
+207	4068
+206	4069
+207	4069
+206	4070
+207	4070
+206	4071
+207	4071
+206	4072
+206	4073
+207	4073
+206	4074
+206	4075
+206	4076
+207	4077
+207	4078
+207	4079
+207	4080
+207	4081
+208	4082
+208	4083
+208	4084
+209	4084
+208	4085
+209	4085
+208	4087
+208	4088
+209	4090
+209	4091
+209	4092
+209	4093
+209	4094
+209	4095
+210	4096
+210	4097
+210	4098
+210	4099
+210	4100
+210	4101
+210	4102
+210	1697
+210	1739
+211	4103
+211	4104
+211	4105
+444	6289
+211	4107
+211	4108
+212	4109
+212	4110
+212	4111
+212	4112
+212	4113
+212	4114
+212	4115
+212	4116
+212	4117
+212	4118
+213	4119
+215	4119
+213	4120
+213	4121
+215	4121
+213	3001
+213	2963
+213	2831
+215	2831
+213	2828
+213	2952
+213	2856
+215	2856
+213	4123
+215	4123
+213	2862
+213	4124
+215	4124
+214	1054
+216	1054
+214	4125
+216	4125
+214	4126
+214	4127
+216	4127
+214	4128
+214	1015
+216	1015
+446	6295
+214	4130
+216	4130
+214	4131
+214	4133
+214	4134
+216	4134
+215	4135
+215	4136
+215	4137
+215	4138
+215	4139
+215	4140
+215	4141
+215	4142
+215	4143
+215	4144
+215	4145
+215	4147
+216	1167
+216	1120
+216	4148
+216	4149
+216	4150
+216	4151
+217	4153
+219	4153
+217	2833
+217	4154
+219	4154
+217	4155
+217	4156
+219	4156
+217	2950
+219	2950
+217	4158
+219	4158
+217	4159
+219	4159
+217	4160
+219	4160
+217	2948
+219	2948
+218	1179
+220	1179
+218	1186
+220	1186
+218	4163
+220	4163
+218	4164
+218	1150
+218	1131
+220	1131
+218	1006
+218	4165
+220	4165
+218	4166
+220	4166
+218	1080
+218	4167
+218	1184
+220	1184
+218	1149
+219	4168
+219	4169
+219	4170
+219	4171
+219	4174
+219	4175
+219	4176
+220	4178
+220	4179
+220	4180
+220	4181
+220	4182
+220	4183
+220	4184
+220	4185
+220	4186
+220	4187
+221	4188
+333	4188
+221	4189
+333	4189
+221	4190
+333	4190
+221	4191
+333	4191
+221	4192
+333	4192
+221	4193
+333	4193
+221	4195
+221	2957
+221	2884
+221	3003
+221	4196
+333	4196
+221	4197
+221	2996
+222	4198
+222	1106
+222	4199
+222	4200
+334	4200
+222	1105
+222	4201
+222	1108
+222	4202
+334	4202
+222	1193
+223	4203
+223	4204
+223	4206
+223	4208
+223	4209
+223	4212
+223	4213
+223	1794
+223	4214
+224	4215
+224	4216
+224	4217
+225	4218
+225	4219
+225	4220
+226	4223
+226	4224
+226	4225
+226	4226
+226	4227
+227	3010
+227	4229
+227	4230
+227	4231
+227	4232
+227	2858
+227	4233
+227	4234
+229	4234
+227	4235
+229	4235
+227	3008
+227	4236
+227	4237
+229	4237
+228	4238
+228	4239
+230	4239
+228	1082
+228	4240
+230	4240
+228	4241
+229	4242
+229	4243
+229	4244
+230	1031
+231	3016
+231	4246
+231	3021
+231	2805
+231	2936
+343	2936
+231	4247
+343	4247
+231	2863
+231	4250
+232	1139
+344	1139
+233	3018
+235	3018
+233	4252
+235	4252
+233	3044
+235	3044
+233	4253
+233	2906
+233	2908
+235	2908
+233	4254
+233	3005
+235	3005
+233	3040
+235	3040
+233	4255
+233	4256
+234	4257
+234	4258
+234	4259
+234	4260
+236	4260
+234	4261
+234	4262
+236	4262
+234	4263
+236	4263
+234	4264
+234	4265
+236	4265
+234	1113
+236	1113
+235	4266
+235	4267
+235	4268
+235	4269
+235	4270
+236	4271
+236	4272
+236	4273
+236	4274
+236	4275
+236	4276
+236	4277
+237	2854
+237	4278
+237	4279
+237	4281
+238	4281
+237	4282
+238	4282
+237	4283
+238	4284
+238	4285
+238	4286
+238	4287
+238	4288
+239	4289
+339	4289
+239	4290
+239	4291
+239	4292
+339	4292
+239	4293
+239	4294
+240	4295
+340	4295
+240	4296
+340	4296
+240	4297
+241	4299
+241	4301
+242	4302
+244	4302
+242	4303
+242	4304
+244	4304
+242	4305
+242	1115
+242	4306
+243	4307
+243	4308
+243	4309
+243	4311
+243	4313
+243	4315
+244	4316
+244	4317
+245	63
+245	66
+245	4318
+245	4319
+329	4319
+245	4320
+245	4321
+329	4321
+245	4322
+245	120
+329	120
+245	4323
+329	4323
+245	4324
+245	4325
+245	4326
+329	4326
+245	4327
+329	4327
+246	4328
+246	4329
+246	4330
+247	4330
+246	1065
+246	4332
+246	4334
+247	1020
+247	4335
+247	4336
+248	4337
+249	4337
+248	4338
+249	4338
+248	28
+249	28
+248	4339
+249	4339
+248	4340
+249	4340
+248	4341
+249	4341
+249	30
+249	4342
+249	4343
+249	4344
+249	4345
+249	4346
+249	4347
+249	4348
+249	4349
+249	4350
+249	4351
+249	4352
+250	4353
+250	4355
+250	4359
+250	4360
+250	4361
+250	4362
+250	4364
+250	4368
+250	4371
+251	4378
+251	4379
+251	4383
+252	4388
+252	4389
+252	4390
+252	4391
+252	4392
+252	325
+252	4393
+252	4394
+252	4398
+252	4400
+252	4401
+253	4411
+254	4415
+319	4415
+254	4416
+254	4417
+254	327
+254	4418
+254	4419
+319	4419
+254	4420
+319	4420
+254	4421
+319	4421
+254	4422
+254	319
+254	4424
+319	4424
+254	4425
+254	4426
+319	4426
+254	263
+254	4427
+319	4427
+254	4428
+254	4429
+255	99
+255	4430
+320	4430
+255	4431
+255	4432
+320	4432
+255	4433
+255	4434
+320	4434
+255	4435
+320	4435
+255	4436
+256	4437
+256	4440
+256	4441
+256	4442
+256	4443
+256	4445
+256	4446
+257	4446
+256	4448
+256	4449
+257	4452
+257	4455
+257	4456
+257	4458
+257	4459
+257	4460
+258	4461
+260	4461
+258	4462
+260	4462
+258	4463
+258	4464
+260	4464
+258	4465
+258	4466
+260	4466
+258	4467
+260	4467
+258	4468
+258	4469
+258	4470
+258	4472
+260	4472
+258	4473
+260	4473
+258	4474
+258	4475
+260	4475
+258	4476
+260	4476
+259	4477
+259	4478
+261	4478
+259	4479
+259	4480
+261	4480
+259	4481
+259	4482
+261	4482
+259	4483
+259	4484
+261	4484
+259	4485
+259	4486
+259	4487
+260	4488
+260	4489
+260	4490
+260	4491
+260	4492
+260	4493
+260	4494
+260	4495
+261	4497
+261	4498
+262	4499
+262	4500
+264	4500
+262	4501
+262	4502
+264	4502
+262	4503
+264	4503
+262	4504
+262	4505
+262	4506
+262	4507
+264	4507
+262	4508
+264	4508
+263	4509
+265	4509
+263	4510
+263	4511
+265	4511
+263	4512
+263	4513
+264	4514
+264	4515
+264	4516
+265	4517
+265	4518
+265	4519
+266	4520
+266	4521
+266	4522
+267	4523
+267	4524
+267	4525
+267	4526
+267	4527
+267	4528
+376	6290
+267	4530
+267	4531
+267	4532
+267	4533
+268	4534
+268	4535
+270	4535
+268	4536
+268	4537
+268	4538
+270	4538
+268	4539
+268	4540
+268	4541
+270	4541
+268	4542
+270	4542
+268	4543
+270	4543
+268	4544
+270	4544
+268	4545
+270	4545
+268	4546
+268	4547
+268	4548
+269	4549
+271	4549
+269	4550
+271	4550
+269	4551
+271	4551
+269	4552
+271	4552
+269	4553
+269	4554
+269	4555
+271	4555
+269	4556
+271	4556
+269	4557
+271	4557
+270	4558
+270	4559
+270	4560
+270	4561
+270	4562
+270	4563
+270	4564
+271	4565
+271	4566
+271	4567
+271	4568
+271	4569
+271	4570
+271	4571
+272	4572
+272	4574
+272	4576
+272	4578
+273	4579
+274	4581
+274	4582
+274	4583
+274	4584
+274	4585
+274	4586
+274	4588
+274	4589
+276	4592
+276	4593
+278	4593
+276	4594
+276	4595
+276	4596
+278	4596
+276	4597
+276	4598
+276	4600
+276	4601
+276	4602
+276	4603
+276	4605
+278	4605
+276	4606
+276	4607
+276	4608
+277	4609
+279	4609
+277	4610
+279	4610
+277	4611
+277	4612
+277	4613
+277	4614
+278	4615
+278	4617
+278	4618
+278	4619
+278	4622
+279	4623
+279	4624
+280	4625
+280	4626
+280	4627
+280	4629
+350	4629
+280	4630
+280	4631
+350	4631
+280	4632
+280	4633
+280	4634
+280	4635
+280	4636
+280	4637
+281	4638
+351	4638
+281	4639
+281	4640
+351	4640
+281	4641
+281	4642
+281	4643
+281	4644
+282	4645
+348	4645
+282	4646
+282	4647
+282	4648
+348	4648
+282	4649
+282	4650
+282	4651
+348	4651
+282	4652
+348	4652
+282	4653
+282	4654
+348	4654
+282	4656
+283	4657
+283	4658
+283	4659
+349	4659
+283	4660
+283	4661
+283	4662
+283	4663
+283	4664
+349	4664
+283	4665
+284	4666
+284	4667
+284	4668
+284	4669
+284	4670
+284	4671
+284	4672
+284	4673
+284	4675
+285	4676
+285	4677
+285	4678
+285	4679
+355	4679
+286	4680
+288	4680
+286	4681
+288	4681
+286	4682
+286	4683
+288	4683
+286	4684
+288	4684
+286	4685
+286	4686
+288	4686
+286	4687
+288	4687
+286	4688
+286	4689
+286	4690
+288	4690
+286	4691
+287	4692
+289	4692
+287	4693
+289	4693
+287	4694
+289	4694
+287	4695
+289	4695
+287	4696
+289	4696
+287	4697
+289	4697
+287	4698
+289	4698
+287	4699
+288	4701
+288	4702
+288	4703
+288	4704
+288	4705
+288	4706
+288	4707
+289	4708
+290	4710
+290	4711
+292	4711
+290	4712
+292	4712
+290	4713
+292	4713
+291	4714
+293	4714
+292	4715
+292	4716
+292	4717
+292	4718
+293	4719
+293	4720
+294	4721
+294	4722
+294	4723
+294	4724
+296	4724
+294	4725
+296	4725
+294	4726
+294	4727
+295	4728
+295	4729
+295	4730
+295	4731
+297	4731
+295	4732
+295	4733
+295	4734
+296	4735
+296	4736
+296	4737
+297	4738
+297	4739
+297	4740
+297	4741
+297	4742
+297	4743
+298	4744
+298	4745
+300	4745
+298	4746
+300	4746
+298	4747
+298	4748
+298	4749
+299	4750
+301	4750
+299	4751
+301	4751
+299	4752
+299	4753
+299	4754
+300	4755
+300	4756
+302	4757
+302	4758
+303	4759
+303	4760
+304	4761
+304	4762
+305	4763
+305	4764
+305	4765
+306	239
+306	267
+306	4766
+308	4766
+307	82
+309	82
+307	4767
+309	4767
+307	4768
+307	4769
+309	4769
+307	4770
+309	4770
+307	4771
+309	4771
+307	75
+307	71
+309	71
+307	4773
+309	4773
+308	4774
+308	4775
+309	4776
+309	4777
+309	4778
+309	4780
+309	4781
+309	4782
+309	4783
+310	4785
+311	4786
+311	4787
+311	4788
+312	4789
+312	4790
+312	4791
+313	4792
+313	4793
+313	4794
+314	4794
+313	4795
+313	4796
+313	4797
+313	4798
+313	4799
+314	4799
+313	4800
+313	4801
+313	4802
+314	4802
+313	4803
+313	4805
+314	4805
+314	4806
+314	4807
+314	4809
+314	4810
+315	4811
+315	4812
+315	4813
+315	4814
+315	4815
+315	4816
+315	4817
+316	4817
+315	4818
+315	4819
+315	4820
+315	4821
+317	4822
+317	4823
+317	4824
+317	4825
+317	4826
+317	4830
+318	4833
+318	4836
+319	4840
+319	4841
+319	4842
+319	4843
+319	4844
+319	4845
+319	4846
+319	4847
+319	4848
+320	4850
+320	4851
+320	4852
+320	4853
+320	4854
+320	4855
+320	4856
+320	4857
+320	4858
+321	4860
+321	4862
+321	4864
+321	4865
+321	251
+321	4866
+321	280
+321	4867
+321	4868
+321	4869
+322	4870
+322	4871
+322	4872
+322	4873
+322	4874
+322	4875
+322	4876
+323	4877
+323	4878
+323	4879
+323	4880
+323	4881
+323	4882
+323	4883
+323	4884
+323	4885
+323	4886
+323	315
+323	4887
+324	4888
+324	4889
+324	4890
+324	4891
+324	4892
+325	257
+325	4893
+325	4894
+325	4895
+325	274
+325	4896
+325	4897
+325	4898
+326	4899
+326	4900
+326	4901
+327	4902
+327	4903
+327	4904
+327	4905
+327	4906
+327	4907
+327	4908
+327	4909
+327	4910
+327	4911
+328	4912
+328	4913
+328	50
+328	4914
+328	4915
+328	4916
+328	4917
+328	4918
+329	56
+329	4919
+329	4920
+329	4921
+329	4922
+329	4923
+330	4924
+330	4925
+330	4926
+330	4927
+330	4928
+330	4929
+330	4930
+330	4931
+331	4932
+331	4933
+331	4934
+331	4935
+331	4936
+331	4937
+331	4938
+332	4939
+332	4940
+332	4941
+332	4942
+376	6291
+332	4944
+332	4945
+332	4946
+332	4947
+333	4948
+333	4950
+333	4951
+333	4952
+333	4953
+333	4954
+333	4955
+334	4956
+334	4957
+334	4958
+334	4959
+334	4960
+334	4961
+335	4962
+335	4963
+335	4965
+335	4966
+335	4967
+335	4968
+335	4969
+446	6293
+335	4971
+336	4972
+336	4973
+336	4974
+336	4975
+337	4976
+337	4977
+337	4978
+337	4979
+337	4980
+337	4981
+337	4982
+337	4983
+337	4984
+337	4986
+338	4987
+338	4988
+338	4989
+338	4990
+338	4991
+338	4992
+338	4993
+338	4994
+338	4995
+339	4996
+339	4997
+339	4998
+339	4999
+339	5000
+339	5001
+339	5002
+339	5003
+340	5004
+340	5005
+341	5007
+341	5008
+341	5009
+341	5010
+341	5011
+341	5012
+341	5013
+341	5014
+341	5015
+341	5016
+341	5017
+341	5018
+342	5019
+342	5020
+342	5021
+342	5022
+342	5023
+342	5024
+342	5025
+342	5026
+342	5027
+342	5028
+342	5029
+342	5030
+342	5031
+342	5032
+342	5033
+342	5034
+342	5035
+343	5036
+343	5037
+343	5039
+343	5040
+343	5042
+344	5043
+344	1068
+344	5044
+344	5045
+344	5046
+345	5047
+345	5048
+345	5049
+345	5050
+345	5051
+345	5052
+345	5053
+346	5054
+346	5055
+346	5056
+346	5057
+346	5058
+346	5059
+346	5060
+346	5061
+346	5062
+346	5063
+346	5064
+346	5065
+346	5066
+346	5067
+346	5068
+346	5069
+346	5070
+347	5071
+347	5072
+347	5073
+347	5074
+347	5075
+347	5076
+347	5077
+347	5078
+348	5079
+348	5080
+348	5081
+348	5082
+348	5083
+348	5084
+348	5085
+348	5086
+349	5088
+349	5089
+349	5090
+349	5091
+349	5092
+350	5093
+350	5094
+350	5095
+350	5097
+350	5098
+351	5099
+351	5100
+351	5101
+352	5102
+352	5103
+352	5104
+352	5105
+352	5107
+353	5109
+353	5110
+353	5111
+353	5112
+353	5113
+354	5115
+354	5116
+354	5117
+354	5118
+354	5119
+354	5120
+354	5121
+354	5123
+354	5124
+355	5125
+355	5126
+355	5127
+356	5128
+356	5129
+356	5130
+356	5131
+356	5132
+356	5133
+357	5134
+357	5135
+357	5136
+357	5137
+357	5140
+357	5141
+357	5142
+136	5143
+189	5143
+42	5144
+257	5144
+256	5144
+251	5145
+253	5145
+37	5147
+252	5147
+250	5147
+256	5148
+257	5148
+251	5149
+253	5149
+144	5150
+54	5151
+153	5151
+352	5151
+214	5152
+216	5152
+136	5153
+189	5153
+125	5154
+219	5154
+217	5154
+6	5155
+253	5155
+251	5155
+144	5156
+275	5156
+6	5157
+251	5157
+251	5158
+253	5158
+52	5159
+141	5159
+266	5159
+231	5160
+343	5160
+42	5161
+256	5161
+251	5162
+253	5162
+276	5163
+278	5163
+169	5164
+171	5164
+213	5165
+215	5165
+151	5166
+223	5166
+125	5167
+217	5167
+219	5167
+149	5168
+225	5168
+153	5169
+352	5169
+136	5170
+189	5170
+28	5171
+246	5171
+247	5171
+208	5172
+209	5172
+37	5173
+250	5173
+47	5174
+134	5174
+210	5174
+151	5175
+223	5175
+147	5176
+197	5176
+6	5177
+251	5177
+136	5178
+189	5178
+313	5179
+314	5179
+169	5180
+171	5180
+151	5181
+223	5181
+251	5182
+253	5182
+55	5183
+147	5183
+197	5183
+250	5184
+252	5184
+139	5185
+272	5185
+250	5186
+252	5186
+37	5187
+250	5187
+58	5188
+149	5188
+49	5190
+131	5190
+331	5190
+446	6294
+375	6298
+380	6302
+231	5192
+343	5192
+154	5193
+353	5193
+140	5194
+273	5194
+126	5195
+243	5195
+41	5196
+321	5196
+44	5197
+143	5197
+52	5198
+141	5198
+266	5198
+146	5199
+336	5199
+146	5200
+336	5200
+37	5201
+250	5201
+53	5202
+133	5202
+139	5203
+272	5203
+28	5204
+246	5204
+247	5204
+41	5205
+321	5205
+251	5206
+253	5206
+154	5207
+353	5207
+37	5208
+252	5208
+250	5208
+257	5209
+446	6296
+250	5211
+252	5211
+227	5212
+229	5212
+53	5213
+133	5213
+212	5213
+143	5214
+17	5215
+132	5215
+332	5215
+53	5216
+133	5216
+250	5218
+252	5218
+253	5219
+251	5219
+128	5220
+251	5221
+253	5221
+139	5222
+250	5223
+252	5223
+143	5224
+274	5224
+143	5225
+274	5225
+50	5226
+136	5226
+189	5226
+45	5227
+133	5228
+212	5228
+284	5229
+354	5229
+127	5230
+237	5230
+158	5232
+160	5232
+139	5233
+272	5233
+221	5234
+333	5234
+23	5235
+148	5235
+195	5237
+195	5238
+195	5239
+438	6305
+195	5241
+195	5242
+195	5243
+494	6311
+189	5244
+189	5245
+189	5246
+189	5247
+189	5248
+189	5249
+189	5250
+189	5251
+440	6316
+443	6325
+189	5254
+189	5255
+189	5256
+195	5257
+189	5258
+142	5259
+267	5259
+141	5261
+52	5261
+133	5262
+53	5262
+153	5263
+352	5263
+153	5264
+352	5264
+148	5265
+147	5266
+197	5266
+197	5267
+147	5267
+147	5268
+198	5269
+23	5269
+148	5269
+198	5270
+148	5270
+147	5271
+197	5271
+198	5272
+148	5272
+198	5273
+148	5273
+55	5274
+147	5274
+197	5274
+55	5275
+147	5275
+197	5275
+147	5276
+197	5276
+56	5277
+138	5277
+151	5278
+223	5279
+151	5279
+150	5280
+149	5281
+225	5281
+26	5282
+150	5282
+26	5283
+150	5283
+31	5284
+232	5284
+219	5285
+217	5285
+217	5286
+219	5286
+126	5288
+243	5288
+241	5288
+243	5289
+126	5289
+241	5289
+256	5290
+257	5290
+256	5291
+42	5291
+173	5292
+175	5292
+174	5293
+176	5293
+174	5294
+176	5294
+168	5295
+166	5295
+309	5296
+307	5297
+309	5297
+4	5297
+36	5298
+254	5298
+320	5299
+253	5300
+59	5301
+144	5301
+145	5302
+335	5302
+146	5303
+336	5303
+145	5305
+335	5305
+145	5306
+45	5306
+335	5307
+145	5307
+155	5308
+337	5308
+156	5309
+155	5310
+156	5311
+156	5312
+338	5312
+156	5313
+14	5313
+155	5314
+337	5314
+156	5316
+155	5317
+337	5317
+46	5318
+155	5318
+156	5320
+338	5320
+46	5321
+155	5321
+337	5321
+14	5322
+156	5322
+155	5323
+337	5323
+446	6328
+156	5325
+338	5325
+446	6333
+380	6338
+46	5327
+155	5327
+156	5328
+156	5329
+338	5329
+155	5330
+135	5331
+15	5331
+135	5332
+15	5332
+47	5333
+134	5333
+210	5333
+49	5334
+331	5334
+131	5334
+189	5335
+136	5335
+189	5336
+136	5336
+130	5337
+62	5337
+278	5338
+276	5338
+278	5339
+276	5339
+340	5340
+240	5340
+289	5341
+287	5341
+282	5342
+348	5342
+258	5343
+260	5343
+318	5344
+317	5344
+318	5345
+317	5345
+318	5346
+317	5346
+318	5347
+317	5347
+318	5348
+317	5348
+280	5349
+350	5349
+154	5350
+64	5350
+195	3060
+195	5220
+359	1543
+359	1531
+359	3224
+210	5352
+359	3214
+359	5351
+223	1645
+274	3272
+223	5278
+359	1610
+359	3218
+225	1779
+190	3199
+202	5358
+332	3124
+202	3094
+226	3371
+336	3313
+332	2720
+338	5309
+332	3129
+226	5359
+190	2677
+202	5360
+336	5356
+375	6299
+226	5362
+190	5354
+190	5363
+202	5364
+224	3402
+190	3204
+202	5355
+202	5353
+353	3418
+224	5365
+226	5366
+202	3097
+224	5367
+202	5357
+226	5368
+202	5369
+202	5370
+198	5371
+332	5372
+224	3396
+190	3207
+203	3074
+331	1741
+359	3217
+203	3078
+203	1747
+359	5381
+203	5387
+203	3076
+203	1776
+203	5382
+203	5388
+203	3083
+359	3216
+203	5376
+203	1690
+203	5389
+331	5390
+331	3110
+331	5377
+223	5378
+272	5391
+203	5373
+203	3080
+337	5392
+189	1816
+212	5393
+223	5394
+203	5395
+203	5396
+335	5397
+331	3109
+223	5398
+331	5399
+203	5379
+210	5400
+272	5401
+272	5383
+359	1829
+203	5380
+203	5384
+337	5402
+335	3294
+197	5374
+274	1807
+210	5403
+352	5404
+335	5405
+197	5406
+335	1835
+274	5407
+210	5408
+438	6306
+197	5385
+197	5386
+359	3222
+197	5409
+494	6313
+332	5410
+224	5411
+226	3364
+190	2537
+224	3400
+224	3401
+211	3168
+273	3243
+273	5412
+275	5413
+378	6319
+382	6322
+443	6324
+225	3359
+225	3360
+225	3363
+225	5414
+341	5415
+341	5416
+203	5417
+446	6331
+210	5419
+210	3155
+171	5420
+210	1660
+359	5421
+375	6340
+210	5423
+359	5277
+171	5424
+210	5425
+210	5426
+440	6343
+491	6344
+491	6349
+445	6355
+144	6369
+400	3537
+415	6385
+410	3587
+401	6386
+407	3701
+415	6380
+407	6387
+412	6388
+418	6389
+412	6381
+410	6382
+407	6390
+410	6391
+407	3704
+405	6392
+420	4023
+407	6383
+405	3833
+402	6393
+420	4021
+401	6394
+420	6379
+402	6395
+480	6378
+480	6396
+420	6397
+420	6384
+402	3790
+415	6447
+415	6467
+400	6468
+400	6469
+400	6470
+418	6448
+356	5427
+356	5428
+223	3381
+212	5429
+356	5430
+405	6471
+412	6440
+226	5433
+226	3373
+415	6441
+338	3456
+332	5436
+332	3140
+336	5435
+353	2612
+353	5437
+198	3349
+273	2581
+198	5438
+198	5439
+198	5440
+400	6449
+400	6472
+364	4870
+245	4919
+363	1
+366	4912
+364	4873
+251	16
+363	5445
+255	4851
+248	30
+364	4871
+365	4890
+248	5446
+365	4892
+415	6473
+255	5447
+366	50
+248	5448
+248	4346
+363	5449
+248	4344
+364	4874
+366	4916
+248	5450
+204	5442
+255	4856
+248	5451
+248	34
+366	4915
+248	4348
+248	5443
+366	48
+364	7
+248	4351
+366	5444
+366	5452
+366	5453
+366	54
+366	5454
+248	5455
+248	5456
+251	5457
+369	4877
+368	4860
+368	225
+368	5205
+370	5463
+368	248
+369	4878
+367	257
+368	5196
+368	251
+368	230
+367	5464
+368	4862
+367	4894
+369	4881
+367	269
+367	237
+369	4882
+370	4902
+369	4879
+306	4774
+367	4893
+369	270
+370	4903
+369	276
+368	5465
+368	4864
+369	4880
+254	4840
+367	4896
+370	283
+367	5466
+369	5467
+367	313
+368	326
+367	4898
+367	5458
+250	320
+370	4905
+250	5459
+370	5468
+370	5469
+250	5470
+254	5471
+256	299
+367	5472
+368	4867
+370	5460
+250	4400
+250	4390
+250	325
+369	5473
+369	4885
+369	315
+250	4388
+254	4846
+256	5474
+370	4906
+250	5475
+256	5476
+367	5461
+370	317
+367	5477
+256	5478
+370	4907
+370	5479
+367	5480
+370	5481
+250	4393
+254	5482
+250	5462
+370	4911
+250	4401
+256	4460
+274	5483
+336	3309
+380	6301
+438	6303
+226	3369
+226	5484
+332	5485
+211	3177
+211	3175
+224	1109
+211	3170
+224	5488
+331	5490
+331	3116
+331	5491
+331	5492
+331	3114
+331	5489
+210	5493
+134	5494
+210	5494
+335	5495
+335	1777
+223	3384
+211	3174
+211	3176
+332	5499
+332	2687
+226	5500
+190	5501
+335	3299
+212	5216
+189	5503
+359	5504
+226	1119
+211	5505
+273	5506
+190	5507
+335	5508
+156	5509
+338	5509
+211	5510
+211	5511
+210	5517
+332	5518
+190	5519
+243	3051
+212	5520
+331	3117
+331	5521
+356	5522
+244	5523
+244	4306
+244	5524
+211	5525
+150	5526
+226	5526
+356	5527
+203	5528
+197	5529
+202	3090
+357	5530
+357	5531
+357	5532
+357	5533
+332	3134
+211	5534
+203	5535
+212	5536
+356	5537
+356	5538
+272	3227
+226	5280
+190	5539
+211	5540
+211	3167
+128	5542
+128	5238
+128	3947
+128	5237
+128	1677
+128	3953
+128	1726
+128	5242
+136	1507
+138	5545
+136	5251
+138	1761
+136	5254
+136	1684
+136	5544
+131	1756
+145	1760
+145	5547
+145	1828
+145	5546
+195	3055
+134	5352
+129	5382
+134	5419
+134	1695
+134	1739
+134	5548
+134	5549
+134	5550
+129	5551
+129	5552
+129	5553
+129	5554
+129	5555
+129	5556
+129	5557
+129	4042
+134	4102
+134	5493
+134	4098
+129	1740
+129	4039
+129	5395
+129	1767
+129	5417
+129	4043
+134	5400
+134	4096
+129	1789
+129	5387
+129	1800
+134	4099
+134	1858
+445	6307
+443	6309
+494	6312
+378	6318
+383	6327
+446	6330
+380	6335
+380	6337
+491	6347
+445	6354
+357	6370
+476	6370
+499	6370
+357	6371
+476	6371
+499	6371
+401	6398
+420	6399
+420	6400
+491	6591
+489	6599
+460	6592
+394	6600
+388	6601
+392	6602
+460	6603
+475	6604
+388	6593
+423	6605
+460	6606
+386	6607
+394	6594
+489	6608
+475	6609
+423	6589
+421	6610
+489	6595
+489	6611
+421	6612
+394	6613
+421	6614
+489	6615
+386	6616
+382	6617
+390	6618
+396	6590
+382	6596
+394	6619
+423	6620
+392	6621
+382	6622
+396	6597
+396	6598
+387	6630
+387	6631
+387	6632
+474	6633
+387	6624
+461	6634
+387	6625
+385	6635
+387	4120
+474	6626
+389	6636
+474	6637
+474	6638
+385	4236
+474	6627
+474	6639
+385	6640
+461	6641
+389	6642
+474	6623
+461	6643
+474	6644
+474	6645
+385	4231
+389	6628
+481	6629
+389	6646
+395	6647
+389	6648
+481	6649
+395	6650
+462	6737
+483	6722
+452	6723
+478	6738
+448	6739
+452	6724
+465	6740
+458	6741
+397	6742
+448	6743
+477	6744
+424	6745
+424	6746
+452	6725
+485	6747
+450	6748
+457	6749
+450	6750
+457	6751
+465	6752
+455	6753
+450	6754
+458	6755
+450	4785
+462	6756
+472	6757
+458	6758
+483	6759
+458	6760
+450	6761
+455	6762
+483	6763
+477	6726
+457	6764
+455	6765
+424	6766
+484	6768
+375	6795
+484	6796
+429	6797
+463	6798
+429	6799
+476	6800
+473	6801
+428	6817
+468	6818
+428	6819
+428	6820
+426	6803
+426	6807
+426	6804
+428	6821
+426	6822
+426	6823
+428	6808
+485	6809
+468	6824
+452	6802
+468	6810
+472	6825
+397	6826
+478	6827
+428	6828
+448	6811
+397	6829
+428	6830
+478	6831
+428	6812
+397	6805
+448	6832
+448	6833
+448	6834
+485	6813
+428	6835
+468	6836
+452	6837
+468	6838
+397	5478
+478	6839
+468	6840
+465	6814
+448	6841
+478	6815
+487	6842
+457	6816
+397	6806
+45	6843
+45	6844
+45	6845
+48	6846
+49	3118
+49	5594
+49	6847
+49	6848
+47	6849
+44	3272
+520	3637
+44	6850
+51	3075
+58	6851
+51	6852
+51	6853
+554	5608
+554	6854
+554	6855
+554	6856
+554	5609
+548	6857
+554	6858
+548	6859
+554	6860
+554	6861
+55	6862
+54	6863
+54	3405
+55	6864
+429	6865
+253	6865
+251	6865
+13	5564
+13	6866
+14	6867
+13	5200
+13	6868
+59	6869
+59	6369
+509	6872
+15	5534
+509	3663
+59	6870
+59	6871
+17	6873
+17	3126
+60	6874
+147	3982
+169	3672
+147	1823
+147	1631
+147	3979
+147	1842
+147	5529
+147	1730
+147	3978
+147	1855
+147	5374
+443	6308
+494	6314
+440	6317
+378	6320
+382	6321
+383	6326
+446	6332
+380	6336
+375	6341
+440	6342
+491	6345
+491	6350
+445	6353
+153	6372
+54	6372
+406	6404
+399	6411
+399	6412
+408	6413
+403	6405
+399	6414
+413	6415
+422	6401
+414	6416
+409	3609
+411	6417
+411	6418
+404	6419
+404	6420
+404	6421
+417	6402
+413	6422
+411	6423
+417	6424
+408	6406
+399	3547
+399	6407
+404	6425
+419	6408
+417	6426
+417	6427
+419	6428
+408	6429
+413	6430
+413	6403
+403	6431
+422	6432
+404	6409
+413	6433
+403	6434
+404	6435
+406	6436
+411	6410
+409	6526
+414	6527
+417	6528
+409	6529
+409	6510
+403	6511
+403	6530
+422	6531
+409	6508
+417	6532
+404	6533
+417	6512
+414	3493
+409	6513
+409	6534
+414	6514
+422	6515
+404	3852
+409	6535
+404	6536
+404	6537
+422	6538
+403	6516
+399	6517
+399	6539
+406	6518
+414	6540
+413	6541
+422	6507
+409	3595
+413	6519
+404	6542
+404	6520
+422	6506
+408	6543
+406	6544
+406	6521
+406	6545
+413	6546
+417	6547
+413	6548
+406	6549
+413	6550
+419	6551
+411	6552
+413	6509
+417	3661
+404	6522
+419	6523
+422	6553
+419	6554
+414	6555
+414	6524
+411	6525
+419	6556
+414	6557
+417	6558
+417	6559
+411	6560
+413	6561
+411	6562
+417	6563
+419	6564
+388	6652
+388	6653
+388	6656
+482	6657
+388	6658
+388	4131
+475	6659
+482	6660
+475	6651
+421	6654
+388	6661
+482	6662
+482	6663
+390	6664
+475	6655
+421	6665
+459	6669
+466	6670
+427	6671
+427	6672
+429	6673
+469	6674
+427	6675
+464	4801
+488	6666
+466	6676
+438	6677
+449	6678
+466	6679
+484	6680
+427	6681
+425	6682
+456	6683
+427	6684
+463	6685
+449	6686
+484	6687
+469	6688
+429	6689
+476	6690
+453	6691
+429	6692
+476	6693
+451	6694
+464	6667
+488	6668
+484	6695
+454	6696
+479	6697
+488	6698
+466	6699
+463	6700
+479	6701
+479	6702
+467	6703
+459	6704
+473	6705
+479	6706
+454	6707
+456	6708
+469	6709
+449	6711
+486	6712
+486	6713
+467	6714
+451	6715
+456	6716
+469	6717
+467	6718
+451	6719
+464	6773
+464	6769
+484	6774
+484	6775
+476	6776
+464	6777
+484	6778
+425	6779
+464	6780
+429	6781
+463	6767
+449	6782
+449	6783
+425	6784
+486	6785
+464	6786
+484	4733
+484	6787
+484	6770
+476	6771
+484	6788
+484	6789
+484	6790
+464	6791
+488	6772
+484	6792
+429	6793
+486	6794
+494	6310
+133	4111
+151	4206
+151	5559
+151	5378
+137	5560
+137	5561
+137	5562
+440	6315
+443	6323
+446	6329
+446	6334
+380	6339
+146	5564
+146	5565
+137	5507
+137	2677
+132	5566
+130	5567
+130	5568
+135	5569
+135	5570
+135	5571
+130	2509
+135	4107
+135	5572
+130	4033
+135	4103
+146	4972
+146	1056
+148	5573
+170	5574
+170	3688
+140	4579
+170	5575
+170	5576
+140	5577
+148	3989
+137	5578
+137	5579
+152	5580
+152	5581
+152	5582
+152	5583
+142	5584
+150	1005
+142	4530
+142	2564
+142	4528
+150	5359
+259	5585
+132	5586
+491	6346
+491	6351
+148	5587
+154	5112
+154	5588
+154	5589
+255	96
+374	3249
+445	6352
+374	3255
+374	4520
+374	4521
+374	4522
+375	3261
+375	4523
+375	4524
+375	4525
+375	4526
+375	4527
+375	4530
+375	4531
+375	4532
+375	4533
+375	5259
+376	1643
+376	3142
+376	4114
+376	4117
+376	4109
+376	4113
+376	4116
+376	4111
+376	4115
+376	4110
+376	4118
+376	5213
+376	5228
+376	5393
+376	5429
+376	5520
+376	5536
+377	3409
+377	3412
+377	5103
+377	5104
+377	5105
+377	5107
+377	5169
+377	5263
+377	5264
+377	5404
+378	3417
+378	3421
+378	3422
+378	3428
+378	5109
+378	5110
+378	5113
+378	5193
+378	3418
+378	5437
+379	3331
+379	3326
+379	3323
+379	3978
+379	3981
+379	3977
+379	3976
+379	5267
+379	5271
+379	5276
+379	5266
+379	5409
+379	5386
+379	5385
+379	5374
+379	5406
+379	5529
+379	3982
+380	3349
+380	3346
+380	3994
+380	3995
+380	3996
+380	3984
+380	3985
+380	3992
+380	3989
+380	5371
+380	3986
+380	3991
+380	5273
+380	5439
+380	5440
+380	5270
+380	5438
+380	3997
+380	5272
+381	3387
+381	3384
+381	3388
+381	4206
+381	4212
+381	4214
+381	4209
+381	4213
+381	4203
+381	4204
+381	5166
+381	5181
+381	5175
+381	5378
+381	5398
+381	5278
+381	5279
+381	5394
+382	3399
+382	5365
+382	5367
+382	5488
+383	3371
+383	3366
+383	3368
+383	3370
+383	3369
+383	3372
+383	3364
+383	4227
+383	4224
+383	4226
+383	4223
+383	5280
+383	5366
+383	5368
+383	5359
+383	5362
+383	5433
+383	5484
+383	4225
+383	5526
+383	5500
+383	3373
+384	3353
+384	3355
+384	3361
+384	4218
+384	4219
+384	4220
+384	5168
+384	3359
+384	3360
+384	3363
+384	5414
+385	4234
+385	4235
+385	4237
+385	4242
+385	4243
+385	4244
+386	4239
+387	4121
+387	4119
+387	4123
+387	4145
+387	4124
+387	4135
+387	4136
+387	4137
+387	4138
+387	4139
+387	4140
+387	4141
+387	4142
+387	4144
+387	5165
+388	4125
+388	4127
+388	1015
+388	4130
+388	4134
+388	4148
+388	4149
+388	4151
+388	5152
+389	4188
+389	4190
+389	4192
+389	4196
+389	4948
+389	4952
+389	4953
+389	4954
+389	4955
+390	4956
+390	4957
+390	4959
+390	4960
+391	4247
+391	5036
+391	5037
+391	5039
+391	5040
+391	5042
+391	5160
+391	5192
+392	5043
+392	5044
+392	5045
+392	5046
+393	4252
+393	4266
+393	4267
+393	4268
+393	4269
+393	4270
+394	4271
+394	4272
+394	4273
+394	4274
+394	4275
+394	4277
+395	4307
+395	4309
+395	4311
+395	4313
+395	4315
+396	4302
+396	4316
+396	4317
+396	5523
+396	5524
+397	4446
+397	4452
+397	4455
+397	4456
+397	4458
+397	4459
+397	4460
+397	5148
+397	5209
+397	5290
+398	4281
+398	4285
+399	3551
+399	3557
+399	3569
+399	3570
+399	3572
+399	3573
+399	3574
+399	3575
+399	3576
+400	3529
+400	3561
+400	3560
+400	3562
+400	3525
+400	3567
+400	3563
+400	3564
+400	3565
+400	3535
+400	3539
+400	3568
+400	3527
+401	4007
+401	4008
+401	4012
+401	4013
+401	4014
+402	3794
+402	3800
+402	3816
+402	3817
+402	3818
+402	3819
+402	3820
+402	3821
+402	3822
+402	3823
+403	3802
+403	3807
+403	3809
+403	3810
+403	3815
+403	3826
+403	3827
+403	3829
+403	3830
+403	3832
+404	3861
+404	3880
+404	3881
+404	3854
+404	3855
+404	3863
+404	3853
+404	3872
+404	3873
+404	3874
+404	3876
+404	3877
+404	3878
+404	3879
+404	3882
+405	3835
+405	3838
+405	3846
+405	3849
+405	3870
+405	3864
+405	3865
+405	3866
+405	3867
+405	3868
+405	3850
+405	3869
+405	3840
+406	4068
+406	4071
+406	4077
+406	4078
+406	4079
+406	4080
+406	4081
+407	3693
+407	3695
+407	3705
+407	3720
+407	3723
+407	3724
+407	3725
+407	3726
+407	5292
+408	3712
+408	3728
+408	3729
+408	3730
+408	3731
+408	3733
+408	3735
+408	3736
+408	3737
+408	5294
+409	3605
+409	3610
+409	3597
+409	3600
+409	3604
+409	3625
+409	3626
+409	3627
+409	3629
+409	3630
+409	3631
+409	3633
+409	3634
+409	3636
+409	5295
+409	3593
+410	3579
+410	3622
+410	3623
+410	3591
+410	3611
+410	3612
+410	3613
+410	3617
+410	3618
+410	3619
+410	3620
+410	3624
+410	3616
+411	4084
+411	4085
+411	4090
+411	4091
+411	4092
+411	4094
+411	5172
+412	3746
+412	3749
+412	3741
+412	3767
+412	3768
+412	3770
+412	3771
+412	3772
+413	3760
+413	3766
+413	3775
+413	3776
+413	3777
+413	3778
+413	3779
+413	3780
+413	3781
+414	3499
+414	3500
+414	3504
+414	3505
+414	3524
+414	3516
+414	3518
+414	3519
+414	3520
+414	3521
+414	3492
+414	3502
+414	3503
+414	5232
+414	3517
+415	3473
+415	3483
+415	3475
+415	3476
+415	3477
+415	3478
+415	3482
+415	3508
+415	3514
+415	3509
+415	3510
+415	3511
+415	3512
+415	3513
+415	3515
+415	3488
+416	3680
+416	3673
+416	3675
+416	3649
+416	3643
+416	3674
+416	3676
+416	3644
+416	5164
+416	3651
+417	3658
+417	3662
+417	3681
+417	3682
+417	3683
+417	3686
+417	3687
+417	3688
+418	3905
+418	3911
+418	3912
+418	3914
+418	3915
+418	3917
+418	3939
+418	3940
+418	3941
+418	3942
+418	3943
+419	3923
+419	3925
+419	3930
+419	3932
+419	3933
+419	3934
+419	3936
+419	3944
+419	3945
+419	3946
+421	4319
+421	4321
+421	4326
+421	4327
+421	4919
+421	4920
+421	4921
+421	4922
+421	4923
+422	102
+422	112
+422	4066
+422	4061
+422	4063
+422	4051
+422	4049
+422	4056
+422	4057
+422	4058
+422	4059
+422	4065
+422	4064
+422	4060
+422	4054
+422	4045
+422	4047
+422	4053
+423	4339
+423	4343
+423	4345
+423	4347
+423	4349
+423	4350
+423	4352
+423	4342
+423	4338
+423	4340
+423	4341
+423	4344
+423	4346
+423	4351
+423	4337
+424	4766
+424	4774
+424	4775
+425	4767
+425	4769
+425	4770
+425	4771
+425	4773
+425	4777
+425	4778
+425	4780
+425	4781
+425	4782
+425	4783
+426	4419
+426	4420
+426	4421
+426	4424
+426	4840
+426	4843
+426	4844
+426	4845
+426	4847
+426	4848
+427	4430
+427	4435
+427	4850
+427	4851
+427	4852
+427	4853
+427	4855
+427	4856
+427	4857
+427	4858
+427	5299
+428	4391
+428	4392
+428	4390
+428	4394
+428	4398
+428	4393
+428	4389
+428	4400
+428	4401
+428	5184
+428	5218
+428	5223
+428	4388
+428	5186
+429	5158
+429	5206
+429	5219
+429	5221
+430	4877
+430	4878
+430	4879
+430	4880
+430	4882
+430	4883
+430	4884
+430	4885
+430	4886
+431	4888
+431	4889
+431	4892
+432	4902
+432	4903
+432	4904
+432	4905
+432	4906
+432	4907
+432	4908
+432	4909
+432	4910
+432	4911
+433	4912
+433	4913
+433	4914
+433	4917
+433	4918
+434	4899
+434	4900
+434	4901
+435	257
+435	4894
+435	4895
+435	4896
+435	4898
+436	4860
+436	4862
+436	4865
+436	4866
+436	4867
+436	4868
+437	4871
+437	4872
+437	4873
+437	4874
+437	4875
+437	4876
+438	3280
+438	3284
+438	5156
+438	5413
+439	3265
+439	3269
+439	4581
+439	4582
+439	4584
+439	4585
+439	4586
+439	4588
+439	4589
+439	5407
+439	5483
+491	6348
+440	3310
+440	3311
+440	4973
+440	4974
+440	4975
+440	5199
+440	3313
+440	5356
+440	5435
+440	3309
+441	3292
+441	3299
+441	3294
+441	4963
+441	4966
+441	4968
+441	4969
+441	4962
+441	4965
+441	4967
+441	5305
+441	5307
+441	5302
+441	5397
+441	5405
+441	5508
+441	5495
+441	4971
+442	3437
+442	4986
+442	4983
+442	4978
+442	4976
+442	4984
+442	4982
+442	4979
+442	4980
+442	4977
+442	5314
+416	6373
+442	5323
+442	5317
+442	5392
+442	5402
+442	4981
+443	3456
+443	4993
+443	4995
+443	4994
+443	4992
+443	4990
+443	4991
+443	4987
+443	4988
+443	4989
+443	5320
+443	5329
+443	5309
+443	5509
+444	1586
+444	3195
+444	3886
+444	3884
+444	3892
+444	3889
+444	3893
+444	3888
+444	5170
+444	5251
+444	5247
+444	5248
+444	5256
+444	5178
+444	5258
+444	5336
+444	5254
+444	5245
+444	5246
+444	5255
+444	5153
+444	5250
+444	5244
+444	5249
+444	5143
+444	5503
+444	3891
+445	2515
+445	3212
+445	3204
+445	3211
+445	3203
+445	3207
+445	3210
+445	3209
+445	3898
+445	3897
+445	3903
+445	3902
+445	3900
+445	3904
+445	5354
+445	5363
+445	5519
+445	5501
+445	5539
+446	3102
+446	3090
+446	3097
+446	3104
+446	3091
+446	3089
+446	3094
+446	4037
+446	4029
+446	4038
+446	4036
+446	4035
+446	4033
+446	4034
+446	4028
+446	4031
+446	4032
+446	5355
+446	5353
+446	5369
+446	5370
+446	5357
+446	5358
+446	5360
+446	5364
+447	3087
+447	3086
+447	3080
+447	3076
+447	3072
+447	3070
+447	3073
+447	3083
+447	3081
+447	3074
+447	3079
+447	3078
+447	3071
+447	4042
+447	4039
+447	4044
+447	5376
+447	5396
+447	5382
+447	5389
+447	5384
+447	5417
+447	5387
+447	5395
+447	5379
+447	5373
+447	5388
+447	3077
+447	4041
+447	5528
+447	5535
+448	4535
+448	4538
+448	4543
+448	4545
+448	4558
+448	4559
+448	4560
+448	4561
+448	4562
+448	4563
+448	4564
+449	4549
+449	4550
+449	4551
+449	4552
+449	4555
+449	4557
+449	4565
+449	4566
+449	4567
+449	4568
+449	4569
+449	4570
+449	4571
+450	4786
+450	4787
+450	4788
+451	4789
+451	4790
+451	4791
+452	5115
+452	5116
+452	5117
+452	5118
+452	5119
+452	5120
+452	5121
+452	5124
+452	5229
+453	5125
+453	5126
+453	5127
+454	4623
+454	4624
+455	4593
+455	4605
+455	4615
+455	4617
+455	4618
+455	4619
+455	4622
+455	5339
+456	4509
+456	4511
+456	4517
+456	4518
+457	4507
+457	4508
+457	4514
+457	4515
+457	4516
+458	4761
+458	4762
+459	4763
+459	4764
+459	4765
+460	4296
+460	5004
+460	5005
+460	5340
+461	4292
+461	4996
+461	4997
+461	4998
+461	4999
+461	5000
+461	5001
+461	5002
+461	5003
+462	4680
+462	4681
+462	4683
+462	4684
+462	4686
+462	4701
+462	4702
+462	4703
+462	4704
+462	4707
+463	4692
+463	4693
+463	4694
+463	4695
+463	4697
+463	4698
+463	4708
+464	4794
+464	4799
+464	4802
+464	4805
+464	4806
+464	4807
+464	4809
+464	5179
+465	4711
+465	4712
+465	4713
+465	4715
+465	4716
+466	4720
+467	4833
+467	4836
+467	5344
+467	5346
+467	5347
+468	5054
+468	5055
+468	5056
+468	5057
+468	5058
+468	5059
+468	5060
+468	5061
+468	5063
+468	5064
+468	5065
+468	5069
+468	5070
+469	5071
+469	5073
+469	5077
+469	5078
+470	5048
+470	5052
+470	5053
+471	4817
+472	4745
+472	4746
+472	4756
+473	4750
+474	2950
+474	4156
+474	4153
+474	4154
+474	4158
+474	4159
+474	4176
+474	4168
+474	4171
+474	4175
+474	5167
+474	5286
+474	5285
+475	1179
+475	4165
+475	4166
+475	4178
+475	4179
+475	4163
+475	4180
+475	4181
+475	4182
+475	4184
+475	4186
+475	4187
+476	5134
+476	5136
+476	5137
+476	5140
+476	5141
+476	5142
+476	5530
+476	5531
+476	5532
+476	5533
+477	5128
+477	5131
+477	5132
+477	5133
+477	5427
+477	5428
+477	5430
+477	5522
+477	5527
+477	5537
+477	5538
+478	4629
+478	5093
+478	5094
+478	5095
+478	5097
+478	5098
+478	5349
+479	4640
+479	5099
+479	5100
+479	5101
+480	3968
+480	3957
+480	3962
+480	3963
+480	3967
+480	3970
+480	4931
+480	4924
+480	4925
+480	4927
+480	4928
+480	4929
+480	4930
+481	5007
+481	5008
+481	5009
+481	5010
+481	5011
+481	5012
+481	5013
+481	5014
+481	5015
+481	5016
+481	5017
+481	5018
+481	5415
+481	5416
+482	5019
+482	5020
+482	5022
+482	5023
+482	5025
+482	5026
+482	5027
+482	5028
+482	5029
+482	5030
+482	5032
+482	5034
+482	5035
+483	4735
+483	4736
+484	4738
+484	4739
+484	4740
+484	4741
+484	4742
+484	4743
+485	4645
+485	4648
+485	4651
+485	4654
+485	5079
+485	5080
+485	5081
+485	5082
+485	5083
+485	5084
+485	5085
+485	5086
+485	5342
+486	4659
+486	4664
+486	5088
+486	5089
+486	5090
+486	5091
+486	5092
+487	4472
+487	4464
+487	4466
+487	4467
+487	4473
+487	4476
+487	4488
+487	4489
+487	4490
+487	4491
+487	4493
+487	5343
+487	4475
+488	4478
+488	4480
+488	4482
+488	4484
+488	4497
+488	4498
+489	4330
+489	1020
+489	4336
+489	5204
+490	3061
+490	3058
+490	3053
+490	3065
+490	3055
+490	3066
+490	3056
+490	3064
+490	3955
+490	3951
+490	3953
+490	3948
+490	3952
+490	3947
+490	5243
+446	3088
+490	5239
+490	5241
+490	5257
+378	6356
+490	3062
+490	3068
+490	3954
+490	3950
+491	3140
+491	3134
+491	3136
+491	3123
+491	3124
+491	3137
+491	3139
+491	4945
+491	4944
+491	4941
+491	4946
+491	4940
+491	4942
+491	4947
+491	4939
+491	5436
+491	5372
+491	5410
+491	5485
+491	5499
+491	5518
+492	3107
+492	3113
+492	3110
+492	3117
+492	3114
+492	3106
+492	3116
+492	4937
+492	4933
+492	4934
+492	4938
+492	4935
+492	4936
+492	5390
+492	5377
+492	5399
+492	3109
+492	5521
+492	5490
+492	5491
+492	5492
+492	5489
+493	1543
+493	3224
+493	3214
+493	5351
+493	3218
+493	3217
+493	5381
+493	5421
+493	5504
+494	3243
+494	5506
+495	3229
+495	3233
+495	3237
+495	4572
+495	4574
+495	4576
+495	4578
+495	5185
+495	5203
+495	5233
+495	5391
+495	5401
+495	5383
+495	3227
+496	3166
+496	3171
+496	4103
+496	4104
+496	4105
+496	4107
+496	4108
+496	3168
+496	3177
+496	3175
+496	3170
+496	3174
+496	3176
+496	5505
+496	5510
+496	5511
+496	5525
+496	5540
+496	3167
+497	1697
+497	3158
+497	3157
+497	3156
+497	3155
+497	3161
+497	4101
+497	4102
+497	4099
+497	4098
+497	4100
+497	4097
+497	5174
+497	5333
+497	5352
+497	5425
+497	5426
+497	5403
+497	5419
+497	5408
+497	5400
+497	5423
+497	5517
+497	4096
+497	3154
+497	5494
+497	5493
+378	6357
+490	3252
+150	4223
+136	5590
+378	6358
+145	5592
+496	6359
+145	1733
+136	5258
+378	6360
+131	5594
+129	5595
+129	5596
+129	5597
+129	4040
+133	5598
+141	5599
+133	5600
+147	5601
+128	3949
+128	5603
+147	5602
+128	5604
+131	5605
+155	5606
+496	6361
+498	5129
+498	5130
+498	5607
+438	6362
+498	5522
+498	5608
+498	5609
+498	5610
+498	5611
+498	5427
+134	1697
+134	5612
+134	5425
+131	5521
+147	5613
+147	5615
+147	5409
+147	5385
+50	5616
+136	5616
+149	5617
+153	5618
+54	5618
+241	5619
+136	5249
+136	5620
+131	1748
+134	4100
+134	5621
+131	5489
+133	4118
+151	1794
+129	1536
+145	5624
+137	5627
+267	5628
+375	5628
+155	5629
+337	5629
+442	5629
+133	4117
+133	5630
+133	4113
+133	4116
+498	5133
+498	5632
+133	5633
+147	3977
+498	5634
+155	5631
+147	1798
+498	5637
+498	5636
+145	5640
+45	5640
+335	5640
+53	5638
+133	5638
+438	6363
+438	6364
+129	5642
+129	5641
+156	5643
+156	5644
+156	5645
+156	5646
+156	5647
+156	4990
+156	5648
+416	6374
+416	6375
+142	5649
+130	5650
+135	5652
+140	5412
+130	2664
+410	6474
+400	6442
+442	5655
+374	3250
+442	5656
+442	5657
+442	5658
+384	5659
+384	5661
+405	6475
+439	5663
+480	6450
+439	5665
+410	6476
+379	5667
+439	5214
+379	5668
+439	5669
+379	5662
+439	3266
+379	5613
+418	6477
+439	5670
+410	6478
+439	5671
+439	5672
+416	5680
+416	5681
+416	5682
+493	5683
+416	5684
+493	5685
+416	5686
+416	5687
+497	5688
+497	5689
+497	5550
+416	5690
+416	5691
+416	5692
+493	5693
+493	5694
+416	3653
+416	5695
+497	5696
+416	5675
+497	5697
+497	5673
+493	5676
+497	5677
+497	5678
+416	5698
+497	5679
+497	5674
+490	5713
+481	5714
+490	5704
+490	5715
+492	5716
+492	5705
+490	5700
+490	5706
+492	5707
+481	5718
+481	5719
+481	5720
+490	5701
+490	5702
+481	5708
+492	5721
+490	5709
+481	5722
+490	5723
+490	5703
+492	5724
+492	5710
+481	5725
+490	5726
+492	5711
+481	5727
+490	5712
+492	5728
+492	5699
+481	5729
+492	5730
+381	5734
+376	5732
+376	5735
+376	5736
+376	5737
+412	6479
+381	5738
+376	5731
+376	5739
+381	5740
+376	5741
+376	5733
+376	3141
+379	5744
+384	5746
+415	6480
+384	5747
+379	5742
+490	5748
+490	5749
+490	5750
+439	5753
+441	5751
+441	5754
+441	5755
+441	5756
+441	5757
+441	5758
+439	5752
+439	5759
+444	5763
+418	6481
+444	5544
+444	5768
+444	5764
+405	6482
+444	5760
+444	5762
+407	6483
+444	5769
+444	5770
+444	5765
+444	5766
+444	5771
+444	5772
+444	5773
+444	5767
+444	5774
+493	5775
+447	5780
+447	5789
+447	5781
+447	5776
+442	5777
+447	5790
+447	5782
+447	5778
+447	5783
+447	5784
+447	5785
+447	5786
+447	5791
+447	5787
+442	5792
+447	5788
+442	5793
+442	5794
+442	5779
+374	5797
+377	1758
+381	4208
+495	5798
+495	5799
+495	5800
+495	5801
+495	5802
+212	5803
+376	5803
+407	6443
+55	5804
+147	5804
+197	5804
+379	5804
+13	5805
+146	5805
+336	5805
+146	5806
+336	5806
+440	5806
+480	3966
+242	4316
+242	5807
+405	6484
+407	6451
+410	6485
+148	3985
+150	5808
+140	2581
+150	5809
+148	2726
+420	6452
+137	2621
+150	5810
+499	5811
+499	5812
+499	5813
+499	5816
+499	5817
+499	5818
+499	5819
+410	6486
+499	5531
+418	6487
+418	6488
+420	6453
+405	6454
+418	6489
+412	6455
+480	6456
+418	6490
+444	5820
+444	5821
+444	5822
+444	5823
+447	5824
+447	5825
+447	5826
+444	5830
+447	5831
+447	5832
+441	5833
+442	5834
+377	5835
+377	5836
+492	5837
+497	5838
+492	3108
+490	5603
+441	5839
+492	5840
+442	5841
+442	5842
+442	5843
+497	5844
+495	5845
+29	5846
+214	5846
+502	5858
+506	5859
+500	5873
+508	5874
+503	5847
+503	5850
+503	3501
+503	5875
+507	5876
+503	5860
+501	5877
+509	3666
+502	5878
+504	4071
+507	5851
+504	4074
+500	3558
+509	5861
+503	5862
+503	5863
+506	5879
+500	5864
+506	3608
+509	3665
+500	3544
+502	5852
+510	3938
+510	5853
+504	5880
+507	5865
+505	3714
+501	3814
+505	5881
+500	5882
+500	5854
+502	3860
+501	5866
+510	5883
+506	3592
+505	5867
+507	5884
+505	5885
+502	5868
+510	3920
+505	5886
+502	5855
+509	5869
+509	5848
+509	3670
+507	5887
+510	5870
+504	4073
+505	3716
+508	4082
+508	4095
+507	3762
+501	3813
+510	5888
+505	5889
+507	5890
+501	5871
+510	5849
+501	5856
+506	5857
+502	5891
+508	5892
+508	5893
+508	5894
+508	4093
+509	3654
+506	5895
+504	4069
+506	5872
+504	5896
+517	5903
+515	5922
+518	5904
+519	5923
+517	5905
+519	5924
+520	5925
+522	5906
+515	5907
+515	3485
+516	3702
+516	5926
+515	5927
+515	3471
+515	5928
+515	5929
+512	4006
+519	5930
+517	5908
+519	5931
+520	5932
+518	3750
+514	5933
+518	3752
+518	5934
+517	3585
+519	5935
+520	5898
+511	5936
+520	5937
+519	5909
+513	5938
+516	5910
+522	5939
+516	3703
+522	5911
+516	5912
+517	5913
+512	5914
+514	5915
+517	3581
+521	4024
+512	5940
+522	5941
+513	5942
+521	5943
+512	5944
+521	4023
+520	5945
+520	3647
+512	5916
+513	3795
+514	5917
+522	5946
+520	5947
+512	5948
+522	3906
+514	5949
+511	3971
+516	3691
+513	5918
+514	3851
+521	5900
+513	3796
+518	3755
+513	5950
+522	5919
+511	5951
+519	5952
+512	5953
+516	5954
+514	3871
+517	5901
+514	5955
+511	5920
+513	5902
+521	4016
+511	5921
+521	5897
+518	5956
+511	3958
+511	5899
+521	5957
+503	5963
+500	5990
+503	5971
+500	5991
+500	3546
+503	5972
+500	3545
+500	3549
+503	5973
+500	3556
+503	5974
+507	5975
+503	5992
+503	3494
+503	5976
+500	5993
+503	3496
+500	5994
+505	5995
+503	5964
+501	5996
+510	5997
+505	5998
+506	5977
+501	5999
+500	6000
+507	5978
+506	6001
+507	6002
+502	3875
+510	5979
+505	3717
+500	5965
+501	6003
+510	5966
+502	3856
+509	5960
+510	3929
+500	6004
+501	3805
+505	5980
+510	6005
+509	6006
+504	4067
+505	6007
+506	5958
+509	5981
+509	5982
+501	5983
+510	5967
+508	6008
+500	6009
+505	3708
+510	6010
+510	3924
+505	5984
+61	5961
+507	5985
+501	5968
+509	6011
+507	6012
+506	5986
+510	3927
+509	3657
+509	6013
+510	6014
+61	5969
+2	5442
+501	5962
+501	3808
+506	5987
+506	5959
+61	6015
+501	6016
+510	6017
+507	6018
+507	3765
+506	3632
+507	3757
+508	5988
+508	6019
+506	6020
+506	5970
+506	6021
+506	3596
+502	5989
+515	6038
+515	3487
+515	6039
+515	6040
+515	6041
+519	6027
+515	6070
+517	6042
+519	3541
+515	6028
+515	6071
+519	6022
+515	3472
+515	6023
+518	6072
+519	3540
+520	6043
+520	3648
+519	6073
+517	6024
+519	3532
+517	6074
+516	6075
+518	6076
+515	6029
+515	6044
+513	6045
+519	6077
+522	6046
+517	3590
+517	6047
+513	3798
+516	6048
+520	3641
+519	6078
+520	3653
+517	3589
+519	6049
+513	6030
+520	6031
+55	6032
+516	6050
+522	3916
+519	6033
+516	6051
+519	6079
+518	3739
+522	6080
+517	6052
+520	6081
+513	3788
+517	6082
+513	6083
+514	6084
+518	6085
+513	6086
+518	3738
+513	6034
+517	6053
+516	6087
+518	3756
+517	6054
+518	3753
+516	6088
+519	6089
+516	6055
+513	6090
+522	6091
+518	6056
+520	6057
+514	6025
+516	6092
+517	6093
+516	6035
+513	6094
+522	6095
+516	6058
+55	6059
+517	3578
+516	3694
+518	3740
+520	6096
+522	3919
+513	6097
+520	6098
+518	6099
+520	3642
+520	6100
+513	6101
+518	6060
+511	6061
+511	3956
+514	6102
+513	6062
+514	6103
+511	6063
+512	6064
+516	6104
+514	3834
+521	6105
+522	6106
+518	6026
+514	6107
+521	6065
+522	6066
+511	6036
+521	6108
+511	6109
+522	6110
+512	6111
+521	6112
+511	3972
+521	6067
+512	3999
+521	6113
+512	6068
+521	6114
+522	6069
+514	3839
+511	3965
+511	6037
+514	3837
+512	4004
+512	4000
+522	6115
+512	4005
+536	6123
+528	6124
+536	6117
+526	6125
+529	6126
+523	6127
+529	4729
+523	6128
+533	4799
+528	4510
+536	4610
+529	6129
+529	6118
+533	4800
+535	6119
+536	6130
+536	6131
+527	6132
+530	4662
+537	4826
+64	5112
+533	6133
+530	6134
+530	6135
+525	6136
+537	6137
+537	5348
+530	4663
+533	6138
+534	4481
+529	6116
+528	6139
+531	6140
+59	6141
+525	6142
+535	6143
+527	6144
+534	6145
+527	6146
+530	4660
+534	6147
+523	6148
+538	6149
+526	6150
+528	4512
+526	4820
+537	6151
+523	6120
+526	6152
+539	6153
+532	6154
+535	6155
+534	4487
+534	6121
+526	6156
+533	6157
+533	4792
+524	6158
+523	6159
+536	6160
+538	6161
+533	6162
+526	4819
+529	6122
+523	4556
+527	6163
+524	6164
+535	6165
+524	6166
+536	6167
+531	6168
+530	6169
+539	6170
+538	6171
+526	6172
+531	6173
+532	4696
+523	6174
+537	6175
+537	6176
+535	6177
+537	6178
+532	4699
+524	6179
+534	6180
+534	6181
+530	6182
+531	6183
+535	6184
+524	6185
+539	6186
+528	6187
+532	6188
+59	6189
+531	6190
+539	6191
+527	6192
+529	6193
+524	6194
+539	6195
+539	6196
+525	6197
+527	6198
+539	6199
+538	6200
+525	4679
+540	6204
+548	6215
+546	6216
+544	6217
+52	6205
+547	6206
+545	4721
+550	6218
+545	6219
+545	6220
+552	6221
+549	4710
+37	4371
+540	6222
+540	6223
+545	6207
+544	6224
+550	6225
+551	6226
+543	6227
+546	6228
+540	6229
+552	4631
+540	4546
+544	4502
+553	6230
+551	6231
+543	6232
+548	6233
+544	6234
+546	6235
+552	6208
+553	6236
+551	6237
+548	6201
+52	6238
+552	6239
+551	6240
+540	4547
+541	6241
+547	6209
+540	4548
+550	6242
+545	6243
+544	4505
+544	4503
+547	4687
+546	4650
+552	6244
+552	4632
+549	6245
+542	6246
+542	6247
+546	6210
+544	6248
+550	6249
+548	6250
+542	6251
+553	6252
+546	4652
+547	6211
+550	6253
+550	6254
+547	6255
+542	4669
+546	6256
+548	6212
+542	6202
+550	4606
+548	6203
+551	6257
+542	6213
+547	6258
+541	6259
+545	6260
+545	6261
+552	6262
+547	6214
+548	4463
+553	6263
+543	6264
+542	6265
+549	6266
+541	6267
+543	6268
+541	6269
+553	6270
+549	6271
+549	6272
+543	6273
+553	6274
+541	6275
+543	6276
+541	6277
+543	6278
+377	6365
+492	6368
+416	6376
+418	6491
+420	6492
+402	6438
+407	6493
+410	6494
+410	6457
+480	6495
+412	6496
+402	6444
+402	6439
+418	6458
+480	6459
+480	6460
+412	6497
+402	6498
+420	6461
+420	6462
+480	6445
+418	6499
+410	6446
+407	6500
+405	6501
+412	6502
+412	6503
+402	6504
+412	6463
+412	6437
+407	6505
+480	6464
+480	6465
+480	6466
+391	6570
+395	6566
+387	6571
+389	6567
+461	6572
+389	6573
+398	6574
+393	6568
+461	6569
+391	6575
+398	6576
+385	6577
+385	6565
+398	6578
+398	6579
+393	6580
+398	6581
+393	6582
+391	6583
+398	6584
+393	6585
+395	6586
+395	6587
+395	6588
+426	6727
+478	6728
+452	6720
+426	6729
+472	6730
+448	6721
+428	4360
+397	4448
+428	6731
+472	6732
+426	4417
+428	4368
+468	6733
+487	6734
+487	4474
+428	6735
+424	6736
+26	3367
+62	3092
+62	6875
+62	6884
+26	6876
+62	6877
+62	6878
+62	6885
+26	6879
+62	6880
+62	6881
+62	6882
+62	6883
+555	5811
+555	6907
+555	6889
+555	6890
+555	6891
+555	6892
+555	6893
+555	6894
+555	6895
+555	6906
+555	5141
+555	6896
+534	6897
+25	6898
+534	4485
+534	6899
+534	6900
+555	5135
+555	6905
+25	6901
+25	6902
+555	6903
+534	4479
+25	6904
+23	5265
+64	5193
+23	6886
+23	6887
+23	6888
+50	5335
+50	6910
+50	6909
+45	6908
+44	6911
+52	3250
+55	6912
+520	6913
+\.
+
+
+--
+-- Data for Name: teams; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+COPY public.teams (id, gender, year, school_id, losses, wins, league_losses, league_wins) FROM stdin;
+429	girls	2023	6	0	0	0	0
+432	boys	2023	8	0	0	0	0
+47	boys	2019	15	1	2	0	2
+48	boys	2019	16	2	0	2	0
+52	boys	2019	20	1	3	1	1
+51	boys	2019	19	1	1	1	1
+55	boys	2019	23	1	2	0	2
+44	boys	2019	12	3	0	2	0
+50	boys	2019	18	1	1	1	1
+58	boys	2019	26	2	0	2	0
+56	boys	2019	24	2	0	2	0
+14	girls	2019	14	1	0	1	0
+59	girls	2019	12	2	0	1	0
+15	girls	2019	15	0	2	0	1
+17	girls	2019	17	0	1	0	1
+60	girls	2019	16	1	0	1	0
+26	girls	2019	26	1	0	1	0
+62	girls	2019	19	0	1	0	1
+64	girls	2019	22	1	0	1	0
+23	girls	2019	23	0	1	0	1
+54	boys	2019	22	1	1	1	1
+145	boys	2021	13	12	3	11	3
+130	girls	2021	19	4	7	4	7
+129	boys	2021	19	4	13	4	12
+144	girls	2021	12	6	6	6	5
+149	boys	2021	26	9	8	9	7
+143	boys	2021	12	9	6	9	5
+139	boys	2021	16	11	2	10	2
+160	girls	2022	47	0	0	0	0
+132	girls	2021	17	0	11	0	11
+153	boys	2021	22	9	3	8	3
+138	boys	2021	24	10	7	9	6
+155	boys	2021	14	16	0	15	0
+229	boys	2022	27	0	0	0	0
+150	girls	2021	26	2	14	2	13
+140	girls	2021	16	9	0	8	0
+196	boys	2021	38	0	0	0	0
+227	boys	2021	27	0	0	0	0
+154	girls	2021	22	7	5	7	4
+126	boys	2019	34	0	0	0	0
+151	boys	2021	25	9	8	9	6
+142	girls	2021	20	8	2	8	1
+215	boys	2022	29	0	0	0	0
+216	girls	2022	29	0	0	0	0
+164	girls	2022	37	0	0	0	0
+124	boys	2019	32	0	0	0	0
+121	boys	2019	29	0	0	0	0
+122	boys	2019	30	0	0	0	0
+125	boys	2019	33	0	0	0	0
+135	girls	2021	15	4	2	4	2
+2	girls	2019	2	0	0	0	0
+3	girls	2019	3	0	0	0	0
+5	girls	2019	5	0	0	0	0
+6	girls	2019	6	0	0	0	0
+7	girls	2019	7	0	0	0	0
+9	girls	2019	9	0	0	0	0
+10	girls	2019	10	0	0	0	0
+35	boys	2019	4	0	0	0	0
+36	boys	2019	5	0	0	0	0
+38	boys	2019	7	0	0	0	0
+39	boys	2019	8	0	0	0	0
+40	boys	2019	9	0	0	0	0
+141	boys	2021	20	8	5	8	4
+193	boys	2022	49	0	0	0	0
+161	boys	2021	37	0	0	0	0
+168	girls	2022	44	0	0	0	0
+171	boys	2022	48	0	2	0	0
+183	boys	2022	40	0	0	0	0
+175	boys	2022	43	0	0	0	0
+167	boys	2022	44	0	0	0	0
+179	boys	2022	46	0	0	0	0
+147	boys	2021	23	11	5	9	5
+219	boys	2022	33	0	0	0	0
+230	girls	2022	27	0	0	0	0
+188	girls	2022	41	0	0	0	0
+207	girls	2022	42	0	0	0	0
+209	girls	2022	45	0	0	0	0
+180	girls	2022	46	0	0	0	0
+172	girls	2022	48	0	0	0	0
+220	girls	2022	33	0	0	0	0
+200	boys	2022	39	0	0	0	0
+213	boys	2021	29	0	0	0	0
+221	boys	2021	30	0	0	0	0
+233	boys	2021	32	0	0	0	0
+199	boys	2021	39	0	0	0	0
+181	boys	2021	40	0	0	0	0
+173	boys	2021	43	0	0	0	0
+165	boys	2021	44	0	0	0	0
+157	boys	2021	47	0	0	0	0
+169	boys	2021	48	0	2	0	0
+191	boys	2021	49	0	0	0	0
+217	boys	2021	33	0	0	0	0
+228	girls	2021	27	0	0	0	0
+222	girls	2021	30	0	0	0	0
+232	girls	2021	31	0	0	0	0
+186	girls	2021	41	0	0	0	0
+206	girls	2021	42	0	0	0	0
+174	girls	2021	43	0	0	0	0
+208	girls	2021	45	0	0	0	0
+178	girls	2021	46	0	0	0	0
+170	girls	2021	48	0	2	0	0
+192	girls	2021	49	0	0	0	0
+218	girls	2021	33	0	0	0	0
+120	boys	2019	27	0	0	0	0
+27	girls	2019	27	0	0	0	0
+29	girls	2019	29	0	0	0	0
+31	girls	2019	31	0	0	0	0
+32	girls	2019	32	0	0	0	0
+33	girls	2019	33	0	0	0	0
+28	girls	2019	28	0	0	0	0
+425	girls	2023	4	0	0	0	0
+49	boys	2019	17	0	2	0	2
+57	boys	2019	25	0	4	0	2
+13	girls	2019	13	0	1	0	1
+25	girls	2019	25	1	1	0	0
+45	boys	2019	13	2	2	2	2
+329	girls	2022	1	0	0	0	0
+265	girls	2022	59	0	0	0	0
+341	boys	2022	51	1	1	0	0
+257	boys	2022	35	0	0	0	0
+249	girls	2022	3	0	0	0	0
+308	boys	2022	4	0	0	0	0
+309	girls	2022	4	0	0	0	0
+319	boys	2022	5	0	0	0	0
+320	girls	2022	5	0	0	0	0
+252	boys	2022	6	0	0	0	0
+253	girls	2022	6	0	0	0	0
+323	boys	2022	7	0	0	0	0
+324	girls	2022	7	0	0	0	0
+327	boys	2022	8	0	0	0	0
+328	girls	2022	8	0	0	0	0
+326	girls	2022	9	0	0	0	0
+325	boys	2022	9	0	0	0	0
+321	boys	2022	10	0	0	0	0
+322	girls	2022	10	0	0	0	0
+342	girls	2022	51	0	2	0	0
+316	girls	2022	56	0	0	0	0
+273	girls	2022	16	0	0	0	0
+264	boys	2022	59	0	0	0	0
+345	girls	2022	62	0	0	0	0
+348	boys	2022	64	0	0	0	0
+63	girls	2019	20	0	0	0	0
+61	girls	2019	18	0	0	0	0
+333	boys	2022	30	0	0	0	0
+349	girls	2022	64	0	0	0	0
+245	girls	2021	1	0	0	0	0
+248	girls	2021	3	0	0	0	0
+307	girls	2021	4	0	0	0	0
+146	girls	2021	13	4	7	4	7
+251	girls	2021	6	0	0	0	0
+365	girls	2021	7	0	0	0	0
+366	girls	2021	8	0	0	0	0
+363	girls	2021	9	0	0	0	0
+364	girls	2021	10	0	0	0	0
+256	boys	2021	35	0	0	0	0
+306	boys	2021	4	0	0	0	0
+255	girls	2021	5	2	0	0	0
+250	boys	2021	6	0	0	0	0
+369	boys	2021	7	0	0	0	0
+368	boys	2021	10	0	0	0	0
+357	girls	2022	55	2	2	0	0
+254	boys	2021	5	1	1	0	0
+241	boys	2021	34	2	0	0	0
+134	boys	2021	15	2	10	2	10
+343	boys	2022	31	0	0	0	0
+243	boys	2022	34	2	0	0	0
+238	boys	2022	36	0	0	0	0
+270	boys	2022	52	0	0	0	0
+311	boys	2022	53	0	0	0	0
+354	boys	2022	54	0	0	0	0
+296	boys	2022	61	0	0	0	0
+304	boys	2022	63	0	0	0	0
+288	boys	2022	65	0	0	0	0
+260	boys	2022	67	0	0	0	0
+292	boys	2022	68	0	0	0	0
+350	boys	2022	71	0	0	0	0
+300	boys	2022	58	0	0	0	0
+334	girls	2022	30	0	0	0	0
+344	girls	2022	31	0	0	0	0
+244	girls	2022	34	2	0	0	0
+271	girls	2022	52	0	0	0	0
+312	girls	2022	53	0	0	0	0
+279	girls	2022	57	0	0	0	0
+297	girls	2022	61	0	0	0	0
+340	girls	2022	60	0	0	0	0
+289	girls	2022	65	0	0	0	0
+314	girls	2022	66	0	0	0	0
+293	girls	2022	68	0	0	0	0
+318	girls	2022	69	0	0	0	0
+351	girls	2022	71	0	0	0	0
+301	girls	2022	58	0	0	0	0
+131	boys	2021	17	2	12	2	12
+148	girls	2021	23	13	3	11	3
+258	boys	2021	67	2	0	0	0
+133	boys	2021	21	0	17	0	15
+242	girls	2021	34	2	0	0	0
+128	boys	2021	11	4	11	4	11
+268	boys	2021	52	0	0	0	0
+310	boys	2021	53	0	0	0	0
+276	boys	2021	57	0	0	0	0
+262	boys	2021	59	0	0	0	0
+302	boys	2021	63	0	0	0	0
+286	boys	2021	65	0	0	0	0
+282	boys	2021	64	0	0	0	0
+280	boys	2021	71	0	0	0	0
+298	boys	2021	58	0	0	0	0
+246	girls	2021	28	0	0	0	0
+234	girls	2021	32	0	0	0	0
+152	girls	2021	25	9	3	8	2
+285	girls	2021	54	0	0	0	0
+277	girls	2021	57	0	0	0	0
+303	girls	2021	63	0	0	0	0
+240	girls	2021	60	0	0	0	0
+287	girls	2021	65	0	0	0	0
+313	girls	2021	66	0	0	0	0
+291	girls	2021	68	0	0	0	0
+281	girls	2021	71	0	0	0	0
+315	girls	2021	56	0	0	0	0
+295	girls	2021	61	0	0	0	0
+137	girls	2021	18	1	12	1	10
+259	girls	2021	67	2	1	0	0
+377	boys	2023	22	6	5	6	5
+376	boys	2023	21	1	13	1	13
+266	boys	2022	20	8	8	7	8
+379	boys	2023	23	14	2	13	2
+381	boys	2023	25	1	14	1	14
+374	boys	2023	20	9	3	9	3
+397	boys	2023	35	0	0	0	0
+422	girls	2023	2	0	0	0	0
+437	girls	2023	10	0	0	0	0
+195	boys	2022	11	2	14	2	13
+235	boys	2022	32	0	0	0	0
+371	boys	2022	50	0	0	0	0
+278	boys	2022	57	0	0	0	0
+339	boys	2022	60	0	0	0	0
+346	boys	2022	70	0	0	0	0
+247	girls	2022	28	0	0	0	0
+236	girls	2022	32	0	0	0	0
+184	girls	2022	40	0	0	0	0
+176	girls	2022	43	0	0	0	0
+194	girls	2022	49	0	0	0	0
+355	girls	2022	54	0	0	0	0
+305	girls	2022	63	0	0	0	0
+261	girls	2022	67	0	0	0	0
+347	girls	2022	70	0	0	0	0
+189	boys	2022	18	8	7	8	7
+163	boys	2022	37	0	0	0	0
+330	boys	2022	38	0	0	0	0
+187	boys	2022	41	0	0	0	0
+159	boys	2022	47	0	0	0	0
+231	boys	2021	31	0	0	0	0
+237	boys	2021	36	0	0	0	0
+185	boys	2021	41	0	0	0	0
+177	boys	2021	46	0	0	0	0
+201	boys	2021	50	0	0	0	0
+284	boys	2021	54	0	0	0	0
+239	boys	2021	60	0	0	0	0
+290	boys	2021	68	0	0	0	0
+294	boys	2021	61	0	0	0	0
+214	girls	2021	29	0	0	0	0
+182	girls	2021	40	0	0	0	0
+223	boys	2022	25	4	12	4	11
+337	boys	2022	14	12	4	12	3
+197	boys	2022	23	9	7	8	7
+352	boys	2022	22	11	4	11	4
+353	girls	2022	22	5	6	5	6
+166	girls	2021	44	0	0	0	0
+267	girls	2022	20	10	2	9	2
+198	girls	2022	23	11	1	10	1
+224	girls	2022	25	7	4	7	4
+226	girls	2022	26	4	7	4	7
+275	girls	2022	12	10	2	10	1
+336	girls	2022	13	6	8	5	6
+338	girls	2022	14	1	11	1	10
+211	girls	2022	15	7	4	7	4
+332	girls	2022	17	1	12	0	11
+190	girls	2022	18	3	9	3	8
+202	girls	2022	19	5	6	5	6
+158	girls	2021	47	0	0	0	0
+269	girls	2021	52	0	0	0	0
+263	girls	2021	59	0	0	0	0
+283	girls	2021	64	0	0	0	0
+359	boys	2022	24	8	9	7	8
+317	girls	2021	69	0	0	0	0
+225	boys	2022	26	14	1	14	1
+274	boys	2022	12	11	5	11	4
+335	boys	2022	13	16	2	13	2
+210	boys	2022	15	6	10	5	10
+272	boys	2022	16	15	1	14	1
+331	boys	2022	17	3	13	3	12
+299	girls	2021	58	0	0	0	0
+204	girls	2021	2	1	0	0	0
+205	girls	2022	2	2	0	0	0
+370	boys	2021	8	0	0	0	0
+367	boys	2021	9	0	0	0	0
+1	girls	2019	1	0	0	0	0
+4	girls	2019	4	0	0	0	0
+8	girls	2019	8	0	0	0	0
+42	boys	2019	35	0	0	0	0
+37	boys	2019	6	0	0	0	0
+41	boys	2019	10	0	0	0	0
+356	boys	2022	55	5	5	0	0
+162	girls	2021	37	0	0	0	0
+212	boys	2022	21	1	16	1	14
+203	boys	2022	19	0	15	0	15
+421	girls	2023	1	0	0	0	0
+378	girls	2023	22	0	0	0	0
+380	girls	2023	23	0	0	0	0
+382	girls	2023	25	0	0	0	0
+385	boys	2023	27	0	0	0	0
+136	boys	2021	18	3	12	3	11
+387	boys	2023	29	0	0	0	0
+391	boys	2023	31	0	0	0	0
+393	boys	2023	32	0	0	0	0
+398	boys	2023	36	0	0	0	0
+400	boys	2023	37	0	0	0	0
+401	boys	2023	39	0	0	0	0
+405	boys	2023	41	0	0	0	0
+407	boys	2023	43	0	0	0	0
+412	boys	2023	46	0	0	0	0
+415	boys	2023	47	0	0	0	0
+418	boys	2023	49	0	0	0	0
+420	boys	2023	50	0	0	0	0
+386	girls	2023	27	0	0	0	0
+390	girls	2023	30	0	0	0	0
+392	girls	2023	31	0	0	0	0
+396	girls	2023	34	0	0	0	0
+399	girls	2023	37	0	0	0	0
+403	girls	2023	40	0	0	0	0
+406	girls	2023	42	0	0	0	0
+408	girls	2023	43	0	0	0	0
+411	girls	2023	45	0	0	0	0
+413	girls	2023	46	0	0	0	0
+417	girls	2023	48	0	0	0	0
+419	girls	2023	49	0	0	0	0
+427	girls	2023	5	0	0	0	0
+375	girls	2023	20	0	0	0	0
+491	girls	2023	17	0	0	0	0
+497	boys	2023	15	5	11	4	11
+446	girls	2023	19	0	0	0	0
+384	boys	2023	26	9	6	9	6
+416	boys	2023	48	1	5	0	0
+481	boys	2023	51	2	0	0	0
+441	boys	2023	13	6	3	6	3
+442	boys	2023	14	11	4	11	4
+383	girls	2023	26	0	0	0	0
+438	girls	2023	12	0	0	0	0
+440	girls	2023	13	0	0	0	0
+443	girls	2023	14	0	0	0	0
+445	girls	2023	18	0	0	0	0
+494	girls	2023	16	0	0	0	0
+496	girls	2023	15	0	0	0	0
+447	boys	2023	19	1	14	1	13
+444	boys	2023	18	6	5	6	5
+493	boys	2023	24	7	6	6	6
+439	boys	2023	12	14	1	14	1
+389	boys	2023	30	0	0	0	0
+395	boys	2023	34	0	0	0	0
+402	boys	2023	40	0	0	0	0
+410	boys	2023	44	0	0	0	0
+448	boys	2023	52	0	0	0	0
+450	boys	2023	53	0	0	0	0
+452	boys	2023	54	0	0	0	0
+455	boys	2023	57	0	0	0	0
+457	boys	2023	59	0	0	0	0
+458	boys	2023	63	0	0	0	0
+461	boys	2023	60	0	0	0	0
+462	boys	2023	65	0	0	0	0
+465	boys	2023	68	0	0	0	0
+468	boys	2023	70	0	0	0	0
+472	boys	2023	58	0	0	0	0
+474	boys	2023	33	0	0	0	0
+477	boys	2023	55	0	0	0	0
+478	boys	2023	71	0	0	0	0
+480	boys	2023	38	0	0	0	0
+483	boys	2023	61	0	0	0	0
+485	boys	2023	64	0	0	0	0
+487	boys	2023	67	0	0	0	0
+388	girls	2023	29	0	0	0	0
+394	girls	2023	32	0	0	0	0
+404	girls	2023	41	0	0	0	0
+409	girls	2023	44	0	0	0	0
+414	girls	2023	47	0	0	0	0
+449	girls	2023	52	0	0	0	0
+451	girls	2023	53	0	0	0	0
+453	girls	2023	54	0	0	0	0
+454	girls	2023	57	0	0	0	0
+456	girls	2023	59	0	0	0	0
+459	girls	2023	63	0	0	0	0
+460	girls	2023	60	0	0	0	0
+463	girls	2023	65	0	0	0	0
+464	girls	2023	66	0	0	0	0
+466	girls	2023	68	0	0	0	0
+467	girls	2023	69	0	0	0	0
+469	girls	2023	70	0	0	0	0
+470	girls	2023	62	0	0	0	0
+471	girls	2023	56	0	0	0	0
+473	girls	2023	58	0	0	0	0
+475	girls	2023	33	0	0	0	0
+476	girls	2023	55	0	0	0	0
+479	girls	2023	71	0	0	0	0
+482	girls	2023	51	0	0	0	0
+484	girls	2023	61	0	0	0	0
+486	girls	2023	64	0	0	0	0
+488	girls	2023	67	0	0	0	0
+489	girls	2023	28	0	0	0	0
+490	boys	2023	11	3	10	3	9
+498	boys	2021	55	5	4	0	0
+30	girls	2019	30	0	0	0	0
+34	girls	2019	34	0	0	0	0
+492	boys	2023	17	6	11	5	10
+495	boys	2023	16	11	0	10	0
+426	boys	2023	5	0	0	0	0
+127	boys	2019	36	0	0	0	0
+428	boys	2023	6	0	0	0	0
+424	boys	2023	4	0	0	0	0
+123	boys	2019	31	0	0	0	0
+430	boys	2023	7	0	0	0	0
+435	boys	2023	9	0	0	0	0
+436	boys	2023	10	0	0	0	0
+423	girls	2023	3	0	0	0	0
+431	girls	2023	7	0	0	0	0
+433	girls	2023	8	0	0	0	0
+434	girls	2023	9	0	0	0	0
+156	girls	2021	14	8	7	8	6
+499	girls	2021	55	1	1	0	0
+509	girls	2019	48	1	1	0	0
+53	boys	2019	21	0	4	0	4
+520	boys	2019	48	0	4	0	0
+500	girls	2019	37	0	0	0	0
+501	girls	2019	40	0	0	0	0
+502	girls	2019	41	0	0	0	0
+504	girls	2019	42	0	0	0	0
+505	girls	2019	43	0	0	0	0
+506	girls	2019	44	0	0	0	0
+508	girls	2019	45	0	0	0	0
+507	girls	2019	46	0	0	0	0
+503	girls	2019	47	0	0	0	0
+510	girls	2019	49	0	0	0	0
+519	boys	2019	37	0	0	0	0
+512	boys	2019	39	0	0	0	0
+513	boys	2019	40	0	0	0	0
+516	boys	2019	43	0	0	0	0
+517	boys	2019	44	0	0	0	0
+518	boys	2019	46	0	0	0	0
+522	boys	2019	49	0	0	0	0
+511	boys	2019	38	0	0	0	0
+514	boys	2019	41	0	0	0	0
+515	boys	2019	47	0	0	0	0
+521	boys	2019	50	0	0	0	0
+531	girls	2019	35	0	0	0	0
+523	girls	2019	52	0	0	0	0
+524	girls	2019	53	0	0	0	0
+525	girls	2019	54	0	0	0	0
+536	girls	2019	57	0	0	0	0
+528	girls	2019	59	0	0	0	0
+539	girls	2019	63	0	0	0	0
+532	girls	2019	65	0	0	0	0
+533	girls	2019	66	0	0	0	0
+535	girls	2019	68	0	0	0	0
+537	girls	2019	69	0	0	0	0
+526	girls	2019	56	0	0	0	0
+527	girls	2019	58	0	0	0	0
+538	girls	2019	71	0	0	0	0
+529	girls	2019	61	0	0	0	0
+530	girls	2019	64	0	0	0	0
+540	boys	2019	52	0	0	0	0
+541	boys	2019	53	0	0	0	0
+542	boys	2019	54	0	0	0	0
+550	boys	2019	57	0	0	0	0
+544	boys	2019	59	0	0	0	0
+553	boys	2019	63	0	0	0	0
+547	boys	2019	65	0	0	0	0
+549	boys	2019	68	0	0	0	0
+543	boys	2019	58	0	0	0	0
+552	boys	2019	71	0	0	0	0
+545	boys	2019	61	0	0	0	0
+546	boys	2019	64	0	0	0	0
+551	boys	2019	72	0	0	0	0
+554	boys	2019	55	2	1	0	1
+548	boys	2019	67	3	0	1	0
+555	girls	2019	55	0	2	0	1
+534	girls	2019	67	2	0	1	0
+46	boys	2019	14	4	0	4	0
+43	boys	2019	11	3	2	2	2
+\.
+
+
+--
+-- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+COPY public.users (id, first_name, last_name, email, password_hash) FROM stdin;
+2	Jeffrey	Woolbert	jeff@qiviutcapital.com	pbkdf2:sha256:50000$ef89zabF$07242a1696f644c7c453fb448b3705881c06d390c61d567144c26815cfc307ce
+1	Jeff	Woolbert	jwoolbert@gmail.com	pbkdf2:sha256:50000$7f68ljpJ$6c96ced94fa2c2acc701b1afaa958bf0c8d9b269d7341464ad0cccf3d0fedfa9
+\.
+
+
+--
+-- Name: non_duplicates_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+--
+
+SELECT pg_catalog.setval('public.non_duplicates_id_seq', 12, true);
+
+
+--
+-- Name: race_scores_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+--
+
+SELECT pg_catalog.setval('public.race_scores_id_seq', 1319, true);
+
+
+--
+-- Name: results_race_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+--
+
+SELECT pg_catalog.setval('public.results_race_id_seq', 1, false);
+
+
+--
+-- Name: results_runner_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+--
+
+SELECT pg_catalog.setval('public.results_runner_id_seq', 1, false);
+
+
+--
+-- Name: results_team_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+--
+
+SELECT pg_catalog.setval('public.results_team_id_seq', 1, false);
+
+
+--
+-- Name: schools_league_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+--
+
+SELECT pg_catalog.setval('public.schools_league_id_seq', 1, false);
+
+
+--
+-- Name: session_table_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+--
+
+SELECT pg_catalog.setval('public.session_table_id_seq', 237, true);
+
+
+--
+-- Name: alembic_version alembic_version_pkc; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.alembic_version
+    ADD CONSTRAINT alembic_version_pkc PRIMARY KEY (version_num);
+
+
+--
+-- Name: courses courses_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.courses
+    ADD CONSTRAINT courses_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: leagues leagues_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.leagues
+    ADD CONSTRAINT leagues_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: locations locations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.locations
+    ADD CONSTRAINT locations_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: non_duplicates non_duplicates_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.non_duplicates
+    ADD CONSTRAINT non_duplicates_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: race_scores race_scores_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.race_scores
+    ADD CONSTRAINT race_scores_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: races races_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.races
+    ADD CONSTRAINT races_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: results results_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.results
+    ADD CONSTRAINT results_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: runners runners_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.runners
+    ADD CONSTRAINT runners_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: schools schools_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.schools
+    ADD CONSTRAINT schools_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: session_table session_table_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.session_table
+    ADD CONSTRAINT session_table_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: session_table session_table_session_id_key; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.session_table
+    ADD CONSTRAINT session_table_session_id_key UNIQUE (session_id);
+
+
+--
+-- Name: teams teams_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.teams
+    ADD CONSTRAINT teams_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT users_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: ix_users_email; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX ix_users_email ON public.users USING btree (email);
+
+
+--
+-- Name: courses courses_location_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.courses
+    ADD CONSTRAINT courses_location_id_fkey FOREIGN KEY (location_id) REFERENCES public.locations(id);
+
+
+--
+-- Name: league_managers league_managers_league_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.league_managers
+    ADD CONSTRAINT league_managers_league_id_fkey FOREIGN KEY (league_id) REFERENCES public.leagues(id);
+
+
+--
+-- Name: league_managers league_managers_manager_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.league_managers
+    ADD CONSTRAINT league_managers_manager_id_fkey FOREIGN KEY (manager_id) REFERENCES public.users(id);
+
+
+--
+-- Name: non_duplicates non_duplicates_runner1_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.non_duplicates
+    ADD CONSTRAINT non_duplicates_runner1_id_fkey FOREIGN KEY (runner1_id) REFERENCES public.runners(id);
+
+
+--
+-- Name: non_duplicates non_duplicates_runner2_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.non_duplicates
+    ADD CONSTRAINT non_duplicates_runner2_id_fkey FOREIGN KEY (runner2_id) REFERENCES public.runners(id);
+
+
+--
+-- Name: race_schools race_schools_race_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.race_schools
+    ADD CONSTRAINT race_schools_race_id_fkey FOREIGN KEY (race_id) REFERENCES public.races(id);
+
+
+--
+-- Name: race_schools race_schools_school_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.race_schools
+    ADD CONSTRAINT race_schools_school_id_fkey FOREIGN KEY (school_id) REFERENCES public.schools(id);
+
+
+--
+-- Name: race_scores race_scores_loser_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.race_scores
+    ADD CONSTRAINT race_scores_loser_id_fkey FOREIGN KEY (loser_id) REFERENCES public.teams(id);
+
+
+--
+-- Name: race_scores race_scores_race_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.race_scores
+    ADD CONSTRAINT race_scores_race_id_fkey FOREIGN KEY (race_id) REFERENCES public.races(id);
+
+
+--
+-- Name: race_scores race_scores_winner_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.race_scores
+    ADD CONSTRAINT race_scores_winner_id_fkey FOREIGN KEY (winner_id) REFERENCES public.teams(id);
+
+
+--
+-- Name: race_teams race_teams_race_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.race_teams
+    ADD CONSTRAINT race_teams_race_id_fkey FOREIGN KEY (race_id) REFERENCES public.races(id);
+
+
+--
+-- Name: race_teams race_teams_team_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.race_teams
+    ADD CONSTRAINT race_teams_team_id_fkey FOREIGN KEY (team_id) REFERENCES public.teams(id);
+
+
+--
+-- Name: races races_course_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.races
+    ADD CONSTRAINT races_course_id_fkey FOREIGN KEY (course_id) REFERENCES public.courses(id);
+
+
+--
+-- Name: races races_host_school_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.races
+    ADD CONSTRAINT races_host_school_id_fkey FOREIGN KEY (host_school_id) REFERENCES public.schools(id);
+
+
+--
+-- Name: races races_location_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.races
+    ADD CONSTRAINT races_location_id_fkey FOREIGN KEY (location_id) REFERENCES public.locations(id);
+
+
+--
+-- Name: races races_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.races
+    ADD CONSTRAINT races_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
+-- Name: results results_race_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.results
+    ADD CONSTRAINT results_race_id_fkey FOREIGN KEY (race_id) REFERENCES public.races(id);
+
+
+--
+-- Name: results results_runner_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.results
+    ADD CONSTRAINT results_runner_id_fkey FOREIGN KEY (runner_id) REFERENCES public.runners(id);
+
+
+--
+-- Name: results results_team_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.results
+    ADD CONSTRAINT results_team_id_fkey FOREIGN KEY (team_id) REFERENCES public.teams(id);
+
+
+--
+-- Name: school_coaches school_coaches_coach_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.school_coaches
+    ADD CONSTRAINT school_coaches_coach_id_fkey FOREIGN KEY (coach_id) REFERENCES public.users(id);
+
+
+--
+-- Name: school_coaches school_coaches_school_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.school_coaches
+    ADD CONSTRAINT school_coaches_school_id_fkey FOREIGN KEY (school_id) REFERENCES public.schools(id);
+
+
+--
+-- Name: school_locations school_locations_location_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.school_locations
+    ADD CONSTRAINT school_locations_location_id_fkey FOREIGN KEY (location_id) REFERENCES public.locations(id);
+
+
+--
+-- Name: school_locations school_locations_school_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.school_locations
+    ADD CONSTRAINT school_locations_school_id_fkey FOREIGN KEY (school_id) REFERENCES public.schools(id);
+
+
+--
+-- Name: schools schools_league_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.schools
+    ADD CONSTRAINT schools_league_id_fkey FOREIGN KEY (league_id) REFERENCES public.leagues(id);
+
+
+--
+-- Name: team_roster team_roster_runner_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.team_roster
+    ADD CONSTRAINT team_roster_runner_id_fkey FOREIGN KEY (runner_id) REFERENCES public.runners(id);
+
+
+--
+-- Name: team_roster team_roster_team_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.team_roster
+    ADD CONSTRAINT team_roster_team_id_fkey FOREIGN KEY (team_id) REFERENCES public.teams(id);
+
+
+--
+-- Name: teams teams_school_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.teams
+    ADD CONSTRAINT teams_school_id_fkey FOREIGN KEY (school_id) REFERENCES public.schools(id);
+
+
+--
+-- PostgreSQL database dump complete
+--
+

@@ -1,0 +1,208 @@
+{% extends "base.html" %}
+
+{% block head %}
+
+<link 
+  rel="stylesheet" 
+  href="https://fonts.googleapis.com/icon?family=Material+Icons"
+>
+<link 
+  rel="stylesheet" 
+  href="/static/css/bootstrap-datepicker.min.css"
+>
+<script src="/static/js/bootstrap-datepicker.min.js"></script>
+
+{% endblock %}
+
+
+{% block content %}
+
+
+<div 
+  class="content-section mt-4" 
+  id="race_info" 
+  data-race_id="{{data.race_id}}" 
+  data-host_school_id="{{data.host_school_id}}" 
+  data-location_id="{{data.location_id}}" 
+  data-course_id="{{data.course_id}}" 
+  data-group_id="{{data.group_id}}" 
+  data-date="{{data.date}}"
+>
+
+  <!-- date selector, defaults to date race is created until changed -->
+  <form class="mb-4">
+    <div class="form-group">
+        <label for="datepicker">Race Date</label>
+        <input 
+          id="datepicker" 
+          type="text" 
+          class="form-control" 
+          value="{{data.date}}"
+        >
+    </div>
+  </form>
+
+  <!-- host school selection, prompts for selection first time through -->
+  <form class="mb-4">
+    <div class="form-group">
+      <label for="host-school-select">Host School</label>
+      <select class="form-control" id="host-school-select">
+
+        {% if not data.host_school_id %}
+        <option selected disabled>Select a school</option>
+        {% endif %}
+
+        {% for s in data.host_school_list %}
+        <option data-host_school_id="{{s.id}}">{{s.long_name}}</option>
+        {% endfor %}
+
+        <option data-host_school_id="add">Add a school not in list</option>
+
+      </select>
+    </div>
+  </form>
+
+  <!-- location selection -->
+  {% if data.host_school_id %}
+  <form class="mb-4">
+    <div class="form-group">
+      <label for="location-select">Location</label>
+      <select class="form-control" id="location-select">
+        {% if not data.location_id %}
+        <option selected disabled>Select a location</option>
+        {% endif %}
+        {% for l in data.location_list %}
+        <option data-location_id="{{l.id}}">{{l.name}}</option>
+        {% endfor %}
+        <option data-location_id="add">Add a location not in list</option>
+      </select>
+    </div>
+  </form>
+  {% endif %}
+
+  <!-- course selection -->
+  {% if data.location_id %}
+  <form class="mb-4">
+    <div class="form-group">
+      <label for="course-select">Course</label>
+      <select class="form-control" id="course-select">
+        {% if not data.course_id %}
+        <option selected disabled>Select a course</option>
+        {% endif %}
+        {% for c in data.course_list %}
+        <option data-course_id="{{c.id}}">{{c.name}}</option>
+        {% endfor %}
+        <option data-course_id="add">Add a course not in list</option>
+      </select>
+      <small id="passwordHelpBlock" class="form-text text-muted">
+        Note: This is the specific course used at this location.  
+        If the course has meaningfully changed from prior races or prior years 
+        (e.g., construction caused a reroute), create a new course to keep 
+        times comparable (e.g., "2020 Temporary Course Given Construction")
+      </small>
+    </div>
+  </form>
+  {% endif %}
+
+  <!-- schools selection -->
+  {% if data.course_id %}
+  <div class="row">
+
+    <!-- column label for schools not yet selected -->
+    <div class="col">
+      <label for="possible-school-select">
+        Select participating schools and add with buttons below
+        <a
+          href="" 
+          data-toggle="tooltip" 
+          data-placement="top" 
+          title="Select ALL schools participating in ANY of the races"
+        >
+          <i class="material-icons">info</i>
+        </a>
+      </label>
+    </div>
+
+    <!-- column label for schools already selected -->
+    <div class="col">
+      <label for="selected-school-select" style="padding-top:6px;">
+        Participating Schools
+      </label>
+    </div>
+  </div>
+
+  <div class="row">
+
+    <!-- schools not yet participating -->
+    <div class="col">
+      <form>
+        <div class="form-group">
+          <select 
+            multiple size="{{data.select_box_length_schools}}" 
+            class="form-control" 
+            id="possible-school-select"
+          >
+            {% for s in data.non_participating_schools %}
+            <option value="{{s.id}}">{{s.long_name}}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </form>
+    </div>
+
+    <!-- participating schools -->
+    <div class="col">
+      <form>
+        <div class="form-group">
+          <select 
+            multiple size="{{data.select_box_length_schools}}" 
+            class="form-control" 
+            id="selected-school-select"
+          >
+            {% for s in data.schools %}
+            <option value="{{s.id}}">{{s.long_name}}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </form>
+    </div>
+
+  </div>
+
+  <div class="row">
+
+    <!-- link to create school if needed -->
+    <div class="col">
+      <small class="text-muted ml-2">
+        School not in list?
+        <a href="/{{ data.race_id }}/add_school">Add School</a>
+      </small>
+    </div>
+    
+    <!-- buttons controlling the adding/removal of participating schools -->
+    <div class="col">
+      <div class="form-group">
+        <button type="button" class="btn btn-outline-primary" id="left">
+           < 
+        </button>
+        <button type="button" class="btn btn-outline-primary" id="right">
+           > 
+        </button>
+        <button type="button" class="btn btn-outline-primary" id="leftall">
+           << 
+        </button>
+        <button type="button" class="btn btn-outline-primary" id="rightall">
+           >> 
+        </button>
+      </div>
+    </div>
+  
+  </div>
+
+  {% endif %}
+
+</div>
+
+<script src="/static/js/race_metadata.js"></script>
+
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block head %}
+<style>
+  img {
+      max-width: 50%;
+  }
+</style>
+{% endblock %}
+
+
+{% block content %}
+<div class="content-section py-3 mt-3 mb-3">
+  <legend class="h3 border-bottom">Race Results</legend>
+
+
+</div>
+
+<table class="table table-sm table-striped mb-5">
+  <thead>
+    <tr>
+      <th scope="col">Date</th>
+      <th scope="col">Race</th>
+      <th scope="col">Location</th>
+    </tr>
+  </thead>
+  <tbody id="races-list">
+
+    {% for race in races %}
+      <tr>
+        <td>{{ race.display_date() }}</td>
+        <td><a href="{{url_for('races.results', race_id=race.id)}}">{{ race.display_name_gender_jv() }}</a></td>
+        <td>{{ race.location.city }}, {{ race.location.state_abbr }}</td>
+      </tr>
+    {% endfor %}
+
+  </tbody>
+</table>
+
+{% endblock %}

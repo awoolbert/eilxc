@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block content %}
+<div 
+  class="content-section py-3 text-center" 
+  id="location" 
+  data-location="{{location}}"
+>
+  <h3 class="mb-4">Recalculating Seed Times for {{runner_count}} Runners</h3>
+  <div class="progress" style="height: 40px;">
+    <div 
+      class="progress-bar progress-bar-striped progress-bar-animated" 
+      role="progressbar" 
+      id="progress-bar" 
+      style="width: 0%; font-size: 20px;"
+    >
+    </div>
+  </div>
+  <div class="container text-center mt-5">
+    <h4 id="complete-notification"></h4>
+  </div>
+
+</div>
+
+<script>
+  var status_url = $('#location').data('location');
+  update_progress(status_url);
+
+  function update_progress(status_url) {
+    $.getJSON(status_url, data => {
+      percent = parseInt(data['current'] * 100 / data['total']);
+      $('#progress-bar').text(`${percent}%`);
+      $('#progress-bar').css('width', `${percent}%`);
+      if (data['state'] != 'PENDING' && data['state'] != 'PROGRESS') {
+        if ('result' in data) {
+          $('#complete-notification').text('Recalculation complete: Loading Page')
+          window.location.href = "{{url_for('core.index')}}";
+        } else {
+          // something unexpected happened
+          console.log('something unexpected happened');
+        }
+      } else {
+        // rerun in 0.5 seconds
+        setTimeout(function() {
+          update_progress(status_url);
+        }, 250);
+      }
+    });
+  };
+</script>
+
+{% endblock %}

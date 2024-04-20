@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block content %}
+
+<div class="content-section mt-4">
+  {% for school, team in school_teams %}
+    <a href="{{ url_for('core.roster', team_id=team.id) }}">
+      <div 
+        class="container float-left text-center mx-1 my-1 pt-1" 
+        data-school_id="{{school.id}}" 
+        style="background-color:{{school.primary_color}}; 
+               color:{{school.text_color}}; 
+               width:250px; 
+               height:60px; 
+               text-align:center;"
+      >
+        {{ school.long_name }}
+      </div>
+    </a>
+  {% endfor %}
+</div>
+
+
+{% endblock %}

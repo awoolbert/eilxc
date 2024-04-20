@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+    <h2 class="my-4">Upload a Race_Data JSON File</h2>
+    <div class="container">
+        <div class="row">
+            <p class="pl-4">Upload race_data.json file </p>
+        </div>
+    </div>
+      
+    <form method="POST" enctype="multipart/form-data">
+        {{ form.csrf_token }}
+        <div class="mb-5">
+            {{ form.file(class="form-control") }}
+            {% for error in form.file.errors %}
+            <div class="alert alert-danger mt-2">{{ error }}</div>
+            {% endfor %}
+        </div>
+        {{ form.submit(class="btn btn-primary") }}
+    </form>
+</div>
+
+{% endblock %}

@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<link rel="stylesheet" href="/static/css/runner.css">
+
+{% endblock %}
+
+
+{% block content %}
+
+<!-- header box with runner name and school name -->
+<div 
+  class="content-section py-3 px-3 mt-3 mb-3" 
+  style="border-style:solid; 
+         border-width:5px; 
+         border-color:{{runner.get_school().primary_color}};  
+         color:{{runner.get_school().primary_color}};"
+>
+  <div class="row">
+
+      <div class="col-8">
+      <legend class="h3"> {{runner.display_name()}} </legend>
+      <h5>{{runner.get_school().long_name}}</h5>
+      <h5>Class of {{runner.grad_year}}</h5>
+      </div>
+
+      <!-- school logo -->
+      <div class="col text-right">
+      {% if runner.get_school().has_image() %}
+      <a href="{{url_for('core.school', school_id=runner.get_school().id)}}">
+          <img 
+          class="logo" 
+          data-school_id="{{ runner.get_school().id }}" 
+          src="/static/{{runner.get_school().img_filename()}}" 
+          class="img" 
+          >
+      </a>
+      {% endif %}
+      </div>
+
+  </div>
+</div>
+
+{{ graph_html|safe }}
+
+<!-- list of results for this runner -->
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th scope="col"></th>
+      <th scope="col"></th>
+      <th scope="col" class="text-center"></th>
+      <th scope="col" class="text-center" colspan="2">Actual</th>
+      <th scope="col" class="text-center" colspan="2">Course Adjusted</th>
+    </tr>
+    <tr>
+
+      <th scope="col" class="sortable">
+        Date 
+        <i class="fas fa-sort"></i>
+        <i class="fas fa-sort-up"></i>
+        <i class="fas fa-sort-down"></i>
+      </th>
+
+      <th scope="col">Race</th>
+      <th scope="col" class="text-center">Place</th>
+
+      <th scope="col" class="sortable">
+        Time 
+        <i class="fas fa-sort"></i>
+        <i class="fas fa-sort-up"></i>
+        <i class="fas fa-sort-down"></i>
+      </th>
+
+      <th scope="col" class="text-center">Pace</th>
+
+      <th scope="col" class="sortable">
+        Time 
+        <i class="fas fa-sort"></i>
+        <i class="fas fa-sort-up"></i>
+        <i class="fas fa-sort-down"></i>
+      </th>
+
+      <th scope="col" class="text-center">Pace</th>
+    </tr>
+  </thead>
+  <tbody id="races-list">
+
+    {% for result in runner.sorted_results() %}
+      <tr>
+        <td>{{ result.race.display_date() }}</td>
+        <td>
+          <a href="{{url_for('races.results', race_id=result.race_id)}}">
+            {{ result.race.display_name_gender_jv() }}
+          </a>
+        </td>
+        <td class="text-center">{{ result.place }}</td>
+        <td class="text-center">{{ result.display_time() }}</td>
+        <td class="text-center">{{ result.display_pace() }}</td>
+        <td class="text-center">{{ result.adj_time_f() }}</td>
+        <td class="text-center">{{ result.adj_pace_f() }}</td>
+      </tr>
+    {% endfor %}
+
+  </tbody>
+</table>
+
+<script src="/static/js/runner.js"></script>
+
+
+{% endblock %}

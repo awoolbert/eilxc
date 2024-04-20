@@ -1,0 +1,74 @@
+9/30/2023 nobles boys			
+Nobles			
+			
+1	John Joyce	17:29	St. Sebastian's
+2	Jeremy Bullock	17:30	Tabor
+3	Tim Churchill	17:33	Nobles
+4	Noah Douglas	17:54	Nobles
+5	Jack Connors	18:04	St. Sebastian's
+6	Nic Huaco	18:09	Tabor
+7	Ben Hebbel	18:10	Tabor
+8	Sebastian Culleton	18:11	St. Sebastian's
+9	Forrester Clark	18:18	Brooks
+10	Charlie Jackivicz	18:25	Tabor
+11	Henry McLane	18:27	Nobles
+12	Cam Gonzales	18:39	Tabor
+13	Ben Guenther	18:48	Nobles
+14	Maxwell Huang	19:03	Nobles
+15	Raphael Klauber	19:07	Nobles
+16	Jonathan Tillen	19:17	Nobles
+17	Matthew Loose	19:31	Nobles
+18	Patrick Albers	19:38	Nobles
+19	Pablo Paxtor	19:42	Tabor
+20	Devin Gray	20:01	Nobles
+21	Chris Thompson	20:04	St. Sebastian's
+22	Luke Peabody	20:11	Tabor
+23	Jonas Wilderman	20:12	Nobles
+24	Will Grace	20:19	Nobles
+25	Charlie Hall	20:38	Nobles
+26	Aydin Alsan	20:41	Nobles
+27	Michael Timmins	20:47	Nobles
+28	Lorenzo Johnson	20:48	Brooks
+29	Joseph Koh	20:49	St. Sebastian's
+30	Alexander Wasynczuk	20:53	St. Sebastian's
+31	Taylor Holmes	20:57	St. Sebastian's
+32	Thomas Lacoste	21:12	Brooks
+33	Justin Lee	21:22	Nobles
+34	Emilio Manz	21:25	Nobles
+35	Max Daniello	21:29	Nobles
+36	Drake Tarlow	21:31	Brooks
+37	James Fair	21:33	Nobles
+38	Eric Liu	21:36	Tabor
+39	Emmett Chen	21:39	Nobles
+40	Jonathan Demosthene	21:42	St. Sebastian's
+41	Tomás Hernández	21:47	Nobles
+42	Noah Divon	21:49	Tabor
+43	Jerry Qin	21:50	Nobles
+44	Nate Madden	21:54	Nobles
+45	Zach Green	22:12	Nobles
+46	Eddie Zhang	22:16	St. Sebastian's
+47	Thomas Pyle	22:20	Brooks
+48	Liam Gavin	22:22	St. Sebastian's
+49	Abdi Abdulle	22:24	Nobles
+50	Nick Proudlove	22:30	Tabor
+51	Eben Dooling	22:31	Brooks
+52	Charlie Young	22:32	Nobles
+53	Arman Dehpanah	22:35	Brooks
+54	Abner Machuca Diaz	23:00	St. Sebastian's
+55	Ken MacDougall	23:04	Nobles
+56	Ben Owusu-Amo	23:05	Nobles
+57	Josh Levine	23:12	Nobles
+58	Oliver Burstein	23:18	Nobles
+59	Louis Sosa Espinal	23:41	St. Sebastian's
+60	Jayden Leung	23:54	Nobles
+61	Samson Oblak	24:35:00	Brooks
+62	Jeffrey Liu	25:11:00	Nobles
+63	Ethan Burack	25:15:00	Nobles
+64	Kamron Bradley	25:30:00	Brooks
+65	Cesar Hernandez	25:32:00	St. Sebastian's
+66	Nayan Seetharam	25:56:00	Nobles
+67	George Pinkas	26:17:00	Nobles
+68	Leo Charlamb	29:10:00	Brooks
+69	David Jiang	32:31:00	Brooks
+70	Samson Nwobi	34:11:00	Brooks
+71	Joel Effah-Boadi	36:45:00	Brooks

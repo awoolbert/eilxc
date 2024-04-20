@@ -1,0 +1,52 @@
+9/14/2019 sm boys			
+St. Mark's			
+			
+			
+1	Bergers	17:21	St. Mark's
+2	Gattuso	17:58	St. Mark's
+3	Mynampaty	18:25	St. Mark's
+4	Haugen	18:52	St. Mark's
+5	Sorenson	18:59	St. George's
+6	Wittman	19:04	St. Mark's
+7	Sparrow	19:07	St. Mark's
+8	Willoughby	19:14	St. Mark's
+9	Hill-Edgar	19:22	St. George's
+10	Croft	19:49	St. Mark's
+11	Roosa	19:50	St. George's
+12	Wilson	19:59	St. George's
+13	Hunt	20:00	St. Mark's
+14	Welch	20:03	St. George's
+15	Griffin	20:11	St. Mark's
+16	Macri	20:12	St. Mark's
+17	Chanshanwut	20:41	St. Mark's
+18	Osborne	20:57	St. Mark's
+19	Farrick	21:02	St. George's
+20	King	21:03	St. George's
+21	Henry	21:10	St. Mark's
+22	Zhou	21:19	St. Mark's
+23	Spaan	21:48	St. George's
+24	Jones	21:49	St. Mark's
+25	Cajamarca	21:52	St. George's
+26	Pestana	21:55	St. Mark's
+27	Donepudi	22:10	St. Mark's
+28	Bundy	22:10	St. Mark's
+29	Wang	22:42	St. George's
+30	Ryckman	22:43	St. Mark's
+31	Karam	23:07	St. George's
+32	Troop	23:12	St. George's
+33	Lee	23:26	St. George's
+34	Yu	23:59	St. George's
+35	Lu	24:06:00	St. George's
+36	Antone	24:08:00	St. George's
+37	Becht	24:30:00	St. Mark's
+38	Zeng	25:10:00	St. George's
+39	Choung	25:18:00	St. George's
+40	An	25:19:00	St. George's
+41	Nichols-Worley	25:43:00	St. Mark's
+42	Wei	25:49:00	St. Mark's
+43	D. Ma	26:03:00	St. Mark's
+44	Xia	27:18:00	St. George's
+45	M. Ma	27:39:00	St. Mark's
+46	O’Brien	28:07:00	St. George's
+47	Ottiano	28:08:00	St. George's
+48	Lawrence	29:13:00	St. George's

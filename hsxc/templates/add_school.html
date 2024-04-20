@@ -1,0 +1,259 @@
+{% extends "base.html" %}
+
+{% block head %}
+  <link rel="stylesheet" href="/static/css/color-picker.min.css">
+  <script src="/static/js/color-picker.min.js"></script>
+  <script 
+    src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js">
+  </script>
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="content-section mt-4">
+  <form method="post">
+
+    {# This hidden_tag is a CSRF security feature. #}
+    {{ form.hidden_tag() }}
+
+    {# School Form #}
+    <fieldset class="form-group">
+      <legend class="border-bottom">School</legend>
+      <div class="form-row">
+
+        {# long_name input #}
+        {% if form.long_name.errors %}
+        <div class="form-group col">
+          {{ form.long_name.label(class="form-control-lable") }}
+          {{ form.long_name(
+            class="form-control form-control-md is-invalid", 
+            id="long_name"
+          )}}
+          <div class="invalid-feedback">
+            {% for error in form.long_name.errors %}
+              <span>{{ error }}</span>
+            {% endfor %}
+          </div>
+        </div>
+        {% else %}
+        <div class="form-group col">
+          {{ form.long_name.label(class="form-control-lable") }}
+          {{ form.long_name(
+            class="form-control form-control-md", 
+            id="long_name"
+          )}}
+        </div>
+        {% endif %}
+
+        {# short_name input #}
+        {% if form.short_name.errors %}
+        <div class="form-group col">
+          {{ form.short_name.label(class="form-control-lable") }}
+          {{ form.short_name(
+            class="form-control form-control-md is-invalid", 
+            id="short_name"
+          )}}
+          <div class="invalid-feedback">
+            {% for error in form.short_name.errors %}
+              <span>{{ error }}</span>
+            {% endfor %}
+          </div>
+        </div>
+        {% else %}
+        <div class="form-group col">
+          {{ form.short_name.label(class="form-control-lable") }}
+          {{ form.short_name(
+            class="form-control form-control-md", 
+            id="short_name"
+          )}}
+        </div>
+        {% endif %}
+        
+      </div>
+
+      <div class="form-row">
+
+        {# city input #}
+        {% if form.city.errors %}
+        <div class="form-group col">
+          {{ form.city.label(class="form-control-lable") }}
+          {{ form.city(
+            class="form-control form-control-md is-invalid", 
+            id="city"
+          )}}
+          <div class="invalid-feedback">
+            {% for error in form.city.errors %}
+              <span>{{ error }}</span>
+            {% endfor %}
+          </div>
+        </div>
+        {% else %}
+        <div class="form-group col">
+          {{ form.city.label(class="form-control-lable") }}
+          {{ form.city(class="form-control form-control-md", id="city")}}
+        </div>
+        {% endif %}
+
+        {# state_abbr input #}
+        {% if form.state_abbr.errors %}
+        <div class="form-group col">
+          {{ form.state_abbr.label(class="form-control-lable") }}
+          {{ form.state_abbr(
+            class="form-control form-control-md is-invalid", 
+            id="state_abbr"
+          )}}
+          <div class="invalid-feedback">
+            {% for error in form.state_abbr.errors %}
+              <span>{{ error }}</span>
+            {% endfor %}
+          </div>
+        </div>
+        {% else %}
+        <div class="form-group col">
+          {{ form.state_abbr.label(class="form-control-lable") }}
+          {{ form.state_abbr(
+            class="form-control form-control-md", 
+            id="state_abbr"
+          )}}
+        </div>
+        {% endif %}
+
+      </div>
+
+
+      <div class="form-row">
+
+        {# league select #}
+        <div hidden class="form-group col">
+          {{ form.league_id.label(class="form-control-lable") }}
+          {{ form.league_id(
+            class="form-control form-control-md", 
+            id="league_id"
+          )}}
+        </div>
+        <div class="form-group col">
+          <label for="league-id-select">League</label>
+          <select class="form-control" id="league-id-select">
+            <option selected disabled>Select the league for this school</option>
+            {% for l in leagues %}
+              {% if l.id == 3 %}
+              <option data-league_id="{{l.id}}">Other</option>
+              {% else %}
+              <option data-league_id="{{l.id}}">
+                {{l.long_name}} ({{l.short_name}})
+              </option>
+              {% endif %}
+            {% endfor %}
+          </select>
+        </div>
+
+      </div>
+
+
+      <div hidden class="form-row">
+
+        {# primary_color input #}
+        <div class="form-group col">
+          {{ form.primary_color.label(class="form-control-lable") }}
+          {{ form.primary_color(
+            class="form-control form-control-md", 
+            id="primary_color", 
+            value="#000000"
+          )}}
+        </div>
+
+        {# secondary_color input #}
+        <div class="form-group col">
+          {{ form.secondary_color.label(class="form-control-lable") }}
+          {{ form.secondary_color(
+            class="form-control form-control-md", 
+            id="secondary_color", 
+            value="#f50b0b"
+          )}}
+        </div>
+
+        {# text_color input #}
+        <div class="form-group col">
+          {{ form.text_color.label(class="form-control-lable") }}
+          {{ form.text_color(
+            class="form-control form-control-md", 
+            id="text_color", 
+            value="#ffffff"
+          )}}
+        </div>
+
+      </div>
+
+      <div class="form-row mt-4">
+
+        {# primary_color color-picker #}
+        <div class="form-group col">
+          <label for="background-cp">Choose primary color</label>
+          <input 
+            class="form-control" 
+            type="text" 
+            id="background-cp" 
+            value="#000000"
+          >
+          <small class="form-text text-muted">
+            Place cursor in box to open color-picker
+          </small>
+        </div>
+
+        {# secondary_color color-picker #}
+        <div class="form-group col">
+          <label for="scondary-cp">Choose secondary color</label>
+          <input 
+            class="form-control" 
+            type="text" 
+            id="secondary-cp" 
+            value="#f50b0b"
+          >
+        </div>
+
+        {# text_color color-picker #}
+        <div class="form-group col">
+          <label for="text-cp">Choose text color</label>
+          <input class="form-control" type="text" id="text-cp" value="#ffffff">
+        </div>
+
+      </div>
+
+      <div class="form-row justify-content-center align-items-center">
+        {# <div class="d-flex justify-content-center align-items-center mx-2 my-2">
+          <h5>How School Colors Will Appear:</h5>
+        </div> #}
+        <div 
+          class="d-flex justify-content-center align-items-center mx-1"
+          id="outer-border" 
+          style="border: solid #000000; 
+                width: 250px;
+                height: 69px;"
+        >
+          <div 
+            class="form-control justify-content-center align-items-center" 
+            id="sample-colors" 
+            style="
+              background-color:#000000; 
+              border: 11px solid #f50b0b;
+              text-align: center;
+              width: 250px;
+              height: 65px;
+              color:#ffffff;"
+          >
+            Sample
+          </div>
+        </div>
+    </fieldset>
+
+    {{ form.submit(class="btn btn-primary") }}
+
+  </form>
+</div>
+
+
+<script src="/static/js/add_school.js"></script>
+
+{% endblock %}

@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block content %}
+<div class="container my-4">
+  <h1 class="text-center">New England Prep</h1>
+  <h3 class="text-center">Cross-Country Manager</h3>
+</div>
+
+<div class="content-section mb-5">
+  {% for league in leagues %}
+
+  {% if league.id < 3 %}
+  <div class="container pt-2 pb-1 mb-4 mt-4" 
+       style="border-style: solid; border-width:5px;">
+ 
+    <h1 class="text-center">
+      <a href="{{ url_for('core.league', league_id=league.id) }}">
+        {{league.long_name}} ({{league.short_name}})
+      </a>
+    </h1>
+ 
+    <div class="text-center mt-3">
+      {% for school in league.alphabetized_schools() %}
+      <a href="{{ url_for('core.school', school_id=school.id) }}">
+        <img class="logo" 
+             data-school_id="{{ school.id }}" 
+             src="/static/{{school.img_filename()}}" 
+             class="img" 
+             style="height: 90px; object-fit: cover;"
+             title="{{ school.long_name }}" 
+        >
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+
+  {% elif league.id == 3 %}
+
+  <div class="container pt-2 pb-3 mb-4 mt-4" 
+       style="border-style: solid; border-width:5px;">
+ 
+    <h1 class="text-center">Other NEPSTA Schools</h1>
+ 
+    <div class="d-flex flex-wrap justify-content-center px-2">
+      {% for school in league.alphabetized_schools() %}
+      <a href="{{ url_for('core.school', school_id=school.id) }}">
+        <div 
+          class="d-flex justify-content-center align-items-center mx-1 my-1"
+          data-school_id="{{school.id}}" 
+          style="border: solid {{school.primary_color}}; 
+                 width: 250px;
+                 height: 69px;"
+        >
+          <div
+            class="justify-content-center align-items-center"
+            style="display: flex;
+                  border: 11px solid {{school.secondary_color}}; 
+                  background-color: {{school.primary_color}}; 
+                  text-align: center;
+                  width: 250px;
+                  height: 65px;
+                  color: {{school.text_color}};"
+          >
+            {{ school.long_name }}
+          </div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+    
+  </div>
+
+  {% endif %}
+
+  {% endfor %}
+</div>
+
+
+{% endblock %}

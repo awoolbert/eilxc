@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="content-section py-3 mt-3 mb-3">
+  <legend class="h3 border-bottom">Merge Duplicate Runners</legend>
+</div>
+
+<p>Below is a list of potentially duplicate runners found in the database.  
+  If you press "Keep 1", then Runner2 will be merged into Runner1. If you press
+  "Keep 2", then Runner1 will be merged into Runner2. If you press "Not Same",
+  then the two runners will be marked as not being the same person and will not
+  show up in this list again.
+</p>
+
+<div class="container mt-5">
+  <table class="table table-sm table-striped">
+    <thead>
+        <tr>
+        <th scope="col" style="text-align:center;">School</th>
+        <th scope="col">Runner1</th>
+        <th scope="col">Runner2</th>
+        <th scope="col">Keep 1</th>
+        <th scope="col">Keep 2</th>
+        <th scope="col">Not Same</th>
+        </tr>
+    </thead>
+
+    <tbody>
+      {% for r1, r2 in pairs %}
+      <tr>
+        <td style="background-color:{{r1.get_school().primary_color}}; 
+                   color:{{r1.get_school().text_color}}; text-align:center;"
+        >
+          {{ r1.get_school().short_name }}
+        </td>
+
+        <td>{{ r1.name_plus_year() }}</td>
+        <td>{{ r2.name_plus_year() }}</td>
+
+        <td>
+          <button 
+            type="button" 
+            class="btn btn-primary btn-sm" 
+            data-r1-id="{{ r1.id }}" 
+            data-r2-id="{{ r2.id }}" 
+            onclick="mergeRunners(event, true)"
+          >
+            Keep 1
+          </button>
+        </td>
+
+        <td>
+          <button 
+            type="button" 
+            class="btn btn-primary btn-sm" 
+            data-r1-id="{{ r1.id }}" 
+            data-r2-id="{{ r2.id }}" 
+            onclick="mergeRunners(event, false)"
+          >
+            Keep 2
+          </button>
+        </td>
+
+        <td>
+          <button 
+            type="button" 
+            class="btn btn-primary btn-sm" 
+            data-r1-id="{{ r1.id }}" 
+            data-r2-id="{{ r2.id }}" 
+            onclick="window.location.href='{{ url_for('race_upload.mark_not_duplicates', id1=r1.id, id2=r2.id) }}'"
+          >
+            Not Same
+          </button>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<script>
+    async function mergeRunners(event, keepFirst) {
+        const r1Id = event.target.getAttribute('data-r1-id');
+        const r2Id = event.target.getAttribute('data-r2-id');
+        const url = `/merge_runners/${keepFirst ? r1Id : r2Id}/${keepFirst ? r2Id : r1Id}`;
+    
+        // Make the API call, e.g., using fetch
+        try {
+            const response = await fetch(url, { method: 'POST' });
+
+            if (response.ok) {
+                // Reload the page after a successful merge
+                location.reload();
+            } else {
+                // Handle the error if the API call failed
+                console.error(`Failed to merge runners: ${response.statusText}`);
+            }
+        } catch (error) {
+            // Handle any other errors (e.g., network errors)
+            console.error(`Failed to merge runners: ${error.message}`);
+        }
+    }
+</script>
+
+{% endblock %}

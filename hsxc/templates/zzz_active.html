@@ -1,0 +1,700 @@
+{% extends "base.html" %}
+
+{% block head %}
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto|Varela+Round|Open+Sans">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <script src="{{ url_for('static', filename="sortable.min.js") }}"></script>
+  <style media="screen">
+    .fa-arrows-alt {
+      cursor: move;
+      cursor: -webkit-grabbing;
+    }
+    .blue-white {
+      background-color: #007bff !important;
+      color: #ffffff;
+    }
+    table.table td i {
+        font-size: 15px;
+        margin-left: 1px;
+    }
+    table.table td a.edit-time i {
+        margin-left: 5px;
+        color: #007bff;
+    }
+    table.table td a.delete-time i {
+        color: red;
+    }
+    .btn-group-xs > .btn, .btn-xs {
+      padding: .25rem .4rem;
+      font-size: .875rem;
+      line-height: .75;
+      border-radius: .2rem;
+    }
+  </style>
+{% endblock %}
+
+
+{% block content %}
+<div class="container mt-4 text-center" id="race_info" data-start_time="{% if race.status == 'active' %} {{race.date}} {% endif %}" data-race_id="{{race.id}}" data-race_status="{{race.status}}" data-date="{{race.date}}">
+  <div class="row h2">
+    <div class="col">
+      {{ race.name }} -
+      {% if race.gender == 'girls' %}
+        Girls
+      {% elif race.gender == 'boys' %}
+        Boys
+      {% endif %}
+    </div>
+  </div>
+  <div class="row h6">
+    <div class="col"></div>
+    <div class="col">{{ race.course.location.name }}</div>
+    <div class="col"></div>
+  </div>
+  <div class="row h6">
+    <div class="col">{{ race.display_date_long() }}</div>
+    <div class="col">{{ race.course.location.city }}, {{ race.course.location.state_abbr }}</div>
+    <div class="col">{{ race.course.meters() }} meters</div>
+  </div>
+</div>
+
+<div class="container mt-4 mb-3" id="start-clock-cntr">
+  <div class="row justify-content-center" id="start-clock-row">
+    <div class="col">
+      <h4 class="text-center pt-2" id="start-instructions">
+        Press button at start of race:
+        <button class="btn btn-primary btn-lg align-self-center" id="start-btn">
+          Start Clock
+        </button>
+      </h4>
+    </div>
+  </div>
+</div>
+
+<div class="container mt-4 mb-3" id="running-clock-cntr">
+
+</div>
+
+<div class="container" id="results-cntr">
+  <div class="row d-flex justify-content-center">
+    <div class="col-1 mr-0 pr-0">
+      <table class="table table-sm table-striped text-center">
+        <thead>
+          <tr>
+            <th scope="col-1">Plc</th>
+          </tr>
+        </thead>
+        <tbody id="places">
+
+          {% for r in runners %}
+            {% if r.time %}
+              <tr class="placeRow" data-place="{{ r.place }}">
+                <td class="place" data-place="{{ r.place }}">{{ r.place }}</td>
+              </tr>
+            {% endif %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="col mx-0 px-0">
+      <table class="table table-sm table-striped">
+        <thead>
+          <tr>
+            <th scope="col">School</th>
+            <th scope="col">Runner</th>
+            <th scope="col" class="text-center">Bib</th>
+            <th scope="col" class="text-center">Drag</th>
+          </tr>
+        </thead>
+        <tbody id="runners">
+          {% for r in runners %}
+            <tr class="runner" data-result_id="{{r.id}}" data-runner_id="{{r.runner_id}}" data-bib="{{r.bib}}" data-team_id="{{r.team_id}}">
+              <td style="background-color:{{r.team.school.primary_color}};  color:{{r.team.school.text_color}};">{{ r.team.school.short_name }}</td>
+              <td>{{ r.runner.display_name() }}</td>
+              <td class="text-center">
+                {{ r.bib }}
+              </td>
+              <td class="text-center">
+                <span class="fas fa-arrows-alt"></span>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="col-2 ml-0 pl-0">
+      <table class="table table-sm table-striped text-center" id="times-table">
+        <thead>
+          <tr>
+            <th scope="col">Time</th>
+            <th scope="col">Action</th>
+          </tr>
+        </thead>
+        <tbody id="times">
+          {% for r in runners %}
+            {% if r.time %}
+              <tr class="timeRow" data-time="{{r.time}}">
+                <td class="time" data-time="{{r.time}}">
+                  {{ r.time }}
+                </td>
+                <td class="actions">
+                  <a class="edit-time" title="Edit" data-toggle="tooltip">
+                    <i class="material-icons">&#xE254;</i>
+                  </a>
+                  <a class="delete-time" title="Delete" data-toggle="tooltip">
+                    <i class="material-icons">&#xE872;</i>
+                  </a>
+                </td>
+              </tr>
+            {% endif %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="container my-3" id="finish-ctr">
+  <div class="row justify-content-center">
+    <button class="btn btn-primary btn-lg" id="finish-btn">
+      Race Finished
+    </button>
+  </div>
+</div>
+
+<div class="modal fade" id="editTimeModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-dialog-centered modal" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editTimeModalTitle">Enter New Time and Press Sync</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group row justify-content-center">
+          <div class="form-group col-2">
+            <label for="minutes" class="">Minutes</label>
+            <input class="form-control" id="minutes" autofocus>
+          </div>
+          <p style="margin-top:38px;">:</p>
+          <div class="form-group col-2">
+            <label for="seconds" class="">Seconds</label>
+            <input class="form-control" id="seconds">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" id="m_close_btn">Close</button>
+        <button id="syncBtn" type="button" class="btn btn-primary">Sync</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="warningModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header" style="background-color:#f8d7da;">
+        <h5 class="modal-title" id="warningModalTitle" style="color:#8c4247;">%title%</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" style="color:#8c4247;" id="warningModalBody">
+        %modal_body%
+      </div>
+      <div class="modal-footer" style="background-color:#f8d7da;">
+        <button type="button" class="btn btn-danger" data-dismiss="modal" id="m_close_btn">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="deleteTimeModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteTimeModalTitle">Delete Time</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" id="deleteTimeModalBody">
+        Are you sure you want to delete this time from the list?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" id="m_close_btn">Close</button>
+        <button id="deleteTimeBtn" type="button" class="btn btn-danger">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="finishRaceModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="finishRaceModalTitle">Finish Race</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" id="finishRaceModalBody">
+        Are you sure you want to finish the race and score the results?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" id="m_close_btn">Close</button>
+        <button id="finishAndScoreBtn" type="button" class="btn btn-danger">Finish</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- <script src="{{ url_for('static', filename='active.js') }}"></script> -->
+<script  type="text/javascript">
+
+var dataController = (function() {
+  var raceState, startTime;
+  var participants = [];
+  const race_id = $("#race_info").data('race_id');
+  const race_status = $("#race_info").data('race_status');
+
+  const getStartingTime = () => {
+    var dateFromServer = document.getElementById("race_info").dataset.date;
+    var msFromServer = Date.parse(dateFromServer);
+    console.log(`Race is currently active, using server starting time of ${dateFromServer}`);
+    return msFromServer;
+  };
+
+  if (race_status == 'active') {
+    start_time = getStartingTime();
+  } else {
+    start_time = null;
+    console.log('Race has not yet started');
+  }
+  raceState = {'race_id':race_id, 'race_status':race_status, 'start_time':start_time, 'participants':participants};
+
+  var runnersJSON = JSON.parse('{{ results_json | tojson }}');
+
+  return {
+    getStateData: function(){
+      const runnerArr = Array.from(document.querySelectorAll('.runner'));
+      const timesArr = Array.from(document.querySelectorAll('.time'));
+      participants = [];
+      runnerArr.forEach((el, i) => {
+        participants.push({
+          result_id: parseInt(el.dataset.result_id),
+          race_id: parseInt(race_id),
+          runner_id: parseInt(el.dataset.runner_id),
+          team_id: parseInt(el.dataset.team_id),
+          bib: parseInt(el.dataset.bib),
+          place: i + 1,
+        })
+      });
+      timesArr.forEach((el, i) => {
+        participants[i].time = parseInt(el.dataset.time)
+      });
+      // Prepare the current race state
+      raceState = {'race_id':race_id, 'race_status':race_status, 'start_time':start_time, 'participants':participants};
+      return raceState;
+    },
+  };
+})();
+
+
+var displayController = (function() {
+  var currentClock = "0:00";
+
+  // convert mins and secs to miliSeconds
+  const timeToMiliseconds = (mins, secs) => {
+    return (mins * 60 + secs) * 1000;
+  };
+
+  // Converts a miliseconds time into MM:SS
+  const displayTime = (miliSeconds) => {
+    var mins = Math.floor( miliSeconds / 60000);
+    var secs =  (miliSeconds - mins * 60000) / 1000;
+    secs = secs.toFixed(0);
+    var secsStr = secs < 10 ? `0${secs}` : secs;
+    return `${mins}:${secsStr}`;
+  };
+
+  // function to display an error modal if bib number inputs are invalid
+  const warningModal = (title, message) => {
+    $('#warningModal').modal('show');
+    $('#warningModalTitle').html(title);
+    $('#warningModalBody').html(message);
+  };
+
+  return {
+    // Makes the 'runners' table sortable
+    startSortable: function(){
+      const el = document.getElementById("runners");
+      const sortable = Sortable.create(el, {
+        handle: '.fa-arrows-alt',
+        animation: 150,
+        chosenClass: 'blue-white'
+      });
+    },
+
+    // Sorts the times table in ascending order
+    sortTimesTable: function(){
+      var table, i, x, y;
+      table = document.getElementById("times-table");
+      var switching = true;
+      // Run loop until no switching is needed
+      while (switching) {
+          switching = false;
+          var rows = table.rows;
+          // Loop to go through all rows
+          for (i = 1; i < (rows.length - 1); i++) {
+              var Switch = false;
+              // Fetch 2 elements that need to be compared
+              x = rows[i].getElementsByTagName("TD")[0];
+              y = rows[i + 1].getElementsByTagName("TD")[0];
+              // Check if 2 rows need to be switched
+              xTime = parseInt(x.dataset.time);
+              yTime = parseInt(y.dataset.time);
+              if (xTime > yTime) {
+                Switch = true;
+                break;
+              }
+          }
+          if (Switch) {
+              // Function to switch rows and mark switch as completed
+              rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+              switching = true;
+          }
+      }
+    },
+
+    // Iterates over every miliseconds time and converts it for display
+    updateTimes: function() {
+      const timesArr = Array.from(document.querySelectorAll('.time'));
+      timesArr.forEach(el => {
+        msTime = parseInt(el.dataset.time);
+        el.textContent = displayTime(msTime);
+      });
+    },
+
+    // Switch formats of the top section of the page once the clock has been started (e.g., change directions, add ticking clock, add adjust clock button, etc.)
+    beginTimingFormat: function() {
+      var runningClockHTML = `
+      <div class="row justify-content-center" id="running-clock-row">
+        <div class="col-7 text-right">
+          <h4 class="py-2 mr-0 pr-0" id="clock-text">
+            Current Time: ${currentClock}
+          </h4>
+        </div>
+        <div class="col text-left py-2 ml-0 pl-0">
+          <button class="btn btn-secondary btn-xs" id="edit-time-btn">
+            Adjust Time
+          </button>
+        </div>
+      </div>
+      <div class="row justify-content-center" id="capture-time-row">
+        <div class="col-5 text-center align-self-center">
+          <button class="btn btn-block btn-danger" id="capture-time-btn">
+            Click Here (or press Enter) to Record a Finish
+          </button>
+        </div>
+      </div>
+      `;
+      $('#start-clock-cntr').html('');
+      $('#running-clock-cntr').html(runningClockHTML);
+    },
+
+    updateClock: function(elapsedTime) {
+      var clockText = `
+        Current Time: ${displayTime(elapsedTime)}
+      `;
+      $('#clock-text').html(clockText);
+		},
+
+    addFinishTime: function(finishTime) {
+      const timesArr = Array.from(document.querySelectorAll('.time'));
+      const runnersArr = Array.from(document.querySelectorAll('.runner'));
+      if(runnersArr.length > timesArr.length) {
+        place = timesArr.length + 1;
+        placeRowHTML = `
+        <tr class="placeRow" data-place="${place}">
+          <td class="place" data-place="${place}">
+            ${place}
+          </td>
+        </tr>`;
+
+        timeRowHTML = `
+        <tr class="timeRow" data-time="${finishTime}">
+          <td class="time" data-time="${finishTime}">${displayTime(finishTime)}</td>
+          <td class="actions">
+            <a class="edit-time" title="Edit" data-toggle="tooltip">
+              <i class="material-icons">&#xE254;</i>
+            </a>
+            <a class="delete-time" title="Delete" data-toggle="tooltip">
+              <i class="material-icons">&#xE872;</i>
+            </a>
+          </td>
+        </tr>`;
+
+        places = document.getElementById('places');
+        times = document.getElementById('times');
+        places.insertAdjacentHTML('beforeend', placeRowHTML);
+        times.insertAdjacentHTML('beforeend', timeRowHTML);
+      }
+    },
+
+    showEditTimeModal: function(raceClock) {
+      if (raceClock == 1) {
+        $('#editTimeModalTitle').text('Enter Official Time and Press Sync');
+        $('#syncBtn').text('Sync');
+        $('#editTimeModal').modal('show');
+      } else {
+        $('#editTimeModalTitle').text('Enter New Time and Press Update');
+        $('#syncBtn').text('Update');
+        $('#editTimeModal').modal('show');
+      }
+    },
+
+    getTimeFromModal: function() {
+      var mins = parseInt($('#minutes').val());
+      var secs = parseInt($('#seconds').val());
+
+      // warn if entries are not valid
+      if (isNaN(mins) || isNaN(secs) || mins < 0 || secs < 0 || secs > 59) {
+        warningModal('Entry Error', 'Please enter two valid numbers and retry');
+        return 0;
+      }
+
+      // Clear the values and hide the modal
+      $('#minutes').val('');
+      $('#seconds').val('');
+      $('#editTimeModal').modal('hide');
+
+      // Convert the user input to miliseconds time
+      return timeToMiliseconds(mins, secs);
+
+    },
+
+    changeFinishTime: function(miliseconds) {
+      // change the values for the selected timeRow
+      timeRowToEdit = $('#timeRowToEdit');
+      timeRowToEdit.attr('data-time',miliseconds.toString());
+
+      // change the values for the td in the selected timeRow
+      timeRowToEdit.find('.time').attr('data-time',miliseconds.toString());
+      timeRowToEdit.find('.time').text(displayTime(miliseconds));
+
+      // remove the id to 'unselect' this row
+      timeRowToEdit.removeAttr('id');
+
+      // Clear the values and hide the modal
+      $('#minutes').val('');
+      $('#seconds').val('');
+      $('#editTimeModal').modal('hide');
+    },
+
+    removeFinishTime: function(timeIndex) {
+      $('.timeRow').eq(timeIndex).remove();
+      $('.placeRow').eq(timeIndex).remove();
+      $('.placeRow').each(function(index, el) {
+        $(el).data('place', index + 1);
+        $(el).html(`<td>${index + 1}</td>`);
+      });
+      $('#deleteTimeModal').modal('hide');
+    },
+
+    getRowIndex: function(row) {
+      $('.timeRow').each( function(index, el) {
+        if ($(el).data('time') == row.data('time')) {
+          rowIndex = index;
+        }
+      });
+      $('#deleteTimeModal').modal('show');
+      return rowIndex;
+    },
+
+  }
+})();
+
+
+var appController = (function(dataCtrl, dispCtrl) {
+  var startTime, clockStarted, lastClick, raceState, status;
+  var rowIndex;
+  var raceClock, timeRowToEdit;
+  var lastClick = false;
+
+  const startEventListeners = () => {
+    // Start the clock
+    $(document).on('click','#start-btn',function(){
+      dispCtrl.beginTimingFormat();
+			startClock();
+      updateRaceState();
+    });
+
+    // Record a time
+    $(document).on('click','#capture-time-btn',function(){
+      // Ensure this is a valid click (i.e., not an echo) and capture time
+      if(Date.now() - lastClick > 20) {
+        lastClick = Date.now();
+        captureTime();
+      }
+    });
+
+    // Adjust the clock to sync with the official time
+    $(document).on('click','#edit-time-btn',function(){
+      raceClock = 1; // we are editing the overall race time
+      dispCtrl.showEditTimeModal(raceClock);
+    });
+
+    // Adjust the clock to sync with the official time
+    $(document).on('click','.edit-time',function(){
+      raceClock = 0; // we are editing an individual finish time
+      dispCtrl.showEditTimeModal(raceClock);
+      // identify this timeRow as the one being edited
+      $(this).closest('.timeRow').attr('id', 'timeRowToEdit');
+    });
+
+    // Adjust the clock to sync with the official time
+    $(document).on('click','#syncBtn',function(){
+      // get the time from the user input
+      enteredTime = dispCtrl.getTimeFromModal();
+
+      // break if entry is invalid
+      if (!enteredTime) {return;}
+
+      // determine if updating raceClock or individual finish time
+      if (raceClock == 1) {
+        // Calculate the difference between entered time and current time
+        var currentTime = Date.now() - startTime;
+        var timeAdjustment = enteredTime - currentTime;
+
+        // Adjust the start time and update the database
+        startTime -= timeAdjustment;
+
+      } else {
+        // Update the DOM with the new finish time
+        dispCtrl.changeFinishTime(enteredTime);
+
+        // sort the times to ensure finishes are in order
+        dispCtrl.sortTimesTable();
+      }
+
+      // update the database
+      updateRaceState();
+    });
+
+    // Every time a modal is shown, if it has an autofocus element, focus on it.
+    $('.modal').on('shown.bs.modal', function() {
+      $(this).find('[autofocus]').focus();
+    });
+
+    // Record a time using the enter key
+    document.addEventListener('keypress', function(e){
+      if(Date.now() - lastClick > 20) {
+        lastClick = Date.now();
+        if (e.keyCode === 13 || e.which === 13) {
+          if(clockStarted) {
+            captureTime();
+          }
+        }
+      }
+    });
+
+    // Whenever a sorting has occured, update the state and send to server (potentially store locally)
+    document.addEventListener('dragend', () => {
+      updateRaceState();
+    });
+
+    // Delete the time and corresponding place when the delete icon is selected
+    // and the action is confirmed with a modal
+    $(document).on('click', '.delete-time', function(e) {
+      // Get the time associated with this delete button
+      rowIndex = dispCtrl.getRowIndex($(this).closest('.timeRow'));
+    });
+    $(document).on('click', '#deleteTimeBtn', function() {
+      dispCtrl.removeFinishTime(rowIndex);
+      updateRaceState();
+    });
+
+    $(document).on('click', '#finish-btn', function() {
+      // show confirm modal
+      $('#finishRaceModal').modal('show');
+    });
+
+    $(document).on('click', '#finishAndScoreBtn', function() {
+      // set race status to complete
+      status = 'complete';
+      // update the database
+      updateRaceState();
+      // redirect to results
+      window.location.href = `/${raceState.race_id}/results`
+    });
+  };
+
+  // Record the finish time, add it to the DOM and update the database
+  const captureTime = () => {
+    var finishTime = (Date.now() - startTime);
+    dispCtrl.addFinishTime(finishTime);
+    dispCtrl.sortTimesTable();
+    updateRaceState();
+  };
+
+  // When start button is pressed (or when page is loaded in 'active' status)
+  // set the start_time and start clock ticking
+  var startClock = function(start_time=false) {
+		clockStarted = true;
+    if(start_time) {
+      startTime = start_time;
+    } else {
+      startTime = Date.now();
+      status = 'active';
+    }
+		function time() {
+			var elapsedTime = Date.now() - startTime;
+			dispCtrl.updateClock(elapsedTime);
+		}
+		setInterval(time, 10);
+	};
+
+  // Updates the race state based on the most recent times and order and then
+  // sends it to the server for storage in the event the page is refreshed
+  const updateRaceState = () => {
+    // Get the race state from the data controller
+    raceState = dataCtrl.getStateData();
+    raceState.start_time = startTime;
+    raceState.race_status = status ? status : raceState.race_status;
+    console.log(raceState);
+    $.ajax({
+      async: true,
+      url: '/update_race_state',
+      type: 'POST',
+      dataType: 'json',
+      contentType: 'application/json',
+      data: JSON.stringify(raceState),
+    });
+  };
+
+  return {
+    init: function() {
+      raceState = dataCtrl.getStateData();
+      console.log(raceState);
+      if(raceState.start_time) {
+        dispCtrl.beginTimingFormat();
+        startClock(raceState.start_time);
+      }
+      startEventListeners();
+      dispCtrl.startSortable();
+      dispCtrl.updateTimes();
+    }
+  }
+})(dataController, displayController)
+
+appController.init();
+
+</script>
+
+{% endblock %}

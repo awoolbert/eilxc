@@ -1,0 +1,215 @@
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+<div class="container mt-4 text-center" 
+     id="race_info" 
+     data-race_id="{{race.race_id}}">
+  <div class="row h2">
+    <div class="col">
+      {{ race.name_f() }}
+    </div>
+  </div>
+  <div class="row h6">
+    <div class="col"></div>
+    <div class="col">{{race.location.name}}</div>
+    <div class="col"></div>
+  </div>
+  <div class="row h6">
+    <div class="col">{{race.display_date_long()}}</div>
+    <div class="col">{{race.location.city}}, {{race.location.state_abbr}}</div>
+    <div class="col">{{race.course.meters()}} meters</div>
+  </div>
+</div>
+
+<!-- Individual Results Table -->
+<div class="container pt-3">
+  <table class="table table-sm table-striped table-hover">
+    <thead>
+      <tr>
+        <th scope="col">School</th>
+        <th scope="col">Plc</th>
+        {% if race_results|length < 2 %}<th scope="col">Pts</th>{% endif %}
+        {% if race.has_bibs() %}<th scope="col">Bib</th>{% endif %}
+        <th scope="col">Runner</th>
+        <th scope="col">Class</th>
+        <th scope="col">Time</th>
+        <th scope="col">Pace</th>
+      </tr>
+    </thead>
+    <tbody id="runners-list">
+
+      {% for ir in ind_results %}
+        <tr class="result" data-runner_id="{{ ir.runner_id }}">
+          <td 
+            class="school" 
+            data-school_id="{{ir.school_id}}"
+            style="background-color:{{ir.primary_color}};  
+                   color:{{ir.text_color}}; 
+                   text-align:center;"
+          >
+            {{ ir.school_name }}
+          </td>
+          <td>{{ ir.place }}</td>
+          {% if race_results|length < 2 %}
+          <td>
+            {% if ir.points != None %}
+              {{ ir.points }}
+            {% endif %}
+          </td>
+          {% endif %}
+          {% if race.has_bibs() %}
+          <td>{{ ir.bib }}</td>
+        {% endif %}
+          <td>{{ ir.runner_name }}</td>
+          <td>{{ ir.grad_year }}</td>
+          <td>{{ ir.time_f }}</td>
+          <td>{{ ir.pace_f }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+<br>
+
+
+{% if win_loss_table %}
+<div class="container pt-3 mt-3">
+      <table class="table table">
+        <thead>
+          <tr>
+            <th scope="col">School</th>
+            <th scope="col" class="text-center">Wins</th>
+            <th scope="col" class="text-center">Losses</th>
+          </tr>
+        </thead>
+        <tbody id="win_loss_table">
+
+          {% for row in win_loss_table %}
+            <tr>
+              <td style="background-color:{{row.primary_color}};  
+                         color:{{row.text_color}};"
+              >
+                {{ row.school_long_name }} {{ row.gender }}
+              </td>
+              <td class="text-center">{{ row.wins }}</td>
+              <td class="text-center">{{ row.losses }}</td>
+            </tr>
+          {% endfor %}
+
+        </tbody>
+      </table>
+</div>
+<br>
+{% endif %}
+
+{% for team_results in race_results %}
+{% if team_results|length > 1 %}
+<div class="container my-5">
+  <div class="container mt-1 mb-0">
+    {% if team_results|length > 2 %}
+      <div class="text-center" style="font-size: 150%; font-weight: 600;">
+        Team Results
+      </div>
+    {% else %}
+      <div class="text-center" style="font-size: 150%; font-weight: 600;">
+        {{team_results[0].school_name}}({{team_results[0].score}}) 
+        {% if team_results[0].score == team_results[1].score%}
+          wins by tie-break
+        {% endif %}
+         vs. 
+        {{team_results[1].school_name}}({{team_results[1].score}})</div>
+    {% endif %}
+  </div>
+
+  {% for tr in team_results %}
+  <div 
+    class="container py-1 school"
+    style="border-style: solid; border-width: 5px; 
+           border-color: {{tr.primary_color}}; 
+           background-color: {{tr.primary_color}};"
+    data-school_id="{{tr.school_id}}"
+  >
+    <div class="container" style="background-color: #ffffff">
+      <div 
+        class="row pb-1" 
+        style="background-color: {{tr.primary_color}}; 
+               color: {{tr.text_color}};"
+      >
+
+        <div class="col-2" style="font-size: 120%; font-weight: 600;">
+          {% if race.scoring_type == 'invitational' %}
+            {{ tr.place }}
+          {% else %}
+            {{ tr.score }}
+          {% endif %}
+        </div>
+        <div class="col" style="font-size: 120%; font-weight: 600;">
+          {{ tr.school_name }} {{tr.gender}}
+          {% if race.scoring_type == 'invitational' %}
+            ({{ tr.score }})
+          {% endif %}
+        </div>
+        <div class="col-2">
+          Avg Time: {{tr.average_time}}
+        </div>
+        <div class="col-3">
+          1-5 Spread: {{tr.first_fifth_spread}}
+        </div>
+      </div>
+      <div class="row border-bottom">
+        <div class="col">
+          {{ tr.scorers[0].points }}
+          {{ tr.scorers[0].runner_name }}
+          {{ tr.scorers[0].time_f }}
+        </div>
+        <div class="col">
+          {{ tr.scorers[1].points }}
+          {{ tr.scorers[1].runner_name }}
+          {{ tr.scorers[1].time_f }}
+        </div>
+        <div class="col">
+          {{ tr.scorers[2].points }}
+          {{ tr.scorers[2].runner_name }}
+          {{ tr.scorers[2].time_f }}
+        </div>
+      </div>
+      <div class="row border-bottom">
+        <div class="col">
+          {{ tr.scorers[3].points }}
+          {{ tr.scorers[3].runner_name }}
+          {{ tr.scorers[3].time_f }}
+        </div>
+        <div class="col">
+          {{ tr.scorers[4].points }}
+          {{ tr.scorers[4].runner_name }}
+          {{ tr.scorers[4].time_f }}
+        </div>
+        <div class="col">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+        </div>
+        <div class="col text-muted font-italic">
+          {% if tr.scorers|length > 5 %}
+            ({{ tr.scorers[5].points }})
+            {{ tr.scorers[5].runner_name }}
+            {{ tr.scorers[5].time_f }}
+          {% endif %}
+        </div>
+        <div class="col text-muted font-italic">
+          {% if tr.scorers|length > 6 %}
+            ({{ tr.scorers[6].points }})
+            {{ tr.scorers[6].runner_name }}
+            {{ tr.scorers[6].time_f }}
+          {% endif %}
+        </div>
+        <div class="col">
+        </div>
+      </div>
+    </div>
+  </div>
+  <p style="line-height:10px;margin:0px;"><br></p>
+  {% endfor%}
+</div>
+{% endif %}
+{% endfor %}

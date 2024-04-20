@@ -1,0 +1,584 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link rel="stylesheet" href="/static/css/school.css">
+<style media="screen">
+  table.table td i {
+    font-size: 20px;
+    margin-left: 4px;
+  }
+
+  table.table td a.edit-runner i {
+    margin-left: 5px;
+    color: #007bff;
+  }
+
+  table.table td a.delete-runner i {
+    color: red;
+  }
+</style>
+
+{% endblock %}
+
+{% block content %}
+
+<div 
+  class="content-section mt-4 mb-5" 
+  id="team_info"
+  data-race_id="{{race_id}}"
+  data-school_id="{{school.id}}" 
+  data-gender="{{team.gender}}" 
+  data-year="{{team.year}}" 
+  data-team_id="{{team.id}}"
+  data-return_page="{{return_page}}"
+>
+  <!-- school header box -->
+  <div class="container mb-4 py-3 px-3 mt-3" 
+       style="border-style:solid; 
+              border-width:5px; 
+              border-color:{{school.primary_color}};  
+              color:{{school.primary_color}};"
+  >
+    <div class="row">
+      <div class="col-8">
+
+        <!-- school name and team name -->
+        <legend class="h2">{{school.long_name}} </legend>
+        <h5>{{ team.year }} {{ team.gender_f() }} Team</h5>
+
+
+        <!-- year select box -->
+        <div class="col-6">
+          <label for="year" style="font-size: 18px;">
+            Change year:
+          </label>
+          <select class="form-select" id="year-select" name="year">
+            {% for y in years %}
+            <option value="{{y}}" {% if y == year %}selected{% endif %}>
+              {{y}}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+  
+        <!-- gender select box -->
+        <div class="col-6">
+          <label for="year" style="font-size: 18px;">
+            Change gender:
+          </label>
+          <select class="form-select" id="gender-select" name="gender">
+            {% for g in genders %}
+            <option value="{{g}}" {% if g == gender %}selected{% endif %}>
+              {{g}}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+
+      </div>
+
+      <!-- image -->
+      <div class="col text-right school" data-school_id="{{ school.id }}">
+        {% if school.has_image() %}
+          <img src="/static/{{school.img_filename()}}">
+        {% endif %}
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- add runner form -->
+  <form class="mb-4" method="post" id="runner-form">
+
+    {# This hidden_tag is a CSRF security feature. #}
+    {{ form.hidden_tag() }}
+
+    <!-- add runner fields -->
+    <fieldset class="form-group px-3">
+      <legend class="border-bottom mb-1">Add a runner to this team</legend>
+      <div class="form-row mb-0">
+
+        <!-- first name field with error checking -->
+        {% if form.first_name.errors %}
+        <div class="form-group col">
+          {{ form.first_name.label(class="form-control-lable") }}
+          {{ form.first_name(
+            class="form-control form-control-md is-invalid", id="first_name"
+          )}}
+          <div class="invalid-feedback">
+            {% for error in form.first_name.errors %}
+            <span>{{ error }}</span>
+            {% endfor %}
+          </div>
+        </div>
+        {% else %}
+        <div class="form-group col">
+          {{ form.first_name.label(class="form-control-lable") }}
+          {{ form.first_name(
+            class="form-control form-control-md", id="first_name"
+          )}}
+        </div>
+        {% endif %}
+
+        <!-- last name field with error checking -->
+        {% if form.last_name.errors %}
+        <div class="form-group col">
+          {{ form.last_name.label(class="form-control-lable") }}
+          {{ form.last_name(
+            class="form-control form-control-md is-invalid", id="last_name"
+          )}}
+          <div class="invalid-feedback">
+            {% for error in form.last_name.errors %}
+            <span>{{ error }}</span>
+            {% endfor %}
+          </div>
+        </div>
+        {% else %}
+        <div class="form-group col">
+          {{ form.last_name.label(class="form-control-lable") }}
+          {{ form.last_name(
+            class="form-control form-control-md", id="last_name"
+          )}}
+        </div>
+        {% endif %}
+
+        <!-- grad year field with error checking -->
+        {% if form.grad_year.errors %}
+        <div class="form-group col-2">
+          {{ form.grad_year.label(class="form-control-lable") }}
+          {{ form.grad_year(
+            class="form-control form-control-md is-invalid", id="grad_year"
+          )}}
+          <div class="invalid-feedback">
+            {% for error in form.grad_year.errors %}
+            <span>{{ error }}</span>
+            {% endfor %}
+          </div>
+        </div>
+        {% else %}
+        <div class="form-group col-2">
+          {{ form.grad_year.label(class="form-control-lable") }}
+          {{ form.grad_year(
+            class="form-control form-control-md", id="grad_year"
+          )}}
+        </div>
+        {% endif %}
+
+        <!-- estimated 5k time input area -->
+        <div class="form-group text-center col-2">
+          <p class="mb-2">Est. 5K Time</p>
+          <div class="form-group row mb-0">
+
+            <!-- minutes field with error checking -->
+            {% if form.minutes.errors %}
+            <div class="form-group text-center col-6 mr-0 pr-1 mb-0">
+              {{ form.minutes(
+                class="form-control form-control-md is-invalid", id="minutes"
+              )}}
+              <div class="invalid-feedback">
+                {% for error in form.minutes.errors %}
+                <span>{{ error }}</span>
+                {% endfor %}
+              </div>
+            </div>
+            {% else %}
+            <div class="form-group text-center col-6 mr-0 pr-1 mb-0">
+              {{ form.minutes(
+                class="form-control form-control-md", id="minutes"
+              )}}
+              <small class="muted">Minutes</small>
+            </div>
+            {% endif %}
+
+            <!-- seconds field with error checking -->
+            {% if form.seconds.errors %}
+            <div class="form-group text-center col-6 ml-0 pl-1 mb-0">
+              {{ form.seconds(
+                class="form-control form-control-md is-invalid", id="seconds"
+              )}}
+              <div class="invalid-feedback">
+                {% for error in form.seconds.errors %}
+                <span>{{ error }}</span>
+                {% endfor %}
+              </div>
+            </div>
+            {% else %}
+            <div class="form-group text-center col-6 ml-0 pl-1 mb-0">
+              {{ form.seconds(
+                class="form-control form-control-md", id="seconds"
+              )}}
+              <small class="muted">Seconds</small>
+            </div>
+            {% endif %}
+
+          </div>
+        </div>
+      </div>
+      <div class="row mb-2 justify-content-end">
+        <div class="col-3" style="width:200px;">
+          {{ form.submit(class="btn btn-block btn-primary") }}
+        </div>
+      </div>
+
+    </fieldset>
+  </form>
+
+  <!-- roster table -->
+  <div class="container mt-3">
+    <h3 class="text-center mb-3 pt-2 border-top">Team Roster</h3>
+    <table class="table table-sm table-striped">
+
+      <thead>
+        <tr>
+          <th></th>
+          <th></th>
+          <th></th>
+          <th colspan="2" class="text-center">No. of Results</th>
+          <th></th>
+        </tr>
+        <tr>
+          {# <th class="pl-3" scope="col">Name</th> #}
+          <th scope="col pl-3" class="sortable">
+            Name 
+            <i class="fas fa-sort"></i>
+            <i class="fas fa-sort-up"></i>
+            <i class="fas fa-sort-down"></i>
+          </th>
+          <th scope="col" class="sortable">
+            Class 
+            <i class="fas fa-sort"></i>
+            <i class="fas fa-sort-up"></i>
+            <i class="fas fa-sort-down"></i>
+          </th>
+          <th scope="col" class="sortable">
+             5K Time 
+            <i class="fas fa-sort"></i>
+            <i class="fas fa-sort-up"></i>
+            <i class="fas fa-sort-down"></i>
+          </th>
+          <th class="text-center" scope="col">Total</th>
+          <th class="text-center" scope="col">{{year}}</th>
+          <th class="text-center" scope="col">Actions</th>
+        </tr>
+      </thead>
+
+      <tbody id="runners-list">
+
+        {% for runner in team.alphabetized_runners() %}
+        <tr class="runner-row" data-runner_id="{{runner.id}}">
+
+          <td class="pl-3">
+            <a href="{{url_for('core.runner', runner_id=runner.id)}}">
+              {{ runner.last_name }}, {{ runner.first_name }}
+            </a>
+          </td>
+
+          <td class="text-center">{{ runner.grad_year }}</td>
+          <td class="text-center">{{ runner.display_seed_time() }}</td>
+          <td class="text-center">{{ runner.res_count() }}</td>
+          <td class="text-center">{{ runner.res_count(year) }}</td>
+
+          <!-- icons to edit or delete runner -->
+          <td class="actions text-center">
+            {% if able_to_delete or runner.completed_results()|length==0 %}
+            <a 
+              class="edit-runner" 
+              title="Edit" 
+              data-toggle="modal" 
+              data-target="#editRunnerModal" 
+              data-runner_id="{{runner.id}}" 
+              data-runner_first_name="{{runner.first_name}}" 
+              data-runner_last_name="{{runner.last_name}}"
+              data-runner_grad_year="{{runner.grad_year}}" 
+              data-runner_minutes="{{runner.minutes()}}" 
+              data-runner_seconds="{{runner.seconds()}}"
+            >
+              <i class="material-icons">&#xE254;</i>
+            </a>
+
+            <a 
+              class="delete-runner" 
+              title="Delete" 
+              data-toggle="modal" 
+              data-target="#deleteRunnerModal" 
+              data-runner_id="{{runner.id}}" 
+              data-runner_first_name="{{runner.first_name}}" 
+              data-runner_last_name="{{runner.last_name}}"
+              data-runner_grad_year="{{runner.grad_year}}" 
+              data-runner_minutes="{{runner.minutes()}}" 
+              data-runner_seconds="{{runner.seconds()}}"
+            >
+              <i class="material-icons">&#xE872;</i>
+            </a>
+            {% endif %}
+          </td>
+
+        </tr>
+        {% endfor %}
+
+      </tbody>
+    </table>
+  </div>
+
+  <!-- other potential runners tabel -->
+  {% if other_runners %}
+  <div class="container mt-5 mb-5">
+    <h4 class="text-center mb-3 pt-2 border-top">
+      Found other runners to consider adding to this team
+    </h4>
+    <table class="table table-sm table-striped">
+
+      <thead>
+        <tr>
+          <th></th>
+          <th></th>
+          <th></th>
+          <th colspan="2" class="text-center">No. of Results</th>
+          <th></th>
+        </tr>
+        <tr>
+          <th class="pl-3" scope="col">Name</th>
+          <th class="text-center" scope="col">Class</th>
+          <th class="text-center" scope="col">5K Time</th>
+          <th class="text-center" scope="col">Total</th>
+          <th class="text-center" scope="col">{{year}}</th>
+          <th class="text-center" scope="col">Actions</th>
+        </tr>
+      </thead>
+
+      <tbody id="other-runners-list">
+
+        {% for runner in other_runners %}
+        <tr class="runner-row" data-runner_id="{{runner.id}}">
+
+          <td class="pl-3">
+            <a href="{{url_for('core.runner', runner_id=runner.id)}}">
+              {{ runner.last_name }}, {{ runner.first_name }}
+            </a>
+          </td>
+
+          <td class="text-center">{{ runner.grad_year }}</td>
+          <td class="text-center">{{ runner.display_seed_time() }}</td>
+          <td class="text-center">{{ runner.res_count() }}</td>
+          <td class="text-center">{{ runner.res_count(year) }}</td>
+
+          <!-- button to add runner to roster -->
+          <td class="actions text-center">
+            <button 
+              type="button" 
+              class="btn btn-sm btn-primary add-other-runner-to-roster-btn" 
+              data-runner_id="{{runner.id}}"
+            >
+              Add to Roster
+            </button>   
+          </td>
+
+        </tr>
+        {% endfor %}
+
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+
+  <!-- edit runner modal -->
+  <div class="modal fade" id="editRunnerModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+      <div class="modal-content">
+
+        <!-- header -->
+        <div class="modal-header">
+          <h5 class="modal-title" id="editRunnerModalTitle">Edit Runner</h5>
+
+          <!-- close modal and exit without changing "x" -->
+          <button 
+            type="button" 
+            class="close" 
+            data-dismiss="modal" 
+            aria-label="Close"
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+
+        </div>
+
+        <!-- body -->
+        <div class="modal-body">
+          <form class="mb-4" method="post">
+            <fieldset class="form-group">
+              <div class="form-row mb-0">
+
+                <div class="form-group col">
+                  {{ form.first_name.label(class="form-control-lable") }}
+                  {{ form.first_name(
+                    class="form-control form-control-md", id="m_first_name"
+                  )}}
+                </div>
+
+                <div class="form-group col">
+                  {{ form.last_name.label(class="form-control-lable") }}
+                  {{ form.last_name(
+                    class="form-control form-control-md", id="m_last_name"
+                  )}}
+                </div>
+
+                <div class="form-group col-2">
+                  {{ form.grad_year.label(class="form-control-lable") }}
+                  {{ form.grad_year(
+                    class="form-control form-control-md", id="m_grad_year"
+                  )}}
+                </div>
+
+                <div class="form-group text-center col-2">
+                  <p class="mb-2">Est. 5K Time</p>
+                  <div class="form-group row mb-0">
+                    <div class="form-group text-center col-6 mr-0 pr-1 mb-0">
+                      {{ form.minutes(
+                        class="form-control form-control-md", id="m_minutes"
+                      )}}
+                      <small class="muted">Minutes</small>
+                    </div>
+                    <div class="form-group text-center col-6 ml-0 pl-1 mb-0">
+                      {{ form.seconds(
+                        class="form-control form-control-md", id="m_seconds"
+                      )}}
+                      <small class="muted">Seconds</small>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </fieldset>
+          </form>
+        </div>
+
+        <!-- footer -->
+        <div class="modal-footer">
+
+          <!-- close without saving button -->
+          <button 
+            type="button" 
+            class="btn btn-secondary" 
+            data-dismiss="modal" 
+            id="m_close_btn"
+          >
+            Close
+          </button>
+          
+          <!-- submit changes button -->
+          <button type="button" class="btn btn-primary" id="m_update_btn">
+            Update Runner
+          </button>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- delete runner modal -->
+  <div class="modal fade" id="deleteRunnerModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="deleteRunnerModalTitle">Delete Runner</h5>
+          <button 
+            type="button" 
+            class="close" 
+            data-dismiss="modal" 
+            aria-label="Close"
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <h6 id="delete-modal-text"></h6>
+        </div>
+        <div class="modal-footer">
+
+          <button 
+            type="button" 
+            class="btn btn-secondary" 
+            data-dismiss="modal" 
+            id="m_cancel_btn"
+          >
+            Cancel
+          </button>
+          
+          <button type="button" class="btn btn-primary" id="m_confirm_del_btn">
+            Confirm
+          </button>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- team does not yet exist modal -->
+  <div 
+    class="modal fade" 
+    id="createTeamModal"
+    tabindex="-1" 
+    aria-labelledby="exampleModalLabel" 
+    aria-hidden="true"
+  >
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <h5 class="modal-title" id="createTeamModalTitle">Create New Team</h5>
+          <button 
+            type="button" 
+            class="close" 
+            data-dismiss="modal" 
+            aria-label="Close"
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <div class="modal-body", id="createTeamMessage">
+          <h6 id="create-team-modal-text"></h6>
+        </div>
+
+        <div class="modal-footer">
+          <button 
+            type="button" 
+            id="noCreateTeamBtn"
+            class="btn btn-secondary" 
+          >
+            No
+          </button>
+          <button 
+            type="button" 
+            id="yesCreateTeamBtn" 
+            class="btn btn-primary">
+            Yes
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- finished editing roster button -->
+  <div class="row mb-2 justify-content-center">
+    <div class="col-3" style="width:200px;">
+      <button 
+        type="button" 
+        class="btn btn-block btn-success" 
+        id="finished-Editing-Roster-Btn"
+        data-return-url="{{ return_to }}"
+      >
+        Finished Editing Roster
+      </button>
+    </div>
+  </div>
+
+</div>
+
+<script src="/static/js/roster.js"></script>
+
+{% endblock %}

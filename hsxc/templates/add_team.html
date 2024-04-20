@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block head %}
+
+<link 
+  rel="stylesheet" 
+  href="https://fonts.googleapis.com/icon?family=Material+Icons"
+>
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="content-section mb-5" 
+     id="school_info" 
+     data-school_id="{{school.id}}">
+
+  <!-- school header box -->
+  <div class="mb-4 mt-3" style="border: 7px solid {{school.primary_color}};">
+    <div class="d-flex" style="border: 6px solid {{school.secondary_color}};">
+      <div
+        class="px-3 py-1" 
+        style="border: 7px solid {{school.primary_color}};  
+               color:{{school.primary_color}};
+               width: 100%;"
+      >
+        <div class="row">
+          
+          <!-- school name, location and league name (if available) -->
+          <div class="col-7">
+            <legend class="h2">{{school.long_name}} </legend>
+            <h5>{{ school.city }}, {{ school.state_abbr }}</h5>
+            {% if school.league.id != 3 %}
+                <h6>{{school.league.long_name}} ({{school.league.short_name}})</h6>
+            {% endif %}
+    
+          </div>
+
+          <!-- school logo -->
+          <div class="col text-right">
+            {% if school.has_image() %}
+              <img src="/static/{{school.img_filename()}}">
+            {% endif %}
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h4>Add a Team</h4>
+
+  <!-- select gender -->
+  <div class="form-group">
+    <select 
+      class="form-control"
+      id="gender-select" 
+      data-school_id="{{school.id}}"
+      data-race_id="{{race_id}}" 
+    >
+      <option selected disabled>Select gender of team to add</option>
+      {% for g in gender_list %}
+        <option data-gender_code="{{g[0]}}">{{g[1]}}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+</div>
+
+<script src="/static/js/add_team.js"></script>
+
+{% endblock %}

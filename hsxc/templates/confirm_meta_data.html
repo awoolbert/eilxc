@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="content-section py-3 mt-3 mb-3">
+  <legend class="h3 border-bottom">Confirm Race Details</legend>
+</div>
+
+<p>Select or enter the information below as needed then select confirm</p>
+<form method="POST" action="{{ url_for('race_upload.confirm_meta_data') }}">
+  <div class="container mt-5">
+    <div class="row">
+        <div class="col-md-3 mb-0 pb-0"><strong>Category</strong></div>
+        <div class="col-md-9 mb-0 pb-0"><strong>Selection</strong></div>
+        <div class="col-md-12 mt-0 pt-0"><hr></div>
+        {% for category, options in meta_data.items() %}
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="{{ category }}">{{ category }}</label>
+            </div>
+        </div>
+        <div class="col-md-9">
+          <div class="form-group">
+
+            {% if category == 'Race Name' %}
+            <input type="text" class="form-control" id="{{ category }}" name="{{ category }}" value="{{ options }}">
+            <small class="form-text text-muted">e.g., "Rivers, Roxbury Latin at Belmont Hill", "Eastern Independent Leage (EIL) Championship"</small>
+
+            {% elif category in ['Gender', 'Varsity or JV', 'Scoring'] %}
+            <select class="form-control" id="{{ category }}" name="{{ category }}">
+                {% for option in options %}
+                    <option value="{{ option }}">{{ option }}</option>
+                {% endfor %}
+            </select>
+
+            {% elif category == 'Date' %}
+            <input type="text" class="form-control" id="{{ category }}" name="{{ category }}" value="{{ options }}">
+            <small class="form-text text-muted">Enter any valid date format (e.g., 11/09/2023, November 9, 2023, etc.</small>
+
+            {% elif category == 'Location' %}
+            <select class="form-control" id="location-select" name="{{ category }}">
+                {% for option in options %}
+                    <option value="{{ option.id }}">{{ option.name }}</option>
+                {% endfor %}
+                    <option value="add">Add a location not in list</option>
+            </select>
+            </select>
+
+            {% elif category == 'Course' %}
+            <select class="form-control" id="course-select" name="{{ category }}">
+                {% for option in options %}
+                    <option value="{{ option.id }}">{{ option.name }}</option>
+                {% endfor %}
+                    <option value="add">Add a course not in list</option>
+              </select>
+            {% endif %}
+
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+  <div class="col-md-9 d-flex mt-4 justify-content-center">
+    <button type="submit" class="btn btn-primary">Confirm Selections</button>
+  </div></form>
+
+  <script src="/static/js/confirm_meta_data.js"></script>
+
+
+{% endblock %}

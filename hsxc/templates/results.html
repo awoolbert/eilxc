@@ -1,0 +1,387 @@
+{% extends "base.html" %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block content %}
+<div class="container mt-4 text-center" 
+     id="race_info" 
+     data-race_id="{{race.id}}"
+     data-race_name="{{ race.name_f() }}">
+  <div class="row h2">
+    <div class="col">
+      {{ race.name_f() }}
+    </div>
+  </div>
+  <div class="row h6">
+    <div class="col"></div>
+    <div class="col">
+      <a href="{{ url_for('core.course', course_id=race.course.id) }}">
+        {{race.location.name}}
+      </a>
+    </div>
+    <div class="col"></div>
+  </div>
+  <div class="row h6">
+    <div class="col">{{race.display_date_long()}}</div>
+    <div class="col">{{race.location.city}}, {{race.location.state_abbr}}</div>
+    <div class="col">{{race.course.meters()}} meters</div>
+  </div>
+</div>
+
+<!-- Individual Results Table -->
+<div class="container pt-3">
+  <table class="table table-sm table-striped">
+    <thead>
+      <tr>
+        <th scope="col">School</th>
+        <th scope="col">Plc</th>
+        {% if race_results|length < 2 %} <th scope="col">Pts</th> {% endif %}
+        {% if race.has_bibs() %} <th scope="col">Bib</th> {% endif %}
+        <th scope="col">Runner</th>
+        <th scope="col">Class</th>
+        <th scope="col">Time</th>
+        <th scope="col">Pace</th>
+      </tr>
+    </thead>
+    <tbody id="runners-list">
+
+      {% for ir in ind_results %}
+      <tr class="result align-items-center" data-runner_id="{{ ir.runner_id }}">
+        <td class="school justify-content-center align-items-center" 
+            data-school_id="{{ir.school_id}}"
+            style="display: flex;
+                  background-color: {{ir.primary_color}}; 
+                  text-align: center;
+                  color: {{ir.text_color}};"
+        >
+          {{ ir.school_name }}
+        </td>
+
+        <td>{{ ir.place }}</td>
+
+        {% if race_results|length < 2 %} 
+          <td>
+          {% if ir.points != None %}
+            {{ ir.points }}
+          {% endif %}
+          </td>
+        {% endif %}
+
+        {% if race.has_bibs() %}
+          <td>{{ ir.bib }}</td>
+        {% endif %}
+
+        <td>
+          <a href="{{url_for('core.runner', runner_id=ir.runner_id)}}">
+            {{ ir.runner_name }}
+          </a>
+        </td>
+        <td>{{ ir.grad_year }}</td>
+        <td>{{ ir.time_f }}</td>
+        <td>{{ ir.pace_f }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+<br>
+
+<!-- Button to switch between dual and invitational scoring -->
+{% if is_authorized and race.team_count() > 2 and 'Hypothetical' not in race.name %}
+<div class="container text-center">
+  <div class="form-check form-check-inline">
+    <input class="form-check-input" 
+           type="radio" 
+           name="inlineRadioOptions" 
+           id="invitational-radio" 
+           value="invitational"
+           {% if race.scoring_type=='invitational' %} checked {% endif %}>
+    <label class="form-check-label h4" 
+           for="inlineRadio1">Score as Invitational</label>
+  </div>
+  <div class="form-check form-check-inline">
+    <input class="form-check-input" 
+           type="radio" 
+           name="inlineRadioOptions" 
+           id="dual-radio" 
+           value="dual" 
+           {% if race.scoring_type !='invitational' %} checked {% endif %}>
+    <label class="form-check-label h4" 
+           for="inlineRadio2">Score as Dual Race(s)</label>
+  </div>
+</div>
+{% endif %}
+
+<!-- win/loss table if dual meet with 3 or more teams -->
+{% if win_loss_table %}
+<div class="container pt-3">
+  <table class="table table">
+    <thead>
+      <tr>
+        <th scope="col">School</th>
+        <th scope="col" class="text-center">Wins</th>
+        <th scope="col" class="text-center">Losses</th>
+      </tr>
+    </thead>
+    <tbody id="win_loss_table">
+
+      {% for row in win_loss_table %}
+      <tr class="school" data-school_id="{{row.school_id}}">
+        <td style="background-color:{{row.primary_color}};  
+                   color:{{row.text_color}};"
+        >
+          {{row.school_long_name }} {{ row.gender }}
+        </td>
+        <td class="text-center">{{ row.wins }}</td>
+        <td class="text-center">{{ row.losses }}</td>
+      </tr>
+      {% endfor %}
+
+    </tbody>
+  </table>
+</div>
+<br>
+{% endif %}
+
+<!-- Team results section. Each "race" has a box for all teams in "race" -->
+{% for team_results in race_results %}
+{% if team_results|length > 1 %}
+<div class="container mt-4">
+  <div class="container mt-1 mb-0">
+    {% if team_results|length > 2 %}
+    <h4 class="text-center">Team Results</h4>
+    {% else %}
+    <h4 class="text-center">
+      {{team_results[0].school_name}}({{team_results[0].score}}) 
+      {% if team_results[0].score == team_results[1].score%}
+        wins by tie-break
+      {% endif %}
+       vs.
+      {{team_results[1].school_name}}({{team_results[1].score}})
+    </h4>
+    {% endif %}
+  </div>
+
+  {% for tr in team_results %}
+  <div 
+    class="container py-1 school"
+    style="border-style: solid; border-width: 5px; 
+           border-color: {{tr.primary_color}}; 
+           background-color: {{tr.primary_color}};"
+    data-school_id="{{tr.school_id}}"
+  >
+    <div class="container" style="background-color: #ffffff">
+      <div 
+        class="row pb-1" 
+        style="background-color: {{tr.primary_color}}; 
+               color: {{tr.text_color}};"
+      >
+
+        <div class="col-2" style="font-size: 120%; font-weight: 600;">
+          {% if race.scoring_type == 'invitational' %}
+            {{ tr.place }}
+          {% else %}
+            {{ tr.score }}
+          {% endif %}
+        </div>
+        <div class="col-5" style="font-size: 120%; font-weight: 600;">
+          {{ tr.school_name }} {{tr.gender}}
+          {% if race.scoring_type == 'invitational' %}
+            ({{ tr.score }})
+          {% endif %}
+        </div>
+        <div class="col-2">
+          Avg Time: {{tr.average_time}}
+        </div>
+        <div class="col-3">
+          1-5 Spread: {{tr.first_fifth_spread}}
+        </div>
+      </div>
+      <div class="row border-bottom runner-link">
+        <div class="col">
+          {{ tr.scorers[0].points }}
+          <a href="{{url_for('core.runner', runner_id=tr.scorers[0].runner_id)}}">
+            {{ tr.scorers[0].runner_name }}
+          </a>
+          {{ tr.scorers[0].time_f }}
+        </div>
+        <div class="col">
+          {{ tr.scorers[1].points }}
+          <a href="{{url_for('core.runner', runner_id=tr.scorers[1].runner_id)}}">
+            {{ tr.scorers[1].runner_name }}
+          </a>
+          {{ tr.scorers[1].time_f }}
+        </div>
+        <div class="col">
+          {{ tr.scorers[2].points }}
+          <a href="{{url_for('core.runner', runner_id=tr.scorers[2].runner_id)}}">
+            {{ tr.scorers[2].runner_name }}
+          </a>
+          {{ tr.scorers[2].time_f }}
+        </div>
+      </div>
+      <div class="row border-bottom runner-link">
+        <div class="col">
+          {{ tr.scorers[3].points }}
+          <a href="{{url_for('core.runner', runner_id=tr.scorers[3].runner_id)}}">
+            {{ tr.scorers[3].runner_name }}
+          </a>
+          {{ tr.scorers[3].time_f }}
+        </div>
+        <div class="col">
+          {{ tr.scorers[4].points }}
+          <a href="{{url_for('core.runner', runner_id=tr.scorers[4].runner_id)}}">
+            {{ tr.scorers[4].runner_name }}
+          </a>
+          {{ tr.scorers[4].time_f }}
+        </div>
+        <div class="col">
+        </div>
+      </div>
+      <div class="row runner-link">
+        <div class="col">
+        </div>
+        <div class="col text-muted font-italic">
+          {% if tr.scorers|length > 5 %}
+          ({{ tr.scorers[5].points }})
+          <a href="{{url_for('core.runner', runner_id=tr.scorers[5].runner_id)}}">
+            {{ tr.scorers[5].runner_name }}
+          </a>
+          {{ tr.scorers[5].time_f }}
+          {% endif %}
+        </div>
+        <div class="col text-muted font-italic">
+          {% if tr.scorers|length > 6 %}
+          ({{ tr.scorers[6].points }})
+          <a href="{{url_for('core.runner', runner_id=tr.scorers[6].runner_id)}}">
+            {{ tr.scorers[6].runner_name }}
+          </a>
+          {{ tr.scorers[6].time_f }}
+          {% endif %}
+        </div>
+        <div class="col">
+        </div>
+      </div>
+    </div>
+  </div>
+  <p style="line-height:10px;margin:0px;"><br></p>
+  {% endfor%}
+</div>
+{% endif %}
+{% endfor %}
+
+<!-- email results button -->
+{% if 'Hypothetical' not in race.name %}
+<div class="container mt-2 mb-5 text-center">
+  <button id="emailAssignmentsBtn" 
+          class="btn btn-lg btn-success" 
+          type="button" 
+          name="button"
+          onclick="showEmailModal();">
+    Email Race Results
+  </button>
+</div>
+{% endif %}
+
+<!-- invalid email address modal -->
+<div class="modal fade" id="invalidEmailModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header" style="background-color:#f8d7da;">
+        <h5 class="modal-title" 
+            id="invalidEmailModalTitle" 
+            style="color:#8c4247;">
+          %title%
+        </h5>
+        <button type="button" 
+                class="close" 
+                data-dismiss="modal" 
+                aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" 
+           style="color:#8c4247;" 
+           id="invalidEmailModalBody">
+        %modal_body%
+      </div>
+      <div class="modal-footer" style="background-color:#f8d7da;">
+        <button type="button" 
+                class="btn btn-danger" 
+                data-dismiss="modal" 
+                id="m_close_btn">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- email address input model -->
+<div class="modal fade" id="emailResultsModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" 
+            id="emailResultsModalTitle">
+          Email Race Results for %raceName%
+        </h5>
+        <button type="button" 
+                class="close" 
+                data-dismiss="modal" 
+                aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        {% for email in email_list %}
+        <div class="form-group row">
+          <label class="col-2 col-form-label">Email</label>
+          <div class="col-10">
+            <input type="email" 
+                   class="form-control email-address" 
+                   value="{{ email }}">
+          </div>
+        </div>
+        {% endfor %}
+        <div class="form-group row">
+          <label class="col-2 col-form-label">Email</label>
+          <div class="col-10">
+            <input type="email" 
+                   class="form-control email-address" 
+                   placeholder="additional email address (optional)"
+                   autofocus>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label class="col-2 col-form-label">Email</label>
+          <div class="col-10">
+            <input type="email" 
+                   class="form-control email-address" 
+                   placeholder="additional email address (optional)">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" 
+                class="btn btn-secondary" 
+                data-dismiss="modal" 
+                id="m_close_btn">
+          Close
+        </button>
+        <button id="sendEmailBtn" 
+                onclick="sendEmail();" 
+                type="button" 
+                class="btn btn-primary">
+          Send
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/static/js/results.js"></script>
+
+{% endblock %}

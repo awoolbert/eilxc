@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block head %}
+
+<link 
+  rel="stylesheet" 
+  href="https://fonts.googleapis.com/icon?family=Material+Icons"
+>
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container-section mt-4 mb-5">
+    <div class="row">
+        <div class="col-md-6">
+            <h2 class="mb-4">Hypothetical Race</h2>
+            <form method="post">
+                {{ form.hidden_tag() }}
+
+                <div class="form-group">
+                    <label for="gender">Choose Gender:</label>
+                    {{ form.gender(class="form-control", id="gender") }}
+                </div>
+
+                <div class="form-group">
+                    <label for="scoring_type">Choose Scoring Method:</label>
+                    {{ form.scoring_type(class="form-control", id="scoring_type") }}
+                </div>
+
+                <div class="form-group">
+                    <label for="stimes_to_use">Choose Times to Use:</label>
+                    {{ form.times_to_use(class="form-control", id="times_to_use") }}
+                </div>
+
+                <div class="form-group">
+                    <label for="schools">Select Schools:</label>
+                    {{ form.schools(class="form-control", id="schools", multiple=True, size=30) }}
+                </div>
+
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

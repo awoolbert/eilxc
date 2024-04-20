@@ -1,0 +1,44 @@
+img {
+    max-width: 50%;
+}
+
+/* Optional styling */
+th {
+    cursor: pointer;
+}
+
+/* Hide Font Awesome icons by default */
+.fa-sort {
+    display: inline !important;
+}
+
+.fa-sort-up, .fa-sort-down {
+    display: none;
+}
+
+/* Hide sort icon and show appropriate icon when column is sorted */
+.asc .fa-sort, .desc .fa-sort {
+    display: none !important;
+}
+
+
+/* Show appropriate icon when column is sorted */
+.asc .fa-sort-up {
+    display: inline !important;
+    color: rgb(0, 153, 255);
+}
+.desc .fa-sort-down {
+    display: inline !important;
+    color: rgb(0, 153, 255);
+}
+
+/* make a form submission button appear as link */
+.link-button {
+    background: none;
+    border: none;
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: 1em;
+    font-family: inherit;
+}

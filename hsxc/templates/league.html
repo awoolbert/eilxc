@@ -1,0 +1,233 @@
+{% extends "base.html" %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block content %}
+
+<div class="content-section mb-5" 
+     id="league_info" 
+     data-league_id="{{league.id}}">
+
+  <!-- logo box -->
+  <div class="container pt-2 pb-1 mb-4 mt-4" 
+       style="border-style: solid; border-width:5px;">
+ 
+    <h1 class="text-center">{{league.long_name}} ({{league.short_name}})</h1>
+ 
+    <div class="text-center mt-3">
+      {% for school in league.alphabetized_schools() %}
+      <a href="{{url_for('core.school', school_id=school.id)}}">
+        <img class="logo" 
+             data-school_id="{{ school.id }}" 
+             src="/static/{{school.img_filename()}}" 
+             class="img" 
+             style="width: {{img_width}};"
+             title="{{ school.long_name }}"
+      >
+      </a>
+      {% endfor %}
+    </div>
+
+    <!-- year select box -->
+    <div class="container text-center">
+      <label for="year" style="font-weight: bold; font-size: 20px;">
+        Select a year:
+      </label>
+      <select class="form-select" id="year-select" name="year">
+        {% for y in years %}
+        <option value="{{y}}" {% if y == year %}selected{% endif %}>
+          {{y}}
+        </option>
+        {% endfor %}
+      </select> 
+    </div>
+
+  </div>
+
+
+  <!-- championship results box -->
+  {% if championships|length > 0 %}
+  <div class="container" id="championships-container">
+
+    <h3 class="text-center mb-3 pt-2 border-top">
+      {{year}} Championship Results
+    </h3>
+
+    <!-- champs name and logo box -->
+    <div class="container mb-5">
+
+      <div class="row text-center">
+        {% for gender, s in champs.items() %}        
+        <div class="col">
+          <h4> {{gender.title()}} Champion</h4>
+        </div>
+        {% endfor %}
+      </div>
+
+      <div class="row text-center">
+        {% for gender, s in champs.items() %}
+        <div class="col">            
+          <a href="{{url_for('core.school', school_id=s.id)}}">
+            <img class="logo" 
+                data-school_id="{{ s.id }}" 
+                src="/static/{{s.img_filename()}}" 
+                class="img" 
+                style="width: {{img_width * 5}};" >
+          </a>
+
+        </div>          
+        {% endfor %}
+      </div>
+
+      <div class="row text-center">
+        {% for gender, s in champs.items() %}        
+        <div class="col">
+          <h5> {{s.long_name}} </h5>
+        </div>
+        {% endfor %}
+      </div>
+
+    </div>
+
+    <!-- championship races box -->
+    <table class="table table-sm table-striped mb-4">
+      <thead>
+        <tr>
+          <th scope="col">Date</th>
+          <th scope="col">Race</th>
+          <th scope="col">Location</th>
+        </tr>
+      </thead>
+      <tbody id="championships-list">
+
+        {% for race in championships %}
+        <tr>
+          <td>{{ race.display_date() }}</td>
+          <td>
+            <a href="{{url_for('races.results', race_id=race.id)}}">
+              {{ race.display_name_gender_jv() }}
+            </a>
+          </td>
+          <td>{{ race.location.city }}, {{ race.location.state_abbr }}</td>
+        </tr>
+        {% endfor %}
+
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+
+  <!-- regular season results box -->
+  <div class="container mb-4" id="standings-container">
+    <h3 class="text-center pt-2 border-top">
+      {{year}} Regular Season Standings
+    </h3>
+
+    <div class="row">
+      {% for gender, team_list in standings.items() %}
+      <div class="col" id="{{gender}}-standings">
+        <h4 class="text-center my-2">{{ gender}} Teams</h4>
+        <table class="table table-sm table-striped">
+          <thead>
+            <tr>
+              <th rowspan="2">School</th>
+              <th class="text-center" colspan="2">Overall</th>
+              <th class="text-center" colspan="2">League</th>
+            </tr>
+            <tr>
+              <th class="text-center">Wins</th>
+              <th class="text-center">Losses</th>
+              <th class="text-center">Wins</th>
+              <th class="text-center">Losses</th>
+            </tr>
+
+            <tbody>
+              {% for team in team_list %}
+              <tr class="school" data-school_id="{{team.school.id}}">
+                <td style="background-color:{{team.school.primary_color}};  
+                           color:{{team.school.text_color}};">
+                  {{ team.school.short_name}}
+                </td>
+                <td class="text-center">{{ team.wins }}</td>
+                <td class="text-center">{{ team.losses }}</td>
+                <td class="text-center">{{ team.league_wins }}</td>
+                <td class="text-center">{{ team.league_losses }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </thead>
+        </table>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- leaderboards -->
+  <div class="container">
+    <h3 class="text-center mb-3 pt-2 border-top">
+      Top Regular Season Performances {{year}}
+    </h3>
+    <div class="row">
+      {% for gender, leaderboard in leaderboards.items() %}
+      <div class="col">
+        <h4 class="text-center">{{ gender.title() }} Top 20 Times*</h4>
+        <table class="table table-striped table-sm mb-2">
+          <thead>
+            <tr>
+              <th scope="col">No.</th>
+              <th scope="col">Time*</th>
+              <th scope="col">Runner</th>
+              <th scope="col">School</th>
+              <th scope="col">Date</th>
+            </tr>
+          </thead>
+      
+          <tbody id="leaderboard-{{gender}}">
+            {% for res in leaderboard %} 
+              <tr>
+                <td>{{ loop.index }}</td>
+    
+                <td>
+                  <a href="{{url_for('races.results', race_id=res.race.id)}}">
+                    {{ res.adj_time_f() }}
+                  </a>
+                </td>
+    
+                <td>
+                  <a href="{{url_for('core.runner', runner_id=res.runner.id)}}">
+                    {{ res.runner.display_name() }}
+                  </a>
+                </td>
+                <td class="school" 
+                    data-school_id="{{res.team.school.id}}" 
+                    style="background-color:{{res.team.school.primary_color}};  
+                           color:{{res.team.school.text_color}};"
+                >
+                  {{ res.team.school.short_name }}
+                </td>
+                <td>
+                  <a href="{{url_for('races.results', race_id=res.race.id)}}">
+                    {{ res.race.date_f() }}
+                  </a>
+                </td>
+              </tr>
+            {% endfor %}
+        
+          </tbody>
+        </table>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="row">
+      <p>* All times are adjusted to normalize for differences in courses</p>
+    </div>
+  </div>
+
+
+</div>
+
+<script src="/static/js/league.js"></script>
+
+{% endblock %}

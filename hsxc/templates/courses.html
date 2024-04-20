@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<table class="table table-sm">
+  <thead>
+    <tr>
+      <th scope="col">League</th>
+      <th scope="col">School</th>
+      <th scope="col">Location</th>
+      <th scope="col">Course</th>
+      <th scope="col">Meters</th>
+      <th scope="col">Results</th>
+      <th scope="col">Adj</th>
+    </tr>
+  </thead>
+  <tbody>
+
+    {% for course, school, num_results in course_list %}
+      <tr>
+        <td>
+          {% if not school %}
+            None
+          {% else %}
+            {{school.league.short_name}}
+          {% endif %}
+        </td>
+        {% if not school %}
+        <td>
+          None
+        </td>
+        {% else %}
+        <td class="school" 
+            data-school_id="{{school.id}}" 
+            style="background-color:{{school.primary_color}};  
+                   color:{{school.text_color}};"
+        >
+          {{school.short_name}}
+        </td>
+        {% endif %}
+        </td>
+        <td>{{course.location.name}}</td>
+        <td><a href="{{url_for('core.course', course_id=course.id)}}">{{course.name}}</a></td>
+        <td>{{course.meters()}}</td>
+        <td>{{num_results}}</td>
+        <td>{{course.adj_f()}}</td>
+      </tr>
+    {% endfor %}
+
+  </tbody>
+</table>
+
+<script>
+$('.school').click(function(e) {
+  console.log(`school = ${$(this).data('school_id')}`);
+  sID = $(this).data('school_id');
+  var currentURL = (
+    window.location.protocol 
+    + "//" 
+    + window.location.host 
+    + window.location.pathname
+  );
+  var newURL = currentURL.replace(`/courses`,`/${sID}/school`);
+  window.location.href = newURL;
+});
+</script>
+
+{% endblock %}

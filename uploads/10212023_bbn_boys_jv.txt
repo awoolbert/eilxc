@@ -1,0 +1,61 @@
+10/21/2023 bbn boys jv			
+BB&N			
+			
+			
+			
+Place	Name	Time	School
+1	Hyatt, Lincoln	17:55	Roxbury Latin
+2	Tillen, Jonathan	18:03	Nobles
+3	Gray, Devin	18:11	Nobles
+4	Grace, William	18:26	Nobles
+5	Wilderman, Jonas	18:28	Nobles
+6	Hall, Charlie	18:42	Nobles
+7	Alsan, Aydin	18:43	Nobles
+8	Timmins, Michael	18:53	Nobles
+9	Damera, Akhilsai	18:58	Roxbury Latin
+10	Daniello, Max	19:02	Nobles
+11	Lee, Justin	19:05	Nobles
+12	Bradley, Colin	19:07	Roxbury Latin
+13	Reid, Calvin	19:08	Roxbury Latin
+14	Hildreth, Raymond	19:09	Groton
+15	Reichard, Fin	19:17	Roxbury Latin
+16	Qin, Jerry	19:20	Nobles
+17	Fair, James	19:26	Nobles
+18	Flatz-Ehrfeld, Thadd	19:29	Groton
+19	Holland, Philip	19:53	Groton
+20	Leung, Jayden	19:54	Nobles
+21	Hernández, Tomás	20:00	Nobles
+22	Lewis-Pierce, Parker	20:01	BB&N
+23	Madden, Nate	20:03	Nobles
+24	Kesselheim, Max	20:04	Roxbury Latin
+25	Lee, Grayson	20:04	Roxbury Latin
+26	Reichard, Brendan	20:07	Roxbury Latin
+27	Conine, Quinn	20:17	BB&N
+28	Tompros, Paul	20:18	Roxbury Latin
+29	Scanlon, George	20:20	BB&N
+30	Chen, Emmett	20:24	Nobles
+31	Cox, Walker	20:33	BB&N
+32	Modi, Sahovan	20:38	Groton
+33	Manz, Emilio	20:47	Nobles
+34	Mago, Aryan	20:53	Groton
+35	Young, Charlie	20:55	Nobles
+36	Owusu-Amo, Ben	20:56	Nobles
+37	Reid, Austin	20:58	Roxbury Latin
+38	Qiao, Michael	21:12	BB&N
+39	Colbert, Oliver	21:15	Roxbury Latin
+40	Seilheimer, Henry	21:17	Groton
+41	Zhang, Douglas	21:18	BB&N
+42	Southworth, Sebasti	21:41	BB&N
+43	Nordahl, Emery	21:43	Nobles
+44	Sheng, Anray	21:47	Nobles
+45	Achebe, Nnamdi	22:10	Nobles
+46	Zhang, Charlie	22:18	BB&N
+47	Harrington, Owen	22:20	Nobles
+48	Garciarramos Petrici	22:22	Groton
+49	Hlidebrandt,	22:29	BB&N
+50	Levine, Josh	22:33	Nobles
+51	Cohen, Alexander	22:41	BB&N
+52	Liu, Jeffrey	22:52	Nobles
+53	Yu, David	23:03	Groton
+54	Ding,	23:45	BB&N
+55	Pinkas, George	24:10	Nobles

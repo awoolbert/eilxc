@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link 
+  rel="stylesheet" 
+  href="https://fonts.googleapis.com/icon?family=Material+Icons"
+>
+{% endblock %}
+
+
+{% block content %}
+<div class="content-section my-4" id="race_info" data-race_id="{{race.id}}">
+  <legend class="h3 border-bottom mt-4 mb-4">Assign Bib Numbers</legend>
+  <div class="container">
+    <h5>Will this race be using bibs?</h5>
+  </div>
+
+  <div class="container my-4" id="buttons-ctr">
+    <button 
+        class="btn btn-primary btn-lg" 
+        id="yes-bibs-btn" 
+        onclick="window.location.href='bibs'"
+    >
+        Yes
+    </button>
+    <button 
+        class="btn btn-primary btn-lg" 
+        id="no-bibs-btn" 
+        onclick="finishBibAssignment()"
+    >
+        No
+    </button>
+
+  </div>
+</div>
+
+<script>
+  // get the race_id and put it in race object to be sent to server
+  var race = {
+    race_id: $('#race_info').data('race_id'),
+  };
+
+
+  // Function to set races status to ready and return to home
+  function finishBibAssignment() {
+    race.status = 'ready';
+    // ajax call to set status to ready
+    $.ajax({
+      async: false,
+      url: '/get_participants_for_bib_assignment',
+      type: 'POST',
+      dataType: 'json',
+      contentType: 'application/json',
+      data: JSON.stringify(race),
+    });
+
+    // go to home
+    window.location.href = `/home`
+
+  }
+
+</script>
+
+
+{% endblock %}

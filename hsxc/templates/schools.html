@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="content-section py-3 text-center">
+  <h5>Full List of Schools in Database</h5>
+</div>
+
+<table class="table table-sm table-striped">
+  <thead>
+    <tr>
+      <th scope="col">league</th>
+      <th scope="col">id</th>
+      <th scope="col">display</th>
+      <th scope="col">long_name</th>
+      <th scope="col">city</th>
+      <th scope="col">state</th>
+    </tr>
+  </thead>
+  <tbody>
+
+    {% for school in school_list %}
+      <tr class="school" data-school_id="{{school.id}}">
+        <td>{{school.league.short_name}}</td>
+        <td>{{school.id}}</td>
+        <td>
+          <div style="border: solid {{school.primary_color}};">
+            <div
+              class="justify-content-center align-items-center"
+              style="display: flex;
+                    border: 11px solid {{school.secondary_color}}; 
+                    background-color: {{school.primary_color}}; 
+                    text-align: center;
+                    color: {{school.text_color}};"
+            >
+              {{school.short_name}}
+            </div>
+          </div>
+        </td>
+        <!-- <td style="background-color:{{school.primary_color}}; color:{{school.text_color}};">{{school.short_name}}</td> -->
+        <td>{{school.long_name}}</td>
+        <td>{{school.city}}</td>
+        <td>{{school.state_abbr}}</td>
+      </tr>
+      <!-- <tr>
+        <td> </td>
+      </tr> -->
+    {% endfor %}
+
+  </tbody>
+</table>
+
+<script type="text/javascript">
+
+  // route to school page if school name box is clicked
+  $('.school').click(function(e) {
+    console.log(`school = ${$(this).data('school_id')}`);
+    if(!$(e.target).closest('.runner-link').length) {
+      sID = $(this).data('school_id')
+      var currentURL = (
+        window.location.protocol 
+        + "//" 
+        + window.location.host 
+        + window.location.pathname
+      );
+      var newURL = currentURL.replace(`/schools`,`/${sID}/school`);
+      window.location.href = newURL;
+    }
+  });
+
+</script>
+
+{% endblock %}

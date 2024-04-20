@@ -1,0 +1,57 @@
+10/28/2023 groton boys			
+Groton			
+			
+			
+Place	Name	Time	School
+1	chris hovet	16:38	Groton
+2	jeremy bullock	16:43	Tabor
+3	ben hebbel	17:31	Tabor
+4	charlie gavin	17:32	Thayer
+5	nic huaco	17:56	Tabor
+6	jason minicozzi	18:08	Rivers
+7	alex young	18:11	Rivers
+8	damien west	18:19	Groton
+9	eric get	18:25	Groton
+10	charlie jackivicz	18:50	Tabor
+11	cam gonzalez	18:54	Tabor
+12	justin jang	18:57	Rivers
+13	jeremy gall	19:03	Groton
+14	brendan brosnan	19:04	Thayer
+15	liam warren	19:11	Groton
+16	luke driscoll	19:21	Thayer
+17	stevel silvers	19:21	Thayer
+18	john brice	19:22	Thayer
+19	jaden smith	19:23	Thayer
+20	chase bellamy	19:29	Groton
+21	luke peabody	19:36	Tabor
+22	theo dowd	19:50	Thayer
+23	raymand hildreth	20:01	Groton
+24	thaddeus flatz-cher	20:14	Groton
+25	heng leong	20:21	Rivers
+26	kogo bennson	20:28	Groton
+27	sam blank	20:28	Rivers
+28	michael lu	20:47	Groton
+29	philip holland	20:49	Groton
+30	thomas valderama	21:01	Tabor
+31	aryan mago	21:12	Groton
+32	sahavan modi	21:12	Groton
+33	nolan mcneill	21:19	Rivers
+34	evan schnieder	21:21	Thayer
+35	jake devries	21:32	Thayer
+36	nolan ghang	21:36	Groton
+37	eric liu	21:41	Tabor
+38	ryan noreke	21:54	Thayer
+39	henry selhemer	21:59	Groton
+40	noah divon	22:03	Tabor
+41	jeffrey wu	22:10	Groton
+42	sebastian keleher	22:20	Thayer
+43	ayur vallena	22:27	Groton
+44	eric liang	23:05	Groton
+45	david yu	23:29	Groton
+46	mateo garciarra-p	24:07	Groton
+47	charlie gilman	24:40	Thayer
+48	own spring	24:46	Groton
+49	jasper clark	25:57	Groton
+50	hansen zheng	27:35	Groton
+51	matt senngins	28:04	Groton
+52	ethan yan	29:29	Groton

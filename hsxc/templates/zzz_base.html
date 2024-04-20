@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+  {% block head %}
+  {% endblock %}
+  <style media="screen">
+    tr {
+      line-height: 25px;
+      min-height: 25px;
+      height: 25px;
+    }
+
+    .table-hover tbody tr:hover td,
+    .table-hover tbody tr:hover th {
+      background-color: #007bff;
+    }
+  </style>
+
+  <meta charset="utf-8">
+  <title>NE Prep XC</title>
+</head>
+
+<body>
+  <header class="site-header">
+    <nav class="navbar navbar-expand-md navbar-dark bg-primary">
+      <div class="container">
+        <a class="navbar-brand" href="{{ url_for('core.index') }}">NE Prep XC</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarToggle">
+          <div class="navbar-nav mr-auto">
+            {% if current_user.is_authenticated %}
+
+            {% if current_user.races_ready_to_start() %}
+            <a class="nav-item nav-link" href="{{ url_for('users.home') }}" style="background-color: #ffffff; border-radius: 10px; color: #007bff; font-weight: bold;">START RACE</a>
+            {% endif %}
+
+            {% if current_user.races_in_setup() %}
+            <a class="nav-item nav-link" href="{{ url_for('users.home') }}">Continue Race Setup</a>
+            {% endif %}
+
+
+            <a class="nav-item nav-link" href="{{ url_for('race_setup.create_race') }}">Create New Race</a>
+            <a class="nav-item nav-link" href="{{ url_for('races.all_races') }}">Race Results</a>
+            <div class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Database
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                <a class="dropdown-item" href="{{ url_for('race_setup.add_school', race_id=0) }}">Add a School</a>
+
+                {% if current_user.schools_coached|length > 0 or current_user.is_administrator() %}
+                <a class="dropdown-item" href="{{ url_for('race_setup.choose_school') }}">Add/Edit/Remove Runner</a>
+                {% endif %}
+
+                {% if current_user.is_administrator() %}
+                <a class="dropdown-item" href="{{ url_for('users.schools') }}">Full School List</a>
+                <a class="dropdown-item" href="{{ url_for('users.runners') }}">Full Runners List</a>
+                <a class="dropdown-item" href="{{ url_for('users.current_runners') }}">Current Runners List</a>
+                <a class="dropdown-item" href="{{ url_for('users.user_list') }}">Registered Users</a>
+                {% endif %}
+
+              </div>
+            </div>
+            {% if current_user.is_administrator() %}
+            <a class="nav-item nav-link" href="{{ url_for('users.register') }}">Register New User</a>
+            {% endif %}
+
+            {% endif %}
+
+          </div>
+          <div class="navbar-nav">
+
+            {% if current_user.is_authenticated %}
+            <a class="nav-item nav-link" href="{{ url_for('users.logout') }}">Logout</a>
+            {% else %}
+            <a class="nav-item nav-link" href="{{ url_for('users.login') }}">Login</a>
+            {% endif %}
+
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+      {% for category, message in messages %}
+      <div class="alert alert-{{ category }}">
+        {{ message }}
+      </div>
+      {% endfor %}
+      {% endif %}
+      {% endwith %}
+      {% block content %}
+      {% endblock %}
+    </div>
+  </header>
+
+</body>
+
+</html>

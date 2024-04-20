@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+
+{% block head %}
+<style>
+  img {
+    max-width: 50%;
+  }
+</style>
+{% endblock %}
+
+
+{% block content %}
+<div class="content-section mb-5" id="school_info" data-school_id="{{school.id}}">
+  <div class="container mb-4 py-3 px-3 mt-3" style="border-style:solid; border-width:5px; border-color:{{school.primary_color}};  color:{{school.primary_color}};">
+    <div class="row">
+      <div class="col-8">
+        <legend class="h2">{{school.long_name}} </legend>
+        <h5>{{ school.city }}, {{ school.state_abbr }}</h5>
+        {% if school.league.id != 3 %}
+        <h6>{{school.league.long_name}} ({{school.league.short_name}})</h6>
+        {% endif %}
+      </div>
+      <div class="col text-right">
+        {% if school.has_image() %}
+        <img src="/static/{{school.img_filename()}}">
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="container mb-4" id="roster-container">
+    <h3 class="text-center mb-3">Current Roster</h3>
+    <div class="row">
+      {% for team in teams %}
+      <div class="col">
+        <table class="table table-sm table-striped mb-1">
+          <thead>
+            <tr>
+              <th scope="col">Team</th>
+              <th scope="col">Name</th>
+              <th scope="col">Class</th>
+            </tr>
+          </thead>
+          <tbody id="roster-list-{{team.gender}}">
+            {% for runner in team.alphabetized_runners() %}
+            <tr>
+              <td>{{ team.display_gender() }}</td>
+              <td><a href="{{url_for('core.runner', runner_id=runner.id)}}">{{ runner.display_name() }}</a></td>
+              <td>{{ runner.grad_year }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <small class="muted" style="margin-left:6px;">Need to <a class="edit-runner-link" href="{{url_for('db_admin.add_runner', race_id=0, school_id=school.id, gender_code=team.gender_code())}}">edit {{team.gender}} team roster</a>?</small>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  {% if school.has_current_year_results() %}
+  <div class="container mb-4" id="record-container">
+    <h3 class="text-center mb-1">Current Year Results</h3>
+    <div class="row">
+      {% for team in teams %}
+      <div class="col">
+        {% if teams|length > 1%}
+        <h4 class="text-center mb-1">{{ team.display_gender() }}</h4>
+        {% endif %}
+        <h6 class="text-center mb-2">
+          (Wins: {{ss[team.gender].wins}} - Losses: {{ss[team.gender].losses}})
+        </h6>
+        <table class="table table-sm table-striped">
+          <thead>
+            <tr>
+              <th scope="col">Date</th>
+              <th scope="col">Opponent</th>
+              <th class="text-center" scope="col">Win/Loss</th>
+              <th class="text-center" scope="col">Score</th>
+            </tr>
+          </thead>
+          <tbody id="srr-list">
+
+            {% for result in ss[team.gender].srr %}
+            <tr>
+              <td>
+                <a href="{{ url_for('races.results', race_id=result.race.id)}}">
+                  {{ result.race.display_date() }}
+                </a>
+              </td>
+              <td class="school" data-opponent_id="{{ result.opponent.school.id }}" style="background-color:{{result.opponent.school.primary_color}};  color:{{result.opponent.school.text_color}};">{{ result.opponent.school.short_name}}</td>
+              {% if result.outcome == 'Win' %}
+                <td class="text-center" style="color: rgb(17, 158, 56);">{{ result.outcome }}</td>
+              {% else %}
+                <td class="text-center" style="color: rgb(233, 29, 29);">{{ result.outcome }}</td>
+              {% endif %}
+              <td class="text-center">{{ result.own_score}} - {{ result.opp_score }}</td>
+            </tr>
+            {% endfor %}
+
+          </tbody>
+        </table>
+      </div>
+      {% endfor %}
+    </div>
+    {% if school.league.id != 3 %}
+    <small class="muted" style="margin-left:6px;">View <a class="league-link" href="{{url_for('core.league', league_id=school.league.id)}}">{{school.league.long_name}} ({{school.league.short_name}})</a> Standings</small>
+    {% endif %}
+  </div>
+  {% endif %}
+
+  <div class="container" id="races-container">
+    <h3 class="text-center mb-3">Previous Years' Results</h3>
+    <table class="table table-sm table-striped">
+      <thead>
+        <tr>
+          <th scope="col">Date</th>
+          <th scope="col">Race</th>
+          <th scope="col">Location</th>
+        </tr>
+      </thead>
+      <tbody id="races-list">
+
+        {% for race in races %}
+        <tr>
+          <td>{{ race.display_date() }}</td>
+          <td><a href="{{url_for('races.results', race_id=race.id)}}">{{ race.name }} - {{ race.display_gender() }}</a></td>
+          <td>{{ race.location.city }}, {{ race.location.state_abbr }}</td>
+        </tr>
+        {% endfor %}
+
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  // route to school page if school box on individual results table is clicked
+  $('.school').click(function(e) {
+    console.log(`school = ${$(this).data('opponent_id')}`);
+    if (!$(e.target).closest('.runner-link').length) {
+      sID = $('#school_info').data('school_id');
+      oID = $(this).data('opponent_id');
+      var currentURL = window.location.protocol + "//" + window.location.host + window.location.pathname;
+      var newURL = currentURL.replace(`/${sID}/school`,
+        `/${oID}/school`);
+      window.location.href = newURL;
+    }
+  });
+</script>
+
+{% endblock %}

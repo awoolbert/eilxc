@@ -1,0 +1,37 @@
+.modal-body {
+  overflow-y: auto;
+  /*max-height: calc(90vh - 150px); /* 100vh is the total height of the viewport. 210px might need to be adjusted based on your header/footer heights */
+}
+
+/* Optional styling */
+.sortable {
+  cursor: pointer;
+}
+
+.runner-count {
+  cursor: pointer;
+}
+
+/* Hide Font Awesome icons by default */
+.fa-sort {
+  display: inline !important;
+}
+
+.fa-sort-up, .fa-sort-down {
+  display: none;
+}
+
+/* Hide sort icon and show appropriate icon when column is sorted */
+.asc .fa-sort, .desc .fa-sort {
+  display: none !important;
+}
+
+/* Show appropriate icon when column is sorted */
+.asc .fa-sort-up {
+  display: inline !important;
+  color: rgb(0, 153, 255);
+}
+.desc .fa-sort-down {
+  display: inline !important;
+  color: rgb(0, 153, 255);
+}

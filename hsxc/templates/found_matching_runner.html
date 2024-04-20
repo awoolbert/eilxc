@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block head %}
+<style>
+  img {
+      max-width: 50%;
+  }
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+<!-- runner info box -->
+<div 
+  class="content-section py-3 px-3 mt-3 mb-3" 
+  style="border-style:solid; border-width:5px; 
+         border-color:{{runner.get_school().primary_color}}; 
+         color:{{runner.get_school().primary_color}};"
+>
+  <div class="row">
+    <div class="col-8">
+      <legend class="h3">{{runner.display_name()}} </legend>
+      <h5>{{runner.get_school().long_name}}</h5>
+      <h5>Class of {{runner.grad_year}}</h5>
+    </div>
+    <div class="col text-right school">
+      {% if runner.get_school().has_image() %}
+      <img src="/static/{{runner.get_school().img_filename()}}">
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  {% if matches|length > 1 %}
+    <div class="container my-5">
+      <h5 class="text-danger">
+        Other runners in the database look similar to the one you entered.
+      </h5>
+      <h5 class="text-danger">
+        Please review the list below before confirming the runner you entered 
+        is a different runner.
+      </h5>
+    </div>
+  {% else %}
+    <div class="container my-5">
+      <h5 class="text-danger">
+        Another runner in the database look similar to the one you entered. 
+        Please review this runner before confirming the runner you entered 
+        is a different runner.
+      </h5>
+      <h5 class="text-danger">If this is the same runner, click the button 
+        saying so.
+      </h5>
+    </div>
+  {% endif %}
+
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th scope="col-2">Most Recent School</th>
+        <th scope="col">Name</th>
+        <th scope="col" class="text-center">Class</th>
+        <th scope="col" class="text-center">5K Time</th>
+        <th scope="col" class="text_center">Action</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {% for match in matches %}
+        <tr>
+          <td 
+            style="background-color:{{match.get_school().primary_color}};  
+                   color:{{match.get_school().text_color}};"
+          >
+            {{ match.school_name() }}
+          </td>
+          <td>{{ match.display_name() }}</td>
+          <td class="text-center">{{ match.grad_year }}</td>
+          <td class="text-center">{{ match.display_seed_time() }}</td>
+          <td class="text_center">
+            <button 
+              class="btn btn-primary" 
+              type="button" 
+              name="button" 
+              onclick="window.location.href='{{url_for('core.confirm_runner_is_duplicate', team_id=team.id, race_id=race_id, step=step, duplicate_runner_id=runner.id, existing_runner_id=match.id)}}'"
+            >
+              This is the same runner!
+            </button>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="container my-3 text-center">
+    <button 
+      class="btn btn-lg btn-success" 
+      type="button" 
+      name="button" 
+      onclick="window.location.href='{{url_for('core.roster', team_id=team.id, race_id=race_id, step=step)}}'"
+    >
+      {% if matches|length > 1 %}
+        None of these are the same runner
+      {% else %}
+        This is not the same runner
+      {% endif %}
+    </button>
+  </div>
+
+
+</div>
+
+{% endblock %}
