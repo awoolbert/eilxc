@@ -126,7 +126,7 @@ def send_welcome_email(user: User):
 
 
 @users.route('/user_list', methods=['GET'])
-@login_required
+# @login_required
 def user_list():
     if not current_user.is_administrator():
         return redirect(url_for('core.index'))
