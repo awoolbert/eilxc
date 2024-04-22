@@ -89,7 +89,7 @@
               <a 
                 class="nav-item nav-link" 
                 {% if current_user.schools_coached|length == 1 %}
-                href="{{ url_for('core.league', school_id=current_user.schools_coached[0].league.id) }}"
+                href="{{ url_for('core.league', league_id=current_user.schools_coached[0].league.id) }}"
                 {% else %}
                 href="{{ url_for('core.index') }}"
                 {% endif %}
